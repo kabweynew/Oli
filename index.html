@@ -804,20 +804,21 @@ input:checked+.slider:before{transform:translateX(20px);}
 
 <script type="module">
 // ═══════════════════════════════════════════════
-// FIREBASE CONFIG — your kabetruck project
+// FIREBASE CONFIG — hask-oli project
 // ═══════════════════════════════════════════════
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getDatabase, ref, set, push, get, onValue, remove, update }
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB_LGbqv3WSm__LVBoClLKuV",
-  authDomain: "hask-a71b3.firebaseapp.com",
-  databaseURL: "https://hask-a71b3-default-rtdb.firebaseio.com",
-  projectId: "hask-a71b3",
-  storageBucket: "hask-a71b3.firebasestorage.app",
-  messagingSenderId: "281862563279",
-  appId: "1:281862563279:web:a638f0d3590d77cf071eba"
+  apiKey: "AIzaSyDwOtY38Rtu6rGLuficnnpBandHGRUHGVs",
+  authDomain: "hask-oli.firebaseapp.com",
+  databaseURL: "https://hask-oli-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "hask-oli",
+  storageBucket: "hask-oli.firebasestorage.app",
+  messagingSenderId: "980799897658",
+  appId: "1:980799897658:web:7b652dffbe023f52137503",
+  measurementId: "G-JJFL4F6GS2"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -836,7 +837,7 @@ window.addEventListener('online', () => {
 // ── TARIFFS ──
 const TOTAL_RATE = 5500;         // Total payment per car (client pays)
 const WORKER_RATE = 1300;        // Worker earns per car (full)
-const PARTIAL_RATE = 2800;       // Company gets on partial
+const PARTIAL_RATE = 2100;       // Company gets on partial
 const WORKER_PARTIAL_RATE = 700; // Worker earns on partial
 const COMPANY_RATE = TOTAL_RATE - WORKER_RATE; // Company keeps = 4200
 
@@ -1214,8 +1215,8 @@ function renderWTrucks(){
         <div class="badge badge-${tk.status}">${tk.status}</div>
       </div>
       <div class="truck-meta">
-        <div><div class="tm-lbl">${T('totalFare')}</div><div class="tm-val" style="color:var(--gold)">${TOTAL_RATE.toLocaleString()} ETB</div></div>
-        <div><div class="tm-lbl">${T('yourEarnings')}</div><div class="tm-val" style="color:var(--teal)">${WORKER_RATE.toLocaleString()} ETB</div></div>
+        <div><div class="tm-lbl">${T('totalFare')}</div><div class="tm-val" style="color:var(--gold)">${tk.status==='partial'?(PARTIAL_RATE+WORKER_PARTIAL_RATE).toLocaleString():tk.status==='unpaid'?'0':TOTAL_RATE.toLocaleString()} ETB</div></div>
+        <div><div class="tm-lbl">${T('yourEarnings')}</div><div class="tm-val" style="color:var(--teal)">${tk.status==='paid'?WORKER_RATE.toLocaleString():tk.status==='partial'?WORKER_PARTIAL_RATE.toLocaleString():'0'} ETB</div></div>
         ${tk.notes?`<div><div class="tm-lbl">${T('note')}</div><div class="tm-val" style="font-size:12px;color:var(--muted)">${tk.notes}</div></div>`:''}
       </div>
       <div class="truck-acts">${wp.editStatus?`<button class="t-btn t-btn-edit" onclick="editTruck('${tk.id}')">✏️ Edit Status</button>`:''}</div>
@@ -1295,7 +1296,7 @@ function renderCTrucks(){
   buildWorkerChips();
   document.getElementById('c-trucks-title').textContent=curUser+' — Trucks';
   document.getElementById('c-stats').innerHTML=`
-    <div class="stat-box"><div class="stat-num">${trucks.length}</div><div class="stat-lbl">Total</div></div>
+    <div class="stat-box"><div class="stat-num">${calcCount(cBase)}</div><div class="stat-lbl">Total</div></div>
     <div class="stat-box"><div class="stat-num" style="color:var(--green)">${paid}</div><div class="stat-lbl">Paid</div></div>
     <div class="stat-box"><div class="stat-num" style="color:var(--gold)">${partial}</div><div class="stat-lbl">Partial</div></div>
     <div class="stat-box"><div class="stat-num" style="color:var(--red)">${unpaid}</div><div class="stat-lbl">Unpaid</div></div>`;
@@ -1322,9 +1323,9 @@ function renderCTrucks(){
       </div>
       <div class="truck-meta">
         <div><div class="tm-lbl">${T('worker')}</div><div class="tm-val" style="color:${color}">👷 ${tk.worker}</div></div>
-        <div><div class="tm-lbl">${T('totalFare')}</div><div class="tm-val" style="color:var(--gold)">${TOTAL_RATE.toLocaleString()} ETB</div></div>
-        <div><div class="tm-lbl">${T('workerGets')}</div><div class="tm-val" style="color:var(--teal)">${WORKER_RATE.toLocaleString()} ETB</div></div>
-        <div><div class="tm-lbl">${T('company')}</div><div class="tm-val" style="color:var(--bright)">${COMPANY_RATE.toLocaleString()} ETB</div></div>
+        <div><div class="tm-lbl">${T('totalFare')}</div><div class="tm-val" style="color:var(--gold)">${tk.status==='partial'?(PARTIAL_RATE+WORKER_PARTIAL_RATE).toLocaleString():tk.status==='unpaid'?'0':TOTAL_RATE.toLocaleString()} ETB</div></div>
+        <div><div class="tm-lbl">${T('workerGets')}</div><div class="tm-val" style="color:var(--teal)">${tk.status==='paid'?WORKER_RATE.toLocaleString():tk.status==='partial'?WORKER_PARTIAL_RATE.toLocaleString():'0'} ETB</div></div>
+        <div><div class="tm-lbl">${T('company')}</div><div class="tm-val" style="color:var(--bright)">${tk.status==='paid'?COMPANY_RATE.toLocaleString():tk.status==='partial'?PARTIAL_RATE.toLocaleString():'0'} ETB</div></div>
         ${tk.notes?`<div><div class="tm-lbl">${T('note')}</div><div class="tm-val" style="font-size:12px;color:var(--muted)">${tk.notes}</div></div>`:''}
       </div>
       ${showEdit||showDel?`<div class="truck-acts">
@@ -1380,7 +1381,7 @@ function renderATrucks(){
   buildWorkerChips();
   const statsEl=document.getElementById('a-day-stats');
   if(statsEl) statsEl.innerHTML=`
-    <div class="day-stat"><div class="stat-num">${aBase.length}</div><div class="stat-lbl">Trucks</div></div>
+    <div class="day-stat"><div class="stat-num">${calcCount(aBase)}</div><div class="stat-lbl">Trucks</div></div>
     <div class="day-stat"><div class="stat-num" style="color:var(--green)">${paid}</div><div class="stat-lbl">Paid</div></div>
     <div class="day-stat"><div class="stat-num" style="color:var(--gold)">${partial}</div><div class="stat-lbl">Partial</div></div>
     <div class="day-stat"><div class="stat-num" style="color:var(--red)">${unpaid}</div><div class="stat-lbl">Unpaid</div></div>
@@ -1407,9 +1408,9 @@ function renderATrucks(){
       </div>
       <div class="truck-meta">
         <div><div class="tm-lbl">${T('worker')}</div><div class="tm-val" style="color:${color}">👷 ${tk.worker}</div></div>
-        <div><div class="tm-lbl">${T('totalFare')}</div><div class="tm-val" style="color:var(--gold)">${TOTAL_RATE.toLocaleString()} ETB</div></div>
-        <div><div class="tm-lbl">${T('workerGets')}</div><div class="tm-val" style="color:var(--teal)">${WORKER_RATE.toLocaleString()} ETB</div></div>
-        <div><div class="tm-lbl">${T('company')}</div><div class="tm-val" style="color:var(--bright)">${COMPANY_RATE.toLocaleString()} ETB</div></div>
+        <div><div class="tm-lbl">${T('totalFare')}</div><div class="tm-val" style="color:var(--gold)">${tk.status==='partial'?(PARTIAL_RATE+WORKER_PARTIAL_RATE).toLocaleString():tk.status==='unpaid'?'0':TOTAL_RATE.toLocaleString()} ETB</div></div>
+        <div><div class="tm-lbl">${T('workerGets')}</div><div class="tm-val" style="color:var(--teal)">${tk.status==='paid'?WORKER_RATE.toLocaleString():tk.status==='partial'?WORKER_PARTIAL_RATE.toLocaleString():'0'} ETB</div></div>
+        <div><div class="tm-lbl">${T('company')}</div><div class="tm-val" style="color:var(--bright)">${tk.status==='paid'?COMPANY_RATE.toLocaleString():tk.status==='partial'?PARTIAL_RATE.toLocaleString():'0'} ETB</div></div>
         ${tk.notes?`<div><div class="tm-lbl">${T('note')}</div><div class="tm-val" style="font-size:12px;color:var(--muted)">${tk.notes}</div></div>`:''}
       </div>
       <div class="truck-acts">
@@ -1468,9 +1469,9 @@ function renderAdvancesList(listId,canDelete){
 }
 
 function renderReports(prefix){
-  var totalFare=trucks.length*TOTAL_RATE;
-  var totalWorkerEarn=trucks.length*WORKER_RATE;
-  var totalCompany=trucks.length*COMPANY_RATE;
+  var totalFare=calcTotalFare(trucks);
+  var totalWorkerEarn=calcWorkerEarn(trucks);
+  var totalCompany=calcCompanyEarn(trucks);
   var totalAdv=advances.reduce(function(s,a){return s+a.amount;},0);
   var netWorkers=totalWorkerEarn-totalAdv;
   var paid=trucks.filter(function(t){return t.status==='paid';}).length;
@@ -1478,9 +1479,9 @@ function renderReports(prefix){
   var partial=trucks.filter(function(t){return t.status==='partial';}).length;
   var todayStr=today();
   var todayTrucks=trucks.filter(function(t){return t.date===todayStr;});
-  var collected=paid*TOTAL_RATE;
-  var outstanding=(unpaid+partial)*TOTAL_RATE;
-  var collectionRate=trucks.length>0?Math.round(paid/trucks.length*100):0;
+  var collected=calcTotalFare(trucks.filter(function(t){return t.status==="paid";}));
+  var outstanding=calcTotalFare(trucks.filter(function(t){return t.status==="unpaid"||t.status==="partial";}));
+  var collectionRate=calcCount(trucks)>0?Math.round(calcCount(trucks.filter(function(t){return t.status==="paid";}))/(calcCount(trucks))*100):0;
   var workload=workers.map(function(w){
     var wt=trucks.filter(function(t){return t.worker===w.name;});
     var cnt=calcCount(wt);
@@ -1519,7 +1520,7 @@ function renderReports(prefix){
   var html=''
   +'<div class="report-card" style="border-left:4px solid var(--bright);">'
   +'<div style="font-family:Barlow Condensed,sans-serif;font-size:16px;font-weight:800;margin-bottom:12px;color:var(--bright);">&#x1F4CA; Overall Summary</div>'
-  +'<div class="report-row"><span class="r-key">Total Trucks</span><span class="r-val">'+trucks.length+'</span></div>'
+  +'<div class="report-row"><span class="r-key">Total Trucks</span><span class="r-val">'+(calcCount(trucks)%1===0?calcCount(trucks):calcCount(trucks).toFixed(1))+'</span></div>'
   +'<div class="report-row"><span class="r-key">&#x2705; Paid</span><span class="r-val" style="color:var(--green)">'+paid+'</span></div>'
   +'<div class="report-row"><span class="r-key">&#x26A1; Partial</span><span class="r-val" style="color:var(--gold)">'+partial+'</span></div>'
   +'<div class="report-row"><span class="r-key">&#x274C; Unpaid</span><span class="r-val" style="color:var(--red)">'+unpaid+'</span></div>'
@@ -1538,9 +1539,9 @@ function renderReports(prefix){
   +'</div>'
   +'<div class="report-card" style="border-left:4px solid var(--teal);">'
   +'<div style="font-family:Barlow Condensed,sans-serif;font-size:16px;font-weight:800;margin-bottom:12px;color:var(--teal);">&#x1F4C5; Today &mdash; '+todayStr+'</div>'
-  +'<div class="report-row"><span class="r-key">Trucks Today</span><span class="r-val" style="color:var(--teal)">'+todayTrucks.length+'</span></div>'
-  +'<div class="report-row"><span class="r-key">Total Fare Today</span><span class="r-val" style="color:var(--gold)">'+(todayTrucks.length*TOTAL_RATE).toLocaleString()+' ETB</span></div>'
-  +'<div class="report-row"><span class="r-key">Workers Earnings Today</span><span class="r-val" style="color:var(--teal)">'+(todayTrucks.length*WORKER_RATE).toLocaleString()+' ETB</span></div>'
+  +'<div class="report-row"><span class="r-key">Trucks Today</span><span class="r-val" style="color:var(--teal)">'+calcCount(todayTrucks)+'</span></div>'
+  +'<div class="report-row"><span class="r-key">Total Fare Today</span><span class="r-val" style="color:var(--gold)">'+calcTotalFare(todayTrucks).toLocaleString()+' ETB</span></div>'
+  +'<div class="report-row"><span class="r-key">Workers Earnings Today</span><span class="r-val" style="color:var(--teal)">'+calcWorkerEarn(todayTrucks).toLocaleString()+' ETB</span></div>'
   +'<div class="report-row"><span class="r-key">&#x2705; Paid Today</span><span class="r-val" style="color:var(--green)">'+todayTrucks.filter(function(t){return t.status==='paid';}).length+'</span></div>'
   +'<div class="report-row"><span class="r-key">&#x274C; Unpaid Today</span><span class="r-val" style="color:var(--red)">'+todayTrucks.filter(function(t){return t.status==='unpaid';}).length+'</span></div>'
   +'</div>'
