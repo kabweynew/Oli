@@ -3,13 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>WKABE — Hask Tracker</title>
+<title>WKABE — Hask Truck Tracker</title>
 <meta name="description" content="Hask Services Djibouti — Truck tracking and worker management">
 <meta name="theme-color" content="#0f1623">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="WKABE">
+<meta name="application-name" content="WKABE">
+<meta name="msapplication-TileColor" content="#0f1623">
+<meta name="msapplication-tap-highlight" content="no">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="splash.jpg">
 <style>
@@ -706,22 +709,24 @@
 
   /* ── PWA UPDATE BANNER ── */
   #updateBanner {
-    position: fixed; top: 22px; left: 0; right: 0; z-index: 9998;
+    position: fixed; bottom: 90px; left: 12px; right: 12px; z-index: 9998;
     background: var(--accent);
     color: #fff;
     display: flex; align-items: center; justify-content: space-between;
-    padding: 10px 16px;
+    padding: 12px 16px;
     font-size: 13px; font-weight: 600;
-    transform: translateY(-100%);
-    transition: transform 0.3s ease;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+    border-radius: var(--radius);
+    transform: translateY(120%);
+    transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+    box-shadow: 0 8px 32px rgba(59,130,246,0.5);
   }
   #updateBanner.show { transform: translateY(0); }
   #updateBanner button {
     background: #fff; color: var(--accent);
     border: none; border-radius: 6px;
-    padding: 5px 12px; font-size: 12px; font-weight: 700;
+    padding: 6px 14px; font-size: 12px; font-weight: 700;
     cursor: pointer; font-family: inherit; margin-left: 12px;
+    white-space: nowrap;
   }
 
   /* ── WORKER VIEW (own trucks) ── */
@@ -2593,6 +2598,7 @@ function patchManifestIcon(size, dataUrl) {
       start_url: '/Oli/?pwa=1',
       scope: '/Oli/',
       display: 'standalone',
+      display_override: ['standalone', 'minimal-ui'],
       orientation: 'portrait',
       background_color: '#0f1623',
       theme_color: '#0f1623',
