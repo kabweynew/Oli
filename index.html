@@ -10,9 +10,6 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="WKABE">
-<meta name="application-name" content="WKABE">
-<meta name="msapplication-TileColor" content="#0f1623">
-<meta name="msapplication-tap-highlight" content="no">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="splash.jpg">
 <style>
@@ -266,7 +263,7 @@
     display: flex; align-items: center; gap: 6px;
     font-family: inherit;
   }
-  .worker-chip.active { color: #fff; }
+  .worker-chip.active { color: #fff; background: var(--accent); border-color: var(--accent); }
   .worker-chip .wdot { width: 8px; height: 8px; border-radius: 50%; }
   .wcount { font-size: 10px; opacity: 0.7; }
 
@@ -308,6 +305,7 @@
     font-size: 16px; font-weight: 700;
     font-family: 'JetBrains Mono', monospace;
     letter-spacing: 0.05em;
+    color: var(--text);
   }
   .status-badge {
     font-size: 10px; font-weight: 700;
@@ -707,26 +705,54 @@
   }
   .dup-warning.visible { display: block; }
 
+  /* ── PWA INSTALL BANNER ── */
+  #installBanner {
+    position: fixed; bottom: 90px; left: 12px; right: 12px; z-index: 9997;
+    background: linear-gradient(135deg, var(--bg3), var(--bg4));
+    border: 1.5px solid var(--accent);
+    color: var(--text);
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 16px;
+    font-size: 13px; font-weight: 600;
+    border-radius: var(--radius);
+    transform: translateY(160%);
+    transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+  #installBanner.show { transform: translateY(0); }
+  #installBanner .install-icon { font-size: 32px; flex-shrink:0; }
+  #installBanner .install-text { flex:1; }
+  #installBanner .install-title { font-size:14px; font-weight:700; }
+  #installBanner .install-sub { font-size:11px; color:var(--text2); margin-top:2px; }
+  #installBanner .install-btn {
+    background: var(--accent); color: #fff;
+    border: none; border-radius: 8px;
+    padding: 8px 16px; font-size: 13px; font-weight: 700;
+    cursor: pointer; font-family: inherit; white-space:nowrap;
+  }
+  #installBanner .install-close {
+    background: none; border: none; color: var(--text3);
+    font-size: 18px; cursor: pointer; padding: 4px; flex-shrink:0;
+  }
+
   /* ── PWA UPDATE BANNER ── */
   #updateBanner {
-    position: fixed; bottom: 90px; left: 12px; right: 12px; z-index: 9998;
+    position: fixed; top: 22px; left: 0; right: 0; z-index: 9998;
     background: var(--accent);
     color: #fff;
     display: flex; align-items: center; justify-content: space-between;
-    padding: 12px 16px;
+    padding: 10px 16px;
     font-size: 13px; font-weight: 600;
-    border-radius: var(--radius);
-    transform: translateY(120%);
-    transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
-    box-shadow: 0 8px 32px rgba(59,130,246,0.5);
+    transform: translateY(-100%);
+    transition: transform 0.3s ease;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
   }
   #updateBanner.show { transform: translateY(0); }
   #updateBanner button {
     background: #fff; color: var(--accent);
     border: none; border-radius: 6px;
-    padding: 6px 14px; font-size: 12px; font-weight: 700;
+    padding: 5px 12px; font-size: 12px; font-weight: 700;
     cursor: pointer; font-family: inherit; margin-left: 12px;
-    white-space: nowrap;
   }
 
   /* ── WORKER VIEW (own trucks) ── */
@@ -788,6 +814,57 @@
     border-radius: 2px; animation: loadBar 1.8s ease forwards;
   }
   @keyframes loadBar { 0%{width:0%} 60%{width:70%} 100%{width:100%} }
+
+  /* ── TRUCK NUMBER BADGE ── */
+  .truck-number {
+    font-size: 10px; font-weight: 800;
+    color: var(--text3); letter-spacing: 0.05em;
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 6px; padding: 2px 7px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ── PLATE SEARCH BAR ── */
+  .plate-search-wrap {
+    padding: 4px 16px 8px;
+    display: flex; gap: 8px; align-items: center;
+  }
+  .plate-search-input {
+    flex: 1;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 20px; padding: 7px 14px;
+    font-size: 13px; font-weight: 600; color: var(--text);
+    font-family: inherit; outline: none;
+  }
+  .plate-search-input:focus { border-color: var(--accent); }
+  .plate-search-clear {
+    background: none; border: none; color: var(--text3);
+    font-size: 18px; cursor: pointer; padding: 4px 6px;
+    display: none;
+  }
+
+  /* ── SUSPEND BANNER ── */
+  #suspendBanner {
+    background: rgba(239,68,68,0.12);
+    border-bottom: 2px solid var(--red);
+    padding: 10px 16px;
+    display: none; align-items: center; gap: 10px;
+    font-size: 13px; font-weight: 600; color: var(--red);
+  }
+  #suspendBanner.active { display: flex; }
+  #suspendBanner span { flex: 1; }
+
+  /* ── SHARE MODAL ── */
+  .share-option {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px; border-radius: var(--radius);
+    background: var(--bg3); border: 1px solid var(--border);
+    cursor: pointer; margin-bottom: 10px; transition: all 0.2s;
+  }
+  .share-option:active { transform: scale(0.97); }
+  .share-icon { font-size: 28px; flex-shrink: 0; }
+  .share-label { font-size: 14px; font-weight: 600; }
+  .share-sub { font-size: 11px; color: var(--text2); margin-top: 2px; }
 </style>
 </head>
 <body>
@@ -801,12 +878,6 @@
     <div class="splash-sub">Hask Services — Djibouti</div>
     <div class="splash-loader"><div class="splash-loader-bar"></div></div>
   </div>
-</div>
-
-<!-- PWA UPDATE BANNER -->
-<div id="updateBanner">
-  🔄 New version available!
-  <button onclick="applyUpdate()">Update Now</button>
 </div>
 
 <div id="loginScreen" class="screen active">
@@ -874,28 +945,53 @@
         <div class="stat-card"><div class="stat-num teal" id="statETB">0.0k</div><div class="stat-label">ETB</div></div>
       </div>
       <div class="date-bar">
-        <button class="date-chip" onclick="setToday()">🟢 Today</button>
-        <div class="date-input-wrap">
+        <button class="date-chip" id="todayChip" onclick="setToday()">🟢 Today</button>
+        <div class="date-input-wrap" style="cursor:pointer" onclick="openDatePicker()" id="datePickerBtn">
           <span style="color:var(--text3);font-size:13px;">📅</span>
-          <input type="date" id="dateFilter" onchange="renderTrucks()">
+          <span id="dateFilterDisplay" style="flex:1;font-size:13px;font-weight:600">Today</span>
+          <span style="color:var(--text3);font-size:12px;">▼</span>
+          <input type="hidden" id="dateFilter">
         </div>
       </div>
-      <div class="filter-bar">
-        <button class="filter-chip active" onclick="setFilter('all',this)">All</button>
-        <button class="filter-chip" onclick="setFilter('paid',this)">✅ Paid</button>
-        <button class="filter-chip" onclick="setFilter('partial',this)">⚡ Partial</button>
-        <button class="filter-chip" onclick="setFilter('unpaid',this)">❌ Unpaid</button>
+      <!-- SUSPEND BANNER -->
+      <div id="suspendBanner">
+        <span>🚫 Adding trucks is currently suspended by Admin</span>
+      </div>
+      <div class="filter-bar" id="statusFilterBar">
+        <button class="filter-chip active" data-filter="all" onclick="setFilter('all',this)">All</button>
+        <button class="filter-chip" data-filter="paid" onclick="setFilter('paid',this)">✅ Paid</button>
+        <button class="filter-chip" data-filter="partial" onclick="setFilter('partial',this)">⚡ Partial</button>
+        <button class="filter-chip" data-filter="unpaid" onclick="setFilter('unpaid',this)">❌ Unpaid</button>
       </div>
       <div class="worker-bar" id="workerFilterBar"></div>
+      <!-- PLATE SEARCH -->
+      <div class="plate-search-wrap">
+        <input class="plate-search-input" id="plateSearch" placeholder="🔍 Search plate number..." oninput="onPlateSearch(this)" autocomplete="off">
+        <button class="plate-search-clear" id="plateSearchClear" onclick="clearPlateSearch()">✕</button>
+      </div>
       <div class="section-header">
         <span class="section-title" id="trucksSectionTitle">TODAY'S TRUCKS</span>
-        <button class="new-btn" onclick="openAddTruck()">+ New</button>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button class="new-btn" style="color:var(--teal)" onclick="openShareReport()">📤 Share</button>
+          <button class="new-btn" onclick="openAddTruck()">+ New</button>
+        </div>
       </div>
       <div id="assignSection" class="assign-section" style="margin:0 16px 10px; display:none;">
         <div class="assign-title">⏳ WAITING FOR WORKER</div>
         <div id="unassignedList"></div>
       </div>
       <div class="trucks-list" id="trucksList"></div>
+    </div>
+
+    <!-- Truck List Tab (all trucks in global order) -->
+    <div id="tabList" style="display:none;">
+      <div style="padding:12px 16px 4px;display:flex;align-items:center;justify-content:space-between;">
+        <div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:0.08em" id="listTabTitle">📋 ALL TRUCKS</div>
+        <div id="listTabCount" style="font-size:12px;color:var(--text2);font-weight:600"></div>
+      </div>
+      <!-- Worker selector for admin/cashier -->
+      <div id="listWorkerFilter" style="padding:0 16px 8px;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;"></div>
+      <div id="truckListContainer" style="padding:0 16px 100px;"></div>
     </div>
 
     <!-- Workers Tab -->
@@ -1035,6 +1131,32 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="modalDatePicker">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">📅 Select Date</div>
+    <div id="datePickerList" style="max-height:320px;overflow-y:auto;margin-bottom:8px;"></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modalDatePicker')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalEditPlate">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">✏️ Edit Plate Number</div>
+    <div class="form-group">
+      <label class="form-label">PLATE NUMBER</label>
+      <input class="form-input" id="editPlateInput" placeholder="e.g. DJ 1234 AB" autocomplete="off" style="text-transform:uppercase">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modalEditPlate')">Cancel</button>
+      <button class="btn-primary" onclick="saveEditPlate()">Save Plate</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="modalPin">
   <div class="modal">
     <div class="modal-handle"></div>
@@ -1058,6 +1180,17 @@
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeModal('modalPerms')">Cancel</button>
       <button class="btn-primary" onclick="savePerms()">💾 Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalShare">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">📤 Share Report</div>
+    <div id="shareContent"></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modalShare')">Close</button>
     </div>
   </div>
 </div>
@@ -1113,6 +1246,7 @@ let deletedTrucks = {};
 let currentUser = null;
 let filterStatus = 'all';
 let filterWorker = 'all';
+let filterPlate = '';
 let editingTruckId = null;
 let editingStatusId = null;
 let editingAssignId = null;
@@ -1120,6 +1254,42 @@ let pinChangingUser = null;
 let permsEditingUser = null;
 let currentTab = 'trucks';
 let currentLang = localStorage.getItem('hask_lang') || 'en';
+let addingSuspended = false;
+
+// ── WORKING DATE HELPERS ──
+// Working day starts 6am. If current time < 6am, return yesterday's date.
+function getWorkingDate() {
+  const now = new Date();
+  if (now.getHours() < 6) {
+    now.setDate(now.getDate() - 1);
+  }
+  return now.toISOString().split('T')[0];
+}
+
+// Next working date = 5 days after the last date that has any truck recorded
+function getNextWorkDate() {
+  const allDates = Object.values(trucks).map(t => t.date).filter(Boolean);
+  if (!allDates.length) {
+    // No trucks yet — next date is today's working date + 5
+    const d = new Date(getWorkingDate());
+    d.setDate(d.getDate() + 5);
+    return d.toISOString().split('T')[0];
+  }
+  allDates.sort();
+  const lastDate = allDates[allDates.length - 1];
+  const d = new Date(lastDate);
+  d.setDate(d.getDate() + 5);
+  return d.toISOString().split('T')[0];
+}
+
+// Build allowed dates for picker: all past working dates + today + next work date
+function getAllowedDates() {
+  const workingToday = getWorkingDate();
+  const nextWork = getNextWorkDate();
+  const pastDates = [...new Set(Object.values(trucks).map(t => t.date).filter(Boolean))].sort();
+  const all = new Set([...pastDates, workingToday, nextWork]);
+  return [...all].sort();
+}
 
 // ── DEFAULT SETTINGS ──
 const DEFAULT_PINS = {
@@ -1236,22 +1406,35 @@ function saveWorkerList(w) { localStorage.setItem('hask_workers', JSON.stringify
 
 // ── FIREBASE LISTENERS ──
 function initFirebase() {
+  // Unsubscribe any existing listeners first
+  try { if (window._unsubTrucks) window._unsubTrucks(); } catch(e) {}
+  try { if (window._unsubAdvances) window._unsubAdvances(); } catch(e) {}
+  try { if (window._unsubDeleted) window._unsubDeleted(); } catch(e) {}
   setSyncing();
-  onValue(ref(db,'trucks'), snap => {
+  window._unsubTrucks = onValue(ref(db,'trucks'), snap => {
     trucks = snap.val() || {};
     renderTrucks();
     renderWorkers();
     renderReports();
     setOnline();
+    // Refresh date display after trucks loaded
+    const wd2 = getWorkingDate();
+    const wd2Obj = new Date(wd2 + 'T12:00:00');
+    const displayEl2 = document.getElementById('dateFilterDisplay');
+    if (displayEl2 && document.getElementById('dateFilter').value === wd2) {
+      displayEl2.textContent = 'Today — ' + wd2Obj.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+    }
   }, err => { setOffline(); });
 
-  onValue(ref(db,'advances'), snap => {
+  window._unsubAdvances = onValue(ref(db,'advances'), snap => {
     advances = snap.val() || {};
     renderAdvances();
     renderWorkers();
   });
 
-  onValue(ref(db,'deleted'), snap => {
+  listenSuspend();
+
+  window._unsubDeleted = onValue(ref(db,'deleted'), snap => {
     deletedTrucks = snap.val() || {};
     // Update bin nav badge live
     const total = Object.keys(deletedTrucks).length;
@@ -1345,19 +1528,35 @@ function checkPin() {
   }
 }
 
-window.goLogin = function() { showScreen('loginScreen'); pinEntry=''; }
+window.goLogin = function() {
+  // Clean up Firebase listeners to avoid stacking
+  try { if (window._unsubTrucks) window._unsubTrucks(); } catch(e) {}
+  try { if (window._unsubAdvances) window._unsubAdvances(); } catch(e) {}
+  try { if (window._unsubDeleted) window._unsubDeleted(); } catch(e) {}
+  try { if (window._unsubSuspend) window._unsubSuspend(); } catch(e) {}
+  trucks = {}; advances = {}; deletedTrucks = {};
+  currentUser = null;
+  showScreen('loginScreen');
+  pinEntry='';
+}
 
 function loginSuccess() {
-  const id = currentUser.id;
+  const id = currentUser ? currentUser.id : null;
+  if (!id) { showToast('⚠️ Login error. Please try again.'); showScreen('loginScreen'); return; }
   const workers = getWorkerList();
-  if (id==='admin') {
-    currentUser = {id, name:'Admin', role:'admin', color:'#a855f7'};
-  } else if (id==='cashier1') {
-    currentUser = {id, name:'Cashier 1', role:'cashier', color:'#3b82f6'};
-  } else if (id==='cashier2') {
-    currentUser = {id, name:'Cashier 2', role:'cashier', color:'#14b8a6'};
+
+  if (id === 'admin') {
+    currentUser = {id:'admin', name:'Admin', role:'admin', color:'#a855f7'};
+  } else if (id === 'cashier1') {
+    currentUser = {id:'cashier1', name:'Cashier 1', role:'cashier', color:'#3b82f6'};
+  } else if (id === 'cashier2') {
+    currentUser = {id:'cashier2', name:'Cashier 2', role:'cashier', color:'#14b8a6'};
   } else if (workers.includes(id)) {
     currentUser = {id, name:id, role:'worker', color:WORKER_COLORS[id]||'#6b7280'};
+  } else {
+    showToast('⚠️ User "' + id + '" not found. Contact Admin.');
+    showScreen('loginScreen');
+    return;
   }
   buildApp();
   initFirebase();
@@ -1386,16 +1585,26 @@ function buildApp() {
   const perms = getUserPerms(id);
   const canAdd = role==='admin' || (role==='cashier' && perms.addTrucks) || (role==='worker' && perms.canAddOwnTrucks);
   document.getElementById('headerAddBtn').style.display = canAdd ? '' : 'none';
+  // Load suspend state
+  get(ref(db,'settings/addingSuspended')).then(snap => {
+    addingSuspended = snap.val() === true;
+    updateSuspendUI();
+  });
 
   // Bottom nav
   buildNav();
 
-  // Date
-  const today = new Date().toISOString().split('T')[0];
-  document.getElementById('dateFilter').value = today;
+  // Date — use working date (respects 6am rule)
+  document.getElementById('dateFilter').value = getWorkingDate();
 
   // Worker filter bar
   buildWorkerFilterBar();
+
+  // Set date display text
+  const wd = getWorkingDate();
+  const wdObj = new Date(wd + 'T12:00:00');
+  const displayEl = document.getElementById('dateFilterDisplay');
+  if (displayEl) displayEl.textContent = 'Today — ' + wdObj.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
 
   switchTab('trucks');
 }
@@ -1406,6 +1615,7 @@ function buildNav() {
   let tabs = [];
   if (role==='admin') tabs = [
     {id:'trucks', icon:'🚛', label:t('trucks')},
+    {id:'list', icon:'📋', label:'List'},
     {id:'workers', icon:'👷', label:t('workers')},
     {id:'advances', icon:'💸', label:t('advances')},
     {id:'reports', icon:'📊', label:t('reports')},
@@ -1415,6 +1625,7 @@ function buildNav() {
   else if (role==='cashier') {
     const p = getUserPerms(currentUser.id);
     tabs = [{id:'trucks', icon:'🚛', label:t('trucks')}];
+    tabs.push({id:'list', icon:'📋', label:'List'});
     tabs.push({id:'workers', icon:'👷', label:t('workers')});
     if (p.addAdvances) tabs.push({id:'advances', icon:'💸', label:t('advances')});
     tabs.push({id:'reports', icon:'📊', label:t('reports')});
@@ -1422,6 +1633,7 @@ function buildNav() {
   } else {
     tabs = [
       {id:'trucks', icon:'🚛', label:t('myTrucks')},
+      {id:'list', icon:'📋', label:'My List'},
       {id:'earnings', icon:'💰', label:t('myEarnings')},
       {id:'logout', icon:'🚪', label:t('logout')},
     ];
@@ -1445,7 +1657,7 @@ window.switchTab = function(tab) {
   if (nb) nb.classList.add('active');
 
   // Show/hide tabs
-  ['Trucks','Workers','Advances','Reports','Manage','Recycle'].forEach(t => {
+  ['Trucks','List','Workers','Advances','Reports','Manage','Recycle'].forEach(t => {
     const el = document.getElementById('tab'+t);
     if (el) el.style.display = (tab===t.toLowerCase()) ? '' : 'none';
   });
@@ -1457,16 +1669,78 @@ window.switchTab = function(tab) {
   if (tab==='manage') renderManage();
   if (tab==='trucks') renderTrucks();
   if (tab==='recycle') renderRecycle();
+  if (tab==='list') renderTruckList();
 }
 
 // ── TODAY / DATE ──
 window.setToday = function() {
-  document.getElementById('dateFilter').value = new Date().toISOString().split('T')[0];
+  selectDate(getWorkingDate());
+}
+window.openDatePicker = function() {
+  const allowed = getAllowedDates();
+  const current = document.getElementById('dateFilter').value;
+  const workingToday = getWorkingDate();
+  const nextWork = getNextWorkDate();
+
+  if (!allowed.length) {
+    document.getElementById('datePickerList').innerHTML = '<div style="padding:20px;text-align:center;color:var(--text2)">No dates available yet</div>';
+    openModal('modalDatePicker');
+    return;
+  }
+  const listEl = document.getElementById('datePickerList');
+  listEl.innerHTML = allowed.reverse().map(d => {
+    const isSelected = d === current;
+    const isTodayD = d === workingToday;
+    const isNextD = d === nextWork;
+    const dateObj = new Date(d + 'T12:00:00');
+    const label = dateObj.toLocaleDateString('en-GB', {weekday:'short', day:'numeric', month:'short', year:'numeric'});
+    const tag = isTodayD ? '<span style="font-size:10px;background:rgba(34,197,94,0.2);color:var(--green);padding:2px 7px;border-radius:10px;font-weight:700;margin-left:6px">TODAY</span>'
+               : isNextD ? '<span style="font-size:10px;background:rgba(59,130,246,0.2);color:var(--accent);padding:2px 7px;border-radius:10px;font-weight:700;margin-left:6px">NEXT</span>' : '';
+    var bg = isSelected ? 'var(--accent)' : 'var(--bg3)';
+    var bdr = isSelected ? 'var(--accent)' : 'var(--border)';
+    var txtColor = isSelected ? '#fff' : 'var(--text)';
+    return '<div data-date="'+d+'" class="date-pick-row" style="padding:14px;border-radius:var(--radius-sm);margin-bottom:6px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;background:'+bg+';border:1.5px solid '+bdr+'">'
+      + '<div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px"><span style="font-weight:600;font-size:13px;color:'+txtColor+'">'+label+'</span>'+tag+'</div>'
+      + (isSelected ? '<span style="color:#fff;font-size:18px;font-weight:700">✓</span>' : '<span style="color:var(--text3);font-size:14px">›</span>')
+      + '</div>';
+  }).join('');
+  // Use event delegation — one listener on container, works on all devices
+  listEl.onclick = function(e) {
+    const row = e.target.closest('.date-pick-row');
+    if (row) selectDate(row.getAttribute('data-date'));
+  };
+  openModal('modalDatePicker');
+}
+
+window.selectDate = function(d) {
+  document.getElementById('dateFilter').value = d;
+  const dateObj = new Date(d + 'T12:00:00');
+  const workingToday = getWorkingDate();
+  const display = d === workingToday
+    ? 'Today — ' + dateObj.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})
+    : dateObj.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+  document.getElementById('dateFilterDisplay').textContent = display;
+  // Reset all filters when switching dates so content is clean
+  filterStatus = 'all';
+  filterWorker = 'all';
+  filterPlate = '';
+  document.querySelectorAll('#statusFilterBar .filter-chip').forEach(c => c.classList.remove('active'));
+  const allChip = document.querySelector('#statusFilterBar .filter-chip[data-filter="all"]');
+  if (allChip) allChip.classList.add('active');
+  document.querySelectorAll('.worker-chip').forEach(c => { c.classList.remove('active'); c.style.color=''; });
+  const allWorkerChip = document.getElementById('wchip_all');
+  if (allWorkerChip) allWorkerChip.classList.add('active');
+  const plateInput = document.getElementById('plateSearch');
+  if (plateInput) plateInput.value = '';
+  const clearBtn = document.getElementById('plateSearchClear');
+  if (clearBtn) clearBtn.style.display = 'none';
+  closeModal('modalDatePicker');
   renderTrucks();
 }
+
 window.setFilter = function(f, el) {
   filterStatus = f;
-  document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
+  document.querySelectorAll('#statusFilterBar .filter-chip').forEach(c=>c.classList.remove('active'));
   el.classList.add('active');
   renderTrucks();
 }
@@ -1489,28 +1763,66 @@ function buildWorkerFilterBar() {
 }
 window.setWorkerFilter = function(w, el) {
   filterWorker = w;
-  document.querySelectorAll('.worker-chip').forEach(c=>{c.classList.remove('active');c.style.color='';});
+  document.querySelectorAll('.worker-chip').forEach(c=>{
+    c.classList.remove('active');
+    c.style.color='';
+    c.style.background='';
+    c.style.borderColor='';
+  });
   el.classList.add('active');
-  if (w!=='all') el.style.color = WORKER_COLORS[w]||'var(--accent)';
+  if (w !== 'all') {
+    const wColor = WORKER_COLORS[w] || '#6b7280';
+    el.style.background = wColor;
+    el.style.borderColor = wColor;
+    el.style.color = '#fff';
+  }
+  renderTrucks();
+}
+window.onPlateSearch = function(input) {
+  filterPlate = input.value.trim().toUpperCase();
+  const clearBtn = document.getElementById('plateSearchClear');
+  if (clearBtn) clearBtn.style.display = filterPlate ? 'block' : 'none';
+  renderTrucks();
+}
+window.clearPlateSearch = function() {
+  filterPlate = '';
+  const input = document.getElementById('plateSearch');
+  if (input) input.value = '';
+  const clearBtn = document.getElementById('plateSearchClear');
+  if (clearBtn) clearBtn.style.display = 'none';
   renderTrucks();
 }
 
 // ── RENDER TRUCKS ──
 function renderTrucks() {
   const date = document.getElementById('dateFilter')?.value;
-  const today = new Date().toISOString().split('T')[0];
+  const today = getWorkingDate();
   const isToday = date === today;
   const role = currentUser.role;
   const id = currentUser.id;
 
-  // Filter trucks
-  let list = Object.entries(trucks).map(([k,v])=>({...v,_id:k}));
+  // ── Update Today chip highlight ──
+  const todayChip = document.getElementById('todayChip');
+  if (todayChip) {
+    todayChip.style.background = isToday ? 'var(--green)' : 'var(--accent)';
+    todayChip.style.opacity = isToday ? '1' : '0.6';
+  }
+
+  // ── All trucks for this date (used for stats + numbering) ──
+  const allForDateUnfiltered = Object.entries(trucks)
+    .map(([k,v])=>({...v,_id:k}))
+    .filter(t => t.date === date)
+    .sort((a,b)=>(a.timestamp||0)-(b.timestamp||0));
+
+  // Day number map — each truck gets a number 1,2,3... within its date
+  const dayNumMap = {};
+  allForDateUnfiltered.forEach((t,i) => { dayNumMap[t._id] = i+1; });
+
+  // ── Build filtered list ──
+  let list = [...allForDateUnfiltered];
 
   // Worker only sees own trucks
   if (role==='worker') list = list.filter(t=>t.worker===id);
-
-  // Date filter
-  if (date) list = list.filter(t=>t.date===date);
 
   // Status filter
   if (filterStatus!=='all') list = list.filter(t=>t.status===filterStatus);
@@ -1518,33 +1830,45 @@ function renderTrucks() {
   // Worker filter
   if (filterWorker!=='all') list = list.filter(t=>t.worker===filterWorker);
 
-  // Sort newest first
+  // Plate search filter
+  if (filterPlate) list = list.filter(t => (t.plate||'').toUpperCase().includes(filterPlate));
+
+  // Sort newest first for display
   list.sort((a,b)=>(b.timestamp||0)-(a.timestamp||0));
 
-  // Stats
-  const allForDate = Object.values(trucks).filter(t=>{
-    if (role==='worker') return t.worker===id && t.date===date;
-    return t.date===date;
-  });
-  document.getElementById('statTotal').textContent = allForDate.length;
-  document.getElementById('statPaid').textContent = allForDate.filter(t=>t.status==='paid').length;
-  document.getElementById('statPartial').textContent = allForDate.filter(t=>t.status==='partial').length;
-  document.getElementById('statUnpaid').textContent = allForDate.filter(t=>t.status==='unpaid'||t.status==='pending').length;
-  const earn = allForDate.reduce((s,t)=>s+(t.status==='paid'?CLIENT_PRICE:t.status==='partial'?2800:0),0);
+  // ── Stats bar — always based on full day, not filtered ──
+  const statsBase = role==='worker'
+    ? allForDateUnfiltered.filter(t=>t.worker===id)
+    : allForDateUnfiltered;
+  document.getElementById('statTotal').textContent = statsBase.length;
+  document.getElementById('statPaid').textContent = statsBase.filter(t=>t.status==='paid').length;
+  document.getElementById('statPartial').textContent = statsBase.filter(t=>t.status==='partial').length;
+  document.getElementById('statUnpaid').textContent = statsBase.filter(t=>t.status==='unpaid'||t.status==='pending').length;
+  const earn = statsBase.reduce((s,t)=>s+(t.status==='paid'?CLIENT_PRICE:t.status==='partial'?2800:0),0);
   document.getElementById('statETB').textContent = earn>=1000 ? (earn/1000).toFixed(1)+'k' : earn;
 
-  // Worker counts
+  // ── Worker chip counts — only for today's date ──
   const workers = getWorkerList();
-  const allDate = Object.values(trucks).filter(t=>t.date===date);
-  document.getElementById('wcount_all').textContent = allDate.length;
+  const allDateTrucks = allForDateUnfiltered;
+  const wcountAll = document.getElementById('wcount_all');
+  if (wcountAll) wcountAll.textContent = allDateTrucks.length;
   workers.forEach(w=>{
     const el = document.getElementById('wcount_'+w);
-    if (el) el.textContent = allDate.filter(t=>t.worker===w).length;
+    if (el) el.textContent = allDateTrucks.filter(t=>t.worker===w).length;
   });
+
+  // Chip states are managed directly by setFilter/setWorkerFilter/selectDate
 
   // Section title
   const stEl = document.getElementById('trucksSectionTitle');
-  if (stEl) stEl.textContent = isToday ? "TODAY'S TRUCKS" : `HISTORY — ${date}`;
+  if (stEl) {
+    if (isToday) {
+      stEl.textContent = "TODAY'S TRUCKS";
+    } else {
+      const histDateObj = new Date(date + 'T12:00:00');
+      stEl.textContent = 'HISTORY — ' + histDateObj.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+    }
+  }
 
   // Hide/show add buttons based on whether date is today
   const headerAddBtn = document.getElementById('headerAddBtn');
@@ -1573,8 +1897,9 @@ function renderTrucks() {
     }
   }
 
-  // Render list (exclude unassigned from main list)
-  const assigned = role==='worker' ? list : list.filter(t=>t.worker && t.worker!=='');
+  // Render list — workers see own trucks, admin/cashier see all including unassigned
+  // (unassigned/pending shown in assign section AND in main list with number)
+  const assigned = list;
   const container = document.getElementById('trucksList');
   if (!container) return;
 
@@ -1594,6 +1919,12 @@ function renderTrucks() {
   const canEditStatus = isToday && (role==='admin' || (role==='cashier' && perms.editStatus) || (role==='worker' && perms.canEditStatus));
   const canDelete = isToday && (role==='admin' || (role==='cashier' && perms.deleteTrucks));
   const canEdit = isToday && (role==='admin' || (role==='cashier' && perms.addTrucks));
+  // ALL roles can edit plate on their own trucks
+  const canEditPlate = isToday;
+
+  // Show/hide suspend banner
+  const suspendBanner = document.getElementById('suspendBanner');
+  if (suspendBanner) suspendBanner.classList.toggle('active', addingSuspended && role!=='admin');
 
   container.innerHTML = historyNotice + assigned.map(truck=>{
     const statusClass = truck.status==='paid'?'paid':truck.status==='partial'?'partial':truck.status==='pending'?'pending':'unpaid';
@@ -1607,12 +1938,21 @@ function renderTrucks() {
     let actions = '';
     if (canEditStatus) actions += `<button class="truck-action-btn primary" onclick="openStatus('${truck._id}')">🟡 Status</button>`;
     if (canEdit) actions += `<button class="truck-action-btn" onclick="openEditTruck('${truck._id}')">✏️ Edit</button>`;
+    // Workers can edit plate on their own trucks
+    if (isToday && role==='worker' && truck.worker===id) actions += `<button class="truck-action-btn" onclick="openEditPlate('${truck._id}')">✏️ Plate</button>`;
     if (canDelete) actions += `<button class="truck-action-btn danger" onclick="deleteTruck('${truck._id}')">🗑️ Delete</button>`;
 
+    const truckNum = dayNumMap[truck._id] || '?';
+    const plateHighlight = filterPlate && truck.plate.toUpperCase().includes(filterPlate)
+      ? truck.plate.replace(new RegExp('('+filterPlate+')', 'gi'), '<mark style="background:rgba(59,130,246,0.3);color:var(--accent);border-radius:3px;padding:0 2px">$1</mark>')
+      : truck.plate;
     return `
       <div class="truck-card ${statusClass}">
         <div class="truck-top">
-          <div class="truck-plate">${truck.plate}</div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="truck-number">#${truckNum}</span>
+            <div class="truck-plate">${plateHighlight}</div>
+          </div>
           <span class="status-badge ${statusClass}">${statusLabel}</span>
         </div>
         <div class="truck-meta">
@@ -1645,6 +1985,27 @@ function renderTrucks() {
 }
 
 // ── EDIT TRUCK ──
+// ── EDIT PLATE (workers only) ──
+let editingPlateId = null;
+window.openEditPlate = function(id) {
+  editingPlateId = id;
+  const truck = trucks[id];
+  if (!truck) return;
+  document.getElementById('editPlateInput').value = truck.plate || '';
+  openModal('modalEditPlate');
+}
+window.saveEditPlate = function() {
+  const plate = document.getElementById('editPlateInput').value.trim().toUpperCase();
+  if (!plate) { showToast('⚠️ Enter plate number'); return; }
+  // Check duplicate on same date
+  const truck = trucks[editingPlateId];
+  const dup = Object.entries(trucks).find(([k,v]) => v.plate && v.plate.toUpperCase()===plate && v.date===truck.date && k!==editingPlateId);
+  if (dup) { showToast('⚠️ ' + plate + ' already recorded today'); return; }
+  update(ref(db,'trucks/'+editingPlateId), {plate});
+  showToast('✅ Plate updated');
+  closeModal('modalEditPlate');
+}
+
 window.openEditTruck = function(id) {
   editingTruckId = id;
   const truck = trucks[id];
@@ -1753,12 +2114,21 @@ window.saveTruck = function() {
   const notes = document.getElementById('truckNotes').value.trim();
   if (!plate) { showToast('⚠️ Enter plate number'); return; }
   if (!date) { showToast('⚠️ Select date'); return; }
+  // Block if suspended (non-admin)
+  if (addingSuspended && currentUser.role !== 'admin') {
+    showToast('🚫 Adding trucks is currently suspended');
+    return;
+  }
 
   // Block adding on past dates
-  const today2 = new Date().toISOString().split('T')[0];
-  if (!editingTruckId && date < today2) {
-    showToast('⚠️ Cannot add trucks for past dates');
-    return;
+  const today2 = getWorkingDate();
+  const nextWork2 = getNextWorkDate();
+  if (!editingTruckId && date !== today2 && date !== nextWork2) {
+    // Allow today's working date and next work date only
+    if (date < today2) {
+      showToast('⚠️ Cannot add trucks for past dates');
+      return;
+    }
   }
   const duplicate = Object.entries(trucks).find(([k,v])=>
     v.plate && v.plate.toUpperCase()===plate && v.date===date && k!==editingTruckId
@@ -1889,9 +2259,20 @@ function renderWorkers() {
     ? (perms.seeAllTrucks ? workerList : workerList.filter(w=>w===id))
     : workerList;
 
-  container.innerHTML = visibleWorkers.map(w=>{
+  // Use selected date for earnings
+  const selectedDate = document.getElementById('dateFilter')?.value || getWorkingDate();
+  const isToday = selectedDate === getWorkingDate();
+  const dateObj = new Date(selectedDate + 'T12:00:00');
+  const dateLabel = isToday ? 'Today' : dateObj.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+
+  // Date header
+  const dateHeader = '<div style="padding:8px 16px 4px;font-size:11px;font-weight:700;color:var(--text3);letter-spacing:0.08em">📅 ' + dateLabel.toUpperCase() + '</div>';
+
+  container.innerHTML = dateHeader + visibleWorkers.map(w=>{
     const color = WORKER_COLORS[w]||'#6b7280';
-    const wTrucks = Object.values(trucks).filter(t=>t.worker===w);
+    // Filter trucks by selected date
+    const wTrucks = Object.values(trucks).filter(t=>t.worker===w && t.date===selectedDate);
+    // Advances are all-time (they accumulate)
     const wAdvances = Object.values(advances).filter(a=>a.worker===w);
     const earned = wTrucks.reduce((s,t)=>s+(WORKER_PAY[t.status]||0),0);
     const advTotal = wAdvances.reduce((s,a)=>s+(a.amount||0),0);
@@ -1914,15 +2295,17 @@ function renderWorkers() {
           <div class="expand-icon">▼</div>
         </div>
         <div class="worker-details">
+          <div class="detail-row"><span class="detail-label">📅 Date</span><span class="detail-val">${dateLabel}</span></div>
           <div class="detail-row"><span class="detail-label">Trucks worked</span><span class="detail-val">${wTrucks.length}</span></div>
           <div class="detail-row"><span class="detail-label">Paid trucks</span><span class="detail-val green">${wTrucks.filter(t=>t.status==='paid').length}</span></div>
           <div class="detail-row"><span class="detail-label">Partial trucks</span><span class="detail-val orange">${wTrucks.filter(t=>t.status==='partial').length}</span></div>
           <div class="detail-row"><span class="detail-label">Unpaid trucks</span><span class="detail-val red">${wTrucks.filter(t=>t.status==='unpaid'||t.status==='pending').length}</span></div>
-          <div class="detail-row"><span class="detail-label">Total earned</span><span class="detail-val green">${earned.toLocaleString()} ETB</span></div>
+          <div class="detail-row"><span class="detail-label">Earned today</span><span class="detail-val green">${earned.toLocaleString()} ETB</span></div>
           <div class="detail-row"><span class="detail-label">Total advances</span><span class="detail-val red">-${advTotal.toLocaleString()} ETB</span></div>
           <div class="detail-row"><span class="detail-label">Net balance</span><span class="detail-val" style="color:${net>=0?'var(--green)':'var(--red)'}">${net.toLocaleString()} ETB</span></div>
           ${role==='admin' ? `
-            <div style="display:flex;gap:8px;margin-top:12px">
+            <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+              <button class="manage-btn" onclick="viewWorkerList('${w}')">📋 List</button>
               <button class="manage-btn" onclick="openPinChange('${w}')">🔐 PIN</button>
               <button class="manage-btn" onclick="openWorkerPerms('${w}')">⚙️ Perms</button>
               <button class="manage-btn danger" onclick="removeWorker('${w}')">🗑️ Remove</button>
@@ -2163,6 +2546,42 @@ function renderManage() {
     </div>
 
     <div>
+      <div class="manage-section-title">📤 SHARE REPORT</div>
+      <div class="manage-card">
+        <div class="manage-item" onclick="openShareReport()">
+          <div class="manage-item-left">
+            <div class="manage-item-icon">📤</div>
+            <div>
+              <div class="manage-item-name">Share Daily Report</div>
+              <div class="manage-item-sub">WhatsApp · Email · Copy · Download</div>
+            </div>
+          </div>
+          <div>›</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="manage-section-title">🚫 ADDING CONTROL</div>
+      <div class="manage-card">
+        <div class="manage-item" onclick="toggleSuspend()">
+          <div class="manage-item-left">
+            <div class="manage-item-icon" id="suspendIcon">${addingSuspended ? '✅' : '🚫'}</div>
+            <div>
+              <div class="manage-item-name" id="suspendLabel" style="color:${addingSuspended?'var(--green)':'var(--red)'}">
+                ${addingSuspended ? 'Resume Adding Trucks' : 'Suspend Adding Trucks'}
+              </div>
+              <div class="manage-item-sub">${addingSuspended ? 'Workers are currently blocked' : 'Block all workers from adding'}</div>
+            </div>
+          </div>
+          <div style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;background:${addingSuspended?'rgba(239,68,68,0.15)':'rgba(34,197,94,0.15)'};color:${addingSuspended?'var(--red)':'var(--green)'}">
+            ${addingSuspended ? 'SUSPENDED' : 'ACTIVE'}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
       <div class="manage-section-title">⚠️ DANGER ZONE</div>
       <div class="manage-card">
 <div class="manage-item" onclick="clearAllData()">
@@ -2310,6 +2729,111 @@ window.removeWorker = function(name) {
   showToast(`🗑️ ${name} removed`);
 }
 
+// ── TRUCK LIST TAB ──
+let listFilterWorker = 'all';
+
+window.setListWorkerFilter = function(w, el) {
+  listFilterWorker = w;
+  document.querySelectorAll('#listWorkerFilter .filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderTruckList();
+}
+
+function renderTruckList() {
+  const role = currentUser.role;
+  const uid = currentUser.id;
+  const container = document.getElementById('truckListContainer');
+  const titleEl = document.getElementById('listTabTitle');
+  const countEl = document.getElementById('listTabCount');
+  const workerFilterEl = document.getElementById('listWorkerFilter');
+  if (!container) return;
+
+  // Use same selected date as trucks tab
+  const date = document.getElementById('dateFilter')?.value || getWorkingDate();
+  const isToday = date === getWorkingDate();
+
+  // All trucks for selected date sorted oldest first (#1 first)
+  const dayTrucks = Object.entries(trucks)
+    .map(([k,v]) => ({...v, _id:k}))
+    .filter(t => t.date === date)
+    .sort((a,b) => (a.timestamp||0) - (b.timestamp||0));
+
+  // Day number map — #1, #2, #3 within this date
+  const dayNumMap = {};
+  dayTrucks.forEach((t,i) => { dayNumMap[t._id] = i+1; });
+
+  // Worker personal number map — My #1, My #2 within this date for this worker
+  const myDayTrucks = dayTrucks.filter(t => t.worker === uid);
+  const personalNumMap = {};
+  myDayTrucks.forEach((t,i) => { personalNumMap[t._id] = i+1; });
+
+  // Build worker filter bar for admin/cashier
+  if (role !== 'worker') {
+    const workers = getWorkerList();
+    const dateObj = new Date(date + 'T12:00:00');
+    const dateLabel = isToday ? 'Today' : dateObj.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+    titleEl.textContent = '📋 ' + dateLabel.toUpperCase();
+    workerFilterEl.innerHTML =
+      '<button class="filter-chip'+(listFilterWorker==='all'?' active':'')+'" onclick="setListWorkerFilter(\"all\",this)">👥 All ('+dayTrucks.length+')</button>' +
+      workers.map(function(w) {
+        var wc = WORKER_COLORS[w]||'#6b7280';
+        var wCount = dayTrucks.filter(function(t){ return t.worker===w; }).length;
+        var active = listFilterWorker===w?' active':'';
+        var activeBg = listFilterWorker===w ? 'background:'+wc+';border-color:'+wc+';color:#fff;' : 'border-color:'+wc+'44;';
+        return '<button class="filter-chip'+active+'" onclick="setListWorkerFilter(\"'+w+'\",this)" style="'+activeBg+'">'+
+          '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:'+(listFilterWorker===w?'#fff':wc)+';margin-right:5px"></span>'+w+' ('+wCount+')</button>';
+      }).join('');
+  } else {
+    const dateObj = new Date(date + 'T12:00:00');
+    const dateLabel = isToday ? 'Today' : dateObj.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+    titleEl.textContent = '📋 MY TRUCKS — ' + dateLabel.toUpperCase();
+    workerFilterEl.innerHTML = '';
+    listFilterWorker = uid;
+  }
+
+  // Filter by worker
+  let list = role === 'worker'
+    ? dayTrucks.filter(t => t.worker === uid)
+    : (listFilterWorker === 'all' ? dayTrucks : dayTrucks.filter(t => t.worker === listFilterWorker));
+
+  if (countEl) countEl.textContent = list.length + ' truck' + (list.length !== 1 ? 's' : '');
+
+  if (!list.length) {
+    container.innerHTML = '<div class="empty-state"><div class="icon">📋</div><p>No trucks for this date</p></div>';
+    return;
+  }
+
+  container.innerHTML = list.map(function(truck) {
+    var dayN = dayNumMap[truck._id] || '?';
+    var personalN = personalNumMap[truck._id];
+    var workerColor = WORKER_COLORS[truck.worker] || '#6b7280';
+    var statusClass = truck.status==='paid'?'paid':truck.status==='partial'?'partial':truck.status==='pending'?'pending':'unpaid';
+    var statusLabel = truck.status==='paid'?'✅ Paid':truck.status==='partial'?'⚡ Partial':truck.status==='pending'?'🟡 Pending':'❌ Unpaid';
+    var timeStr = truck.timestamp ? new Date(truck.timestamp).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}) : '';
+
+    return '<div class="truck-card '+statusClass+'" style="margin-bottom:8px">'
+      + '<div class="truck-top">'
+        + '<div style="display:flex;align-items:center;gap:6px">'
+          + '<span class="truck-number" style="background:rgba(59,130,246,0.15);color:var(--accent);border-color:rgba(59,130,246,0.3)">#'+dayN+'</span>'
+          + (role==='worker' && personalN ? '<span class="truck-number" style="background:rgba(34,197,94,0.1);color:var(--green);border-color:rgba(34,197,94,0.3)">My #'+personalN+'</span>' : '')
+          + '<div class="truck-plate">'+truck.plate+'</div>'
+        + '</div>'
+        + '<span class="status-badge '+statusClass+'">'+statusLabel+'</span>'
+      + '</div>'
+      + '<div class="truck-meta" style="margin-top:4px">'
+        + (timeStr ? '<span>🕐 '+timeStr+'</span> · ' : '')
+        + (role!=='worker' ? '<span style="color:'+workerColor+';font-weight:600">'+(truck.worker||'Unassigned')+'</span>' : '')
+      + '</div>'
+    + '</div>';
+  }).join('');
+}
+
+// Also update renderWorkers to show personal truck list with numbering when admin clicks a worker
+window.viewWorkerList = function(workerName) {
+  listFilterWorker = workerName;
+  switchTab('list');
+}
+
 // ── RECYCLE BIN ──
 let recycleFilter = 'all';
 let recycleSearchQ = '';
@@ -2446,6 +2970,136 @@ function showToast(msg) {
   setTimeout(()=>t.classList.remove('show'), 2500);
 }
 
+// ── SUSPEND ADDING ──
+function updateSuspendUI() {
+  const banner = document.getElementById('suspendBanner');
+  if (banner) banner.classList.toggle('active', addingSuspended && currentUser?.role !== 'admin');
+  // Update add buttons
+  const role = currentUser?.role;
+  const canAdd = role==='admin' || !addingSuspended;
+  const headerBtn = document.getElementById('headerAddBtn');
+  if (headerBtn && role !== 'admin') {
+    headerBtn.style.opacity = addingSuspended ? '0.4' : '1';
+    headerBtn.style.pointerEvents = addingSuspended ? 'none' : '';
+  }
+  renderManage();
+}
+window.toggleSuspend = function() {
+  addingSuspended = !addingSuspended;
+  set(ref(db,'settings/addingSuspended'), addingSuspended);
+  updateSuspendUI();
+  showToast(addingSuspended ? '🚫 Adding suspended for all workers' : '✅ Adding resumed for all workers');
+}
+
+// Listen to suspend state from Firebase (real-time across all devices)
+function listenSuspend() {
+  window._unsubSuspend = onValue(ref(db,'settings/addingSuspended'), snap => {
+    addingSuspended = snap.val() === true;
+    if (currentUser) updateSuspendUI();
+  });
+}
+
+// ── SHARE REPORT ──
+window.openShareReport = function() {
+  const SEP = '-----------------------------------';
+  const date = document.getElementById('dateFilter')?.value || new Date().toISOString().split('T')[0];
+  const allForDate = Object.values(trucks).filter(function(t){ return t.date === date; });
+  const paid = allForDate.filter(function(t){ return t.status==='paid'; }).length;
+  const partial = allForDate.filter(function(t){ return t.status==='partial'; }).length;
+  const unpaid = allForDate.filter(function(t){ return t.status==='unpaid'||t.status==='pending'; }).length;
+  const revenue = allForDate.reduce(function(s,t){ return s+(t.status==='paid'?CLIENT_PRICE:t.status==='partial'?2800:0); },0);
+  const workerPay = allForDate.reduce(function(s,t){ return s+(WORKER_PAY[t.status]||0); },0);
+
+  var workerLines = [];
+  getWorkerList().forEach(function(w) {
+    var wt = allForDate.filter(function(t){ return t.worker===w; });
+    if (!wt.length) return;
+    var wp = wt.filter(function(t){ return t.status==='paid'; }).length;
+    var wpa = wt.filter(function(t){ return t.status==='partial'; }).length;
+    var wu = wt.filter(function(t){ return t.status==='unpaid'||t.status==='pending'; }).length;
+    workerLines.push('  ' + w + ': ' + wt.length + ' trucks (' + wp + ' paid, ' + wpa + ' partial, ' + wu + ' unpaid)');
+  });
+
+  var sorted = allForDate.slice().sort(function(a,b){ return (a.timestamp||0)-(b.timestamp||0); });
+  var truckLines = sorted.map(function(t,i){
+    return '  #' + (i+1) + ' ' + t.plate + ' - ' + (t.worker||'Unassigned') + ' - ' + t.status.toUpperCase();
+  });
+
+  var reportParts = [
+    'WKABE HASK SERVICES - Daily Report',
+    'Date: ' + date,
+    'Generated: ' + new Date().toLocaleString(),
+    SEP,
+    'SUMMARY',
+    '  Total Trucks: ' + allForDate.length,
+    '  Paid: ' + paid,
+    '  Partial: ' + partial,
+    '  Unpaid: ' + unpaid,
+    '  Revenue: ' + revenue.toLocaleString() + ' ETB',
+    '  Worker Pay: ' + workerPay.toLocaleString() + ' ETB',
+    '  Company: ' + (revenue-workerPay).toLocaleString() + ' ETB',
+    SEP,
+    'BY WORKER',
+    workerLines.length ? workerLines.join('\n') : '  No trucks assigned',
+    SEP,
+    'TRUCK LIST',
+    truckLines.length ? truckLines.join('\n') : '  No trucks',
+    SEP,
+    'WKABE Hask Services - Djibouti'
+  ];
+
+  var report = reportParts.join('\n');
+  window.currentReport = report;
+  window.currentReportEncoded = encodeURIComponent(report);
+  window.currentReportDate = date;
+  window.currentReportSubject = encodeURIComponent('WKABE Daily Report - ' + date);
+
+  document.getElementById('shareContent').innerHTML =
+    '<div style="font-size:12px;color:var(--text2);margin-bottom:14px">Report for <strong style="color:var(--text)">' + date + '</strong> &nbsp;&#183;&nbsp; ' + allForDate.length + ' trucks &nbsp;&#183;&nbsp; ' + revenue.toLocaleString() + ' ETB</div>' +
+    '<div class="share-option" onclick="shareViaWhatsApp(window.currentReportEncoded)">' +
+      '<div class="share-icon">&#x1F4AC;</div>' +
+      '<div><div class="share-label">WhatsApp</div><div class="share-sub">Send report as message</div></div>' +
+    '</div>' +
+    '<div class="share-option" onclick="shareViaEmail(window.currentReportSubject,window.currentReportEncoded)">' +
+      '<div class="share-icon">&#x1F4E7;</div>' +
+      '<div><div class="share-label">Email</div><div class="share-sub">Open in mail app</div></div>' +
+    '</div>' +
+    '<div class="share-option" onclick="copyReport(window.currentReport)">' +
+      '<div class="share-icon">&#x1F4CB;</div>' +
+      '<div><div class="share-label">Copy to Clipboard</div><div class="share-sub">Paste anywhere</div></div>' +
+    '</div>' +
+    '<div class="share-option" onclick="downloadReport(window.currentReport,window.currentReportDate)">' +
+      '<div class="share-icon">&#x1F4C4;</div>' +
+      '<div><div class="share-label">Download .txt</div><div class="share-sub">Save to phone</div></div>' +
+    '</div>';
+
+  openModal('modalShare');
+}
+window.shareViaWhatsApp = function(encoded) {
+  window.open('https://wa.me/?text='+encoded, '_blank');
+}
+window.shareViaEmail = function(subject, encoded) {
+  window.open('mailto:?subject='+subject+'&body='+encoded, '_blank');
+}
+window.copyReport = function(text) {
+  navigator.clipboard.writeText(text).then(()=>showToast('📋 Copied!')).catch(()=>{
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast('📋 Copied!');
+  });
+}
+window.downloadReport = function(text, date) {
+  const blob = new Blob([text], {type:'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `hask-report-${date}.txt`;
+  a.click();
+  showToast('📄 Downloaded!');
+}
+
 // ── EXPORT / INSTALL ──
 window.exportExcel = function() {
   const rows = [['Plate','Date','Worker','Status','Notes','Added By','Total Fare','Worker Pay','Company']];
@@ -2465,40 +3119,80 @@ window.exportExcel = function() {
 let deferredPrompt = null;
 let appInstalled = false;
 
+// Check if already installed (standalone mode = PWA is running installed)
+if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+  appInstalled = true;
+}
+
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault();
   deferredPrompt = e;
-  // Show install button in manage tab if it's visible
-  const btn = document.getElementById('installAppBtn');
-  if (btn) btn.style.display = '';
+  // Only show banner if:
+  // 1. Not already installed
+  // 2. User hasn't dismissed it before
+  // 3. Running on real server (not local file)
+  // 4. Only show ONCE ever — never auto-show again after first time
+  const dismissed = localStorage.getItem('pwaInstallDismissed');
+  const alreadyPrompted = localStorage.getItem('pwaInstallPrompted');
+  if (!appInstalled && !dismissed && !alreadyPrompted && location.protocol === 'https:') {
+    localStorage.setItem('pwaInstallPrompted', '1');
+    setTimeout(() => {
+      if (!appInstalled) {
+        const banner = document.getElementById('installBanner');
+        if (banner) banner.classList.add('show');
+      }
+    }, 5000);
+  }
 });
 
 window.addEventListener('appinstalled', () => {
   appInstalled = true;
   deferredPrompt = null;
+  // Mark as permanently installed — never show again
+  localStorage.setItem('pwaInstallDismissed', 'installed');
+  const banner = document.getElementById('installBanner');
+  if (banner) banner.classList.remove('show');
   showToast('✅ App installed successfully!');
-  const btn = document.getElementById('installAppBtn');
-  if (btn) btn.textContent = '✅ App Installed';
 });
 
-window.installApp = function() {
+window.triggerInstall = function() {
   if (deferredPrompt) {
     deferredPrompt.prompt();
     deferredPrompt.userChoice.then(choice => {
-      if (choice.outcome === 'accepted') showToast('✅ Installing app...');
-      else showToast('ℹ️ Install dismissed');
       deferredPrompt = null;
+      const banner = document.getElementById('installBanner');
+      if (banner) banner.classList.remove('show');
+      if (choice.outcome === 'accepted') {
+        showToast('✅ Installing...');
+      }
     });
-  } else if (appInstalled) {
-    showToast('✅ App is already installed');
+  }
+}
+
+window.dismissInstall = function() {
+  const banner = document.getElementById('installBanner');
+  if (banner) banner.classList.remove('show');
+  // Dismissed = never auto-show again, but can still install via Manage tab
+  localStorage.setItem('pwaInstallDismissed', '1');
+}
+
+window.installApp = function() {
+  // Called from Manage tab — always try regardless of auto-show history
+  if (appInstalled || window.matchMedia('(display-mode: standalone)').matches) {
+    showToast('✅ Already installed');
+    return;
+  }
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(choice => {
+      deferredPrompt = null;
+      if (choice.outcome === 'accepted') showToast('✅ Installing...');
+      else showToast('ℹ️ You can install later from the Manage tab');
+    });
   } else {
-    // iOS Safari instructions
     const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
-    if (isIOS) {
-      showToast('📲 Tap Share → "Add to Home Screen" in Safari');
-    } else {
-      showToast('📲 Use browser menu → "Install App" or "Add to Home Screen"');
-    }
+    if (isIOS) showToast('📲 Tap Share → "Add to Home Screen"');
+    else showToast('📲 Tap browser menu → "Install App"');
   }
 }
 window.downloadHTML = function() {
@@ -2598,7 +3292,6 @@ function patchManifestIcon(size, dataUrl) {
       start_url: '/Oli/?pwa=1',
       scope: '/Oli/',
       display: 'standalone',
-      display_override: ['standalone', 'minimal-ui'],
       orientation: 'portrait',
       background_color: '#0f1623',
       theme_color: '#0f1623',
@@ -2668,52 +3361,8 @@ function generateIcon(size) {
 // Icons are handled by initIcons() which runs at bottom of script
 
 // ── SERVICE WORKER (PWA) ──
-let swReg = null;
-let newWorker = null;
-
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/Oli/sw.js').then(reg => {
-    swReg = reg;
-
-    // Check for waiting worker on load (app reloaded after update was found)
-    if (reg.waiting) showUpdateBanner(reg.waiting);
-
-    // New SW installed but waiting
-    reg.addEventListener('updatefound', () => {
-      const nw = reg.installing;
-      nw.addEventListener('statechange', () => {
-        if (nw.state === 'installed' && navigator.serviceWorker.controller) {
-          showUpdateBanner(nw);
-        }
-      });
-    });
-
-    // Periodic update check every 60 minutes
-    setInterval(() => reg.update(), 60 * 60 * 1000);
-
-  }).catch(err => console.warn('SW registration failed:', err));
-
-  // When the new SW takes control, reload to get fresh app
-  let refreshing = false;
-  navigator.serviceWorker.addEventListener('controllerchange', () => {
-    if (!refreshing) { refreshing = true; window.location.reload(); }
-  });
-}
-
-function showUpdateBanner(worker) {
-  newWorker = worker;
-  const banner = document.getElementById('updateBanner');
-  if (banner) banner.classList.add('show');
-}
-
-window.applyUpdate = function() {
-  const banner = document.getElementById('updateBanner');
-  if (banner) banner.classList.remove('show');
-  if (newWorker) {
-    newWorker.postMessage('skipWaiting');
-  } else if (swReg && swReg.waiting) {
-    swReg.waiting.postMessage('skipWaiting');
-  }
+  navigator.serviceWorker.register('/Oli/sw.js').catch(()=>{});
 }
 
 // ── INIT ──
