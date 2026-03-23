@@ -1,26 +1,26 @@
 {
   "name": "WKABE Hask Tracker",
   "short_name": "WKABE",
-  "description": "Hask Services Djibouti — Truck Tracker",
+  "description": "Hask Services — Djibouti Truck Tracker",
   "start_url": "/Oli/",
   "scope": "/Oli/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#0f1623",
   "theme_color": "#0f1623",
-  "prefer_related_applications": false,
+  "categories": ["business"],
   "icons": [
     {
       "src": "/Oli/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
       "src": "/Oli/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "maskable"
+      "purpose": "any maskable"
     }
   ]
 }

@@ -641,65 +641,42 @@
   /* ── PWA INSTALL BANNER ── */
   #pwaInstallBanner {
     position: fixed;
-    bottom: -200px;
-    left: 12px; right: 12px;
-    z-index: 9999;
-    background: linear-gradient(135deg, #1a2235, #243048);
-    border: 1.5px solid var(--accent);
-    border-radius: var(--radius);
-    padding: 16px;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.6);
-    transition: bottom 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #1a0533, #2d0a5e);
+    border: 1px solid rgba(123,47,247,0.5);
+    border-radius: 18px;
+    padding: 14px 16px;
     display: flex;
-    flex-direction: column;
+    align-items: center;
     gap: 12px;
+    z-index: 9000;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+    max-width: 390px;
+    width: calc(100% - 24px);
+    animation: slideUp 0.4s ease;
   }
-  #pwaInstallBanner.show { bottom: 90px; }
-  .pwa-banner-top {
-    display: flex; align-items: center; gap: 12px;
-  }
-  .pwa-banner-icon {
-    width: 52px; height: 52px;
-    border-radius: 14px;
-    flex-shrink: 0;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-  }
+  #pwaInstallBanner.hidden { display: none; }
+  #pwaInstallBanner.on-login { bottom: 24px; }
+  .pwa-banner-icon-wrap { font-size: 30px; flex-shrink: 0; }
   .pwa-banner-text { flex: 1; }
-  .pwa-banner-title {
-    font-size: 15px; font-weight: 700; color: var(--text);
+  .pwa-banner-title { font-size: 15px; font-weight: 700; color: #fff; }
+  .pwa-banner-sub { font-size: 11px; color: rgba(255,255,255,0.55); margin-top: 2px; }
+  .pwa-inst-btn {
+    background: linear-gradient(135deg, #7b2ff7, #f107a3);
+    border: none; color: white;
+    border-radius: 11px;
+    padding: 9px 15px;
+    font-size: 13px; font-weight: 700;
+    cursor: pointer; white-space: nowrap;
+    font-family: inherit;
   }
-  .pwa-banner-sub {
-    font-size: 12px; color: var(--text2); margin-top: 3px;
-  }
-  .pwa-banner-close {
+  .pwa-close-btn {
     background: none; border: none;
-    color: var(--text3); font-size: 20px;
-    cursor: pointer; padding: 4px; flex-shrink: 0;
-    line-height: 1;
-  }
-  .pwa-banner-btns {
-    display: flex; gap: 10px;
-  }
-  .pwa-install-btn {
-    flex: 1;
-    background: var(--accent);
-    color: #fff; border: none;
-    border-radius: var(--radius-sm);
-    padding: 12px;
-    font-size: 14px; font-weight: 700;
-    cursor: pointer; font-family: inherit;
-    display: flex; align-items: center; justify-content: center; gap: 6px;
-    transition: all 0.2s;
-  }
-  .pwa-install-btn:active { transform: scale(0.97); background: var(--accent2); }
-  .pwa-not-now-btn {
-    background: var(--bg3);
-    color: var(--text2); border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 12px 16px;
-    font-size: 13px; font-weight: 600;
-    cursor: pointer; font-family: inherit;
-    transition: all 0.2s;
+    color: rgba(255,255,255,0.35);
+    font-size: 20px; cursor: pointer;
+    padding: 2px 6px; flex-shrink: 0;
   }
 
   /* ── TOAST ── */
@@ -768,6 +745,40 @@
     line-height: 1.5;
   }
   .dup-warning.visible { display: block; }
+
+  /* ── PENDING / WAITING FOR WORKER ── */
+  .pending-section {
+    background: rgba(155,89,182,0.08);
+    border: 1.5px solid rgba(155,89,182,0.25);
+    border-radius: var(--radius);
+    padding: 12px;
+    margin-bottom: 14px;
+  }
+  .pending-hdr {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .pending-title { font-size: 15px; font-weight: 800; color: #c39bd3; }
+  .pending-count {
+    background: rgba(155,89,182,0.3); color: #c39bd3;
+    border-radius: 20px; padding: 2px 9px;
+    font-size: 11px; font-weight: 700;
+  }
+  .pending-row {
+    background: rgba(0,0,0,0.25);
+    border-radius: 10px; padding: 10px 11px;
+    margin-bottom: 7px; display: flex; align-items: center; gap: 10px;
+  }
+  .pending-row:last-child { margin-bottom: 0; }
+  .pending-plate { font-size: 17px; font-weight: 800; font-family: 'JetBrains Mono', monospace; }
+  .pending-meta { font-size: 10px; color: var(--text2); margin-top: 2px; }
+  .t-btn-assign {
+    background: rgba(155,89,182,0.2);
+    border: 1px solid rgba(155,89,182,0.4);
+    color: #c39bd3; padding: 6px 11px;
+    border-radius: 8px; font-size: 11px; font-weight: 700;
+    cursor: pointer; white-space: nowrap; font-family: inherit;
+  }
 
   /* ── PWA UPDATE BANNER ── */
   #updateBanner {
@@ -1154,9 +1165,11 @@
   <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-title">👷 Assign Worker</div>
+    <div id="assignTruckInfo" style="font-size:13px;color:var(--text2);margin-bottom:14px;"></div>
+    <input type="hidden" id="assignTruckId">
     <div class="form-group">
       <label class="form-label">SELECT WORKER</label>
-      <select class="form-select" id="assignWorker"></select>
+      <select class="form-select" id="assignWorkerSel"></select>
     </div>
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeModal('modalAssign')">Cancel</button>
@@ -1249,21 +1262,14 @@
 </div>
 
 <!-- PWA INSTALL BANNER -->
-<div id="pwaInstallBanner">
-  <div class="pwa-banner-top">
-    <canvas class="pwa-banner-icon" id="pwaInstallIcon" width="52" height="52"></canvas>
-    <div class="pwa-banner-text">
-      <div class="pwa-banner-title">Install WKABE App</div>
-      <div class="pwa-banner-sub">Fast access · Works offline · No app store needed</div>
-    </div>
-    <button class="pwa-banner-close" onclick="dismissPWABanner()">✕</button>
+<div id="pwaInstallBanner" class="hidden">
+  <div class="pwa-banner-icon-wrap">📲</div>
+  <div class="pwa-banner-text">
+    <div class="pwa-banner-title">Install WKABE App</div>
+    <div class="pwa-banner-sub">Tap Install to add to home screen</div>
   </div>
-  <div class="pwa-banner-btns">
-    <button class="pwa-install-btn" onclick="doInstallPWA()">
-      📲 Install Now
-    </button>
-    <button class="pwa-not-now-btn" onclick="dismissPWABanner()">Not now</button>
-  </div>
+  <button class="pwa-inst-btn" onclick="doInstallPWA()">Install</button>
+  <button class="pwa-close-btn" onclick="dismissPWABanner()">✕</button>
 </div>
 
 <!-- TOAST -->
@@ -1975,57 +1981,67 @@ function renderTrucks() {
   if (headerAddBtn) headerAddBtn.style.display = (canAdd && isToday) ? '' : 'none';
   if (newBtn) newBtn.style.display = (canAdd && isToday) ? '' : 'none';
 
-  // Unassigned (admin/cashier only)
-  const unassigned = role!=='worker' ? list.filter(t=>!t.worker||t.worker==='') : [];
-  const assignSec = document.getElementById('assignSection');
-  const unList = document.getElementById('unassignedList');
-  if (assignSec && unList) {
-    if (unassigned.length > 0 && role!=='worker') {
-      assignSec.style.display = '';
-      unList.innerHTML = unassigned.map(t=>`
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)">
-          <span style="font-family:'JetBrains Mono',monospace;font-weight:600">${t.plate}</span>
-          <button class="truck-action-btn primary" style="flex:none;padding:5px 12px;font-size:11px"
-            onclick="openAssign('${t._id}')">👷 ${t('assign')}</button>
-        </div>
-      `).join('');
-    } else {
-      assignSec.style.display = 'none';
-    }
-  }
-
-  // Render list — workers see own trucks, admin/cashier see all including unassigned
-  // (unassigned/pending shown in assign section AND in main list with number)
-  const assigned = list;
   const container = document.getElementById('trucksList');
   if (!container) return;
 
-  if (assigned.length===0) {
+  // Pending = no worker assigned (only shown today, only for admin/cashier)
+  const pendingTrucks = (isToday && role !== 'worker')
+    ? list.filter(t => !t.worker || t.status === 'pending')
+    : [];
+  // Assigned trucks = has a worker and not pending
+  const assignedTrucks = list.filter(t => t.worker && t.status !== 'pending');
+
+  // Show/hide suspend banner
+  const suspendBanner = document.getElementById('suspendBanner');
+  if (suspendBanner) suspendBanner.classList.toggle('active', addingSuspended && role!=='admin');
+
+  if (pendingTrucks.length === 0 && assignedTrucks.length === 0) {
     container.innerHTML = `<div class="empty-state"><div class="icon">${isToday?'🚛':'📅'}</div><p>${isToday?t('noTrucks'):'No trucks on this date'}</p></div>`;
     return;
   }
 
-  // Show history notice for past dates
+  // History notice for past dates
   const historyNotice = !isToday ? `
     <div style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:10px;font-size:12px;color:var(--orange);display:flex;align-items:center;gap:8px">
       📅 <span>Viewing history — ${date}. Read-only, no changes allowed.</span>
     </div>
   ` : '';
 
+  // Build pending section (reference style)
+  let pendingHTML = '';
+  if (pendingTrucks.length > 0) {
+    const canAssignNow = isToday && (role==='admin' || role==='cashier');
+    pendingHTML = `<div class="pending-section">
+      <div class="pending-hdr">
+        <span class="pending-title">⏳ Waiting for Worker</span>
+        <span class="pending-count">${pendingTrucks.length}</span>
+      </div>
+      ${pendingTrucks.map(tk => `
+        <div class="pending-row">
+          <div style="flex:1">
+            <div class="pending-plate">${tk.plate}</div>
+            <div class="pending-meta">📅 ${tk.date||'—'} · Added by: ${tk.addedBy||'—'}</div>
+            <div class="pending-meta" style="color:#f1c40f;margin-top:2px;">💳 Client paid ${CLIENT_PRICE.toLocaleString()} ETB · Worker earn: ${WORKER_PAY.paid.toLocaleString()} ETB on assignment</div>
+          </div>
+          ${canAssignNow
+            ? `<button class="t-btn-assign" onclick="openAssign('${tk._id}')">👷 Assign</button>`
+            : `<span style="font-size:10px;color:var(--text3)">Waiting…</span>`
+          }
+        </div>
+      `).join('')}
+    </div>`;
+  }
+
   const perms = getUserPerms(id);
   const canEditStatus = isToday && (role==='admin' || (role==='cashier' && perms.editStatus) || (role==='worker' && perms.canEditStatus));
   const canDelete = isToday && (role==='admin' || (role==='cashier' && perms.deleteTrucks));
   const canEdit = isToday && (role==='admin' || (role==='cashier' && perms.addTrucks));
-  // ALL roles can edit plate on their own trucks
-  const canEditPlate = isToday;
 
-  // Show/hide suspend banner
-  const suspendBanner = document.getElementById('suspendBanner');
-  if (suspendBanner) suspendBanner.classList.toggle('active', addingSuspended && role!=='admin');
-
-  container.innerHTML = historyNotice + assigned.map(truck=>{
-    const statusClass = truck.status==='paid'?'paid':truck.status==='partial'?'partial':truck.status==='pending'?'pending':'unpaid';
-    const statusLabel = truck.status==='paid'?'✅ Paid':truck.status==='partial'?'⚡ Partial':truck.status==='pending'?'🟡 Pending':'❌ Unpaid';
+  container.innerHTML = historyNotice + pendingHTML + (assignedTrucks.length === 0
+    ? `<div class="empty-state"><div class="icon">🚛</div><p>${pendingTrucks.length ? 'No assigned trucks today' : t('noTrucks')}</p></div>`
+    : assignedTrucks.map(truck=>{
+    const statusClass = truck.status==='paid'?'paid':truck.status==='partial'?'partial':'unpaid';
+    const statusLabel = truck.status==='paid'?'✅ Paid':truck.status==='partial'?'⚡ Partial':'❌ Unpaid';
     const workerColor = WORKER_COLORS[truck.worker]||'#6b7280';
     const workerEarn = WORKER_PAY[truck.status]||0;
     const totalFare = truck.status==='paid'?CLIENT_PRICE:truck.status==='partial'?2800:0;
@@ -2035,7 +2051,6 @@ function renderTrucks() {
     let actions = '';
     if (canEditStatus) actions += `<button class="truck-action-btn primary" onclick="openStatus('${truck._id}')">🟡 Status</button>`;
     if (canEdit) actions += `<button class="truck-action-btn" onclick="openEditTruck('${truck._id}')">✏️ Edit</button>`;
-    // Workers can edit plate on their own trucks
     if (isToday && role==='worker' && truck.worker===id) actions += `<button class="truck-action-btn" onclick="openEditPlate('${truck._id}')">✏️ Plate</button>`;
     if (canDelete) actions += `<button class="truck-action-btn danger" onclick="deleteTruck('${truck._id}')">🗑️ Delete</button>`;
 
@@ -2078,7 +2093,7 @@ function renderTrucks() {
         ${actions ? `<div class="truck-actions">${actions}</div>` : ''}
       </div>
     `;
-  }).join('');
+  }).join(''));
 }
 
 // ── EDIT TRUCK ──
@@ -2111,16 +2126,23 @@ window.openEditTruck = function(id) {
   document.getElementById('truckPlate').value = truck.plate||'';
   document.getElementById('truckDate').value = truck.date||'';
   document.getElementById('truckNotes').value = truck.notes||'';
-  // Clear duplicate warning on open
   const warn = document.getElementById('dupWarning');
   if (warn) warn.classList.remove('visible');
   const workers = getWorkerList();
   const sel = document.getElementById('truckWorker');
-  sel.innerHTML = `<option value="">— Unassigned —</option>${workers.map(w=>`<option value="${w}">${w}</option>`).join('')}`;
-  sel.value = truck.worker||'';
-  document.getElementById('workerGroup').style.display = currentUser.role==='worker' ? 'none' : '';
-  document.getElementById('statusGroup').style.display = currentUser.role==='worker' ? 'none' : '';
-  buildStatusRadio('statusRadio', truck.status||'unpaid');
+  if (currentUser.role === 'worker') {
+    sel.innerHTML = `<option value="${currentUser.id}">${currentUser.id}</option>`;
+    document.getElementById('workerGroup').style.display = 'none';
+    document.getElementById('statusGroup').style.display = 'none';
+  } else {
+    sel.innerHTML = `<option value="">— No worker yet (Pending) —</option>` +
+      workers.map(w=>`<option value="${w}">${w}</option>`).join('');
+    sel.value = truck.worker||'';
+    document.getElementById('workerGroup').style.display = '';
+    document.getElementById('statusGroup').style.display = '';
+  }
+  // Show actual status, but pending trucks default to unpaid in radio
+  buildStatusRadio('statusRadio', (truck.status==='pending' ? 'unpaid' : truck.status)||'unpaid');
   openModal('modalTruck');
 }
 
@@ -2141,7 +2163,7 @@ window.checkDuplicate = function() {
   if (matches.length > 0) {
     const m = matches[0][1];
     const workerColor = WORKER_COLORS[m.worker] || '#6b7280';
-    warn.innerHTML = `⚠️ <strong>${plate}</strong> already recorded on ${date} — Worker: <span style="color:${workerColor}">${m.worker||'Unassigned'}</span>, Status: ${m.status}`;
+    warn.innerHTML = `⚠️ <strong>${plate}</strong> already recorded on ${date} — Worker: <span style="color:${workerColor}">${m.worker||'No worker yet'}</span>, Status: ${m.status}`;
     warn.classList.add('visible');
   } else {
     warn.classList.remove('visible');
@@ -2155,21 +2177,23 @@ window.openAddTruck = function() {
   document.getElementById('truckPlate').value = '';
   document.getElementById('truckDate').value = document.getElementById('dateFilter').value;
   document.getElementById('truckNotes').value = '';
-  // Clear duplicate warning
   const warn = document.getElementById('dupWarning');
   if (warn) warn.classList.remove('visible');
 
   const workers = getWorkerList();
   const sel = document.getElementById('truckWorker');
-  sel.innerHTML = `<option value="">— Unassigned —</option>${workers.map(w=>`<option value="${w}">${w}</option>`).join('')}`;
 
-  if (currentUser.role==='worker') {
-    sel.value = currentUser.id;
-    document.getElementById('workerGroup').style.display='none';
-    document.getElementById('statusGroup').style.display='none';
+  if (currentUser.role === 'worker') {
+    // Worker: auto-assigned to self, fields hidden
+    sel.innerHTML = `<option value="${currentUser.id}">${currentUser.id}</option>`;
+    document.getElementById('workerGroup').style.display = 'none';
+    document.getElementById('statusGroup').style.display = 'none';
   } else {
-    document.getElementById('workerGroup').style.display='';
-    document.getElementById('statusGroup').style.display='';
+    // Admin/Cashier: show worker dropdown with "No worker yet" option
+    sel.innerHTML = `<option value="">— No worker yet (Pending) —</option>` +
+      workers.map(w => `<option value="${w}">${w}</option>`).join('');
+    document.getElementById('workerGroup').style.display = '';
+    document.getElementById('statusGroup').style.display = '';
   }
 
   buildStatusRadio('statusRadio', 'unpaid');
@@ -2180,7 +2204,6 @@ function buildStatusRadio(containerId, selected) {
     {val:'unpaid', label:'❌ '+t('unpaid'), sub:'0 ETB to worker'},
     {val:'partial', label:'⚡ '+t('partial'), sub:'Worker: 700 ETB · Client: 2,800 ETB'},
     {val:'paid', label:'✅ '+t('paid'), sub:'Worker: 1,300 ETB · Client: 5,500 ETB'},
-    {val:'pending', label:'🟡 '+t('workerPending'), sub:'Worker assignment pending'},
   ];
   document.getElementById(containerId).innerHTML = opts.map(o=>`
     <div class="radio-opt${o.val===selected?' selected':''}" onclick="selectRadio(this,'${containerId}')">
@@ -2205,9 +2228,12 @@ function getRadioVal(groupId) {
 window.saveTruck = function() {
   const plate = document.getElementById('truckPlate').value.trim().toUpperCase();
   const date = document.getElementById('truckDate').value;
-  const worker = document.getElementById('truckWorker').value;
-  // Workers cannot set payment status — always defaults to unpaid
-  const status = currentUser.role==='worker' ? 'unpaid' : getRadioVal('statusRadio');
+  const worker = currentUser.role === 'worker'
+    ? currentUser.id
+    : document.getElementById('truckWorker').value;
+  let status = currentUser.role === 'worker' ? 'unpaid' : getRadioVal('statusRadio');
+  // No worker selected → force pending so it appears in Waiting for Worker section
+  if (!worker && status !== 'pending') status = 'pending';
   const notes = document.getElementById('truckNotes').value.trim();
   if (!plate) { showToast('⚠️ Enter plate number'); return; }
   if (!date) { showToast('⚠️ Select date'); return; }
@@ -2280,18 +2306,25 @@ window.saveStatus = function() {
 
 // ── ASSIGN ──
 window.openAssign = function(id) {
-  editingAssignId = id;
+  if (currentUser.role === 'worker') { showToast('⛔ Only admin and cashiers can assign workers'); return; }
+  const truck = trucks[id];
+  if (!truck) return;
+  document.getElementById('assignTruckId').value = id;
+  document.getElementById('assignTruckInfo').textContent = 'Truck: ' + truck.plate + ' · Added by: ' + (truck.addedBy || '—');
   const workers = getWorkerList();
-  document.getElementById('assignWorker').innerHTML = workers.map(w=>`<option value="${w}">${w}</option>`).join('');
-  const cur = trucks[id]?.worker;
-  if (cur) document.getElementById('assignWorker').value = cur;
+  document.getElementById('assignWorkerSel').innerHTML = workers.map(w=>`<option value="${w}">${w}</option>`).join('');
   openModal('modalAssign');
 }
 window.doAssign = function() {
-  if (!editingAssignId) return;
-  const w = document.getElementById('assignWorker').value;
-  updateDoc(doc(db,'trucks',editingAssignId), {worker:w});
-  showToast(`✅ Assigned to ${w}`);
+  const id = document.getElementById('assignTruckId').value;
+  const worker = document.getElementById('assignWorkerSel').value;
+  if (!worker) { showToast('⚠️ Select a worker'); return; }
+  const truck = trucks[id];
+  if (!truck) return;
+  // Assign worker; if truck was pending, revert to unpaid so payment can be set properly
+  const newStatus = truck.status === 'pending' ? 'unpaid' : truck.status;
+  updateDoc(doc(db,'trucks',id), { worker, status: newStatus, assignedBy: currentUser.id, assignedAt: Date.now() });
+  showToast(`✅ ${worker} assigned to ${truck.plate}`);
   closeModal('modalAssign');
 }
 
@@ -2810,8 +2843,7 @@ window.togglePerm = function(perm) {
   el.classList.toggle('on');
 }
 window.savePerms = function() {
-  const all = getPerms();
-  const perms = all[permsEditingUser] || {};
+  const perms = _cloudPerms[permsEditingUser] || {};
   document.querySelectorAll('#permsContent .perm-row').forEach(row=>{
     const toggle = row.querySelector('.toggle');
     const permName = toggle.id.replace('perm_','');
@@ -3463,6 +3495,51 @@ function generateIcon(size) {
 // ── SERVICE WORKER (PWA) ──
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/Oli/sw.js').catch(()=>{});
+}
+
+// ── PWA INSTALL ──
+window.addEventListener('beforeinstallprompt', function(e) {
+  e.preventDefault();
+  deferredPrompt = e;
+  setTimeout(function() {
+    if (!sessionStorage.getItem('pwa-dismissed')) {
+      const banner = document.getElementById('pwaInstallBanner');
+      const onLogin = document.getElementById('loginScreen').classList.contains('active');
+      if (onLogin) banner.classList.add('on-login');
+      else banner.classList.remove('on-login');
+      banner.classList.remove('hidden');
+    }
+  }, 1500);
+});
+
+window.addEventListener('appinstalled', function() {
+  deferredPrompt = null;
+  dismissPWABanner();
+  showToast('✅ WKABE installed successfully!');
+});
+
+window.doInstallPWA = function() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(function(r) {
+      if (r.outcome === 'accepted') showToast('Installing…');
+      deferredPrompt = null;
+      dismissPWABanner();
+    });
+  } else {
+    const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+    if (isIOS) showToast('📲 In Safari: tap Share → Add to Home Screen');
+    else showToast('📲 Tap ⋮ menu → Install App or Add to Home Screen');
+  }
+}
+
+window.dismissPWABanner = function() {
+  document.getElementById('pwaInstallBanner').classList.add('hidden');
+  sessionStorage.setItem('pwa-dismissed', '1');
+}
+
+function maybeShowPWABanner() {
+  // Banner is shown automatically when beforeinstallprompt fires
 }
 
 // ── INIT ──

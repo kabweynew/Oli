@@ -1,82 +1,39 @@
-const CACHE_NAME = 'hask-live-v1';
-const STATIC_ASSETS = [
+const CACHE_NAME = 'wkabe-v1';
+const ASSETS = [
   '/Oli/',
   '/Oli/index.html',
-  '/Oli/manifest.json',
-  '/Oli/splash.jpg'
+  '/Oli/manifest.json'
 ];
 
-// Install: pre-cache static assets
-self.addEventListener('install', e => {
+self.addEventListener('install', function(e) {
   e.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(c => c.addAll(STATIC_ASSETS))
-      .then(() => self.skipWaiting())
+    caches.open(CACHE_NAME).then(function(cache) {
+      return cache.addAll(ASSETS);
+    })
   );
+  self.skipWaiting();
 });
 
-// Activate: clean old caches
-self.addEventListener('activate', e => {
+self.addEventListener('activate', function(e) {
   e.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
-    ).then(() => clients.claim())
+    caches.keys().then(function(keys) {
+      return Promise.all(
+        keys.filter(function(key) { return key !== CACHE_NAME; })
+            .map(function(key) { return caches.delete(key); })
+      );
+    })
   );
+  self.clients.claim();
 });
 
-// Fetch strategy:
-// - Firebase / Google APIs → network only (real-time data must be live)
-// - Fonts, CDN scripts → cache first, fallback network
-// - App shell (index.html, manifest) → network first, fallback cache
-self.addEventListener('fetch', e => {
-  const url = e.request.url;
-
-  // Firebase Realtime DB & Auth → always network, never cache
-  if (
-    url.includes('firebasedatabase.app') ||
-    url.includes('firebaseio.com') ||
-    url.includes('googleapis.com') ||
-    url.includes('gstatic.com/firebasejs')
-  ) {
-    e.respondWith(fetch(e.request));
+self.addEventListener('fetch', function(e) {
+  // Network first for Firebase requests, cache first for everything else
+  if (e.request.url.includes('firebase') || e.request.url.includes('googleapis')) {
     return;
   }
-
-  // Google Fonts → cache first (stable)
-  if (url.includes('fonts.googleapis.com') || url.includes('fonts.gstatic.com')) {
-    e.respondWith(
-      caches.match(e.request).then(cached => {
-        if (cached) return cached;
-        return fetch(e.request).then(res => {
-          const clone = res.clone();
-          caches.open(CACHE_NAME).then(c => c.put(e.request, clone));
-          return res;
-        });
-      })
-    );
-    return;
-  }
-
-  // App shell: network first, fallback to cache
   e.respondWith(
-    fetch(e.request)
-      .then(res => {
-        if (res.ok && e.request.method === 'GET') {
-          const clone = res.clone();
-          caches.open(CACHE_NAME).then(c => c.put(e.request, clone));
-        }
-        return res;
-      })
-      .catch(() => caches.match(e.request).then(cached => {
-        if (cached) return cached;
-        if (e.request.mode === 'navigate') {
-          return caches.match('/Oli/index.html');
-        }
-      }))
+    fetch(e.request).catch(function() {
+      return caches.match(e.request);
+    })
   );
-});
-
-// Handle skip-waiting message from app
-self.addEventListener('message', e => {
-  if (e.data === 'skipWaiting') self.skipWaiting();
 });
