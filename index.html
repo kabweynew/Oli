@@ -1273,23 +1273,27 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
-  getDatabase, ref, set, push, onValue, remove, update, get
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+  getFirestore,
+  collection, doc,
+  setDoc, addDoc, getDoc, getDocs,
+  updateDoc, deleteDoc,
+  onSnapshot,
+  query, orderBy
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 // ── FIREBASE CONFIG ──
 const firebaseConfig = {
-  apiKey: "AIzaSyDwOtY38Rtu6rGLuficnnpBandHGRUHGVs",
-  authDomain: "hask-oli.firebaseapp.com",
-  databaseURL: "https://hask-oli-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "hask-oli",
-  storageBucket: "hask-oli.firebasestorage.app",
-  messagingSenderId: "980799897658",
-  appId: "1:980799897658:web:7b652dffbe023f52137503",
-  measurementId: "G-JJFL4F6GS2"
+  apiKey: "AIzaSyDlMIQekGsMTZlPqNWddeL2tqPwNCknetg",
+  authDomain: "haaa-3b06e.firebaseapp.com",
+  projectId: "haaa-3b06e",
+  storageBucket: "haaa-3b06e.firebasestorage.app",
+  messagingSenderId: "172639268578",
+  appId: "1:172639268578:web:ab7b25bab6bca71e33b8bb",
+  measurementId: "G-T69FLVPZPY"
 };
 
 const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+const db = getFirestore(app);
 
 // ── STATE ──
 let trucks = {};
@@ -1458,20 +1462,19 @@ function saveWorkerList(w) { localStorage.setItem('hask_workers', JSON.stringify
 
 // ── FIREBASE LISTENERS ──
 function initFirebase() {
-  // Clean up ALL existing listeners before creating new ones
   ['_unsubTrucks','_unsubAdvances','_unsubDeleted','_unsubSuspend'].forEach(k => {
     try { if (window[k]) { window[k](); window[k] = null; } } catch(e) {}
   });
 
   setSyncing();
 
-  window._unsubTrucks = onValue(ref(db,'trucks'), snap => {
-    trucks = snap.val() || {};
+  window._unsubTrucks = onSnapshot(collection(db,'trucks'), snap => {
+    trucks = {};
+    snap.forEach(d => { trucks[d.id] = d.data(); });
     renderTrucks();
     renderWorkers();
     renderReports();
     setOnline();
-    // Refresh date display
     const wd2 = getWorkingDate();
     const wd2Obj = new Date(wd2 + 'T12:00:00');
     const displayEl2 = document.getElementById('dateFilterDisplay');
@@ -1480,14 +1483,16 @@ function initFirebase() {
     }
   }, () => { setOffline(); });
 
-  window._unsubAdvances = onValue(ref(db,'advances'), snap => {
-    advances = snap.val() || {};
+  window._unsubAdvances = onSnapshot(collection(db,'advances'), snap => {
+    advances = {};
+    snap.forEach(d => { advances[d.id] = d.data(); });
     renderAdvances();
     renderWorkers();
   }, () => {});
 
-  window._unsubDeleted = onValue(ref(db,'deleted'), snap => {
-    deletedTrucks = snap.val() || {};
+  window._unsubDeleted = onSnapshot(collection(db,'deleted'), snap => {
+    deletedTrucks = {};
+    snap.forEach(d => { deletedTrucks[d.id] = d.data(); });
     const total = Object.keys(deletedTrucks).length;
     const navBin = document.getElementById('nav_recycle');
     if (navBin) {
@@ -1497,8 +1502,8 @@ function initFirebase() {
     if (currentTab === 'recycle') renderRecycleList();
   }, () => {});
 
-  window._unsubSuspend = onValue(ref(db,'settings/addingSuspended'), snap => {
-    addingSuspended = snap.val() === true;
+  window._unsubSuspend = onSnapshot(doc(db,'settings','addingSuspended'), snap => {
+    addingSuspended = snap.exists() ? snap.data().value === true : false;
     if (currentUser) updateSuspendUI();
   }, () => {});
 }
@@ -1642,8 +1647,8 @@ function buildApp() {
   const canAdd = role==='admin' || (role==='cashier' && perms.addTrucks) || (role==='worker' && perms.canAddOwnTrucks);
   document.getElementById('headerAddBtn').style.display = canAdd ? '' : 'none';
   // Load suspend state
-  get(ref(db,'settings/addingSuspended')).then(snap => {
-    addingSuspended = snap.val() === true;
+  getDoc(doc(db,'settings','addingSuspended')).then(snap => {
+    addingSuspended = snap.exists() ? snap.data().value === true : false;
     updateSuspendUI();
   });
 
@@ -2057,7 +2062,7 @@ window.saveEditPlate = function() {
   const truck = trucks[editingPlateId];
   const dup = Object.entries(trucks).find(([k,v]) => v.plate && v.plate.toUpperCase()===plate && v.date===truck.date && k!==editingPlateId);
   if (dup) { showToast('⚠️ ' + plate + ' already recorded today'); return; }
-  update(ref(db,'trucks/'+editingPlateId), {plate});
+  updateDoc(doc(db,'trucks',editingPlateId), {plate});
   showToast('✅ Plate updated');
   closeModal('modalEditPlate');
 }
@@ -2202,10 +2207,10 @@ window.saveTruck = function() {
   };
 
   if (editingTruckId) {
-    update(ref(db,'trucks/'+editingTruckId), data);
+    updateDoc(doc(db,'trucks',editingTruckId), data);
     showToast('✅ Truck updated');
   } else {
-    push(ref(db,'trucks'), data);
+    addDoc(collection(db,'trucks'), data);
     showToast('✅ Truck added');
   }
   closeModal('modalTruck');
@@ -2216,9 +2221,9 @@ window.deleteTruck = function(id) {
   if (!confirm('Delete this truck? It will go to Recycle Bin.')) return;
   const truck = trucks[id];
   if (truck) {
-    set(ref(db,'deleted/'+id), {...truck, deletedAt:Date.now(), deletedBy:currentUser.id});
+    setDoc(doc(db,'deleted',id), {...truck, deletedAt:Date.now(), deletedBy:currentUser.id});
   }
-  remove(ref(db,'trucks/'+id));
+  deleteDoc(doc(db,'trucks',id));
   showToast('🗑️ Moved to Recycle Bin');
 }
 
@@ -2232,7 +2237,7 @@ window.openStatus = function(id) {
 window.saveStatus = function() {
   if (!editingStatusId) return;
   const newStatus = getRadioVal('statusChangeRadio');
-  update(ref(db,'trucks/'+editingStatusId), {status:newStatus});
+  updateDoc(doc(db,'trucks',editingStatusId), {status:newStatus});
   showToast('✅ Status updated');
   closeModal('modalStatus');
 }
@@ -2249,7 +2254,7 @@ window.openAssign = function(id) {
 window.doAssign = function() {
   if (!editingAssignId) return;
   const w = document.getElementById('assignWorker').value;
-  update(ref(db,'trucks/'+editingAssignId), {worker:w});
+  updateDoc(doc(db,'trucks',editingAssignId), {worker:w});
   showToast(`✅ Assigned to ${w}`);
   closeModal('modalAssign');
 }
@@ -2269,7 +2274,7 @@ window.saveAdvance = function() {
   const date = document.getElementById('advDate').value;
   const reason = document.getElementById('advReason').value.trim();
   if (!worker||!amount||!date) { showToast('⚠️ Fill all required fields'); return; }
-  push(ref(db,'advances'), {worker, amount, date, reason, addedBy:currentUser.id, timestamp:Date.now()});
+  addDoc(collection(db,'advances'), {worker, amount, date, reason, addedBy:currentUser.id, timestamp:Date.now()});
   showToast('✅ Advance saved');
   closeModal('modalAdvance');
 }
@@ -2297,7 +2302,7 @@ function renderAdvances() {
 }
 window.deleteAdvance = function(id) {
   if (!confirm('Delete this advance?')) return;
-  remove(ref(db,'advances/'+id));
+  deleteDoc(doc(db,'advances',id));
   showToast('🗑️ Advance deleted');
 }
 
@@ -2910,8 +2915,9 @@ function renderRecycle() {
   const container = document.getElementById('recycleList');
   if (!container) return;
   container.innerHTML = '<div class="recycle-empty"><div class="icon">⏳</div><p>Loading...</p></div>';
-  get(ref(db,'deleted')).then(snap => {
-    deletedTrucks = snap.val() || {};
+  getDocs(collection(db,'deleted')).then(snap => {
+    deletedTrucks = {};
+    snap.forEach(d => { deletedTrucks[d.id] = d.data(); });
     renderRecycleList();
   }).catch(() => {
     container.innerHTML = `<div class="recycle-empty"><div class="icon">⚠️</div><p>Could not load bin. Check connection.</p></div>`;
@@ -2982,8 +2988,8 @@ window.restoreTruck = function(id) {
   if (!confirm(`Restore truck ${t.plate} back to active list?`)) return;
   const restored = {...t};
   delete restored._id; delete restored.deletedAt; delete restored.deletedBy;
-  set(ref(db,'trucks/'+id), restored);
-  remove(ref(db,'deleted/'+id));
+  setDoc(doc(db,'trucks',id), restored);
+  deleteDoc(doc(db,'deleted',id));
   delete deletedTrucks[id];
   showToast('↩️ Truck restored');
   renderRecycleList();
@@ -2992,7 +2998,7 @@ window.permDelete = function(id) {
   const t = deletedTrucks[id];
   const plate = t ? t.plate : 'this truck';
   if (!confirm(`Permanently delete ${plate}? This CANNOT be undone.`)) return;
-  remove(ref(db,'deleted/'+id));
+  deleteDoc(doc(db,'deleted',id));
   delete deletedTrucks[id];
   showToast(`🗑️ ${plate} permanently deleted`);
   renderRecycleList();
@@ -3001,14 +3007,14 @@ window.emptyRecycleBin = function() {
   const total = Object.keys(deletedTrucks).length;
   if (total === 0) { showToast('Bin is already empty'); return; }
   if (!confirm(`Permanently delete ALL ${total} trucks in the bin? This CANNOT be undone.`)) return;
-  remove(ref(db,'deleted'));
+  getDocs(collection(db,'deleted')).then(snap => { snap.forEach(d => deleteDoc(d.ref)); });
   deletedTrucks = {};
   showToast(`🗑️ Emptied — ${total} trucks permanently deleted`);
   renderRecycleList();
 }
 window.clearAllData = function() {
   if (!confirm('Clear ALL truck data? This cannot be undone!')) return;
-  remove(ref(db,'trucks'));
+  getDocs(collection(db,'trucks')).then(snap => { snap.forEach(d => deleteDoc(d.ref)); });
   showToast('⚠️ All data cleared');
 }
 
@@ -3043,7 +3049,7 @@ function updateSuspendUI() {
 }
 window.toggleSuspend = function() {
   addingSuspended = !addingSuspended;
-  set(ref(db,'settings/addingSuspended'), addingSuspended);
+  setDoc(doc(db,'settings','addingSuspended'), {value: addingSuspended});
   updateSuspendUI();
   showToast(addingSuspended ? '🚫 Adding suspended for all workers' : '✅ Adding resumed for all workers');
 }
