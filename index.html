@@ -1282,7 +1282,7 @@
 <div class="modal-overlay" id="modalHeadName">
   <div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title">🏢 Rename Company Head Role</div>
+    <div class="modal-title">🏢 Rename CEO Role</div>
     <div class="form-group">
       <label class="form-label">ROLE NAME</label>
       <input class="form-input" id="headNameInput" placeholder="e.g. Directeur, Patron, Boss..." maxlength="20">
@@ -1377,15 +1377,15 @@ function getAllowedDates() {
 
 // ── DEFAULT SETTINGS ──
 const DEFAULT_PINS = {
-  admin: '1234',
-  head: '9999',
-  cashier1: '1111',
-  cashier2: '2222',
-  Ahmed: '3333',
-  Radwan: '4444',
-  Oli: '5555',
-  Ali: '6666',
-  Omar: '7777'
+  admin: '2055',
+  head: '2013',
+  cashier1: '7777',
+  cashier2: '8888',
+  Ahmed: '1111',
+  Ali: '2222',
+  Oli: '3333',
+  Omar: '4444',
+  Radwan: '5555'
 };
 const DEFAULT_WORKERS = ['Ahmed','Radwan','Oli','Ali','Omar'];
 const WORKER_COLORS = {
@@ -1485,7 +1485,8 @@ const t = k => (T[currentLang]||T.en)[k] || k;
 let _cloudPins = {};
 let _cloudPerms = {};
 let _cloudWorkers = null;
-let _cloudHeadName = 'Company Head'; // editable by admin
+let _cloudHeadName = null; // null until Firebase loads — prevents flash to default
+function getHeadName() { return _cloudHeadName || 'CEO'; }
 
 // ── PIN MANAGEMENT (Firestore-backed) ──
 function getPin(user) { return _cloudPins[user] || DEFAULT_PINS[user] || '0000'; }
@@ -1587,9 +1588,18 @@ function initFirebase() {
 
   // ── Cloud Head Name ──
   window._unsubHead = onSnapshot(doc(db,'settings','headName'), snap => {
-    _cloudHeadName = snap.exists() ? (snap.data().name || 'Company Head') : 'Company Head';
-    buildLogin();
-    if (currentTab === 'manage') renderManage();
+    const prev = _cloudHeadName;
+    _cloudHeadName = snap.exists() ? (snap.data().name || null) : null;
+    // Only rebuild if name actually changed
+    if (_cloudHeadName !== prev) {
+      buildLogin();
+      if (currentUser && currentUser.role === 'head') {
+        currentUser.name = getHeadName();
+        document.getElementById('headerSub').textContent = getHeadName();
+        document.getElementById('roleBadge').textContent = getHeadName().toUpperCase();
+      }
+      if (currentTab === 'manage') renderManage();
+    }
   }, () => {});
 }
 
@@ -1624,7 +1634,7 @@ function buildLogin() {
   const grid = document.getElementById('loginGrid');
   const users = [
     {id:'admin', label:'Admin', role:'Full access', icon:'👑', color:'#a855f7'},
-    {id:'head', label:_cloudHeadName, role:'Company Head', icon:'🏢', color:'#f59e0b'},
+    {id:'head', label:getHeadName(), role:'CEO', icon:'🏢', color:'#f59e0b'},
     {id:'cashier1', label:'Cashier 1', role:'Cashier', icon:'💼', color:'#3b82f6'},
     {id:'cashier2', label:'Cashier 2', role:'Cashier', icon:'💼', color:'#14b8a6'},
     ...workers.map(w => ({
@@ -1649,7 +1659,7 @@ window.goPin = function(userId) {
   const workers = getWorkerList();
   let name = userId, role = 'Worker', color = WORKER_COLORS[userId]||'#6b7280';
   if (userId==='admin') { name='Admin'; role='Full Access'; color='#a855f7'; }
-  else if (userId==='head') { name=_cloudHeadName; role='Company Head'; color='#f59e0b'; }
+  else if (userId==='head') { name=getHeadName(); role='CEO'; color='#f59e0b'; }
   else if (userId==='cashier1') { name='Cashier 1'; role='Cashier'; color='#3b82f6'; }
   else if (userId==='cashier2') { name='Cashier 2'; role='Cashier'; color='#14b8a6'; }
 
@@ -1708,7 +1718,7 @@ function loginSuccess() {
   if (id === 'admin') {
     currentUser = {id:'admin', name:'Admin', role:'admin', color:'#a855f7'};
   } else if (id === 'head') {
-    currentUser = {id:'head', name:_cloudHeadName, role:'head', color:'#f59e0b'};
+    currentUser = {id:'head', name:getHeadName(), role:'head', color:'#f59e0b'};
   } else if (id === 'cashier1') {
     currentUser = {id:'cashier1', name:'Cashier 1', role:'cashier', color:'#3b82f6'};
   } else if (id === 'cashier2') {
@@ -1738,11 +1748,11 @@ function buildApp() {
     t('allTrucks');
   document.getElementById('headerSub').textContent =
     role==='admin' ? t('fullView') :
-    role==='head' ? _cloudHeadName :
+    role==='head' ? getHeadName() :
     role==='cashier' ? t('cashierView') :
     'Hask Services';
   const rb = document.getElementById('roleBadge');
-  rb.textContent = role==='head' ? _cloudHeadName.toUpperCase() : role.toUpperCase();
+  rb.textContent = role==='head' ? getHeadName().toUpperCase() : role.toUpperCase();
   rb.className = 'role-badge ' + (role==='head' ? 'head' : role);
 
   // Show/hide add button
@@ -2728,7 +2738,7 @@ function renderManage() {
           <div class="manage-item-left">
             <div class="manage-item-icon">🏢</div>
             <div>
-              <div class="manage-item-name" id="headNameDisplay">${_cloudHeadName}</div>
+              <div class="manage-item-name" id="headNameDisplay">${getHeadName()}</div>
               <div class="manage-item-sub">Tap to rename this role</div>
             </div>
           </div>
@@ -2872,7 +2882,7 @@ window.setLang = function(lang) {
 
 // ── COMPANY HEAD NAME ──
 window.openEditHeadName = function() {
-  document.getElementById('headNameInput').value = _cloudHeadName;
+  document.getElementById('headNameInput').value = getHeadName();
   openModal('modalHeadName');
 }
 window.saveHeadName = function() {
