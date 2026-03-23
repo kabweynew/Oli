@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>WKABE — Hask Truck Tracker</title>
-<meta name="description" content="Hask Services Djibouti — Truck tracking and worker management">
+<meta name="description" content="Hask Services Djibouti — Truck tracking and sealer management">
 <meta name="theme-color" content="#0f1623">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -167,6 +167,7 @@
     letter-spacing: 0.05em;
   }
   .role-badge.admin { background: rgba(168,85,247,0.2); color: var(--purple); border: 1px solid rgba(168,85,247,0.3); }
+  .role-badge.head { background: rgba(245,158,11,0.2); color: var(--orange); border: 1px solid rgba(245,158,11,0.3); }
   .role-badge.cashier { background: rgba(59,130,246,0.2); color: var(--accent); border: 1px solid rgba(59,130,246,0.3); }
   .role-badge.worker { background: rgba(34,197,94,0.2); color: var(--green); border: 1px solid rgba(34,197,94,0.3); }
   .add-btn {
@@ -748,7 +749,7 @@
   }
   .dup-warning.visible { display: block; }
 
-  /* ── PENDING / WAITING FOR WORKER ── */
+  /* ── PENDING / WAITING FOR SEALER ── */
   .pending-section {
     background: rgba(155,89,182,0.08);
     border: 1.5px solid rgba(155,89,182,0.25);
@@ -1024,7 +1025,7 @@
         </div>
       </div>
       <div id="assignSection" class="assign-section" style="margin:0 16px 10px; display:none;">
-        <div class="assign-title">⏳ WAITING FOR WORKER</div>
+        <div class="assign-title">⏳ WAITING FOR SEALER</div>
         <div id="unassignedList"></div>
       </div>
       <div class="trucks-list" id="trucksList"></div>
@@ -1106,7 +1107,7 @@
       <input class="form-input" type="date" id="truckDate">
     </div>
     <div class="form-group" id="workerGroup">
-      <label class="form-label">WORKER</label>
+      <label class="form-label">SEALER/label>
       <select class="form-select" id="truckWorker"></select>
     </div>
     <div class="form-group" id="statusGroup">
@@ -1129,7 +1130,7 @@
     <div class="modal-handle"></div>
     <div class="modal-title">💰 Add Advance</div>
     <div class="form-group">
-      <label class="form-label">WORKER</label>
+      <label class="form-label">SEALER/label>
       <select class="form-select" id="advWorker"></select>
     </div>
     <div class="form-group">
@@ -1166,16 +1167,16 @@
 <div class="modal-overlay" id="modalAssign">
   <div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title">👷 Assign Worker</div>
+    <div class="modal-title">👷 Assign Sealer</div>
     <div id="assignTruckInfo" style="font-size:13px;color:var(--text2);margin-bottom:14px;"></div>
     <input type="hidden" id="assignTruckId">
     <div class="form-group">
-      <label class="form-label">SELECT WORKER</label>
+      <label class="form-label">SELECT SEALER</label>
       <select class="form-select" id="assignWorkerSel"></select>
     </div>
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeModal('modalAssign')">Cancel</button>
-      <button class="btn-primary" onclick="doAssign()">✅ Assign Worker</button>
+      <button class="btn-primary" onclick="doAssign()">✅ Assign Sealer</button>
     </div>
   </div>
 </div>
@@ -1212,8 +1213,12 @@
     <div class="modal-title" id="pinModalTitle">🔐 Change PIN</div>
     <div class="form-group">
       <label class="form-label">NEW PIN (4 digits)</label>
-      <input class="form-input" type="password" id="newPin" placeholder="••••" maxlength="4" inputmode="numeric">
+      <div style="position:relative">
+        <input class="form-input" type="password" id="newPin" placeholder="••••" maxlength="4" inputmode="numeric" style="padding-right:48px">
+        <button onclick="togglePinVisibility()" id="pinEyeBtn" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text2);font-size:18px;cursor:pointer;padding:4px">👁</button>
+      </div>
     </div>
+    <button onclick="resetPinToDefault()" style="width:100%;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);color:var(--orange);border-radius:var(--radius-sm);padding:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;margin-bottom:4px">🔄 Reset to Default PIN</button>
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeModal('modalPin')">Cancel</button>
       <button class="btn-primary" onclick="savePin()">Save PIN</button>
@@ -1247,9 +1252,9 @@
 <div class="modal-overlay" id="modalAddWorker">
   <div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title">👷 Add Worker</div>
+    <div class="modal-title">👷 Add Sealer</div>
     <div class="form-group">
-      <label class="form-label">WORKER NAME</label>
+      <label class="form-label">SEALER NAME</label>
       <input class="form-input" id="newWorkerName" placeholder="Full name">
     </div>
     <div class="form-group">
@@ -1258,7 +1263,7 @@
     </div>
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeModal('modalAddWorker')">Cancel</button>
-      <button class="btn-primary" onclick="saveNewWorker()">Add Worker</button>
+      <button class="btn-primary" onclick="saveNewWorker()">Add Sealer</button>
     </div>
   </div>
 </div>
@@ -1272,6 +1277,21 @@
   </div>
   <button class="pwa-inst-btn" onclick="doInstallPWA()">Install</button>
   <button class="pwa-close-btn" onclick="dismissPWABanner()">✕</button>
+</div>
+
+<div class="modal-overlay" id="modalHeadName">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🏢 Rename Company Head Role</div>
+    <div class="form-group">
+      <label class="form-label">ROLE NAME</label>
+      <input class="form-input" id="headNameInput" placeholder="e.g. Directeur, Patron, Boss..." maxlength="20">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modalHeadName')">Cancel</button>
+      <button class="btn-primary" onclick="saveHeadName()">Save</button>
+    </div>
+  </div>
 </div>
 
 <!-- TOAST -->
@@ -1358,6 +1378,7 @@ function getAllowedDates() {
 // ── DEFAULT SETTINGS ──
 const DEFAULT_PINS = {
   admin: '1234',
+  head: '9999',
   cashier1: '1111',
   cashier2: '2222',
   Ahmed: '3333',
@@ -1377,7 +1398,7 @@ const WORKER_PAY = { paid: 1300, partial: 700, unpaid: 0 };
 // ── TRANSLATIONS ──
 const T = {
   en: {
-    trucks:'Trucks', workers:'Workers', advances:'Advances', reports:'Reports', manage:'Manage',
+    trucks:'Trucks', sealers:'Sealers', advances:'Advances', reports:'Reports', manage:'Manage',
     addTruck:'Add Truck', today:'Today', allTrucks:'All Trucks',
     noTrucks:'No trucks found', paid:'Paid', partial:'Partial', unpaid:'Unpaid',
     assign:'Assign', changeStatus:'Change Status', delete:'Delete',
@@ -1389,14 +1410,22 @@ const T = {
     logout:'Logout', language:'Language',
     recycleBin:'Recycle Bin', clearData:'Clear All Data',
     adminPin:'Admin PIN', cashierPerms:'Cashier Permissions',
-    workerPerms:'Worker Permissions', changePin:'Change PIN',
-    addAdvance:'Add Advance', addWorker:'Add Worker',
+    workerPerms:'Sealer Permissions', changePin:'Change PIN',
+    addAdvance:'Add Advance', addWorker:'Add Sealer',
     save:'Save', cancel:'Cancel', back:'Back',
-    waitingWorker:'Waiting for Worker',
-    workerPending:'Paid — Worker Pending',
+    waitingWorker:'Waiting for Sealer', workerPending:'Paid — Sealer Pending',
+    // Report
+    rTitle:'WKABE HASK SERVICES - Daily Report',
+    rDate:'Date', rGenerated:'Generated', rSummary:'SUMMARY',
+    rTotal:'Total Trucks', rPaid:'Paid', rPartial:'Partial', rUnpaid:'Unpaid', rPending:'Paid (no sealer)',
+    rRevenue:'Revenue', rSealerPay:'Sealer Pay', rCompany:'Company', rUncollected:'Uncollected (Unpaid)',
+    rBySealer:'BY SEALER', rTruckList:'TRUCK LIST', rEarned:'Earned', rUncollectedBy:'Uncollected',
+    rNoAssigned:'No trucks assigned', rNoTrucks:'No trucks',
+    rNoSealer:'No sealer', rFooter:'WKABE Hask Services - Djibouti',
+    rSubject:'WKABE Daily Report',
   },
   fr: {
-    trucks:'Camions', workers:'Chauffeurs', advances:'Avances', reports:'Rapports', manage:'Gérer',
+    trucks:'Camions', sealers:'Scelleurs', advances:'Avances', reports:'Rapports', manage:'Gérer',
     addTruck:'Ajouter Camion', today:"Aujourd'hui", allTrucks:'Tous les Camions',
     noTrucks:'Aucun camion trouvé', paid:'Payé', partial:'Partiel', unpaid:'Impayé',
     assign:'Assigner', changeStatus:'Changer Statut', delete:'Supprimer',
@@ -1408,14 +1437,22 @@ const T = {
     logout:'Déconnexion', language:'Langue',
     recycleBin:'Corbeille', clearData:'Effacer Données',
     adminPin:'PIN Admin', cashierPerms:'Permissions Caissier',
-    workerPerms:'Permissions Travailleur', changePin:'Changer PIN',
-    addAdvance:'Ajouter Avance', addWorker:'Ajouter Travailleur',
+    workerPerms:'Permissions Scelleur', changePin:'Changer PIN',
+    addAdvance:'Ajouter Avance', addWorker:'Ajouter Scelleur',
     save:'Enregistrer', cancel:'Annuler', back:'Retour',
-    waitingWorker:'En attente de travailleur',
-    workerPending:'Payé — Travailleur en attente',
+    waitingWorker:'En attente de scelleur', workerPending:'Payé — Scelleur en attente',
+    // Rapport
+    rTitle:'WKABE HASK SERVICES - Rapport Journalier',
+    rDate:'Date', rGenerated:'Généré le', rSummary:'RÉSUMÉ',
+    rTotal:'Total Camions', rPaid:'Payé', rPartial:'Partiel', rUnpaid:'Impayé', rPending:'Payé (sans scelleur)',
+    rRevenue:'Revenu', rSealerPay:'Paiement Scelleur', rCompany:'Entreprise', rUncollected:'Non encaissé (Impayé)',
+    rBySealer:'PAR SCELLEUR', rTruckList:'LISTE DES CAMIONS', rEarned:'Gagné', rUncollectedBy:'Non encaissé',
+    rNoAssigned:'Aucun camion assigné', rNoTrucks:'Aucun camion',
+    rNoSealer:'Sans scelleur', rFooter:'WKABE Hask Services - Djibouti',
+    rSubject:'Rapport Journalier WKABE',
   },
   so: {
-    trucks:'Baabuurta', workers:'Shaqaalaha', advances:'Amaahda', reports:'Warbixinta', manage:'Maamul',
+    trucks:'Baabuurta', sealers:'Shaaqaalaha', advances:'Amaahda', reports:'Warbixinta', manage:'Maamul',
     addTruck:'Kudar Baabuur', today:'Maanta', allTrucks:'Dhammaan Baabuurta',
     noTrucks:'Baabuur lama helin', paid:'La bixiyay', partial:'Qayb', unpaid:'Aan la bixin',
     assign:'U xil saar', changeStatus:'Beddel xaalada', delete:'Tirtir',
@@ -1427,19 +1464,28 @@ const T = {
     logout:'Ka bax', language:'Luqadda',
     recycleBin:'Xabadka', clearData:'Naadi Xogta',
     adminPin:'PIN Admin', cashierPerms:'Fasaxyada Kaashiyeerka',
-    workerPerms:'Fasaxyada Shaqaalaha', changePin:'Beddel PIN',
-    addAdvance:'Kudar Amaah', addWorker:'Kudar Shaqaale',
+    workerPerms:'Fasaxyada Shaaqaalaha', changePin:'Beddel PIN',
+    addAdvance:'Kudar Amaah', addWorker:'Kudar Shaaqaale',
     save:'Keydi', cancel:'Jooji', back:'Dib u noqo',
-    waitingWorker:'Sugaya shaqaalaha',
-    workerPending:'La bixiyay — Shaqaalaha sugaya',
+    waitingWorker:'Sugaya shaaqaalaha', workerPending:'La bixiyay — Shaaqaalaha sugaya',
+    // Warbixin
+    rTitle:'WKABE HASK SERVICES - Warbixinta Maalinlaha',
+    rDate:'Taariikhda', rGenerated:'La sameeyay', rSummary:'KOOBAN',
+    rTotal:'Wadarta Baabuurta', rPaid:'La bixiyay', rPartial:'Qayb', rUnpaid:'Aan la bixin', rPending:'La bixiyay (la sugayo)',
+    rRevenue:'Dakhliga', rSealerPay:'Lacagta Shaaqaalaha', rCompany:'Shirkadda', rUncollected:'Aan la urursan (Impayé)',
+    rBySealer:'SHAAQAALE KASTA', rTruckList:'LIISKA BAABUURTA', rEarned:'La helay', rUncollectedBy:'Aan la urursan',
+    rNoAssigned:'Baabuur lama xilsaarin', rNoTrucks:'Baabuur ma jiro',
+    rNoSealer:'Shaaqaale ma jiro', rFooter:'WKABE Hask Services - Djibouti',
+    rSubject:'Warbixinta Maalinlaha WKABE',
   }
 };
 const t = k => (T[currentLang]||T.en)[k] || k;
 
 // ── CLOUD STATE (synced from Firestore) ──
-let _cloudPins = {};       // { userId: '1234', ... }
-let _cloudPerms = {};      // { userId: { addTrucks: true, ... }, ... }
-let _cloudWorkers = null;  // null = not loaded yet; [] = loaded
+let _cloudPins = {};
+let _cloudPerms = {};
+let _cloudWorkers = null;
+let _cloudHeadName = 'Company Head'; // editable by admin
 
 // ── PIN MANAGEMENT (Firestore-backed) ──
 function getPin(user) { return _cloudPins[user] || DEFAULT_PINS[user] || '0000'; }
@@ -1538,6 +1584,13 @@ function initFirebase() {
     if (currentTab === 'workers') renderWorkers();
     if (currentTab === 'manage') renderManage();
   }, () => {});
+
+  // ── Cloud Head Name ──
+  window._unsubHead = onSnapshot(doc(db,'settings','headName'), snap => {
+    _cloudHeadName = snap.exists() ? (snap.data().name || 'Company Head') : 'Company Head';
+    buildLogin();
+    if (currentTab === 'manage') renderManage();
+  }, () => {});
 }
 
 function setSyncing() {
@@ -1571,10 +1624,11 @@ function buildLogin() {
   const grid = document.getElementById('loginGrid');
   const users = [
     {id:'admin', label:'Admin', role:'Full access', icon:'👑', color:'#a855f7'},
+    {id:'head', label:_cloudHeadName, role:'Company Head', icon:'🏢', color:'#f59e0b'},
     {id:'cashier1', label:'Cashier 1', role:'Cashier', icon:'💼', color:'#3b82f6'},
     {id:'cashier2', label:'Cashier 2', role:'Cashier', icon:'💼', color:'#14b8a6'},
     ...workers.map(w => ({
-      id:w, label:w, role:'Worker · My trucks only',
+      id:w, label:w, role:'Sealer · My seals only',
       icon: w.substring(0,2).toUpperCase(), color: WORKER_COLORS[w]||'#6b7280'
     }))
   ];
@@ -1595,10 +1649,11 @@ window.goPin = function(userId) {
   const workers = getWorkerList();
   let name = userId, role = 'Worker', color = WORKER_COLORS[userId]||'#6b7280';
   if (userId==='admin') { name='Admin'; role='Full Access'; color='#a855f7'; }
+  else if (userId==='head') { name=_cloudHeadName; role='Company Head'; color='#f59e0b'; }
   else if (userId==='cashier1') { name='Cashier 1'; role='Cashier'; color='#3b82f6'; }
   else if (userId==='cashier2') { name='Cashier 2'; role='Cashier'; color='#14b8a6'; }
 
-  document.getElementById('pinAvatar').textContent = userId==='admin'?'👑':userId.startsWith('cashier')?'💼':userId.substring(0,2).toUpperCase();
+  document.getElementById('pinAvatar').textContent = userId==='admin'?'👑':userId==='head'?'🏢':userId.startsWith('cashier')?'💼':userId.substring(0,2).toUpperCase();
   document.getElementById('pinAvatar').style.background = color+'22';
   document.getElementById('pinAvatar').style.color = color;
   document.getElementById('pinAvatar').style.border = `2px solid ${color}44`;
@@ -1652,6 +1707,8 @@ function loginSuccess() {
 
   if (id === 'admin') {
     currentUser = {id:'admin', name:'Admin', role:'admin', color:'#a855f7'};
+  } else if (id === 'head') {
+    currentUser = {id:'head', name:_cloudHeadName, role:'head', color:'#f59e0b'};
   } else if (id === 'cashier1') {
     currentUser = {id:'cashier1', name:'Cashier 1', role:'cashier', color:'#3b82f6'};
   } else if (id === 'cashier2') {
@@ -1676,19 +1733,21 @@ function buildApp() {
   // Header
   document.getElementById('headerTitle').textContent =
     role==='admin' ? t('allTrucks') :
+    role==='head' ? t('allTrucks') :
     role==='cashier' ? t('trucks') :
-    t('myTrucks');
+    t('allTrucks');
   document.getElementById('headerSub').textContent =
     role==='admin' ? t('fullView') :
+    role==='head' ? _cloudHeadName :
     role==='cashier' ? t('cashierView') :
     'Hask Services';
   const rb = document.getElementById('roleBadge');
-  rb.textContent = role.toUpperCase();
-  rb.className = 'role-badge ' + role;
+  rb.textContent = role==='head' ? _cloudHeadName.toUpperCase() : role.toUpperCase();
+  rb.className = 'role-badge ' + (role==='head' ? 'head' : role);
 
   // Show/hide add button
   const perms = getUserPerms(id);
-  const canAdd = role==='admin' || (role==='cashier' && perms.addTrucks) || (role==='worker' && perms.canAddOwnTrucks);
+  const canAdd = role==='admin' || role==='head' || (role==='cashier' && perms.addTrucks) || (role==='worker' && perms.canAddOwnTrucks);
   document.getElementById('headerAddBtn').style.display = canAdd ? '' : 'none';
   // Load suspend state
   getDoc(doc(db,'settings','addingSuspended')).then(snap => {
@@ -1721,23 +1780,32 @@ function buildNav() {
   if (role==='admin') tabs = [
     {id:'trucks', icon:'🚛', label:t('trucks')},
     {id:'list', icon:'📋', label:'List'},
-    {id:'workers', icon:'👷', label:t('workers')},
+    {id:'workers', icon:'👷', label:t('sealers')},
     {id:'advances', icon:'💸', label:t('advances')},
     {id:'reports', icon:'📊', label:t('reports')},
     {id:'manage', icon:'⚙️', label:t('manage')},
     {id:'recycle', icon:'🗑️', label:'Bin'},
   ];
+  else if (role==='head') tabs = [
+    {id:'trucks', icon:'🚛', label:t('trucks')},
+    {id:'list', icon:'📋', label:'List'},
+    {id:'workers', icon:'👷', label:t('sealers')},
+    {id:'advances', icon:'💸', label:t('advances')},
+    {id:'reports', icon:'📊', label:t('reports')},
+    {id:'recycle', icon:'🗑️', label:'Bin'},
+    {id:'logout', icon:'🚪', label:t('logout')},
+  ];
   else if (role==='cashier') {
     const p = getUserPerms(currentUser.id);
     tabs = [{id:'trucks', icon:'🚛', label:t('trucks')}];
     tabs.push({id:'list', icon:'📋', label:'List'});
-    tabs.push({id:'workers', icon:'👷', label:t('workers')});
+    tabs.push({id:'workers', icon:'👷', label:t('sealers')});
     if (p.addAdvances) tabs.push({id:'advances', icon:'💸', label:t('advances')});
     tabs.push({id:'reports', icon:'📊', label:t('reports')});
     tabs.push({id:'logout', icon:'🚪', label:t('logout')});
   } else {
     tabs = [
-      {id:'trucks', icon:'🚛', label:t('myTrucks')},
+      {id:'trucks', icon:'🚛', label:t('trucks')},
       {id:'list', icon:'📋', label:'My List'},
       {id:'earnings', icon:'💰', label:t('myEarnings')},
       {id:'logout', icon:'🚪', label:t('logout')},
@@ -1926,30 +1994,34 @@ function renderTrucks() {
   // ── Build filtered list ──
   let list = [...allForDateUnfiltered];
 
-  // Worker only sees own trucks
-  if (role==='worker') list = list.filter(t=>t.worker===id);
+  // Workers see ALL trucks on the trucks tab (numbering order)
+  // Their own trucks are in "My List" tab
 
   // Status filter
   if (filterStatus!=='all') list = list.filter(t=>t.status===filterStatus);
 
-  // Worker filter
-  if (filterWorker!=='all') list = list.filter(t=>t.worker===filterWorker);
+  // Worker filter (only for admin/cashier/head)
+  if (filterWorker!=='all' && role!=='worker') list = list.filter(t=>t.worker===filterWorker);
 
   // Plate search filter
   if (filterPlate) list = list.filter(t => (t.plate||'').toUpperCase().includes(filterPlate));
 
-  // Sort newest first for display
-  list.sort((a,b)=>(b.timestamp||0)-(a.timestamp||0));
+  // Sort by number (oldest first = #1 first)
+  list.sort((a,b)=>(a.timestamp||0)-(b.timestamp||0));
 
-  // ── Stats bar — always based on full day, not filtered ──
+  // ── Stats bar — for workers show only their own trucks ──
   const statsBase = role==='worker'
     ? allForDateUnfiltered.filter(t=>t.worker===id)
     : allForDateUnfiltered;
-  document.getElementById('statTotal').textContent = statsBase.length;
-  document.getElementById('statPaid').textContent = statsBase.filter(t=>t.status==='paid').length;
+  document.getElementById('statTotal').textContent = (
+    statsBase.filter(t=>t.status==='paid'||t.status==='pending').length +
+    statsBase.filter(t=>t.status==='partial').length * 0.5 +
+    statsBase.filter(t=>t.status==='unpaid').length
+  ).toFixed(1).replace('.0','');
+  document.getElementById('statPaid').textContent = statsBase.filter(t=>t.status==='paid'||t.status==='pending').length;
   document.getElementById('statPartial').textContent = statsBase.filter(t=>t.status==='partial').length;
-  document.getElementById('statUnpaid').textContent = statsBase.filter(t=>t.status==='unpaid'||t.status==='pending').length;
-  const earn = statsBase.reduce((s,t)=>s+(t.status==='paid'?CLIENT_PRICE:t.status==='partial'?2800:0),0);
+  document.getElementById('statUnpaid').textContent = statsBase.filter(t=>t.status==='unpaid').length;
+  const earn = statsBase.reduce((s,t)=>s+(t.status==='paid'||t.status==='pending'?CLIENT_PRICE:t.status==='partial'?2800:0),0);
   document.getElementById('statETB').textContent = earn>=1000 ? (earn/1000).toFixed(1)+'k' : earn;
 
   // ── Worker chip counts — only for today's date ──
@@ -1979,7 +2051,7 @@ function renderTrucks() {
   const headerAddBtn = document.getElementById('headerAddBtn');
   const newBtn = document.querySelector('.new-btn');
   const perms2 = getUserPerms(id);
-  const canAdd = role==='admin' || (role==='cashier' && perms2.addTrucks) || (role==='worker' && perms2.canAddOwnTrucks);
+  const canAdd = role==='admin' || role==='head' || (role==='cashier' && perms2.addTrucks) || (role==='worker' && perms2.canAddOwnTrucks);
   if (headerAddBtn) headerAddBtn.style.display = (canAdd && isToday) ? '' : 'none';
   if (newBtn) newBtn.style.display = (canAdd && isToday) ? '' : 'none';
 
@@ -2015,7 +2087,7 @@ function renderTrucks() {
     const canAssignNow = isToday && (role==='admin' || role==='cashier');
     pendingHTML = `<div class="pending-section">
       <div class="pending-hdr">
-        <span class="pending-title">⏳ Waiting for Worker</span>
+        <span class="pending-title">⏳ Waiting for Sealer</span>
         <span class="pending-count">${pendingTrucks.length}</span>
       </div>
       ${pendingTrucks.map(tk => `
@@ -2035,9 +2107,9 @@ function renderTrucks() {
   }
 
   const perms = getUserPerms(id);
-  const canEditStatus = isToday && (role==='admin' || (role==='cashier' && perms.editStatus));
-  const canDelete = isToday && (role==='admin' || (role==='cashier' && perms.deleteTrucks));
-  const canEdit = isToday && (role==='admin' || (role==='cashier' && perms.addTrucks)); // full edit: plate+worker+status
+  const canEditStatus = isToday && (role==='admin' || role==='head' || (role==='cashier' && perms.editStatus));
+  const canDelete = isToday && (role==='admin' || role==='head' || (role==='cashier' && perms.deleteTrucks));
+  const canEdit = isToday && (role==='admin' || role==='head' || (role==='cashier' && perms.addTrucks)); // full edit: plate+worker+status
 
   container.innerHTML = historyNotice + pendingHTML + (assignedTrucks.length === 0
     ? `<div class="empty-state"><div class="icon">🚛</div><p>${pendingTrucks.length ? 'No assigned trucks today' : t('noTrucks')}</p></div>`
@@ -2077,7 +2149,7 @@ function renderTrucks() {
         ${truck.notes ? `<div class="truck-meta">📝 ${truck.notes}</div>` : ''}
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
           <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">WORKER</div>
+            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
             <div style="font-size:12px;font-weight:700;color:${workerColor}">${truck.worker||'—'}</div>
           </div>
           <div style="text-align:center">
@@ -2085,7 +2157,7 @@ function renderTrucks() {
             <div style="font-size:12px;font-weight:700;color:var(--orange)">${totalFare>0?totalFare.toLocaleString()+' ETB':'—'}</div>
           </div>
           <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">WORKER GETS</div>
+            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
             <div style="font-size:12px;font-weight:700;color:var(--teal)">${workerEarn>0?workerEarn.toLocaleString()+' ETB':'—'}</div>
           </div>
           <div style="text-align:center">
@@ -2138,14 +2210,14 @@ window.openEditTruck = function(id) {
     document.getElementById('workerGroup').style.display = 'none';
     document.getElementById('statusGroup').style.display = 'none';
   } else {
-    sel.innerHTML = `<option value="">— No worker yet (Pending) —</option>` +
+    sel.innerHTML = `<option value="">— No sealer yet (Pending) —</option>` +
       workers.map(w=>`<option value="${w}">${w}</option>`).join('');
     sel.value = truck.worker||'';
     document.getElementById('workerGroup').style.display = '';
     document.getElementById('statusGroup').style.display = '';
   }
-  // Show actual status, but pending trucks default to unpaid in radio
-  buildStatusRadio('statusRadio', (truck.status==='pending' ? 'unpaid' : truck.status)||'unpaid');
+  // Show actual status, but pending trucks are paid
+  buildStatusRadio('statusRadio', (truck.status==='pending' ? 'paid' : truck.status)||'unpaid');
   openModal('modalTruck');
 }
 
@@ -2166,7 +2238,7 @@ window.checkDuplicate = function() {
   if (matches.length > 0) {
     const m = matches[0][1];
     const workerColor = WORKER_COLORS[m.worker] || '#6b7280';
-    warn.innerHTML = `⚠️ <strong>${plate}</strong> already recorded on ${date} — Worker: <span style="color:${workerColor}">${m.worker||'No worker yet'}</span>, Status: ${m.status}`;
+    warn.innerHTML = `⚠️ <strong>${plate}</strong> already recorded on ${date} — Worker: <span style="color:${workerColor}">${m.worker||'No sealer yet'}</span>, Status: ${m.status}`;
     warn.classList.add('visible');
   } else {
     warn.classList.remove('visible');
@@ -2192,21 +2264,21 @@ window.openAddTruck = function() {
     document.getElementById('workerGroup').style.display = 'none';
     document.getElementById('statusGroup').style.display = 'none';
   } else {
-    // Admin/Cashier: show worker dropdown with "No worker yet" option
-    sel.innerHTML = `<option value="">— No worker yet (Pending) —</option>` +
+    // Admin/Head/Cashier: show worker dropdown with "No sealer yet" option
+    sel.innerHTML = `<option value="">— No sealer yet (Pending) —</option>` +
       workers.map(w => `<option value="${w}">${w}</option>`).join('');
     document.getElementById('workerGroup').style.display = '';
     document.getElementById('statusGroup').style.display = '';
   }
 
-  buildStatusRadio('statusRadio', 'unpaid');
+  buildStatusRadio('statusRadio', 'paid');
   openModal('modalTruck');
 }
 function buildStatusRadio(containerId, selected) {
   const opts = [
-    {val:'unpaid', label:'❌ '+t('unpaid'), sub:'0 ETB to worker'},
-    {val:'partial', label:'⚡ '+t('partial'), sub:'Worker: 700 ETB · Client: 2,800 ETB'},
-    {val:'paid', label:'✅ '+t('paid'), sub:'Worker: 1,300 ETB · Client: 5,500 ETB'},
+    {val:'unpaid', label:'❌ '+t('unpaid'), sub:'0 ETB to sealer'},
+    {val:'partial', label:'⚡ '+t('partial'), sub:'Sealer: 700 ETB · Company: 2,100 ETB · Total: 2,800 ETB'},
+    {val:'paid', label:'✅ '+t('paid'), sub:'Sealer: 1,300 ETB · Client: 5,500 ETB'},
   ];
   document.getElementById(containerId).innerHTML = opts.map(o=>`
     <div class="radio-opt${o.val===selected?' selected':''}" onclick="selectRadio(this,'${containerId}')">
@@ -2236,9 +2308,7 @@ window.saveTruck = function() {
     : document.getElementById('truckWorker').value;
   let status = currentUser.role === 'worker' ? 'unpaid' : getRadioVal('statusRadio');
   // No worker selected → paid (client already paid, worker not assigned yet)
-  if (!worker && status !== 'pending') status = 'pending';
-  // Force paid amount tracking for pending trucks
-  if (status === 'pending') status = 'pending'; // keeps in waiting section but paid
+  if (!worker) status = 'pending';
   const notes = document.getElementById('truckNotes').value.trim();
   if (!plate) { showToast('⚠️ Enter plate number'); return; }
   if (!date) { showToast('⚠️ Select date'); return; }
@@ -2311,7 +2381,7 @@ window.saveStatus = function() {
 
 // ── ASSIGN ──
 window.openAssign = function(id) {
-  if (currentUser.role === 'worker') { showToast('⛔ Only admin and cashiers can assign workers'); return; }
+  if (currentUser.role === 'worker') { showToast('⛔ Only admin and cashiers can assign sealers'); return; }
   const truck = trucks[id];
   if (!truck) return;
   document.getElementById('assignTruckId').value = id;
@@ -2323,11 +2393,11 @@ window.openAssign = function(id) {
 window.doAssign = function() {
   const id = document.getElementById('assignTruckId').value;
   const worker = document.getElementById('assignWorkerSel').value;
-  if (!worker) { showToast('⚠️ Select a worker'); return; }
+  if (!worker) { showToast('⚠️ Select a sealer'); return; }
   const truck = trucks[id];
   if (!truck) return;
-  // Assign worker; if truck was pending, revert to unpaid so payment can be set properly
-  const newStatus = truck.status === 'pending' ? 'unpaid' : truck.status;
+  // Assign worker; pending truck was already paid — keep paid status
+  const newStatus = truck.status === 'pending' ? 'paid' : truck.status;
   updateDoc(doc(db,'trucks',id), { worker, status: newStatus, assignedBy: currentUser.id, assignedAt: Date.now() });
   showToast(`✅ ${worker} assigned to ${truck.plate}`);
   closeModal('modalAssign');
@@ -2361,7 +2431,7 @@ function renderAdvances() {
     container.innerHTML = `<div class="empty-state"><div class="icon">💸</div><p>No advances yet</p></div>`;
     return;
   }
-  const canDel = currentUser.role==='admin';
+  const canDel = currentUser.role==='admin' || currentUser.role==='head';
   container.innerHTML = list.map(a=>`
     <div class="advance-card">
       <div class="advance-icon">💸</div>
@@ -2434,7 +2504,7 @@ function renderWorkers() {
           <div class="detail-row"><span class="detail-label">Trucks worked</span><span class="detail-val">${wTrucks.length}</span></div>
           <div class="detail-row"><span class="detail-label">Paid trucks</span><span class="detail-val green">${wTrucks.filter(t=>t.status==='paid').length}</span></div>
           <div class="detail-row"><span class="detail-label">Partial trucks</span><span class="detail-val orange">${wTrucks.filter(t=>t.status==='partial').length}</span></div>
-          <div class="detail-row"><span class="detail-label">Unpaid trucks</span><span class="detail-val red">${wTrucks.filter(t=>t.status==='unpaid'||t.status==='pending').length}</span></div>
+          <div class="detail-row"><span class="detail-label">Unpaid trucks</span><span class="detail-val red">${wTrucks.filter(t=>t.status==='unpaid').length}</span></div>
           <div class="detail-row"><span class="detail-label">Earned today</span><span class="detail-val green">${earned.toLocaleString()} ETB</span></div>
           <div class="detail-row"><span class="detail-label">Total advances</span><span class="detail-val red">-${advTotal.toLocaleString()} ETB</span></div>
           <div class="detail-row"><span class="detail-label">Net balance</span><span class="detail-val" style="color:${net>=0?'var(--green)':'var(--red)'}">${net.toLocaleString()} ETB</span></div>
@@ -2483,12 +2553,14 @@ function renderReports() {
   if (sf !== 'all') filtered = filtered.filter(t => t.status === sf);
   if (wf !== 'all') filtered = filtered.filter(t => t.worker === wf);
 
-  const totalTrucks = filtered.length;
-  const paidCount = filtered.filter(t=>t.status==='paid').length;
+  const totalTrucks = filtered.filter(t=>t.status==='paid'||t.status==='pending').length
+    + filtered.filter(t=>t.status==='partial').length * 0.5
+    + filtered.filter(t=>t.status==='unpaid').length;
+  const paidCount = filtered.filter(t=>t.status==='paid'||t.status==='pending').length;
   const partialCount = filtered.filter(t=>t.status==='partial').length;
-  const unpaidCount = filtered.filter(t=>t.status==='unpaid'||t.status==='pending').length;
-  const totalClient = filtered.reduce((s,t)=>s+(t.status==='paid'?CLIENT_PRICE:t.status==='partial'?2800:0),0);
-  const totalWorker = filtered.reduce((s,t)=>s+(WORKER_PAY[t.status]||0),0);
+  const unpaidCount = filtered.filter(t=>t.status==='unpaid').length;
+  const totalClient = filtered.reduce((s,t)=>s+(t.status==='paid'||t.status==='pending'?CLIENT_PRICE:t.status==='partial'?2800:0),0);
+  const totalWorker = filtered.reduce((s,t)=>s+(t.status==='pending'?WORKER_PAY.paid:(WORKER_PAY[t.status]||0)),0);
   const totalCompany = totalClient - totalWorker;
   const totalAdv = allAdvances.reduce((s,a)=>s+(a.amount||0),0);
   const unpaidAmount = unpaidCount * CLIENT_PRICE;
@@ -2519,7 +2591,7 @@ function renderReports() {
       <div class="report-row"><span class="report-label">⚡ Partial</span><span class="report-val" style="color:var(--orange)">${partialCount}</span></div>
       <div class="report-row"><span class="report-label">❌ Unpaid</span><span class="report-val" style="color:var(--red)">${unpaidCount}</span></div>
       <div class="report-row"><span class="report-label">💰 Total Client Revenue</span><span class="report-val" style="color:var(--teal)">${totalClient.toLocaleString()} ETB</span></div>
-      <div class="report-row"><span class="report-label">👷 Total Worker Pay</span><span class="report-val">${totalWorker.toLocaleString()} ETB</span></div>
+      <div class="report-row"><span class="report-label">👷 Total Sealer Pay</span><span class="report-val">${totalWorker.toLocaleString()} ETB</span></div>
       <div class="report-row"><span class="report-label">🏢 Company Earnings</span><span class="report-val" style="color:var(--green)">${totalCompany.toLocaleString()} ETB</span></div>
       <div class="report-row"><span class="report-label">💸 Total Advances</span><span class="report-val" style="color:var(--red)">-${totalAdv.toLocaleString()} ETB</span></div>
       ${unpaidCount > 0 ? `
@@ -2529,15 +2601,19 @@ function renderReports() {
       </div>` : ''}
     </div>
     <div class="report-card">
-      <div class="report-title">👷 PER WORKER</div>
+      <div class="report-title">👷 PER SEALER</div>
       ${workerList.map(w=>{
         const wt = filtered.filter(t=>t.worker===w);
         const wa = allAdvances.filter(a=>a.worker===w);
         const earned = wt.reduce((s,t)=>s+(WORKER_PAY[t.status]||0),0);
         const adv = wa.reduce((s,a)=>s+(a.amount||0),0);
         const net = earned - adv;
-        const wUnpaid = wt.filter(t=>t.status==='unpaid'||t.status==='pending').length;
+        const wUnpaid = wt.filter(t=>t.status==='unpaid').length;
         const wUnpaidAmt = wUnpaid * CLIENT_PRICE;
+        const wCount = wt.filter(t=>t.status==='paid'||t.status==='pending').length
+          + wt.filter(t=>t.status==='partial').length * 0.5
+          + wt.filter(t=>t.status==='unpaid').length;
+        const wCountDisplay = wCount % 1 === 0 ? wCount : wCount.toFixed(1);
         if (wt.length===0 && sf==='all' && wf==='all') return `
           <div class="report-row">
             <span class="report-label">
@@ -2551,7 +2627,7 @@ function renderReports() {
           <div class="report-row">
             <span class="report-label">
               <span style="width:8px;height:8px;border-radius:50%;background:${WORKER_COLORS[w]||'#6b7280'};display:inline-block;margin-right:4px"></span>
-              ${w} <span style="color:var(--text3);font-size:11px">(${wt.length} truck${wt.length!==1?'s':''})</span>
+              ${w} <span style="color:var(--text3);font-size:11px">(${wCountDisplay} truck${wCount!==1?'s':''})</span>
             </span>
             <div style="text-align:right">
               <div class="report-val" style="color:${net>=0?'var(--green)':'var(--red)'}">${net.toLocaleString()} ETB</div>
@@ -2584,7 +2660,7 @@ function renderManage() {
 
   container.innerHTML = `
     <div>
-      <div class="manage-section-title">👷 WORKERS</div>
+      <div class="manage-section-title">👷 SEALERS</div>
       <div class="manage-card">
         ${workers.map(w=>`
           <div class="manage-item">
@@ -2605,7 +2681,7 @@ function renderManage() {
         <div class="manage-item" onclick="openModal('modalAddWorker')">
           <div class="manage-item-left">
             <div class="manage-item-icon">➕</div>
-            <div><div class="manage-item-name">Add Worker</div></div>
+            <div><div class="manage-item-name">Add Sealer</div></div>
           </div>
         </div>
       </div>
@@ -2639,6 +2715,29 @@ function renderManage() {
           <div class="manage-item-left">
             <div class="manage-item-icon">🔐</div>
             <div><div class="manage-item-name">Change Admin PIN</div><div class="manage-item-sub">Current PIN is hidden</div></div>
+          </div>
+          <div>›</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="manage-section-title">🏢 COMPANY HEAD</div>
+      <div class="manage-card">
+        <div class="manage-item" onclick="openEditHeadName()">
+          <div class="manage-item-left">
+            <div class="manage-item-icon">🏢</div>
+            <div>
+              <div class="manage-item-name" id="headNameDisplay">${_cloudHeadName}</div>
+              <div class="manage-item-sub">Tap to rename this role</div>
+            </div>
+          </div>
+          <div>✏️</div>
+        </div>
+        <div class="manage-item" onclick="openPinChange('head')">
+          <div class="manage-item-left">
+            <div class="manage-item-icon">🔐</div>
+            <div><div class="manage-item-name">Change PIN</div><div class="manage-item-sub">Default: 9999</div></div>
           </div>
           <div>›</div>
         </div>
@@ -2725,7 +2824,7 @@ function renderManage() {
             <div class="manage-item-icon" id="cloudSyncIcon">☁️</div>
             <div>
               <div class="manage-item-name" id="cloudSyncStatus" style="color:var(--green)">Connected to Firebase</div>
-              <div class="manage-item-sub">Trucks · Workers · PINs · Permissions — all synced across devices in real-time</div>
+              <div class="manage-item-sub">Trucks · Sealers · PINs · Permissions — all synced across devices in real-time</div>
             </div>
           </div>
           <div id="syncDotManage" style="width:10px;height:10px;border-radius:50%;background:var(--green);flex-shrink:0"></div>
@@ -2765,9 +2864,26 @@ function renderManage() {
 window.setLang = function(lang) {
   currentLang = lang;
   localStorage.setItem('hask_lang', lang);
-  buildNav();
+  // Rebuild entire app UI with new language
+  buildApp();
   renderManage();
-  showToast('🌐 Language changed');
+  showToast('🌐 ' + (lang==='fr'?'Langue changée':lang==='so'?'Luqadda la bedelay':'Language changed'));
+}
+
+// ── COMPANY HEAD NAME ──
+window.openEditHeadName = function() {
+  document.getElementById('headNameInput').value = _cloudHeadName;
+  openModal('modalHeadName');
+}
+window.saveHeadName = function() {
+  const name = document.getElementById('headNameInput').value.trim();
+  if (!name) { showToast('⚠️ Enter a name'); return; }
+  _cloudHeadName = name;
+  setDoc(doc(db,'settings','headName'), { name });
+  showToast(`✅ Role renamed to "${name}"`);
+  closeModal('modalHeadName');
+  renderManage();
+  buildLogin();
 }
 
 // ── PIN MANAGEMENT ──
@@ -2775,7 +2891,27 @@ window.openPinChange = function(user) {
   pinChangingUser = user;
   document.getElementById('pinModalTitle').textContent = `🔐 Change PIN — ${user}`;
   document.getElementById('newPin').value = '';
+  document.getElementById('newPin').type = 'password';
+  document.getElementById('pinEyeBtn').textContent = '👁';
   openModal('modalPin');
+}
+window.togglePinVisibility = function() {
+  const input = document.getElementById('newPin');
+  const btn = document.getElementById('pinEyeBtn');
+  if (input.type === 'password') {
+    input.type = 'text';
+    btn.textContent = '🙈';
+  } else {
+    input.type = 'password';
+    btn.textContent = '👁';
+  }
+}
+window.resetPinToDefault = function() {
+  const defaultPin = DEFAULT_PINS[pinChangingUser] || '0000';
+  if (!confirm(`Reset PIN for ${pinChangingUser} to default (${defaultPin})?`)) return;
+  setPin(pinChangingUser, defaultPin);
+  showToast(`✅ PIN reset to default for ${pinChangingUser}`);
+  closeModal('modalPin');
 }
 window.savePin = function() {
   const pin = document.getElementById('newPin').value;
@@ -2792,7 +2928,7 @@ window.openCashierPerms = function(user) {
   document.getElementById('permsModalTitle').textContent = `⚙️ ${user==='cashier1'?'Cashier 1':'Cashier 2'} Permissions`;
   document.getElementById('permsContent').innerHTML = `
     <div class="perm-row">
-      <div><div class="perm-label">➕ Add Trucks</div><div style="font-size:11px;color:var(--text3)">Can record trucks for any worker</div></div>
+      <div><div class="perm-label">➕ Add Trucks</div><div style="font-size:11px;color:var(--text3)">Can record trucks for any sealer</div></div>
       <div class="toggle${p.addTrucks?' on':''}" id="perm_addTrucks" onclick="togglePerm('addTrucks')"></div>
     </div>
     <div class="perm-row">
@@ -2817,7 +2953,7 @@ window.openWorkerPerms = function(user) {
   document.getElementById('permsContent').innerHTML = `
     <div style="font-size:12px;color:var(--text2);margin-bottom:12px">Worker: ${user}</div>
     <div class="perm-row">
-      <div><div class="perm-label">➕ Add Trucks</div><div style="font-size:11px;color:var(--text3)">Can record new trucks using the + Add button</div></div>
+      <div><div class="perm-label">➕ Add Trucks</div><div style="font-size:11px;color:var(--text3)">Can record new truck seals using the + Add button</div></div>
       <div class="toggle${p.canAddOwnTrucks?' on':''}" id="perm_canAddOwnTrucks" onclick="togglePerm('canAddOwnTrucks')"></div>
     </div>
     <div class="perm-row">
@@ -2825,7 +2961,7 @@ window.openWorkerPerms = function(user) {
       <div class="toggle${p.canEditStatus?' on':''}" id="perm_canEditStatus" onclick="togglePerm('canEditStatus')"></div>
     </div>
     <div class="perm-row">
-      <div><div class="perm-label">👥 See All Workers' Trucks</div><div style="font-size:11px;color:var(--text3)">Can view trucks added by other workers</div></div>
+      <div><div class="perm-label">👥 See All Sealers' Trucks</div><div style="font-size:11px;color:var(--text3)">Can view trucks added by other sealers</div></div>
       <div class="toggle${p.seeAllTrucks?' on':''}" id="perm_seeAllTrucks" onclick="togglePerm('seeAllTrucks')"></div>
     </div>
     <div class="perm-row">
@@ -2946,7 +3082,7 @@ function renderTruckList() {
   } else {
     const dateObj = new Date(date + 'T12:00:00');
     const dateLabel = isToday ? 'Today' : dateObj.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
-    titleEl.textContent = '📋 MY TRUCKS — ' + dateLabel.toUpperCase();
+    titleEl.textContent = '📋 MY LIST — ' + dateLabel.toUpperCase();
     workerFilterEl.innerHTML = '';
     listFilterWorker = uid;
   }
@@ -3042,7 +3178,7 @@ function renderRecycleList() {
   }
 
   // Apply filters
-  if (recycleFilter !== 'all') list = list.filter(t => t.status === recycleFilter || (recycleFilter==='unpaid' && (t.status==='unpaid'||t.status==='pending')));
+  if (recycleFilter !== 'all') list = list.filter(t => t.status === recycleFilter || (recycleFilter==='unpaid' && (t.status==='unpaid')));
   if (recycleSearchQ) list = list.filter(t => (t.plate||'').toUpperCase().includes(recycleSearchQ));
 
   if (list.length === 0) {
@@ -3161,74 +3297,121 @@ function listenSuspend() {
 window.openShareReport = function() {
   const SEP = '-----------------------------------';
   const date = document.getElementById('dateFilter')?.value || new Date().toISOString().split('T')[0];
-  const allForDate = Object.values(trucks).filter(function(t){ return t.date === date; });
-  const paid = allForDate.filter(function(t){ return t.status==='paid'; }).length;
-  const partial = allForDate.filter(function(t){ return t.status==='partial'; }).length;
-  const unpaid = allForDate.filter(function(t){ return t.status==='unpaid'||t.status==='pending'; }).length;
-  const revenue = allForDate.reduce(function(s,t){ return s+(t.status==='paid'?CLIENT_PRICE:t.status==='partial'?2800:0); },0);
-  const workerPay = allForDate.reduce(function(s,t){ return s+(WORKER_PAY[t.status]||0); },0);
+  const allForDate = Object.values(trucks).filter(function(tk){ return tk.date === date; });
+  const pendingCount = allForDate.filter(function(tk){ return tk.status==='pending'; }).length;
+  const paid = allForDate.filter(function(tk){ return tk.status==='paid'; }).length + pendingCount;
+  const partial = allForDate.filter(function(tk){ return tk.status==='partial'; }).length;
+  const unpaid = allForDate.filter(function(tk){ return tk.status==='unpaid'; }).length;
+  const revenue = allForDate.reduce(function(s,tk){ return s+(tk.status==='paid'||tk.status==='pending'?CLIENT_PRICE:tk.status==='partial'?2800:0); },0);
+  const totalSealerPay = allForDate.reduce(function(s,tk){
+    // pending = paid by client but no sealer yet — count 1,300 ETB as future sealer payment
+    if (tk.status==='pending') return s + WORKER_PAY.paid;
+    return s + (WORKER_PAY[tk.status]||0);
+  },0);
+  const uncollected = unpaid * CLIENT_PRICE;
 
-  var workerLines = [];
+  // Fully translated status label — no raw keys ever
+  function statusLabel(status) {
+    if (status==='paid') return t('rPaid');
+    if (status==='partial') return t('rPartial');
+    if (status==='unpaid') return t('rUnpaid');
+    if (status==='pending') return t('rPending');
+    return status.toUpperCase();
+  }
+
+  // Per sealer breakdown
+  var sealerLines = [];
+  var overallSealerLines = [];
   getWorkerList().forEach(function(w) {
-    var wt = allForDate.filter(function(t){ return t.worker===w; });
+    var wt = allForDate.filter(function(tk){ return tk.worker===w; });
     if (!wt.length) return;
-    var wp = wt.filter(function(t){ return t.status==='paid'; }).length;
-    var wpa = wt.filter(function(t){ return t.status==='partial'; }).length;
-    var wu = wt.filter(function(t){ return t.status==='unpaid'||t.status==='pending'; }).length;
-    workerLines.push('  ' + w + ': ' + wt.length + ' trucks (' + wp + ' paid, ' + wpa + ' partial, ' + wu + ' unpaid)');
+    var wp = wt.filter(function(tk){ return tk.status==='paid'||tk.status==='pending'; }).length;
+    var wpa = wt.filter(function(tk){ return tk.status==='partial'; }).length;
+    var wu = wt.filter(function(tk){ return tk.status==='unpaid'; }).length;
+    var earned = wt.reduce(function(s,tk){ return s+(WORKER_PAY[tk.status]||0); },0);
+    var uncol = wu * CLIENT_PRICE;
+    sealerLines.push(
+      '  ' + w + ': ' + wt.length + ' (' + wp + ' ' + t('rPaid') + ', ' + wpa + ' ' + t('rPartial') + ', ' + wu + ' ' + t('rUnpaid') + ')' +
+      '\n    ' + t('rEarned') + ': ' + earned.toLocaleString() + ' ETB' +
+      (uncol > 0 ? '\n    ' + t('rUncollectedBy') + ': ' + uncol.toLocaleString() + ' ETB' : '')
+    );
+    overallSealerLines.push('  ' + w + ': ' + earned.toLocaleString() + ' ETB');
   });
 
+  // Truck list
   var sorted = allForDate.slice().sort(function(a,b){ return (a.timestamp||0)-(b.timestamp||0); });
-  var truckLines = sorted.map(function(t,i){
-    return '  #' + (i+1) + ' ' + t.plate + ' - ' + (t.worker||'Unassigned') + ' - ' + t.status.toUpperCase();
+  var truckLines = sorted.map(function(tk,i){
+    return '  #' + (i+1) + ' ' + tk.plate + ' - ' + (tk.worker||t('rNoSealer')) + ' - ' + statusLabel(tk.status);
   });
 
   var reportParts = [
-    'WKABE HASK SERVICES - Daily Report',
-    'Date: ' + date,
-    'Generated: ' + new Date().toLocaleString(),
+    t('rTitle'),
+    t('rDate') + ': ' + date,
+    t('rGenerated') + ': ' + new Date().toLocaleString(),
     SEP,
-    'SUMMARY',
-    '  Total Trucks: ' + allForDate.length,
-    '  Paid: ' + paid,
-    '  Partial: ' + partial,
-    '  Unpaid: ' + unpaid,
-    '  Revenue: ' + revenue.toLocaleString() + ' ETB',
-    '  Worker Pay: ' + workerPay.toLocaleString() + ' ETB',
-    '  Company: ' + (revenue-workerPay).toLocaleString() + ' ETB',
+    t('rSummary'),
+    '  ' + t('rTotal') + ': ' + allForDate.length,
+    '  ' + t('rPaid') + ': ' + paid,
+    '  ' + t('rPartial') + ': ' + partial,
+    '  ' + t('rUnpaid') + ': ' + unpaid,
+    '  ' + t('rRevenue') + ': ' + revenue.toLocaleString() + ' ETB',
+    '  ' + t('rSealerPay') + ': ' + totalSealerPay.toLocaleString() + ' ETB',
+    '  ' + t('rCompany') + ': ' + (revenue - totalSealerPay).toLocaleString() + ' ETB',
+    '  ' + t('rUncollected') + ': ' + uncollected.toLocaleString() + ' ETB',
     SEP,
-    'BY WORKER',
-    workerLines.length ? workerLines.join('\n') : '  No trucks assigned',
+    t('rBySealer'),
+    sealerLines.length ? sealerLines.join('\n') : '  ' + t('rNoAssigned'),
     SEP,
-    'TRUCK LIST',
-    truckLines.length ? truckLines.join('\n') : '  No trucks',
+    t('rSealerPay').toUpperCase(),
+    '  ' + totalSealerPay.toLocaleString() + ' ETB',
     SEP,
-    'WKABE Hask Services - Djibouti'
+    t('rTruckList'),
+    truckLines.length ? truckLines.join('\n') : '  ' + t('rNoTrucks'),
+    SEP,
+    t('rFooter')
   ];
 
   var report = reportParts.join('\n');
   window.currentReport = report;
   window.currentReportEncoded = encodeURIComponent(report);
   window.currentReportDate = date;
-  window.currentReportSubject = encodeURIComponent('WKABE Daily Report - ' + date);
+  window.currentReportSubject = encodeURIComponent(t('rSubject') + ' - ' + date);
+
+  const L = currentLang;
+  const subLabel    = L==='fr'?'Envoyer le rapport'           :L==='so'?'U dir warbixinta'        :'Send report as message';
+  const emailLabel  = L==='fr'?'Ouvrir dans messagerie'       :L==='so'?'Fur barnaamijka email'    :'Open in mail app';
+  const copyLabel   = L==='fr'?'Copier'                       :L==='so'?'Koobiye'                  :'Copy to Clipboard';
+  const copySub     = L==='fr'?"Coller n'importe où"          :L==='so'?'Ku dhaji meel kasta'      :'Paste anywhere';
+  const dlLabel     = L==='fr'?'Télécharger .txt'             :L==='so'?'Soo degso .txt'           :'Download .txt';
+  const dlSub       = L==='fr'?'Sauvegarder sur téléphone'    :L==='so'?'Keydi telefoonkaaga'      :'Save to phone';
+  const exportLabel = L==='fr'?'Exporter Excel (.csv)'        :L==='so'?'Dhoofinta Excel (.csv)'   :'Export Excel (.csv)';
+  const exportSub   = L==='fr'?'Toutes les données'           :L==='so'?'Dhammaan xogta'           :'All data';
 
   document.getElementById('shareContent').innerHTML =
-    '<div style="font-size:12px;color:var(--text2);margin-bottom:14px">Report for <strong style="color:var(--text)">' + date + '</strong> &nbsp;&#183;&nbsp; ' + allForDate.length + ' trucks &nbsp;&#183;&nbsp; ' + revenue.toLocaleString() + ' ETB</div>' +
+    '<div style="font-size:12px;color:var(--text2);margin-bottom:14px">' +
+      t('rDate') + ': <strong style="color:var(--text)">' + date + '</strong>' +
+      ' &nbsp;·&nbsp; ' + allForDate.length + ' ' + t('trucks') +
+      ' &nbsp;·&nbsp; ' + revenue.toLocaleString() + ' ETB' +
+    '</div>' +
     '<div class="share-option" onclick="shareViaWhatsApp(window.currentReportEncoded)">' +
       '<div class="share-icon">&#x1F4AC;</div>' +
-      '<div><div class="share-label">WhatsApp</div><div class="share-sub">Send report as message</div></div>' +
+      '<div><div class="share-label">WhatsApp</div><div class="share-sub">' + subLabel + '</div></div>' +
     '</div>' +
     '<div class="share-option" onclick="shareViaEmail(window.currentReportSubject,window.currentReportEncoded)">' +
       '<div class="share-icon">&#x1F4E7;</div>' +
-      '<div><div class="share-label">Email</div><div class="share-sub">Open in mail app</div></div>' +
+      '<div><div class="share-label">Email</div><div class="share-sub">' + emailLabel + '</div></div>' +
     '</div>' +
     '<div class="share-option" onclick="copyReport(window.currentReport)">' +
       '<div class="share-icon">&#x1F4CB;</div>' +
-      '<div><div class="share-label">Copy to Clipboard</div><div class="share-sub">Paste anywhere</div></div>' +
+      '<div><div class="share-label">' + copyLabel + '</div><div class="share-sub">' + copySub + '</div></div>' +
     '</div>' +
     '<div class="share-option" onclick="downloadReport(window.currentReport,window.currentReportDate)">' +
       '<div class="share-icon">&#x1F4C4;</div>' +
-      '<div><div class="share-label">Download .txt</div><div class="share-sub">Save to phone</div></div>' +
+      '<div><div class="share-label">' + dlLabel + '</div><div class="share-sub">' + dlSub + '</div></div>' +
+    '</div>' +
+    '<div class="share-option" onclick="exportExcel();closeModal(\'modalShare\')">' +
+      '<div class="share-icon">&#x1F4CA;</div>' +
+      '<div><div class="share-label" style="color:var(--green)">' + exportLabel + '</div><div class="share-sub">' + exportSub + '</div></div>' +
     '</div>';
 
   openModal('modalShare');
@@ -3260,14 +3443,24 @@ window.downloadReport = function(text, date) {
 
 // ── EXPORT / INSTALL ──
 window.exportExcel = function() {
-  const rows = [['Plate','Date','Worker','Status','Notes','Added By','Total Fare','Worker Pay','Company']];
-  Object.values(trucks).forEach(t=>{
-    const workerEarn = WORKER_PAY[t.status]||0;
-    const totalFare = t.status==='paid'?CLIENT_PRICE:t.status==='partial'?Math.round(CLIENT_PRICE*0.6):0;
-    rows.push([t.plate,t.date,t.worker||'',t.status,t.notes||'',t.addedBy||'',totalFare,workerEarn,totalFare-workerEarn]);
+  const rows = [['Plate','Date','Sealer','Status','Total Fare','Sealer Pay','Company','Notes','Added By']];
+  const sorted = Object.values(trucks).sort((a,b) => {
+    if (a.date < b.date) return -1;
+    if (a.date > b.date) return 1;
+    return (a.timestamp||0) - (b.timestamp||0);
   });
-  let csv = rows.map(r=>r.map(c=>`"${c}"`).join(',')).join('\n');
-  const blob = new Blob([csv],{type:'text/csv'});
+  sorted.forEach(tk => {
+    const workerEarn = WORKER_PAY[tk.status]||0;
+    const totalFare = tk.status==='paid'||tk.status==='pending' ? CLIENT_PRICE : tk.status==='partial' ? 2800 : 0;
+    const statusDisplay = tk.status==='paid'||tk.status==='pending' ? 'Paid' : tk.status==='partial' ? 'Partial' : 'Unpaid';
+    rows.push([
+      tk.plate, tk.date, tk.worker||'', statusDisplay,
+      totalFare, workerEarn, totalFare - workerEarn,
+      tk.notes||'', tk.addedBy||''
+    ]);
+  });
+  let csv = rows.map(r => r.map(c => `"${c}"`).join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = `hask-trucks-${new Date().toISOString().split('T')[0]}.csv`;
