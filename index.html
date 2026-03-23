@@ -11,7 +11,9 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="WKABE">
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="splash.jpg">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
 
@@ -3382,63 +3384,6 @@ function initIcons() {
     const c = document.getElementById(id);
     if (c) drawWKABEIcon(c);
   });
-
-  // Generate proper PNG icons from canvas and inject into document
-  [192, 512].forEach(size => {
-    const c = document.createElement('canvas');
-    c.width = c.height = size;
-    drawWKABEIcon(c);
-    const dataUrl = c.toDataURL('image/png');
-
-    // Apple touch icon (use 192)
-    if (size === 192) {
-      // Remove existing apple touch icons first
-      document.querySelectorAll('link[rel="apple-touch-icon"]').forEach(l => l.remove());
-      const link = document.createElement('link');
-      link.rel = 'apple-touch-icon';
-      link.sizes = '192x192';
-      link.href = dataUrl;
-      document.head.appendChild(link);
-    }
-
-    // Patch manifest dynamically with canvas-generated PNG icons
-    // (Replaces the jpeg reference which can't be maskable)
-    if (size === 192 || size === 512) {
-      patchManifestIcon(size, dataUrl);
-    }
-  });
-}
-
-// Dynamically inject a <link rel="manifest"> with patched icons (base64 PNG)
-let _manifestPatched = false;
-function patchManifestIcon(size, dataUrl) {
-  // We patch by injecting a blob-based manifest override once both icons ready
-  if (!window._iconCache) window._iconCache = {};
-  window._iconCache[size] = dataUrl;
-  if (window._iconCache[192] && window._iconCache[512] && !_manifestPatched) {
-    _manifestPatched = true;
-    const manifest = {
-      name: 'WKABE Hask Tracker',
-      short_name: 'WKABE',
-      description: 'Hask Services — Djibouti Truck Tracker',
-      start_url: '/Oli/?pwa=1',
-      scope: '/Oli/',
-      display: 'standalone',
-      orientation: 'portrait',
-      background_color: '#0f1623',
-      theme_color: '#0f1623',
-      categories: ['business'],
-      icons: [
-        { src: window._iconCache[192], sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
-        { src: window._iconCache[512], sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
-      ]
-    };
-    const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    // Replace the manifest link
-    const existing = document.querySelector('link[rel="manifest"]');
-    if (existing) existing.href = url;
-  }
 }
 
 // ── SPLASH ──
