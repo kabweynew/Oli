@@ -914,6 +914,7 @@
   .share-label { font-size: 14px; font-weight: 600; }
   .share-sub { font-size: 11px; color: var(--text2); margin-top: 2px; }
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
 
@@ -1302,6 +1303,9 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
   getFirestore,
+  initializeFirestore,
+  persistentLocalCache,
+  persistentMultipleTabManager,
   collection, doc,
   setDoc, addDoc, getDoc, getDocs,
   updateDoc, deleteDoc,
@@ -1321,7 +1325,30 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+
+// ── OFFLINE PERSISTENCE (Firebase v10 — works like WhatsApp) ──
+// Data is cached locally — app works offline, syncs instantly when back online
+let db;
+try {
+  db = initializeFirestore(app, {
+    localCache: persistentLocalCache({
+      tabManager: persistentMultipleTabManager()
+    })
+  });
+} catch(e) {
+  // Fallback if persistence fails (e.g. private browsing)
+  db = getFirestore(app);
+}
+
+// ── NETWORK STATUS INDICATOR ──
+window.addEventListener('online', () => {
+  setOnline();
+  showToast('☁️ Back online — syncing...');
+});
+window.addEventListener('offline', () => {
+  setOffline();
+  showToast('📴 Offline — changes saved locally');
+});
 
 // ── STATE ──
 let trucks = {};
@@ -2766,14 +2793,21 @@ function renderManage() {
     </div>
 
     <div>
-      <div class="manage-section-title">📤 EXPORT & INSTALL</div>
+      <div class="manage-section-title">📤 EXPORT & IMPORT</div>
       <div class="manage-card">
         <div class="manage-item" onclick="exportExcel()">
           <div class="manage-item-left">
             <div class="manage-item-icon">📊</div>
-            <div><div class="manage-item-name" style="color:var(--green)">Export to Excel (.xlsx)</div></div>
+            <div><div class="manage-item-name" style="color:var(--green)">Export to Excel (.csv)</div><div class="manage-item-sub">Download all truck data</div></div>
           </div>
         </div>
+        <div class="manage-item" onclick="document.getElementById('importFileInput').click()">
+          <div class="manage-item-left">
+            <div class="manage-item-icon">📥</div>
+            <div><div class="manage-item-name" style="color:var(--accent)">Import from Excel (.xlsx)</div><div class="manage-item-sub">Upload trucks from spreadsheet</div></div>
+          </div>
+        </div>
+        <input type="file" id="importFileInput" accept=".xlsx,.csv" style="display:none" onchange="importExcel(this)">
         <div class="manage-item" onclick="installApp()">
           <div class="manage-item-left">
             <div class="manage-item-icon">📲</div>
@@ -3451,7 +3485,88 @@ window.downloadReport = function(text, date) {
   showToast('📄 Downloaded!');
 }
 
-// ── EXPORT / INSTALL ──
+// ── IMPORT EXCEL ──
+window.importExcel = function(input) {
+  const file = input.files[0];
+  if (!file) return;
+  input.value = '';
+
+  function doImport() {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, {type:'uint8'});
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json(sheet);
+        if (!rows.length) { showToast('⚠️ No data found in file'); return; }
+
+        let imported = 0, skipped = 0;
+        const promises = [];
+
+        rows.forEach(function(row) {
+          const plate = (row['Plate']||row['plate']||row['PLATE']||'').toString().trim().toUpperCase();
+          if (!plate) { skipped++; return; }
+
+          let date = row['Date']||row['date']||row['DATE']||'';
+          if (date instanceof Date) {
+            date = date.toISOString().split('T')[0];
+          } else {
+            date = (date+'').trim();
+            if (!isNaN(date) && date.length < 6) {
+              date = new Date((parseFloat(date)-25569)*86400*1000).toISOString().split('T')[0];
+            }
+          }
+          if (!date) date = getWorkingDate();
+
+          const rawWorker = (row['Worker']||row['worker']||row['Sealer']||row['sealer']||'').toString().trim();
+          const worker = (rawWorker.toLowerCase()==='personne'||rawWorker==='—'||rawWorker==='-'||rawWorker==='') ? '' : rawWorker;
+
+          const rawStatus = (row['Status']||row['status']||'').toString().trim().toLowerCase();
+          let status = 'unpaid';
+          if (rawStatus==='paid'||rawStatus==='payé'||rawStatus==='la bixiyay') status='paid';
+          else if (rawStatus==='partial'||rawStatus==='partiel'||rawStatus==='qayb') status='partial';
+          else if (rawStatus==='pending') status='pending';
+
+          if (!worker && status==='paid') status='pending';
+
+          const notes = (row['Notes']||row['notes']||'').toString().trim();
+          const addedBy = (row['Added By']||row['Added by']||row['addedBy']||'Import').toString().trim();
+
+          const isDup = Object.values(trucks).some(t=>t.plate===plate&&t.date===date);
+          if (isDup) { skipped++; return; }
+
+          imported++;
+          promises.push(addDoc(collection(db,'trucks'), {
+            plate, date, worker, status, notes,
+            addedBy: addedBy||'Import',
+            timestamp: Date.now()+imported
+          }));
+        });
+
+        Promise.all(promises)
+          .then(()=>showToast('✅ Imported '+imported+' trucks'+(skipped?' · '+skipped+' skipped':'')))
+          .catch(()=>showToast('⚠️ Some trucks may not have imported'));
+
+      } catch(err) {
+        showToast('❌ Could not read file — use .xlsx or .csv format');
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  // Load SheetJS dynamically if not already loaded
+  if (typeof XLSX !== 'undefined') {
+    doImport();
+  } else {
+    showToast('⏳ Loading Excel reader...');
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+    script.onload = doImport;
+    script.onerror = ()=>showToast('❌ Could not load Excel reader — check internet');
+    document.head.appendChild(script);
+  }
+}
 window.exportExcel = function() {
   const rows = [['Plate','Date','Sealer','Status','Total Fare','Sealer Pay','Company','Notes','Added By']];
   const sorted = Object.values(trucks).sort((a,b) => {
