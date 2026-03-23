@@ -3491,81 +3491,98 @@ window.importExcel = function(input) {
   if (!file) return;
   input.value = '';
 
-  function doImport() {
-    const reader = new FileReader();
+  const reader = new FileReader();
+
+  // Handle CSV files as text, XLSX as binary
+  const isCSV = file.name.toLowerCase().endsWith('.csv');
+
+  if (isCSV) {
     reader.onload = function(e) {
       try {
-        const data = new Uint8Array(e.target.result);
-        const workbook = XLSX.read(data, {type:'uint8'});
-        const sheet = workbook.Sheets[workbook.SheetNames[0]];
-        const rows = XLSX.utils.sheet_to_json(sheet);
-        if (!rows.length) { showToast('⚠️ No data found in file'); return; }
-
-        let imported = 0, skipped = 0;
-        const promises = [];
-
-        rows.forEach(function(row) {
-          const plate = (row['Plate']||row['plate']||row['PLATE']||'').toString().trim().toUpperCase();
-          if (!plate) { skipped++; return; }
-
-          let date = row['Date']||row['date']||row['DATE']||'';
-          if (date instanceof Date) {
-            date = date.toISOString().split('T')[0];
-          } else {
-            date = (date+'').trim();
-            if (!isNaN(date) && date.length < 6) {
-              date = new Date((parseFloat(date)-25569)*86400*1000).toISOString().split('T')[0];
-            }
-          }
-          if (!date) date = getWorkingDate();
-
-          const rawWorker = (row['Worker']||row['worker']||row['Sealer']||row['sealer']||'').toString().trim();
-          const worker = (rawWorker.toLowerCase()==='personne'||rawWorker==='—'||rawWorker==='-'||rawWorker==='') ? '' : rawWorker;
-
-          const rawStatus = (row['Status']||row['status']||'').toString().trim().toLowerCase();
-          let status = 'unpaid';
-          if (rawStatus==='paid'||rawStatus==='payé'||rawStatus==='la bixiyay') status='paid';
-          else if (rawStatus==='partial'||rawStatus==='partiel'||rawStatus==='qayb') status='partial';
-          else if (rawStatus==='pending') status='pending';
-
-          if (!worker && status==='paid') status='pending';
-
-          const notes = (row['Notes']||row['notes']||'').toString().trim();
-          const addedBy = (row['Added By']||row['Added by']||row['addedBy']||'Import').toString().trim();
-
-          const isDup = Object.values(trucks).some(t=>t.plate===plate&&t.date===date);
-          if (isDup) { skipped++; return; }
-
-          imported++;
-          promises.push(addDoc(collection(db,'trucks'), {
-            plate, date, worker, status, notes,
-            addedBy: addedBy||'Import',
-            timestamp: Date.now()+imported
-          }));
+        const text = e.target.result;
+        const lines = text.split('\n').filter(l=>l.trim());
+        if (lines.length < 2) { showToast('⚠️ No data found in file'); return; }
+        const headers = lines[0].split(',').map(h=>h.replace(/"/g,'').trim());
+        const rows = lines.slice(1).map(line=>{
+          const vals = line.split(',').map(v=>v.replace(/"/g,'').trim());
+          const obj = {};
+          headers.forEach((h,i)=>{ obj[h]=vals[i]||''; });
+          return obj;
         });
-
-        Promise.all(promises)
-          .then(()=>showToast('✅ Imported '+imported+' trucks'+(skipped?' · '+skipped+' skipped':'')))
-          .catch(()=>showToast('⚠️ Some trucks may not have imported'));
-
+        processImportRows(rows);
       } catch(err) {
-        showToast('❌ Could not read file — use .xlsx or .csv format');
+        showToast('❌ CSV read error: ' + err.message);
+      }
+    };
+    reader.readAsText(file);
+  } else {
+    reader.onload = function(e) {
+      try {
+        if (!window.XLSX) { showToast('❌ Excel reader not ready — refresh page'); return; }
+        const data = new Uint8Array(e.target.result);
+        const workbook = window.XLSX.read(data, {type:'uint8'});
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        const rows = window.XLSX.utils.sheet_to_json(sheet, {defval:''});
+        processImportRows(rows);
+      } catch(err) {
+        showToast('❌ XLSX read error: ' + err.message);
       }
     };
     reader.readAsArrayBuffer(file);
   }
+}
 
-  // Load SheetJS dynamically if not already loaded
-  if (typeof XLSX !== 'undefined') {
-    doImport();
-  } else {
-    showToast('⏳ Loading Excel reader...');
-    const script = document.createElement('script');
-    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
-    script.onload = doImport;
-    script.onerror = ()=>showToast('❌ Could not load Excel reader — check internet');
-    document.head.appendChild(script);
-  }
+function processImportRows(rows) {
+  if (!rows.length) { showToast('⚠️ No data found in file'); return; }
+
+  let imported = 0, skipped = 0;
+  const promises = [];
+
+  rows.forEach(function(row) {
+    const plate = (row['Plate']||row['plate']||row['PLATE']||'').toString().trim().toUpperCase();
+    if (!plate) { skipped++; return; }
+
+    let date = row['Date']||row['date']||row['DATE']||'';
+    if (date instanceof Date) {
+      date = date.toISOString().split('T')[0];
+    } else {
+      date = (date+'').trim();
+      if (date && !isNaN(date) && date.length < 6) {
+        date = new Date((parseFloat(date)-25569)*86400*1000).toISOString().split('T')[0];
+      }
+    }
+    if (!date) date = getWorkingDate();
+
+    const rawWorker = (row['Worker']||row['worker']||row['Sealer']||row['sealer']||'').toString().trim();
+    const worker = (rawWorker.toLowerCase()==='personne'||rawWorker==='—'||rawWorker==='-'||rawWorker==='') ? '' : rawWorker;
+
+    const rawStatus = (row['Status']||row['status']||'').toString().trim().toLowerCase();
+    let status = 'unpaid';
+    if (rawStatus==='paid'||rawStatus==='payé') status='paid';
+    else if (rawStatus==='partial'||rawStatus==='partiel') status='partial';
+    else if (rawStatus==='pending') status='pending';
+
+    if (!worker && status==='paid') status='pending';
+
+    const notes = (row['Notes']||row['notes']||'').toString().trim();
+    const addedBy = (row['Added By']||row['Added by']||row['addedBy']||'Import').toString().trim();
+
+    const isDup = Object.values(trucks).some(t=>t.plate===plate&&t.date===date);
+    if (isDup) { skipped++; return; }
+
+    imported++;
+    promises.push(addDoc(collection(db,'trucks'), {
+      plate, date, worker, status, notes,
+      addedBy: addedBy||'Import',
+      timestamp: Date.now()+imported
+    }));
+  });
+
+  if (!imported && !skipped) { showToast('⚠️ No valid trucks found'); return; }
+
+  Promise.all(promises)
+    .then(()=>showToast('✅ Imported '+imported+' trucks'+(skipped?' · '+skipped+' skipped':'')))
+    .catch(err=>showToast('⚠️ Import error: '+err.message));
 }
 window.exportExcel = function() {
   const rows = [['Plate','Date','Sealer','Status','Total Fare','Sealer Pay','Company','Notes','Added By']];
