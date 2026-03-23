@@ -1011,6 +1011,7 @@
         <button class="filter-chip" data-filter="paid" onclick="setFilter('paid',this)">✅ Paid</button>
         <button class="filter-chip" data-filter="partial" onclick="setFilter('partial',this)">⚡ Partial</button>
         <button class="filter-chip" data-filter="unpaid" onclick="setFilter('unpaid',this)">❌ Unpaid</button>
+        <button class="filter-chip" id="dupChip" onclick="openDuplicateSpotter()" style="display:none;background:rgba(239,68,68,0.15);border-color:rgba(239,68,68,0.4);color:var(--red)">🔍 Duplicates <span id="dupChipCount"></span></button>
       </div>
       <div class="worker-bar" id="workerFilterBar"></div>
       <!-- PLATE SEARCH -->
@@ -1295,6 +1296,19 @@
   </div>
 </div>
 
+<!-- DUPLICATE MANAGER MODAL -->
+<div class="modal-overlay" id="modalDuplicates">
+  <div class="modal" style="max-height:85vh">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🔍 Duplicate Spotter</div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:14px" id="dupSummaryText"></div>
+    <div id="dupList" style="display:flex;flex-direction:column;gap:10px;max-height:55vh;overflow-y:auto;margin-bottom:12px;"></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modalDuplicates')">Close</button>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div id="toast"></div>
 
@@ -1561,6 +1575,7 @@ function initFirebase() {
     renderWorkers();
     renderReports();
     setOnline();
+    updateDupChip();
     const wd2 = getWorkingDate();
     const wd2Obj = new Date(wd2 + 'T12:00:00');
     const displayEl2 = document.getElementById('dateFilterDisplay');
@@ -3496,12 +3511,13 @@ window.importExcel = function(input) {
 
   function handleRows(rows) {
     if (!rows || !rows.length) { showToast('⚠️ No data found in file'); return; }
-    let imported = 0, skipped = 0;
+
+    let imported = 0;
     const promises = [];
 
     rows.forEach(function(row) {
       const plate = (row['Plate']||row['plate']||row['PLATE']||'').toString().trim().toUpperCase();
-      if (!plate) { skipped++; return; }
+      if (!plate) return;
 
       let date = row['Date']||row['date']||row['DATE']||'';
       if (date instanceof Date) {
@@ -3512,7 +3528,7 @@ window.importExcel = function(input) {
           date = new Date((parseFloat(date)-25569)*86400*1000).toISOString().split('T')[0];
         }
       }
-      if (!date || date === 'NaN-NaN-NaN') date = getWorkingDate();
+      if (!date || date==='NaN-NaN-NaN') date = getWorkingDate();
 
       const rawWorker = (row['Worker']||row['worker']||row['Sealer']||row['sealer']||'').toString().trim();
       const worker = (rawWorker.toLowerCase()==='personne'||rawWorker==='—'||rawWorker==='-') ? '' : rawWorker;
@@ -3527,9 +3543,6 @@ window.importExcel = function(input) {
       const notes = (row['Notes']||row['notes']||'').toString().trim();
       const addedBy = (row['Added By']||row['Added by']||row['addedBy']||'Import').toString().trim();
 
-      const isDup = Object.values(trucks).some(t=>t.plate===plate&&t.date===date);
-      if (isDup) { skipped++; return; }
-
       imported++;
       promises.push(addDoc(collection(db,'trucks'), {
         plate, date, worker, status, notes,
@@ -3538,12 +3551,8 @@ window.importExcel = function(input) {
       }));
     });
 
-    if (!imported && !promises.length) {
-      showToast(skipped ? '⚠️ All '+skipped+' trucks already exist' : '⚠️ No valid trucks found');
-      return;
-    }
     Promise.all(promises)
-      .then(()=>showToast('✅ Imported '+imported+' trucks'+(skipped?' · '+skipped+' skipped':'')))
+      .then(()=>showToast('✅ Imported '+imported+' trucks — check 🔍 Duplicates chip if needed'))
       .catch(err=>showToast('⚠️ Import error: '+(err.message||err)));
   }
 
@@ -3574,6 +3583,78 @@ window.importExcel = function(input) {
     };
     reader.readAsArrayBuffer(file);
   }
+}
+
+// ── DUPLICATE SPOTTER ──
+function updateDupChip() {
+  const role = currentUser?.role;
+  const chip = document.getElementById('dupChip');
+  const countEl = document.getElementById('dupChipCount');
+  if (!chip) return;
+  if (role !== 'admin' && role !== 'cashier' && role !== 'head') { chip.style.display='none'; return; }
+
+  // Find all plates that appear more than once on the same date
+  const seen = {};
+  const dupIds = [];
+  Object.entries(trucks).forEach(([id, t]) => {
+    const key = t.plate + '|' + t.date;
+    if (!seen[key]) seen[key] = [];
+    seen[key].push(id);
+  });
+  Object.values(seen).forEach(ids => { if (ids.length > 1) ids.forEach(id => dupIds.push(id)); });
+
+  if (dupIds.length > 0) {
+    chip.style.display = '';
+    countEl.textContent = '(' + dupIds.length + ')';
+  } else {
+    chip.style.display = 'none';
+  }
+}
+
+window.openDuplicateSpotter = function() {
+  const seen = {};
+  Object.entries(trucks).forEach(([id, t]) => {
+    const key = t.plate + '|' + t.date;
+    if (!seen[key]) seen[key] = [];
+    seen[key].push({id, ...t});
+  });
+
+  const groups = Object.values(seen).filter(g => g.length > 1);
+  if (!groups.length) { showToast('✅ No duplicates found'); return; }
+
+  const statusColor = s => s==='paid'||s==='pending'?'var(--green)':s==='partial'?'var(--orange)':'var(--red)';
+  const statusLabel = s => s==='paid'?'✅ Paid':s==='partial'?'⚡ Partial':s==='pending'?'🟡 Pending':'❌ Unpaid';
+
+  document.getElementById('dupSummaryText').textContent =
+    groups.length + ' duplicate group(s) found — tap 🗑️ to delete individual entries:';
+
+  document.getElementById('dupList').innerHTML = groups.map((group, gi) => `
+    <div style="background:var(--bg3);border:1.5px solid rgba(239,68,68,0.3);border-radius:var(--radius-sm);padding:12px">
+      <div style="font-family:'JetBrains Mono',monospace;font-weight:800;font-size:15px;margin-bottom:8px;color:var(--red)">
+        🚛 ${group[0].plate} — ${group[0].date} (${group.length}x)
+      </div>
+      ${group.map((tk,i) => `
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px;background:var(--card);border-radius:6px;margin-bottom:6px">
+          <div>
+            <div style="font-size:12px;font-weight:600;color:${statusColor(tk.status)}">${statusLabel(tk.status)}</div>
+            <div style="font-size:11px;color:var(--text2)">👤 ${tk.worker||'No sealer'} · By: ${tk.addedBy||'—'}</div>
+          </div>
+          <button class="truck-action-btn danger" style="flex:none;padding:5px 10px"
+            onclick="deleteDupEntry('${tk.id}', this)">🗑️ Delete</button>
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+
+  openModal('modalDuplicates');
+}
+
+window.deleteDupEntry = function(id, btn) {
+  if (!confirm('Delete this truck entry?')) return;
+  deleteDoc(doc(db,'trucks',id));
+  btn.closest('[style*="display:flex"]').remove();
+  showToast('🗑️ Deleted');
+  updateDupChip();
 }
 window.exportExcel = function() {
   const rows = [['Plate','Date','Sealer','Status','Total Fare','Sealer Pay','Company','Notes','Added By']];
