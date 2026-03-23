@@ -1428,41 +1428,45 @@ const T = {
 };
 const t = k => (T[currentLang]||T.en)[k] || k;
 
-// ── PIN MANAGEMENT (localStorage) ──
-function getPins() {
-  try { return JSON.parse(localStorage.getItem('hask_pins')) || {}; } catch { return {}; }
-}
-function savePins(pins) { localStorage.setItem('hask_pins', JSON.stringify(pins)); }
-function getPin(user) { return getPins()[user] || DEFAULT_PINS[user] || '0000'; }
-function setPin(user, pin) { const p=getPins(); p[user]=pin; savePins(p); }
+// ── CLOUD STATE (synced from Firestore) ──
+let _cloudPins = {};       // { userId: '1234', ... }
+let _cloudPerms = {};      // { userId: { addTrucks: true, ... }, ... }
+let _cloudWorkers = null;  // null = not loaded yet; [] = loaded
 
-// ── PERMISSIONS (localStorage) ──
-function getPerms() {
-  try { return JSON.parse(localStorage.getItem('hask_perms')) || {}; } catch { return {}; }
+// ── PIN MANAGEMENT (Firestore-backed) ──
+function getPin(user) { return _cloudPins[user] || DEFAULT_PINS[user] || '0000'; }
+function setPin(user, pin) {
+  _cloudPins[user] = pin;
+  setDoc(doc(db, 'settings', 'pins'), _cloudPins);
 }
-function savePermsData(p) { localStorage.setItem('hask_perms', JSON.stringify(p)); }
+
+// ── PERMISSIONS (Firestore-backed) ──
 function getUserPerms(user) {
-  const all = getPerms();
-  if (all[user]) return all[user];
+  if (_cloudPerms[user]) return _cloudPerms[user];
   if (user==='cashier1'||user==='cashier2') return {addTrucks:true,addAdvances:true,editStatus:true,deleteTrucks:false};
-  // All workers: can add trucks, cannot edit payment status by default
   const workerList = getWorkerList();
   if (DEFAULT_WORKERS.includes(user) || workerList.includes(user)) {
     return {canAddOwnTrucks:true, canEditStatus:false, seeEarnings:true, seeStats:true, seeAllTrucks:false, seeTeam:false};
   }
   return {};
 }
-function setUserPerms(user, p) { const all=getPerms(); all[user]=p; savePermsData(all); }
-
-// ── WORKERS LIST (from localStorage, extendable) ──
-function getWorkerList() {
-  try { return JSON.parse(localStorage.getItem('hask_workers')) || DEFAULT_WORKERS; } catch { return DEFAULT_WORKERS; }
+function setUserPerms(user, p) {
+  _cloudPerms[user] = p;
+  setDoc(doc(db, 'settings', 'perms'), _cloudPerms);
 }
-function saveWorkerList(w) { localStorage.setItem('hask_workers', JSON.stringify(w)); }
+
+// ── WORKERS LIST (Firestore-backed) ──
+function getWorkerList() {
+  return _cloudWorkers !== null ? _cloudWorkers : DEFAULT_WORKERS;
+}
+function saveWorkerList(w) {
+  _cloudWorkers = w;
+  setDoc(doc(db, 'settings', 'workers'), { list: w });
+}
 
 // ── FIREBASE LISTENERS ──
 function initFirebase() {
-  ['_unsubTrucks','_unsubAdvances','_unsubDeleted','_unsubSuspend'].forEach(k => {
+  ['_unsubTrucks','_unsubAdvances','_unsubDeleted','_unsubSuspend','_unsubPins','_unsubPerms','_unsubWorkers'].forEach(k => {
     try { if (window[k]) { window[k](); window[k] = null; } } catch(e) {}
   });
 
@@ -1506,19 +1510,51 @@ function initFirebase() {
     addingSuspended = snap.exists() ? snap.data().value === true : false;
     if (currentUser) updateSuspendUI();
   }, () => {});
+
+  // ── Cloud PINs ──
+  window._unsubPins = onSnapshot(doc(db,'settings','pins'), snap => {
+    _cloudPins = snap.exists() ? snap.data() : {};
+  }, () => {});
+
+  // ── Cloud Permissions ──
+  window._unsubPerms = onSnapshot(doc(db,'settings','perms'), snap => {
+    _cloudPerms = snap.exists() ? snap.data() : {};
+    if (currentTab === 'manage') renderManage();
+  }, () => {});
+
+  // ── Cloud Worker List ──
+  window._unsubWorkers = onSnapshot(doc(db,'settings','workers'), snap => {
+    _cloudWorkers = snap.exists() ? (snap.data().list || DEFAULT_WORKERS) : DEFAULT_WORKERS;
+    buildLogin();
+    if (currentTab === 'trucks') renderTrucks();
+    if (currentTab === 'workers') renderWorkers();
+    if (currentTab === 'manage') renderManage();
+  }, () => {});
 }
 
 function setSyncing() {
   document.getElementById('syncDot').className='syncing';
-  document.getElementById('syncLabel').textContent='Syncing...';
+  document.getElementById('syncLabel').textContent='Syncing…';
+  const d = document.getElementById('syncDotManage');
+  if (d) { d.style.background='var(--orange)'; d.style.animation='pulse 1s infinite'; }
+  const s = document.getElementById('cloudSyncStatus');
+  if (s) { s.textContent='Syncing…'; s.style.color='var(--orange)'; }
 }
 function setOnline() {
   document.getElementById('syncDot').className='';
-  document.getElementById('syncLabel').textContent='Live';
+  document.getElementById('syncLabel').textContent='☁️ Live';
+  const d = document.getElementById('syncDotManage');
+  if (d) { d.style.background='var(--green)'; d.style.animation=''; }
+  const s = document.getElementById('cloudSyncStatus');
+  if (s) { s.textContent='Connected — all data synced'; s.style.color='var(--green)'; }
 }
 function setOffline() {
   document.getElementById('syncDot').className='offline';
   document.getElementById('syncLabel').textContent='Offline';
+  const d = document.getElementById('syncDotManage');
+  if (d) { d.style.background='var(--red)'; d.style.animation=''; }
+  const s = document.getElementById('cloudSyncStatus');
+  if (s) { s.textContent='Offline — check internet connection'; s.style.color='var(--red)'; }
 }
 
 // ── LOGIN ──
@@ -2638,6 +2674,31 @@ function renderManage() {
           </div>
           <div style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;background:${addingSuspended?'rgba(239,68,68,0.15)':'rgba(34,197,94,0.15)'};color:${addingSuspended?'var(--red)':'var(--green)'}">
             ${addingSuspended ? 'SUSPENDED' : 'ACTIVE'}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="manage-section-title">☁️ CLOUD SYNC</div>
+      <div class="manage-card">
+        <div class="manage-item">
+          <div class="manage-item-left">
+            <div class="manage-item-icon" id="cloudSyncIcon">☁️</div>
+            <div>
+              <div class="manage-item-name" id="cloudSyncStatus" style="color:var(--green)">Connected to Firebase</div>
+              <div class="manage-item-sub">Trucks · Workers · PINs · Permissions — all synced across devices in real-time</div>
+            </div>
+          </div>
+          <div id="syncDotManage" style="width:10px;height:10px;border-radius:50%;background:var(--green);flex-shrink:0"></div>
+        </div>
+        <div class="manage-item">
+          <div class="manage-item-left">
+            <div class="manage-item-icon">📦</div>
+            <div>
+              <div class="manage-item-name">Project: haaa-3b06e</div>
+              <div class="manage-item-sub">Firebase Firestore · Real-time database</div>
+            </div>
           </div>
         </div>
       </div>
