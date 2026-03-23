@@ -1454,7 +1454,7 @@ function getUserPerms(user) {
   if (user==='cashier1'||user==='cashier2') return {addTrucks:true,addAdvances:true,editStatus:true,deleteTrucks:false};
   const workerList = getWorkerList();
   if (DEFAULT_WORKERS.includes(user) || workerList.includes(user)) {
-    return {canAddOwnTrucks:true, canEditStatus:false, seeEarnings:true, seeStats:true, seeAllTrucks:false, seeTeam:false};
+    return {canAddOwnTrucks:true, canEditStatus:false, canEditOwnTruck:true, seeEarnings:true, seeStats:true, seeAllTrucks:false, seeTeam:false};
   }
   return {};
 }
@@ -2035,9 +2035,9 @@ function renderTrucks() {
   }
 
   const perms = getUserPerms(id);
-  const canEditStatus = isToday && (role==='admin' || (role==='cashier' && perms.editStatus) || (role==='worker' && perms.canEditStatus));
+  const canEditStatus = isToday && (role==='admin' || (role==='cashier' && perms.editStatus));
   const canDelete = isToday && (role==='admin' || (role==='cashier' && perms.deleteTrucks));
-  const canEdit = isToday && (role==='admin' || (role==='cashier' && perms.addTrucks));
+  const canEdit = isToday && (role==='admin' || (role==='cashier' && perms.addTrucks)); // full edit: plate+worker+status
 
   container.innerHTML = historyNotice + pendingHTML + (assignedTrucks.length === 0
     ? `<div class="empty-state"><div class="icon">🚛</div><p>${pendingTrucks.length ? 'No assigned trucks today' : t('noTrucks')}</p></div>`
@@ -2053,6 +2053,7 @@ function renderTrucks() {
     let actions = '';
     if (canEditStatus) actions += `<button class="truck-action-btn primary" onclick="openStatus('${truck._id}')">🟡 Status</button>`;
     if (canEdit) actions += `<button class="truck-action-btn" onclick="openEditTruck('${truck._id}')">✏️ Edit</button>`;
+    // Workers can only edit plate on their own trucks
     if (isToday && role==='worker' && truck.worker===id) actions += `<button class="truck-action-btn" onclick="openEditPlate('${truck._id}')">✏️ Plate</button>`;
     if (canDelete) actions += `<button class="truck-action-btn danger" onclick="deleteTruck('${truck._id}')">🗑️ Delete</button>`;
 
@@ -2234,8 +2235,10 @@ window.saveTruck = function() {
     ? currentUser.id
     : document.getElementById('truckWorker').value;
   let status = currentUser.role === 'worker' ? 'unpaid' : getRadioVal('statusRadio');
-  // No worker selected → force pending so it appears in Waiting for Worker section
+  // No worker selected → paid (client already paid, worker not assigned yet)
   if (!worker && status !== 'pending') status = 'pending';
+  // Force paid amount tracking for pending trucks
+  if (status === 'pending') status = 'pending'; // keeps in waiting section but paid
   const notes = document.getElementById('truckNotes').value.trim();
   if (!plate) { showToast('⚠️ Enter plate number'); return; }
   if (!date) { showToast('⚠️ Select date'); return; }
@@ -2869,7 +2872,7 @@ window.saveNewWorker = function() {
   saveWorkerList(workers);
   setPin(name, pin);
   // Set safe default permissions for new worker
-  setUserPerms(name, {canAddOwnTrucks:true, canEditStatus:false, seeEarnings:true, seeStats:true, seeAllTrucks:false, seeTeam:false});
+  setUserPerms(name, {canAddOwnTrucks:true, canEditStatus:false, canEditOwnTruck:true, seeEarnings:true, seeStats:true, seeAllTrucks:false, seeTeam:false});
   buildWorkerFilterBar();
   renderManage();
   renderWorkers();
