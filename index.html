@@ -1961,6 +1961,7 @@ window.selectDate = function(d) {
   if (clearBtn) clearBtn.style.display = 'none';
   closeModal('modalDatePicker');
   renderTrucks();
+  updateDupChip();
 }
 
 window.setFilter = function(f, el) {
@@ -2173,6 +2174,7 @@ function renderTrucks() {
     const totalFare = truck.status==='paid'?CLIENT_PRICE:truck.status==='partial'?2800:0;
     const company = totalFare - workerEarn;
     const dateStr = truck.timestamp ? new Date(truck.timestamp).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}) : truck.date;
+    const modStr = truck.modifiedAt ? new Date(truck.modifiedAt).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}) : null;
 
     let actions = '';
     if (canEditStatus) actions += `<button class="truck-action-btn primary" onclick="openStatus('${truck._id}')">🟡 Status</button>`;
@@ -2198,6 +2200,7 @@ function renderTrucks() {
           <span>📅 ${dateStr}</span>
           ${truck.addedBy ? ` · Added by: ${truck.addedBy}` : ''}
         </div>
+        ${modStr ? `<div class="truck-meta" style="font-size:10px;color:var(--text3)">✏️ Modified: ${modStr}${truck.modifiedBy ? ' by ' + truck.modifiedBy : ''}</div>` : ''}
         ${truck.notes ? `<div class="truck-meta">📝 ${truck.notes}</div>` : ''}
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
           <div style="text-align:center">
@@ -2396,7 +2399,13 @@ window.saveTruck = function() {
   };
 
   if (editingTruckId) {
-    updateDoc(doc(db,'trucks',editingTruckId), data);
+    const original = trucks[editingTruckId];
+    // Preserve original timestamp and addedBy — only update content fields
+    updateDoc(doc(db,'trucks',editingTruckId), {
+      plate, date, worker, status, notes,
+      modifiedAt: Date.now(),
+      modifiedBy: currentUser.name || currentUser.id
+    });
     showToast('✅ Truck updated');
   } else {
     addDoc(collection(db,'trucks'), data);
@@ -2426,7 +2435,11 @@ window.openStatus = function(id) {
 window.saveStatus = function() {
   if (!editingStatusId) return;
   const newStatus = getRadioVal('statusChangeRadio');
-  updateDoc(doc(db,'trucks',editingStatusId), {status:newStatus});
+  updateDoc(doc(db,'trucks',editingStatusId), {
+    status: newStatus,
+    modifiedAt: Date.now(),
+    modifiedBy: currentUser.name || currentUser.id
+  });
   showToast('✅ Status updated');
   closeModal('modalStatus');
 }
@@ -2450,7 +2463,12 @@ window.doAssign = function() {
   if (!truck) return;
   // Assign worker; pending truck was already paid — keep paid status
   const newStatus = truck.status === 'pending' ? 'paid' : truck.status;
-  updateDoc(doc(db,'trucks',id), { worker, status: newStatus, assignedBy: currentUser.id, assignedAt: Date.now() });
+  updateDoc(doc(db,'trucks',id), {
+    worker, status: newStatus,
+    assignedBy: currentUser.id,
+    modifiedAt: Date.now(),
+    modifiedBy: currentUser.name || currentUser.id
+  });
   showToast(`✅ ${worker} assigned to ${truck.plate}`);
   closeModal('modalAssign');
 }
@@ -3593,27 +3611,29 @@ function updateDupChip() {
   if (!chip) return;
   if (role !== 'admin' && role !== 'cashier' && role !== 'head') { chip.style.display='none'; return; }
 
-  // Find all plates that appear more than once on the same date
+  const date = document.getElementById('dateFilter')?.value || getWorkingDate();
   const seen = {};
-  const dupIds = [];
   Object.entries(trucks).forEach(([id, t]) => {
+    if (t.date !== date) return;
     const key = t.plate + '|' + t.date;
     if (!seen[key]) seen[key] = [];
     seen[key].push(id);
   });
-  Object.values(seen).forEach(ids => { if (ids.length > 1) ids.forEach(id => dupIds.push(id)); });
+  const dupCount = Object.values(seen).filter(ids => ids.length > 1).reduce((s,ids)=>s+ids.length,0);
 
-  if (dupIds.length > 0) {
+  if (dupCount > 0) {
     chip.style.display = '';
-    countEl.textContent = '(' + dupIds.length + ')';
+    countEl.textContent = '(' + dupCount + ')';
   } else {
     chip.style.display = 'none';
   }
 }
 
 window.openDuplicateSpotter = function() {
+  const date = document.getElementById('dateFilter')?.value || getWorkingDate();
   const seen = {};
   Object.entries(trucks).forEach(([id, t]) => {
+    if (t.date !== date) return;
     const key = t.plate + '|' + t.date;
     if (!seen[key]) seen[key] = [];
     seen[key].push({id, ...t});
@@ -3624,29 +3644,62 @@ window.openDuplicateSpotter = function() {
 
   const statusColor = s => s==='paid'||s==='pending'?'var(--green)':s==='partial'?'var(--orange)':'var(--red)';
   const statusLabel = s => s==='paid'?'✅ Paid':s==='partial'?'⚡ Partial':s==='pending'?'🟡 Pending':'❌ Unpaid';
+  const workers = getWorkerList();
 
   document.getElementById('dupSummaryText').textContent =
-    groups.length + ' duplicate group(s) found — tap 🗑️ to delete individual entries:';
+    groups.length + ' duplicate group(s) — edit, then delete the one to remove:';
 
-  document.getElementById('dupList').innerHTML = groups.map((group, gi) => `
-    <div style="background:var(--bg3);border:1.5px solid rgba(239,68,68,0.3);border-radius:var(--radius-sm);padding:12px">
-      <div style="font-family:'JetBrains Mono',monospace;font-weight:800;font-size:15px;margin-bottom:8px;color:var(--red)">
-        🚛 ${group[0].plate} — ${group[0].date} (${group.length}x)
+  document.getElementById('dupList').innerHTML = groups.map((group) => `
+    <div style="background:var(--bg3);border:1.5px solid rgba(239,68,68,0.3);border-radius:var(--radius-sm);padding:12px;margin-bottom:4px">
+      <div style="font-family:'JetBrains Mono',monospace;font-weight:800;font-size:15px;margin-bottom:10px;color:var(--red)">
+        🚛 ${group[0].plate} — ${group[0].date} <span style="font-size:11px">(${group.length}x)</span>
       </div>
-      ${group.map((tk,i) => `
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px;background:var(--card);border-radius:6px;margin-bottom:6px">
-          <div>
-            <div style="font-size:12px;font-weight:600;color:${statusColor(tk.status)}">${statusLabel(tk.status)}</div>
-            <div style="font-size:11px;color:var(--text2)">👤 ${tk.worker||'No sealer'} · By: ${tk.addedBy||'—'}</div>
+      ${group.map((tk) => `
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px;margin-bottom:8px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <div>
+              <span style="font-size:12px;font-weight:700;color:${statusColor(tk.status)}">${statusLabel(tk.status)}</span>
+              <span style="font-size:11px;color:var(--text2);margin-left:8px">By: ${tk.addedBy||'—'}</span>
+            </div>
+            <button class="truck-action-btn danger" style="flex:none;padding:4px 10px;font-size:11px"
+              onclick="deleteDupEntry('${tk.id}', this)">🗑️</button>
           </div>
-          <button class="truck-action-btn danger" style="flex:none;padding:5px 10px"
-            onclick="deleteDupEntry('${tk.id}', this)">🗑️ Delete</button>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div>
+              <div style="font-size:10px;color:var(--text3);font-weight:700;margin-bottom:4px">SEALER</div>
+              <select class="form-select" style="padding:6px 8px;font-size:12px" id="dupWorker_${tk.id}"
+                onchange="saveDupEdit('${tk.id}')">
+                <option value="">— No sealer —</option>
+                ${workers.map(w=>`<option value="${w}" ${tk.worker===w?'selected':''}>${w}</option>`).join('')}
+              </select>
+            </div>
+            <div>
+              <div style="font-size:10px;color:var(--text3);font-weight:700;margin-bottom:4px">STATUS</div>
+              <select class="form-select" style="padding:6px 8px;font-size:12px" id="dupStatus_${tk.id}"
+                onchange="saveDupEdit('${tk.id}')">
+                <option value="unpaid" ${tk.status==='unpaid'?'selected':''}>❌ Unpaid</option>
+                <option value="partial" ${tk.status==='partial'?'selected':''}>⚡ Partial</option>
+                <option value="paid" ${tk.status==='paid'?'selected':''}>✅ Paid</option>
+              </select>
+            </div>
+          </div>
         </div>
       `).join('')}
     </div>
   `).join('');
 
   openModal('modalDuplicates');
+}
+
+window.saveDupEdit = function(id) {
+  const worker = document.getElementById('dupWorker_'+id)?.value || '';
+  const status = document.getElementById('dupStatus_'+id)?.value || 'unpaid';
+  updateDoc(doc(db,'trucks',id), {
+    worker, status,
+    modifiedAt: Date.now(),
+    modifiedBy: currentUser.name || currentUser.id
+  });
+  showToast('✅ Updated');
 }
 
 window.deleteDupEntry = function(id, btn) {
