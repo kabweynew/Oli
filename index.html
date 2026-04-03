@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+<html lang="en"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>WKABE — Hask Truck Tracker</title>
@@ -919,33 +917,97 @@
 <body>
 
 <!-- SPLASH SCREEN -->
-<div id="splashScreen">
-  <img class="splash-img" id="splashImg" src="splash.jpg" alt="">
-  <div class="splash-content">
-    <canvas class="splash-icon" id="splashIcon" width="100" height="100"></canvas>
-    <div class="splash-title">WKABE</div>
-    <div class="splash-sub">Hask Services — Djibouti</div>
-    <div class="splash-loader"><div class="splash-loader-bar"></div></div>
-  </div>
-</div>
 
-<div id="loginScreen" class="screen active">
+
+<div id="loginScreen" class="screen">
   <canvas id="loginLogo" width="72" height="72" style="border-radius:20%;margin-bottom:12px;box-shadow:0 8px 32px rgba(0,0,0,0.5)"></canvas>
   <div class="login-title">WKABE</div>
   <div class="login-sub">Hask Services — Djibouti</div>
-  <div class="login-grid" id="loginGrid"></div>
+  <div class="login-grid" id="loginGrid">
+    <button class="login-btn admin-btn" onclick="goPin('admin')">
+      <div class="avatar" style="background:#a855f722;color:#a855f7;border:2px solid #a855f744">
+        👑
+      </div>
+      <div class="role-name">Admin</div>
+      <div class="role-label">Full access</div>
+    </button>
+  
+    <button class="login-btn" onclick="goPin('head')">
+      <div class="avatar" style="background:#f59e0b22;color:#f59e0b;border:2px solid #f59e0b44">
+        🏢
+      </div>
+      <div class="role-name">Rey/Moud</div>
+      <div class="role-label">CEO</div>
+    </button>
+  
+    <button class="login-btn" onclick="goPin('cashier1')">
+      <div class="avatar" style="background:#3b82f622;color:#3b82f6;border:2px solid #3b82f644">
+        💼
+      </div>
+      <div class="role-name">Cashier 1</div>
+      <div class="role-label">Cashier</div>
+    </button>
+  
+    <button class="login-btn" onclick="goPin('cashier2')">
+      <div class="avatar" style="background:#14b8a622;color:#14b8a6;border:2px solid #14b8a644">
+        💼
+      </div>
+      <div class="role-name">Cashier 2</div>
+      <div class="role-label">Cashier</div>
+    </button>
+  
+    <button class="login-btn" onclick="goPin('Ahmed')">
+      <div class="avatar" style="background:#3b82f622;color:#3b82f6;border:2px solid #3b82f644">
+        AH
+      </div>
+      <div class="role-name">Ahmed</div>
+      <div class="role-label">Sealer · My seals only</div>
+    </button>
+  
+    <button class="login-btn" onclick="goPin('Radwan')">
+      <div class="avatar" style="background:#22c55e22;color:#22c55e;border:2px solid #22c55e44">
+        RA
+      </div>
+      <div class="role-name">Radwan</div>
+      <div class="role-label">Sealer · My seals only</div>
+    </button>
+  
+    <button class="login-btn" onclick="goPin('Oli')">
+      <div class="avatar" style="background:#f59e0b22;color:#f59e0b;border:2px solid #f59e0b44">
+        OL
+      </div>
+      <div class="role-name">Oli</div>
+      <div class="role-label">Sealer · My seals only</div>
+    </button>
+  
+    <button class="login-btn" onclick="goPin('Ali')">
+      <div class="avatar" style="background:#ef444422;color:#ef4444;border:2px solid #ef444444">
+        AL
+      </div>
+      <div class="role-name">Ali</div>
+      <div class="role-label">Sealer · My seals only</div>
+    </button>
+  
+    <button class="login-btn" onclick="goPin('Omar')">
+      <div class="avatar" style="background:#a855f722;color:#a855f7;border:2px solid #a855f744">
+        OM
+      </div>
+      <div class="role-name">Omar</div>
+      <div class="role-label">Sealer · My seals only</div>
+    </button>
+  </div>
 </div>
 
 <!-- PIN SCREEN -->
 <div id="pinScreen" class="screen">
-  <div class="pin-avatar" id="pinAvatar"></div>
-  <div class="pin-name" id="pinName"></div>
-  <div class="pin-role" id="pinRole"></div>
+  <div class="pin-avatar" id="pinAvatar" style="background: rgba(168, 85, 247, 0.133); color: rgb(168, 85, 247); border: 2px solid rgba(168, 85, 247, 0.267);">👑</div>
+  <div class="pin-name" id="pinName">Admin</div>
+  <div class="pin-role" id="pinRole">Full Access</div>
   <div class="pin-dots">
-    <div class="pin-dot" id="d0"></div>
-    <div class="pin-dot" id="d1"></div>
-    <div class="pin-dot" id="d2"></div>
-    <div class="pin-dot" id="d3"></div>
+    <div class="pin-dot filled" id="d0"></div>
+    <div class="pin-dot filled" id="d1"></div>
+    <div class="pin-dot filled" id="d2"></div>
+    <div class="pin-dot filled" id="d3"></div>
   </div>
   <div class="pin-keypad">
     <button class="pin-key" onclick="pinKey('1')">1</button>
@@ -965,19 +1027,19 @@
 </div>
 
 <!-- MAIN APP SCREEN -->
-<div id="appScreen" class="screen">
+<div id="appScreen" class="screen active">
   <!-- HEADER -->
   <div class="app-header">
     <div class="header-left">
       <div class="header-logo">HSK</div>
       <div>
-        <div class="header-title" id="headerTitle">Hask Tracker</div>
-        <div class="header-sub" id="headerSub">Hask Services</div>
+        <div class="header-title" id="headerTitle">Tous les Camions</div>
+        <div class="header-sub" id="headerSub">Admin — Vue complète</div>
       </div>
     </div>
     <div class="header-right">
-      <div class="online-badge"><div id="syncDot"></div><span id="syncLabel">Live</span></div>
-      <span class="role-badge" id="roleBadge">ADMIN</span>
+      <div class="online-badge"><div id="syncDot" class="offline"></div><span id="syncLabel">Offline</span></div>
+      <span class="role-badge admin" id="roleBadge">ADMIN</span>
       <button class="add-btn" id="headerAddBtn" onclick="openAddTruck()">+ Add</button>
     </div>
   </div>
@@ -985,21 +1047,21 @@
   <!-- MAIN CONTENT -->
   <div class="main-content" id="mainContent">
     <!-- Trucks Tab -->
-    <div id="tabTrucks">
+    <div id="tabTrucks" style="display: none;">
       <div class="stats-bar">
         <div class="stat-card"><div class="stat-num blue" id="statTotal">0</div><div class="stat-label">TRUCKS</div></div>
         <div class="stat-card"><div class="stat-num green" id="statPaid">0</div><div class="stat-label">PAID</div></div>
         <div class="stat-card"><div class="stat-num orange" id="statPartial">0</div><div class="stat-label">PARTIAL</div></div>
         <div class="stat-card"><div class="stat-num red" id="statUnpaid">0</div><div class="stat-label">UNPAID</div></div>
-        <div class="stat-card"><div class="stat-num teal" id="statETB">0.0k</div><div class="stat-label">ETB</div></div>
+        <div class="stat-card"><div class="stat-num teal" id="statETB">0</div><div class="stat-label">ETB</div></div>
       </div>
       <div class="date-bar">
-        <button class="date-chip" id="todayChip" onclick="setToday()">🟢 Today</button>
+        <button class="date-chip" id="todayChip" onclick="setToday()" style="background: var(--green); opacity: 1;">🟢 Today</button>
         <div class="date-input-wrap" style="cursor:pointer" onclick="openDatePicker()" id="datePickerBtn">
           <span style="color:var(--text3);font-size:13px;">📅</span>
-          <span id="dateFilterDisplay" style="flex:1;font-size:13px;font-weight:600">Today</span>
+          <span id="dateFilterDisplay" style="flex:1;font-size:13px;font-weight:600">Today — Mon 30 Mar</span>
           <span style="color:var(--text3);font-size:12px;">▼</span>
-          <input type="hidden" id="dateFilter">
+          <input type="hidden" id="dateFilter" value="2026-03-30">
         </div>
       </div>
       <!-- SUSPEND BANNER -->
@@ -1013,7 +1075,38 @@
         <button class="filter-chip" data-filter="unpaid" onclick="setFilter('unpaid',this)">❌ Unpaid</button>
         <button class="filter-chip" id="dupChip" onclick="openDuplicateSpotter()" style="display:none;background:rgba(239,68,68,0.15);border-color:rgba(239,68,68,0.4);color:var(--red)">🔍 Duplicates <span id="dupChipCount"></span></button>
       </div>
-      <div class="worker-bar" id="workerFilterBar"></div>
+      <div class="worker-bar" id="workerFilterBar">
+    <button class="worker-chip active" id="wchip_all" onclick="setWorkerFilter('all',this)">
+      <div class="wdot" style="background:var(--accent)"></div>
+      👥 All <span class="wcount" id="wcount_all">0</span>
+    </button>
+    
+      <button class="worker-chip" id="wchip_Ahmed" onclick="setWorkerFilter('Ahmed',this)" style="border-color:#3b82f644">
+        <div class="wdot" style="background:#3b82f6"></div>
+        Ahmed <span class="wcount" id="wcount_Ahmed">0</span>
+      </button>
+    
+      <button class="worker-chip" id="wchip_Radwan" onclick="setWorkerFilter('Radwan',this)" style="border-color:#22c55e44">
+        <div class="wdot" style="background:#22c55e"></div>
+        Radwan <span class="wcount" id="wcount_Radwan">0</span>
+      </button>
+    
+      <button class="worker-chip" id="wchip_Oli" onclick="setWorkerFilter('Oli',this)" style="border-color:#f59e0b44">
+        <div class="wdot" style="background:#f59e0b"></div>
+        Oli <span class="wcount" id="wcount_Oli">0</span>
+      </button>
+    
+      <button class="worker-chip" id="wchip_Ali" onclick="setWorkerFilter('Ali',this)" style="border-color:#ef444444">
+        <div class="wdot" style="background:#ef4444"></div>
+        Ali <span class="wcount" id="wcount_Ali">0</span>
+      </button>
+    
+      <button class="worker-chip" id="wchip_Omar" onclick="setWorkerFilter('Omar',this)" style="border-color:#a855f744">
+        <div class="wdot" style="background:#a855f7"></div>
+        Omar <span class="wcount" id="wcount_Omar">0</span>
+      </button>
+    
+  </div>
       <!-- PLATE SEARCH -->
       <div class="plate-search-wrap">
         <input class="plate-search-input" id="plateSearch" placeholder="🔍 Search plate number..." oninput="onPlateSearch(this)" autocomplete="off">
@@ -1022,6 +1115,7 @@
       <div class="section-header">
         <span class="section-title" id="trucksSectionTitle">TODAY'S TRUCKS</span>
         <div style="display:flex;gap:8px;align-items:center">
+          <button class="new-btn" style="color:var(--green);font-size:11px;" id="exportDateBtn" onclick="exportExcel()">📊 Export</button>
           <button class="new-btn" style="color:var(--teal)" onclick="openShareReport()">📤 Share</button>
           <button class="new-btn" onclick="openAddTruck()">+ New</button>
         </div>
@@ -1030,7 +1124,7 @@
         <div class="assign-title">⏳ WAITING FOR SEALER</div>
         <div id="unassignedList"></div>
       </div>
-      <div class="trucks-list" id="trucksList"></div>
+      <div class="trucks-list" id="trucksList"><div class="empty-state"><div class="icon">🚛</div><p>Aucun camion trouvé</p></div></div>
     </div>
 
     <!-- Truck List Tab (all trucks in global order) -->
@@ -1046,7 +1140,182 @@
 
     <!-- Workers Tab -->
     <div id="tabWorkers" style="display:none;">
-      <div class="workers-list" id="workersList"></div>
+      <div class="workers-list" id="workersList"><div style="padding:8px 16px 4px;font-size:11px;font-weight:700;color:var(--text3);letter-spacing:0.08em">📅 TODAY</div>
+      <div class="worker-card" id="wcard_Ahmed">
+        <div class="worker-card-header" onclick="toggleWorker('Ahmed')">
+          <div class="worker-avatar" style="background:#3b82f622;color:#3b82f6;border:2px solid #3b82f644">
+            AH
+          </div>
+          <div class="worker-info">
+            <div class="worker-name">Ahmed</div>
+            <div class="worker-stats-row">
+              <div class="worker-stat">Trucks: <span>0</span></div>
+              <div class="worker-stat">Earned: <span style="color:var(--green)">0</span></div>
+              <div class="worker-stat">Net: <span style="color:var(--red)">-600</span></div>
+            </div>
+          </div>
+          <div class="expand-icon">▼</div>
+        </div>
+        <div class="worker-details">
+          <div class="detail-row"><span class="detail-label">📅 Date</span><span class="detail-val">Today</span></div>
+          <div class="detail-row"><span class="detail-label">Trucks worked</span><span class="detail-val">0</span></div>
+          <div class="detail-row"><span class="detail-label">Paid trucks</span><span class="detail-val green">0</span></div>
+          <div class="detail-row"><span class="detail-label">Partial trucks</span><span class="detail-val orange">0</span></div>
+          <div class="detail-row"><span class="detail-label">Unpaid trucks</span><span class="detail-val red">0</span></div>
+          <div class="detail-row"><span class="detail-label">Earned today</span><span class="detail-val green">0 ETB</span></div>
+          <div class="detail-row"><span class="detail-label">Total advances</span><span class="detail-val red">-600 ETB</span></div>
+          <div class="detail-row"><span class="detail-label">Net balance</span><span class="detail-val" style="color:var(--red)">-600 ETB</span></div>
+          
+            <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+              <button class="manage-btn" onclick="viewWorkerList('Ahmed')">📋 List</button>
+              <button class="manage-btn" onclick="openPinChange('Ahmed')">🔐 PIN</button>
+              <button class="manage-btn" onclick="openWorkerPerms('Ahmed')">⚙️ Perms</button>
+              <button class="manage-btn danger" onclick="removeWorker('Ahmed')">🗑️ Remove</button>
+            </div>
+          
+        </div>
+      </div>
+    
+      <div class="worker-card" id="wcard_Radwan">
+        <div class="worker-card-header" onclick="toggleWorker('Radwan')">
+          <div class="worker-avatar" style="background:#22c55e22;color:#22c55e;border:2px solid #22c55e44">
+            RA
+          </div>
+          <div class="worker-info">
+            <div class="worker-name">Radwan</div>
+            <div class="worker-stats-row">
+              <div class="worker-stat">Trucks: <span>0</span></div>
+              <div class="worker-stat">Earned: <span style="color:var(--green)">0</span></div>
+              <div class="worker-stat">Net: <span style="color:var(--red)">-1,000</span></div>
+            </div>
+          </div>
+          <div class="expand-icon">▼</div>
+        </div>
+        <div class="worker-details">
+          <div class="detail-row"><span class="detail-label">📅 Date</span><span class="detail-val">Today</span></div>
+          <div class="detail-row"><span class="detail-label">Trucks worked</span><span class="detail-val">0</span></div>
+          <div class="detail-row"><span class="detail-label">Paid trucks</span><span class="detail-val green">0</span></div>
+          <div class="detail-row"><span class="detail-label">Partial trucks</span><span class="detail-val orange">0</span></div>
+          <div class="detail-row"><span class="detail-label">Unpaid trucks</span><span class="detail-val red">0</span></div>
+          <div class="detail-row"><span class="detail-label">Earned today</span><span class="detail-val green">0 ETB</span></div>
+          <div class="detail-row"><span class="detail-label">Total advances</span><span class="detail-val red">-1,000 ETB</span></div>
+          <div class="detail-row"><span class="detail-label">Net balance</span><span class="detail-val" style="color:var(--red)">-1,000 ETB</span></div>
+          
+            <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+              <button class="manage-btn" onclick="viewWorkerList('Radwan')">📋 List</button>
+              <button class="manage-btn" onclick="openPinChange('Radwan')">🔐 PIN</button>
+              <button class="manage-btn" onclick="openWorkerPerms('Radwan')">⚙️ Perms</button>
+              <button class="manage-btn danger" onclick="removeWorker('Radwan')">🗑️ Remove</button>
+            </div>
+          
+        </div>
+      </div>
+    
+      <div class="worker-card" id="wcard_Oli">
+        <div class="worker-card-header" onclick="toggleWorker('Oli')">
+          <div class="worker-avatar" style="background:#f59e0b22;color:#f59e0b;border:2px solid #f59e0b44">
+            OL
+          </div>
+          <div class="worker-info">
+            <div class="worker-name">Oli</div>
+            <div class="worker-stats-row">
+              <div class="worker-stat">Trucks: <span>0</span></div>
+              <div class="worker-stat">Earned: <span style="color:var(--green)">0</span></div>
+              <div class="worker-stat">Net: <span style="color:var(--red)">-200</span></div>
+            </div>
+          </div>
+          <div class="expand-icon">▼</div>
+        </div>
+        <div class="worker-details">
+          <div class="detail-row"><span class="detail-label">📅 Date</span><span class="detail-val">Today</span></div>
+          <div class="detail-row"><span class="detail-label">Trucks worked</span><span class="detail-val">0</span></div>
+          <div class="detail-row"><span class="detail-label">Paid trucks</span><span class="detail-val green">0</span></div>
+          <div class="detail-row"><span class="detail-label">Partial trucks</span><span class="detail-val orange">0</span></div>
+          <div class="detail-row"><span class="detail-label">Unpaid trucks</span><span class="detail-val red">0</span></div>
+          <div class="detail-row"><span class="detail-label">Earned today</span><span class="detail-val green">0 ETB</span></div>
+          <div class="detail-row"><span class="detail-label">Total advances</span><span class="detail-val red">-200 ETB</span></div>
+          <div class="detail-row"><span class="detail-label">Net balance</span><span class="detail-val" style="color:var(--red)">-200 ETB</span></div>
+          
+            <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+              <button class="manage-btn" onclick="viewWorkerList('Oli')">📋 List</button>
+              <button class="manage-btn" onclick="openPinChange('Oli')">🔐 PIN</button>
+              <button class="manage-btn" onclick="openWorkerPerms('Oli')">⚙️ Perms</button>
+              <button class="manage-btn danger" onclick="removeWorker('Oli')">🗑️ Remove</button>
+            </div>
+          
+        </div>
+      </div>
+    
+      <div class="worker-card" id="wcard_Ali">
+        <div class="worker-card-header" onclick="toggleWorker('Ali')">
+          <div class="worker-avatar" style="background:#ef444422;color:#ef4444;border:2px solid #ef444444">
+            AL
+          </div>
+          <div class="worker-info">
+            <div class="worker-name">Ali</div>
+            <div class="worker-stats-row">
+              <div class="worker-stat">Trucks: <span>0</span></div>
+              <div class="worker-stat">Earned: <span style="color:var(--green)">0</span></div>
+              <div class="worker-stat">Net: <span style="color:var(--green)">0</span></div>
+            </div>
+          </div>
+          <div class="expand-icon">▼</div>
+        </div>
+        <div class="worker-details">
+          <div class="detail-row"><span class="detail-label">📅 Date</span><span class="detail-val">Today</span></div>
+          <div class="detail-row"><span class="detail-label">Trucks worked</span><span class="detail-val">0</span></div>
+          <div class="detail-row"><span class="detail-label">Paid trucks</span><span class="detail-val green">0</span></div>
+          <div class="detail-row"><span class="detail-label">Partial trucks</span><span class="detail-val orange">0</span></div>
+          <div class="detail-row"><span class="detail-label">Unpaid trucks</span><span class="detail-val red">0</span></div>
+          <div class="detail-row"><span class="detail-label">Earned today</span><span class="detail-val green">0 ETB</span></div>
+          <div class="detail-row"><span class="detail-label">Total advances</span><span class="detail-val red">-0 ETB</span></div>
+          <div class="detail-row"><span class="detail-label">Net balance</span><span class="detail-val" style="color:var(--green)">0 ETB</span></div>
+          
+            <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+              <button class="manage-btn" onclick="viewWorkerList('Ali')">📋 List</button>
+              <button class="manage-btn" onclick="openPinChange('Ali')">🔐 PIN</button>
+              <button class="manage-btn" onclick="openWorkerPerms('Ali')">⚙️ Perms</button>
+              <button class="manage-btn danger" onclick="removeWorker('Ali')">🗑️ Remove</button>
+            </div>
+          
+        </div>
+      </div>
+    
+      <div class="worker-card" id="wcard_Omar">
+        <div class="worker-card-header" onclick="toggleWorker('Omar')">
+          <div class="worker-avatar" style="background:#a855f722;color:#a855f7;border:2px solid #a855f744">
+            OM
+          </div>
+          <div class="worker-info">
+            <div class="worker-name">Omar</div>
+            <div class="worker-stats-row">
+              <div class="worker-stat">Trucks: <span>0</span></div>
+              <div class="worker-stat">Earned: <span style="color:var(--green)">0</span></div>
+              <div class="worker-stat">Net: <span style="color:var(--red)">-5,500</span></div>
+            </div>
+          </div>
+          <div class="expand-icon">▼</div>
+        </div>
+        <div class="worker-details">
+          <div class="detail-row"><span class="detail-label">📅 Date</span><span class="detail-val">Today</span></div>
+          <div class="detail-row"><span class="detail-label">Trucks worked</span><span class="detail-val">0</span></div>
+          <div class="detail-row"><span class="detail-label">Paid trucks</span><span class="detail-val green">0</span></div>
+          <div class="detail-row"><span class="detail-label">Partial trucks</span><span class="detail-val orange">0</span></div>
+          <div class="detail-row"><span class="detail-label">Unpaid trucks</span><span class="detail-val red">0</span></div>
+          <div class="detail-row"><span class="detail-label">Earned today</span><span class="detail-val green">0 ETB</span></div>
+          <div class="detail-row"><span class="detail-label">Total advances</span><span class="detail-val red">-5,500 ETB</span></div>
+          <div class="detail-row"><span class="detail-label">Net balance</span><span class="detail-val" style="color:var(--red)">-5,500 ETB</span></div>
+          
+            <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+              <button class="manage-btn" onclick="viewWorkerList('Omar')">📋 List</button>
+              <button class="manage-btn" onclick="openPinChange('Omar')">🔐 PIN</button>
+              <button class="manage-btn" onclick="openWorkerPerms('Omar')">⚙️ Perms</button>
+              <button class="manage-btn danger" onclick="removeWorker('Omar')">🗑️ Remove</button>
+            </div>
+          
+        </div>
+      </div>
+    </div>
     </div>
 
     <!-- Advances Tab -->
@@ -1055,18 +1324,449 @@
         <span class="section-title">ALL CREDIT RECORDS</span>
         <button class="new-btn" onclick="openAddAdvance()">+ Add</button>
       </div>
-      <div class="advances-list" id="advancesList"></div>
+      <div class="advances-list" id="advancesList">
+    <div class="advance-card">
+      <div class="advance-icon">💸</div>
+      <div class="advance-info">
+        <div class="advance-worker">Ahmed</div>
+        <div class="advance-meta">📅 2026-03-28</div>
+      </div>
+      <div class="advance-amount">-600</div>
+      <button class="advance-delete" onclick="deleteAdvance('z3zj9cGifOX41YvjT4X9')">🗑️</button>
+    </div>
+  
+    <div class="advance-card">
+      <div class="advance-icon">💸</div>
+      <div class="advance-info">
+        <div class="advance-worker">Oli</div>
+        <div class="advance-meta">📅 2026-03-28</div>
+      </div>
+      <div class="advance-amount">-200</div>
+      <button class="advance-delete" onclick="deleteAdvance('Qb4sZzPf4AKK0ejf3gCW')">🗑️</button>
+    </div>
+  
+    <div class="advance-card">
+      <div class="advance-icon">💸</div>
+      <div class="advance-info">
+        <div class="advance-worker">Radwan</div>
+        <div class="advance-meta">📅 2026-03-28</div>
+      </div>
+      <div class="advance-amount">-1,000</div>
+      <button class="advance-delete" onclick="deleteAdvance('NnL9YFjzE1NNnPQ2uMgq')">🗑️</button>
+    </div>
+  
+    <div class="advance-card">
+      <div class="advance-icon">💸</div>
+      <div class="advance-info">
+        <div class="advance-worker">Omar</div>
+        <div class="advance-meta">📅 2026-03-28</div>
+      </div>
+      <div class="advance-amount">-5,500</div>
+      <button class="advance-delete" onclick="deleteAdvance('IBZf4pOtNPnT091xDqVV')">🗑️</button>
+    </div>
+  </div>
     </div>
 
     <!-- Reports Tab -->
     <div id="tabReports" style="display:none;">
-      <div class="reports-content" id="reportsContent"></div>
+      <div class="reports-content" id="reportsContent">
+    <div style="padding:12px 0 4px">
+      <div style="font-size:11px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:8px">📅 SHOWING: 2026-03-30  </div>
+      <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none">
+    <button class="filter-chip active" onclick="setReportFilter('all',this)" style="font-size:11px;padding:4px 10px">
+      All
+    </button>
+  
+    <button class="filter-chip" onclick="setReportFilter('paid',this)" style="font-size:11px;padding:4px 10px">
+      ✅ Paid
+    </button>
+  
+    <button class="filter-chip" onclick="setReportFilter('partial',this)" style="font-size:11px;padding:4px 10px">
+      ⚡ Partial
+    </button>
+  
+    <button class="filter-chip" onclick="setReportFilter('unpaid',this)" style="font-size:11px;padding:4px 10px">
+      ❌ Unpaid
+    </button>
+  </div>
+      <div style="display:flex;gap:6px;overflow-x:auto;padding:6px 0;scrollbar-width:none">
+    <button class="filter-chip active" onclick="setReportWorkerFilter('all',this)" style="font-size:11px;padding:4px 10px">
+      👥 All
+    </button>
+  
+    <button class="filter-chip" onclick="setReportWorkerFilter('Ahmed',this)" style="font-size:11px;padding:4px 10px">
+      Ahmed
+    </button>
+  
+    <button class="filter-chip" onclick="setReportWorkerFilter('Radwan',this)" style="font-size:11px;padding:4px 10px">
+      Radwan
+    </button>
+  
+    <button class="filter-chip" onclick="setReportWorkerFilter('Oli',this)" style="font-size:11px;padding:4px 10px">
+      Oli
+    </button>
+  
+    <button class="filter-chip" onclick="setReportWorkerFilter('Ali',this)" style="font-size:11px;padding:4px 10px">
+      Ali
+    </button>
+  
+    <button class="filter-chip" onclick="setReportWorkerFilter('Omar',this)" style="font-size:11px;padding:4px 10px">
+      Omar
+    </button>
+  </div>
+    </div>
+    <div class="report-card">
+      <div class="report-title">📊 SUMMARY</div>
+      <div class="report-row"><span class="report-label">🚛 Total Trucks</span><span class="report-val">0</span></div>
+      <div class="report-row"><span class="report-label">✅ Paid</span><span class="report-val" style="color:var(--green)">0</span></div>
+      <div class="report-row"><span class="report-label">⚡ Partial</span><span class="report-val" style="color:var(--orange)">0</span></div>
+      <div class="report-row"><span class="report-label">❌ Unpaid</span><span class="report-val" style="color:var(--red)">0</span></div>
+      <div class="report-row"><span class="report-label">💰 Total Client Revenue</span><span class="report-val" style="color:var(--teal)">0 ETB</span></div>
+      <div class="report-row"><span class="report-label">👷 Total Sealer Pay</span><span class="report-val">0 ETB</span></div>
+      <div class="report-row"><span class="report-label">🏢 Company Earnings</span><span class="report-val" style="color:var(--green)">0 ETB</span></div>
+      <div class="report-row"><span class="report-label">💸 Total Advances</span><span class="report-val" style="color:var(--red)">-0 ETB</span></div>
+      
+    </div>
+    <div class="report-card">
+      <div class="report-title">👷 PER SEALER</div>
+      
+          <div class="report-row">
+            <span class="report-label">
+              <span style="width:8px;height:8px;border-radius:50%;background:#3b82f6;display:inline-block;margin-right:4px"></span>
+              Ahmed
+            </span>
+            <span class="report-val" style="color:var(--text3)">0 ETB</span>
+          </div>
+          <div class="report-row">
+            <span class="report-label">
+              <span style="width:8px;height:8px;border-radius:50%;background:#22c55e;display:inline-block;margin-right:4px"></span>
+              Radwan
+            </span>
+            <span class="report-val" style="color:var(--text3)">0 ETB</span>
+          </div>
+          <div class="report-row">
+            <span class="report-label">
+              <span style="width:8px;height:8px;border-radius:50%;background:#f59e0b;display:inline-block;margin-right:4px"></span>
+              Oli
+            </span>
+            <span class="report-val" style="color:var(--text3)">0 ETB</span>
+          </div>
+          <div class="report-row">
+            <span class="report-label">
+              <span style="width:8px;height:8px;border-radius:50%;background:#ef4444;display:inline-block;margin-right:4px"></span>
+              Ali
+            </span>
+            <span class="report-val" style="color:var(--text3)">0 ETB</span>
+          </div>
+          <div class="report-row">
+            <span class="report-label">
+              <span style="width:8px;height:8px;border-radius:50%;background:#a855f7;display:inline-block;margin-right:4px"></span>
+              Omar
+            </span>
+            <span class="report-val" style="color:var(--text3)">0 ETB</span>
+          </div>
+    </div>
+  </div>
     </div>
 
     <!-- Manage Tab -->
-    <div id="tabManage" style="display:none;">
-      <div class="manage-content" id="manageContent"></div>
+    <div id="tabManage" style="">
+      <div class="manage-content" id="manageContent">
+    <div>
+      <div class="manage-section-title">👷 SEALERS</div>
+      <div class="manage-card">
+        
+          <div class="manage-item">
+            <div class="manage-item-left">
+              <div style="width:32px;height:32px;border-radius:50%;background:#3b82f622;color:#3b82f6;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">AH</div>
+              <div>
+                <div class="manage-item-name">Ahmed</div>
+                <div class="manage-item-sub">Worker · PIN: ••••</div>
+              </div>
+            </div>
+            <div class="manage-item-right">
+              <button class="manage-btn" onclick="openWorkerPerms('Ahmed')">⚙️ Perms</button>
+              <button class="manage-btn" onclick="openPinChange('Ahmed')">🔐 PIN</button>
+              <button class="manage-btn danger" onclick="removeWorker('Ahmed')">🗑️</button>
+            </div>
+          </div>
+        
+          <div class="manage-item">
+            <div class="manage-item-left">
+              <div style="width:32px;height:32px;border-radius:50%;background:#22c55e22;color:#22c55e;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">RA</div>
+              <div>
+                <div class="manage-item-name">Radwan</div>
+                <div class="manage-item-sub">Worker · PIN: ••••</div>
+              </div>
+            </div>
+            <div class="manage-item-right">
+              <button class="manage-btn" onclick="openWorkerPerms('Radwan')">⚙️ Perms</button>
+              <button class="manage-btn" onclick="openPinChange('Radwan')">🔐 PIN</button>
+              <button class="manage-btn danger" onclick="removeWorker('Radwan')">🗑️</button>
+            </div>
+          </div>
+        
+          <div class="manage-item">
+            <div class="manage-item-left">
+              <div style="width:32px;height:32px;border-radius:50%;background:#f59e0b22;color:#f59e0b;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">OL</div>
+              <div>
+                <div class="manage-item-name">Oli</div>
+                <div class="manage-item-sub">Worker · PIN: ••••</div>
+              </div>
+            </div>
+            <div class="manage-item-right">
+              <button class="manage-btn" onclick="openWorkerPerms('Oli')">⚙️ Perms</button>
+              <button class="manage-btn" onclick="openPinChange('Oli')">🔐 PIN</button>
+              <button class="manage-btn danger" onclick="removeWorker('Oli')">🗑️</button>
+            </div>
+          </div>
+        
+          <div class="manage-item">
+            <div class="manage-item-left">
+              <div style="width:32px;height:32px;border-radius:50%;background:#ef444422;color:#ef4444;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">AL</div>
+              <div>
+                <div class="manage-item-name">Ali</div>
+                <div class="manage-item-sub">Worker · PIN: ••••</div>
+              </div>
+            </div>
+            <div class="manage-item-right">
+              <button class="manage-btn" onclick="openWorkerPerms('Ali')">⚙️ Perms</button>
+              <button class="manage-btn" onclick="openPinChange('Ali')">🔐 PIN</button>
+              <button class="manage-btn danger" onclick="removeWorker('Ali')">🗑️</button>
+            </div>
+          </div>
+        
+          <div class="manage-item">
+            <div class="manage-item-left">
+              <div style="width:32px;height:32px;border-radius:50%;background:#a855f722;color:#a855f7;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">OM</div>
+              <div>
+                <div class="manage-item-name">Omar</div>
+                <div class="manage-item-sub">Worker · PIN: ••••</div>
+              </div>
+            </div>
+            <div class="manage-item-right">
+              <button class="manage-btn" onclick="openWorkerPerms('Omar')">⚙️ Perms</button>
+              <button class="manage-btn" onclick="openPinChange('Omar')">🔐 PIN</button>
+              <button class="manage-btn danger" onclick="removeWorker('Omar')">🗑️</button>
+            </div>
+          </div>
+        
+        <div class="manage-item" onclick="openModal('modalAddWorker')">
+          <div class="manage-item-left">
+            <div class="manage-item-icon">➕</div>
+            <div><div class="manage-item-name">Add Sealer</div></div>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <div>
+      <div class="manage-section-title">💼 CASHIERS &amp; PERMISSIONS</div>
+      <div class="manage-card">
+        
+          <div class="manage-item">
+            <div class="manage-item-left">
+              <div class="manage-item-icon">💼</div>
+              <div>
+                <div class="manage-item-name">Cashier 1</div>
+                <div class="manage-item-sub">Cashier · PIN: ••••</div>
+              </div>
+            </div>
+            <div class="manage-item-right">
+              <button class="manage-btn" onclick="openCashierPerms('cashier1')">⚙️ Perms</button>
+              <button class="manage-btn" onclick="openPinChange('cashier1')">🔐 PIN</button>
+            </div>
+          </div>
+        
+          <div class="manage-item">
+            <div class="manage-item-left">
+              <div class="manage-item-icon">💼</div>
+              <div>
+                <div class="manage-item-name">Cashier 2</div>
+                <div class="manage-item-sub">Cashier · PIN: ••••</div>
+              </div>
+            </div>
+            <div class="manage-item-right">
+              <button class="manage-btn" onclick="openCashierPerms('cashier2')">⚙️ Perms</button>
+              <button class="manage-btn" onclick="openPinChange('cashier2')">🔐 PIN</button>
+            </div>
+          </div>
+        
+      </div>
+    </div>
+
+    <div>
+      <div class="manage-section-title">🔐 ADMIN PIN</div>
+      <div class="manage-card">
+        <div class="manage-item" onclick="openPinChange('admin')">
+          <div class="manage-item-left">
+            <div class="manage-item-icon">🔐</div>
+            <div><div class="manage-item-name">Change Admin PIN</div><div class="manage-item-sub">Current PIN is hidden</div></div>
+          </div>
+          <div>›</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="manage-section-title">🏢 COMPANY HEAD</div>
+      <div class="manage-card">
+        <div class="manage-item" onclick="openEditHeadName()">
+          <div class="manage-item-left">
+            <div class="manage-item-icon">🏢</div>
+            <div>
+              <div class="manage-item-name" id="headNameDisplay">Rey/Moud</div>
+              <div class="manage-item-sub">Tap to rename this role</div>
+            </div>
+          </div>
+          <div>✏️</div>
+        </div>
+        <div class="manage-item" onclick="openPinChange('head')">
+          <div class="manage-item-left">
+            <div class="manage-item-icon">🔐</div>
+            <div><div class="manage-item-name">Change PIN</div><div class="manage-item-sub">Default: 2013</div></div>
+          </div>
+          <div>›</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="manage-section-title">🌐 LANGUAGE</div>
+      <div class="manage-card" style="padding:14px">
+        <div style="display:flex;gap:8px">
+          <button class="lang-btn " onclick="setLang('en')">🇬🇧 English</button>
+          <button class="lang-btn active" onclick="setLang('fr')">🇫🇷 Français</button>
+          <button class="lang-btn " onclick="setLang('so')">🇸🇴 Soomaali</button>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="manage-section-title">📤 EXPORT &amp; IMPORT</div>
+      <div class="manage-card">
+        <div class="manage-item" onclick="exportExcel()">
+          <div class="manage-item-left">
+            <div class="manage-item-icon">📊</div>
+            <div><div class="manage-item-name" style="color:var(--green)">Export to Excel (.csv)</div><div class="manage-item-sub">Export trucks for selected date</div></div>
+          </div>
+        </div>
+        <div class="manage-item" onclick="document.getElementById('importFileInput').click()">
+          <div class="manage-item-left">
+            <div class="manage-item-icon">📥</div>
+            <div><div class="manage-item-name" style="color:var(--accent)">Import from Excel (.xlsx)</div><div class="manage-item-sub">Upload trucks from spreadsheet</div></div>
+          </div>
+        </div>
+        <input type="file" id="importFileInput" accept=".xlsx,.csv" style="display:none" onchange="importExcel(this)">
+        <div class="manage-item" onclick="installApp()">
+          <div class="manage-item-left">
+            <div class="manage-item-icon">📲</div>
+            <div><div class="manage-item-name" id="manageInstallBtn">Install App on Phone</div><div class="manage-item-sub">Add WKABE to your home screen</div></div>
+          </div>
+          <div>›</div>
+        </div>
+        <div class="manage-item" onclick="downloadHTML()">
+          <div class="manage-item-left">
+            <div class="manage-item-icon">📥</div>
+            <div><div class="manage-item-name">Download HTML File</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="manage-section-title">📤 SHARE REPORT</div>
+      <div class="manage-card">
+        <div class="manage-item" onclick="openShareReport()">
+          <div class="manage-item-left">
+            <div class="manage-item-icon">📤</div>
+            <div>
+              <div class="manage-item-name">Share Daily Report</div>
+              <div class="manage-item-sub">WhatsApp · Email · Copy · Download</div>
+            </div>
+          </div>
+          <div>›</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="manage-section-title">🚫 ADDING CONTROL</div>
+      <div class="manage-card">
+        <div class="manage-item" onclick="toggleSuspend()">
+          <div class="manage-item-left">
+            <div class="manage-item-icon" id="suspendIcon">🚫</div>
+            <div>
+              <div class="manage-item-name" id="suspendLabel" style="color:var(--red)">
+                Suspend Adding Trucks
+              </div>
+              <div class="manage-item-sub">Block all workers from adding</div>
+            </div>
+          </div>
+          <div style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;background:rgba(34,197,94,0.15);color:var(--green)">
+            ACTIVE
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="manage-section-title">☁️ CLOUD SYNC</div>
+      <div class="manage-card">
+        <div class="manage-item">
+          <div class="manage-item-left">
+            <div class="manage-item-icon" id="cloudSyncIcon">☁️</div>
+            <div>
+              <div class="manage-item-name" id="cloudSyncStatus" style="color:var(--green)">Connected to Firebase</div>
+              <div class="manage-item-sub">Trucks · Sealers · PINs · Permissions — all synced across devices in real-time</div>
+            </div>
+          </div>
+          <div id="syncDotManage" style="width:10px;height:10px;border-radius:50%;background:var(--green);flex-shrink:0"></div>
+        </div>
+        <div class="manage-item">
+          <div class="manage-item-left">
+            <div class="manage-item-icon">📦</div>
+            <div>
+              <div class="manage-item-name">Project: haaa-3b06e</div>
+              <div class="manage-item-sub">Firebase Firestore · Real-time database</div>
+            </div>
+          </div>
+        </div>
+        <div class="manage-item" onclick="forceSync()">
+          <div class="manage-item-left">
+            <div class="manage-item-icon">🔄</div>
+            <div>
+              <div class="manage-item-name" style="color:var(--accent)">Force Sync</div>
+              <div class="manage-item-sub">Clear local cache · Re-download all data fresh</div>
+            </div>
+          </div>
+          <div>›</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="manage-section-title">⚠️ DANGER ZONE</div>
+      <div class="manage-card">
+<div class="manage-item" onclick="clearAllData()">
+          <div class="manage-item-left">
+            <div class="manage-item-icon">⚠️</div>
+            <div><div class="manage-item-name" style="color:var(--red)">Clear All Truck Data</div></div>
+          </div>
+        </div>
+        <div class="manage-item" onclick="goLogin()">
+          <div class="manage-item-left">
+            <div class="manage-item-icon">🚪</div>
+            <div><div class="manage-item-name">Logout</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+    </div>
+
+    <!-- Claims Tab -->
+    <div id="tabClaims" style="display:none;"></div>
 
     <!-- Recycle Bin Tab -->
     <div id="tabRecycle" style="display:none;">
@@ -1091,7 +1791,42 @@
   </div>
 
   <!-- BOTTOM NAV -->
-  <div class="bottom-nav" id="bottomNav"></div>
+  <div class="bottom-nav" id="bottomNav">
+    <button class="nav-btn" id="nav_trucks" onclick="switchTab('trucks')">
+      <div class="nav-icon">🚛</div>
+      <div class="nav-label">Camions</div>
+    </button>
+  
+    <button class="nav-btn" id="nav_list" onclick="switchTab('list')">
+      <div class="nav-icon">📋</div>
+      <div class="nav-label">List</div>
+    </button>
+  
+    <button class="nav-btn" id="nav_workers" onclick="switchTab('workers')">
+      <div class="nav-icon">👷</div>
+      <div class="nav-label">Scelleurs</div>
+    </button>
+  
+    <button class="nav-btn" id="nav_advances" onclick="switchTab('advances')">
+      <div class="nav-icon">💸</div>
+      <div class="nav-label">Avances</div>
+    </button>
+  
+    <button class="nav-btn" id="nav_reports" onclick="switchTab('reports')">
+      <div class="nav-icon">📊</div>
+      <div class="nav-label">Rapports</div>
+    </button>
+  
+    <button class="nav-btn active" id="nav_manage" onclick="switchTab('manage')">
+      <div class="nav-icon">⚙️</div>
+      <div class="nav-label">Gérer</div>
+    </button>
+  
+    <button class="nav-btn" id="nav_recycle" onclick="switchTab('recycle')">
+      <div class="nav-icon">🗑️</div>
+      <div class="nav-label">Bin (2)</div>
+    </button>
+  </div>
 </div>
 
 <!-- MODALS -->
@@ -1109,9 +1844,9 @@
       <input class="form-input" type="date" id="truckDate">
     </div>
     <div class="form-group" id="workerGroup">
-      <label class="form-label">SEALER/label>
+      <label class="form-label">SEALER/label&gt;
       <select class="form-select" id="truckWorker"></select>
-    </div>
+    </label></div>
     <div class="form-group" id="statusGroup">
       <label class="form-label">PAYMENT STATUS</label>
       <div class="radio-group" id="statusRadio"></div>
@@ -1132,9 +1867,9 @@
     <div class="modal-handle"></div>
     <div class="modal-title">💰 Add Advance</div>
     <div class="form-group">
-      <label class="form-label">SEALER/label>
+      <label class="form-label">SEALER/label&gt;
       <select class="form-select" id="advWorker"></select>
-    </div>
+    </label></div>
     <div class="form-group">
       <label class="form-label">AMOUNT (ETB)</label>
       <input class="form-input" type="number" id="advAmount" placeholder="0">
@@ -1368,6 +2103,7 @@ window.addEventListener('offline', () => {
 let trucks = {};
 let advances = {};
 let deletedTrucks = {};
+let claims = {};
 let currentUser = null;
 let filterStatus = 'all';
 let filterWorker = 'all';
@@ -1381,14 +2117,11 @@ let currentTab = 'trucks';
 let currentLang = localStorage.getItem('hask_lang') || 'en';
 let addingSuspended = false;
 
-// ── WORKING DATE HELPERS ──
-// Working day starts 6am. If current time < 6am, return yesterday's date.
+// ── WORKING DATE HELPERS ── LOCAL time (Djibouti=UTC+3) 6am rule
 function getWorkingDate() {
-  const now = new Date();
-  if (now.getHours() < 6) {
-    now.setDate(now.getDate() - 1);
-  }
-  return now.toISOString().split('T')[0];
+  var now = new Date();
+  if (now.getHours() < 6) now.setDate(now.getDate() - 1);
+  return now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
 }
 
 // Next working date = 5 days after the last date that has any truck recorded
@@ -1562,7 +2295,7 @@ function saveWorkerList(w) {
 
 // ── FIREBASE LISTENERS ──
 function initFirebase() {
-  ['_unsubTrucks','_unsubAdvances','_unsubDeleted','_unsubSuspend','_unsubPins','_unsubPerms','_unsubWorkers'].forEach(k => {
+  ['_unsubTrucks','_unsubAdvances','_unsubDeleted','_unsubSuspend','_unsubPins','_unsubPerms','_unsubWorkers','_unsubHead','_unsubClaims'].forEach(function(k) {
     try { if (window[k]) { window[k](); window[k] = null; } } catch(e) {}
   });
 
@@ -1627,6 +2360,14 @@ function initFirebase() {
     if (currentTab === 'workers') renderWorkers();
     if (currentTab === 'manage') renderManage();
   }, () => {});
+
+  // ── Claims ──
+  window._unsubClaims = onSnapshot(collection(db,'claims'), snap => {
+    claims = {};
+    snap.forEach(function(d) { claims[d.id] = d.data(); });
+    updateClaimsBadge();
+    if (currentTab === 'claims') renderClaimsTab();
+  }, function() {});
 
   // ── Cloud Head Name ──
   window._unsubHead = onSnapshot(doc(db,'settings','headName'), snap => {
@@ -1741,12 +2482,10 @@ function checkPin() {
 }
 
 window.goLogin = function() {
-  // Clean up Firebase listeners to avoid stacking
-  try { if (window._unsubTrucks) window._unsubTrucks(); } catch(e) {}
-  try { if (window._unsubAdvances) window._unsubAdvances(); } catch(e) {}
-  try { if (window._unsubDeleted) window._unsubDeleted(); } catch(e) {}
-  try { if (window._unsubSuspend) window._unsubSuspend(); } catch(e) {}
-  trucks = {}; advances = {}; deletedTrucks = {};
+  ['_unsubTrucks','_unsubAdvances','_unsubDeleted','_unsubSuspend','_unsubPins','_unsubPerms','_unsubWorkers','_unsubHead','_unsubClaims'].forEach(function(k){
+    try { if (window[k]) { window[k](); window[k]=null; } } catch(e) {}
+  });
+  trucks = {}; advances = {}; deletedTrucks = {}; claims = {};
   currentUser = null;
   showScreen('loginScreen');
   pinEntry='';
@@ -1835,6 +2574,7 @@ function buildNav() {
     {id:'workers', icon:'👷', label:t('sealers')},
     {id:'advances', icon:'💸', label:t('advances')},
     {id:'reports', icon:'📊', label:t('reports')},
+    {id:'claims', icon:'🙋', label:'Claims'},
     {id:'manage', icon:'⚙️', label:t('manage')},
     {id:'recycle', icon:'🗑️', label:'Bin'},
   ];
@@ -1844,6 +2584,7 @@ function buildNav() {
     {id:'workers', icon:'👷', label:t('sealers')},
     {id:'advances', icon:'💸', label:t('advances')},
     {id:'reports', icon:'📊', label:t('reports')},
+    {id:'claims', icon:'🙋', label:'Claims'},
     {id:'recycle', icon:'🗑️', label:'Bin'},
     {id:'logout', icon:'🚪', label:t('logout')},
   ];
@@ -1854,12 +2595,14 @@ function buildNav() {
     tabs.push({id:'workers', icon:'👷', label:t('sealers')});
     if (p.addAdvances) tabs.push({id:'advances', icon:'💸', label:t('advances')});
     tabs.push({id:'reports', icon:'📊', label:t('reports')});
+    tabs.push({id:'claims', icon:'🙋', label:'Claims'});
     tabs.push({id:'logout', icon:'🚪', label:t('logout')});
   } else {
     tabs = [
       {id:'trucks', icon:'🚛', label:t('trucks')},
       {id:'list', icon:'📋', label:'My List'},
       {id:'earnings', icon:'💰', label:t('myEarnings')},
+      {id:'claims', icon:'🙋', label:'Claims'},
       {id:'logout', icon:'🚪', label:t('logout')},
     ];
   }
@@ -1882,7 +2625,7 @@ window.switchTab = function(tab) {
   if (nb) nb.classList.add('active');
 
   // Show/hide tabs
-  ['Trucks','List','Workers','Advances','Reports','Manage','Recycle'].forEach(t => {
+  ['Trucks','List','Workers','Advances','Reports','Claims','Manage','Recycle'].forEach(t => {
     const el = document.getElementById('tab'+t);
     if (el) el.style.display = (tab===t.toLowerCase()) ? '' : 'none';
   });
@@ -1894,6 +2637,8 @@ window.switchTab = function(tab) {
   if (tab==='manage') renderManage();
   if (tab==='trucks') renderTrucks();
   if (tab==='recycle') renderRecycle();
+  if (tab==='claims') { renderClaimsTab(); updateClaimsBadge(); }
+  if (tab==='advances') renderAdvances();
   if (tab==='list') renderTruckList();
 }
 
@@ -2090,14 +2835,19 @@ function renderTrucks() {
   // Chip states are managed directly by setFilter/setWorkerFilter/selectDate
 
   // Section title
-  const stEl = document.getElementById('trucksSectionTitle');
+  var stEl = document.getElementById('trucksSectionTitle');
   if (stEl) {
     if (isToday) {
       stEl.textContent = "TODAY'S TRUCKS";
     } else {
-      const histDateObj = new Date(date + 'T12:00:00');
+      var histDateObj = new Date(date + 'T12:00:00');
       stEl.textContent = 'HISTORY — ' + histDateObj.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
     }
+  }
+  // Update export button label with current date
+  var exportBtn = document.getElementById('exportDateBtn');
+  if (exportBtn) {
+    exportBtn.textContent = '📊 Export ' + date;
   }
 
   // Hide/show add buttons based on whether date is today
@@ -2111,12 +2861,9 @@ function renderTrucks() {
   const container = document.getElementById('trucksList');
   if (!container) return;
 
-  // Pending = no worker assigned (only shown today, only for admin/cashier)
-  const pendingTrucks = (isToday && role !== 'worker')
-    ? list.filter(t => !t.worker || t.status === 'pending')
-    : [];
-  // Assigned trucks = has a worker and not pending
-  const assignedTrucks = list.filter(t => t.worker && t.status !== 'pending');
+  // Pending = no worker assigned — ALL roles see these so workers can claim
+  var pendingTrucks = isToday ? list.filter(function(t){return !t.worker || t.status==='pending';}) : [];
+  var assignedTrucks = list.filter(function(t){return t.worker && t.status!=='pending';});
 
   // Show/hide suspend banner
   const suspendBanner = document.getElementById('suspendBanner');
@@ -2134,29 +2881,40 @@ function renderTrucks() {
     </div>
   ` : '';
 
-  // Build pending section (reference style)
-  let pendingHTML = '';
+  // Build pending section
+  var pendingHTML = '';
   if (pendingTrucks.length > 0) {
-    const canAssignNow = isToday && (role==='admin' || role==='cashier');
-    pendingHTML = `<div class="pending-section">
-      <div class="pending-hdr">
-        <span class="pending-title">⏳ Waiting for Sealer</span>
-        <span class="pending-count">${pendingTrucks.length}</span>
-      </div>
-      ${pendingTrucks.map(tk => `
-        <div class="pending-row">
-          <div style="flex:1">
-            <div class="pending-plate">${tk.plate}</div>
-            <div class="pending-meta">📅 ${tk.date||'—'} · Added by: ${tk.addedBy||'—'}</div>
-            <div class="pending-meta" style="color:#f1c40f;margin-top:2px;">💳 Client paid ${CLIENT_PRICE.toLocaleString()} ETB · Worker earn: ${WORKER_PAY.paid.toLocaleString()} ETB on assignment</div>
-          </div>
-          ${canAssignNow
-            ? `<button class="t-btn-assign" onclick="openAssign('${tk._id}')">👷 Assign</button>`
-            : `<span style="font-size:10px;color:var(--text3)">Waiting…</span>`
-          }
-        </div>
-      `).join('')}
-    </div>`;
+    var canAssignNow = isToday && (role==='admin' || role==='cashier');
+    var pRows = pendingTrucks.map(function(tk) {
+      var existingClaimWorkers = (role==='admin'||role==='cashier'||role==='head')
+        ? Object.values(claims).filter(function(c){return c.truckId===tk._id && c.status==='pending';}).map(function(c){return c.workerName||c.worker;})
+        : [];
+      var myPendingClaim = role==='worker'
+        ? Object.values(claims).find(function(c){return c.truckId===tk._id && c.worker===id && c.status==='pending';})
+        : null;
+      var claimInfo = existingClaimWorkers.length>0
+        ? '<div class="pending-meta" style="color:#a855f7;margin-top:3px;">🙋 Claimed by: '+existingClaimWorkers.join(', ')+'</div>' : '';
+      var actionBtns = '';
+      if (canAssignNow) actionBtns += '<button class="t-btn-assign pending-assign-btn" data-tid="'+tk._id+'">👷 Assign</button>';
+      if (role==='worker') {
+        actionBtns += myPendingClaim
+          ? '<span style="font-size:10px;font-weight:700;color:#f59e0b;background:rgba(245,158,11,0.15);padding:4px 8px;border-radius:8px;">⏳ Claim Sent</span>'
+          : '<button class="t-btn-assign claim-truck-btn" style="background:rgba(168,85,247,0.2);border-color:rgba(168,85,247,0.4);color:#c39bd3;" data-tid="'+tk._id+'" data-plate="'+tk.plate+'">🙋 Claim</button>';
+      }
+      if (!canAssignNow && role!=='worker') actionBtns = '<span style="font-size:10px;color:var(--text3)">Waiting…</span>';
+      return '<div class="pending-row">'
+        +'<div style="flex:1">'
+        +'<div class="pending-plate">'+tk.plate+'</div>'
+        +'<div class="pending-meta">📅 '+(tk.date||'—')+' · Added by: '+(tk.addedBy||'—')+'</div>'
+        +'<div class="pending-meta" style="color:#f1c40f;margin-top:2px;">💳 '+CLIENT_PRICE.toLocaleString()+' ETB · Sealer earns: '+WORKER_PAY.paid.toLocaleString()+' ETB</div>'
+        +claimInfo
+        +'</div>'
+        +'<div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end;">'+actionBtns+'</div>'
+        +'</div>';
+    }).join('');
+    pendingHTML = '<div class="pending-section">'
+      +'<div class="pending-hdr"><span class="pending-title">⏳ Waiting for Sealer</span><span class="pending-count">'+pendingTrucks.length+'</span></div>'
+      +pRows+'</div>';
   }
 
   const perms = getUserPerms(id);
@@ -2173,8 +2931,9 @@ function renderTrucks() {
     const workerEarn = WORKER_PAY[truck.status]||0;
     const totalFare = truck.status==='paid'?CLIENT_PRICE:truck.status==='partial'?2800:0;
     const company = totalFare - workerEarn;
-    const dateStr = truck.timestamp ? new Date(truck.timestamp).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}) : truck.date;
-    const modStr = truck.modifiedAt ? new Date(truck.modifiedAt).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}) : null;
+    // dateStr = date only (no added time shown on card — only modification time is shown)
+    const dateStr = truck.timestamp ? new Date(truck.timestamp).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : truck.date;
+    const modStr = truck.modifiedAt ? new Date(truck.modifiedAt).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}) : null;
 
     let actions = '';
     if (canEditStatus) actions += `<button class="truck-action-btn primary" onclick="openStatus('${truck._id}')">🟡 Status</button>`;
@@ -2200,7 +2959,7 @@ function renderTrucks() {
           <span>📅 ${dateStr}</span>
           ${truck.addedBy ? ` · Added by: ${truck.addedBy}` : ''}
         </div>
-        ${modStr ? `<div class="truck-meta" style="font-size:10px;color:var(--text3)">✏️ Modified: ${modStr}${truck.modifiedBy ? ' by ' + truck.modifiedBy : ''}</div>` : ''}
+        ${modStr ? `<div class="truck-meta" style="font-size:11px;color:var(--orange);font-weight:600">✏️ Modified: ${modStr}${truck.modifiedBy ? ' — by ' + truck.modifiedBy : ''}</div>` : ''}
         ${truck.notes ? `<div class="truck-meta">📝 ${truck.notes}</div>` : ''}
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
           <div style="text-align:center">
@@ -2383,12 +3142,17 @@ window.saveTruck = function() {
       return;
     }
   }
-  const duplicate = Object.entries(trucks).find(([k,v])=>
-    v.plate && v.plate.toUpperCase()===plate && v.date===date && k!==editingTruckId
-  );
-  if (duplicate) {
-    const dupTruck = duplicate[1];
-    showToast(`⚠️ ${plate} already recorded on ${date} (${dupTruck.status})`);
+  var dupEntry = Object.entries(trucks).find(function(e){
+    return e[1].plate && e[1].plate.toUpperCase()===plate && e[1].date===date && e[0]!==editingTruckId;
+  });
+  if (dupEntry) {
+    var dupTruck = dupEntry[1]; var dupId = dupEntry[0];
+    if (currentUser.role==='worker' && (!dupTruck.worker || dupTruck.status==='pending')) {
+      closeModal('modalTruck');
+      submitClaim(dupId, dupTruck.plate, dupTruck.date);
+      return;
+    }
+    showToast('⚠️ '+plate+' already recorded ('+(dupTruck.worker||'Pending')+')');
     return;
   }
 
@@ -2473,6 +3237,149 @@ window.doAssign = function() {
   closeModal('modalAssign');
 }
 
+// ══════════════════════════════════════
+// CLAIMS SYSTEM
+// ══════════════════════════════════════
+
+// Called when worker taps Claim button
+window.submitClaim = function(truckId, plate, date) {
+  if (!currentUser || currentUser.role !== 'worker') return;
+  var already = Object.values(claims).find(function(c){
+    return c.truckId===truckId && c.worker===currentUser.id && c.status==='pending';
+  });
+  if (already) { showToast('⏳ Claim already sent for '+plate); return; }
+  if (!confirm('Claim truck '+plate+'?\nA request will be sent to Admin/Cashier for approval.')) return;
+  addDoc(collection(db,'claims'), {
+    truckId: truckId,
+    plate: plate,
+    date: date,
+    worker: currentUser.id,
+    workerName: currentUser.name || currentUser.id,
+    status: 'pending',
+    createdAt: Date.now()
+  }).then(function() {
+    showToast('✅ Claim sent! Waiting for approval.');
+  }).catch(function(e) {
+    console.error('Claim error:', e);
+    if (e.code === 'permission-denied') {
+      showToast('❌ Permission denied — update Firestore rules to allow /claims/');
+    } else if (e.code === 'unavailable' || e.message && e.message.includes('offline')) {
+      showToast('📴 Offline — claim will sync when back online');
+    } else {
+      showToast('❌ Error: ' + (e.code || e.message || 'unknown'));
+    }
+  });
+};
+
+// Admin/Cashier approves a claim
+// Once approved: truck gets the worker assigned (keeping ORIGINAL timestamp)
+// Claim is permanently deleted — no history
+window.approveClaim = function(claimId) {
+  var claim = claims[claimId];
+  if (!claim) { showToast('⚠️ Claim not found'); return; }
+  var truck = trucks[claim.truckId];
+  if (!truck) { showToast('⚠️ Truck no longer exists'); return; }
+  if (!confirm('Approve '+claim.workerName+' for truck '+claim.plate+'?')) return;
+  // Assign worker — keep original truck timestamp so position in list stays the same
+  updateDoc(doc(db,'trucks',claim.truckId), {
+    worker: claim.worker,
+    status: truck.status==='pending' ? 'paid' : truck.status,
+    assignedAt: Date.now(),
+    assignedBy: currentUser.id
+    // NOTE: we do NOT update timestamp — truck keeps its original position
+  }).then(function() {
+    // Delete THIS claim
+    deleteDoc(doc(db,'claims',claimId));
+    // Delete all other claims for same truck
+    Object.entries(claims).forEach(function(e) {
+      if (e[0] !== claimId && e[1].truckId === claim.truckId) {
+        deleteDoc(doc(db,'claims',e[0]));
+      }
+    });
+    showToast('✅ '+claim.workerName+' assigned to '+claim.plate);
+  }).catch(function(e) {
+    showToast('❌ Failed to approve. Check connection.');
+    console.error(e);
+  });
+};
+
+// Admin/Cashier rejects a claim — just deletes it, no trace
+window.rejectClaim = function(claimId) {
+  var claim = claims[claimId];
+  if (!claim) return;
+  if (!confirm('Reject claim from '+(claim.workerName||claim.worker)+' for '+claim.plate+'?')) return;
+  deleteDoc(doc(db,'claims',claimId)).then(function() {
+    showToast('❌ Claim rejected');
+  });
+};
+
+// Update claims badge in nav
+function updateClaimsBadge() {
+  if (!currentUser) return;
+  var count = Object.values(claims).filter(function(c){return c.status==='pending';}).length;
+  var nav = document.getElementById('nav_claims');
+  if (!nav) return;
+  var lbl = nav.querySelector('.nav-label');
+  if (lbl) lbl.textContent = count>0 ? 'Claims ('+count+')' : 'Claims';
+  nav.style.color = count>0 ? 'var(--purple)' : '';
+  nav.style.fontWeight = count>0 ? '800' : '';
+}
+
+// Render the Claims tab
+function renderClaimsTab() {
+  var container = document.getElementById('tabClaims');
+  if (!container) return;
+  var role = currentUser.role;
+  var uid = currentUser.id;
+  var canApprove = role==='admin'||role==='cashier'||role==='head';
+  var all = Object.entries(claims)
+    .map(function(e){ return Object.assign({},e[1],{_id:e[0]}); })
+    .filter(function(c){ return c.status==='pending'; })
+    .sort(function(a,b){ return (a.createdAt||0)-(b.createdAt||0); });
+  // Workers only see their own; others see all
+  var visible = role==='worker'
+    ? all.filter(function(c){ return c.worker===uid; })
+    : all;
+  if (visible.length===0) {
+    container.innerHTML = '<div style="padding:16px"><div class="empty-state">'
+      +'<div class="icon">🙋</div>'
+      +'<p>'+(role==='worker'?'You have no pending claims':'No pending claims')+'</p>'
+      +'</div></div>';
+    return;
+  }
+  var html = '<div style="padding:12px 16px 80px">'
+    +'<div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:0.08em;margin-bottom:12px">'
+    +'🙋 PENDING CLAIMS — '+visible.length+'</div>'
+    +'<div style="display:flex;flex-direction:column;gap:10px;">';
+  visible.forEach(function(c) {
+    var wc = WORKER_COLORS[c.worker]||'#6b7280';
+    var ts = c.createdAt ? new Date(c.createdAt).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}) : '—';
+    var initials = (c.workerName||c.worker||'?').substring(0,2).toUpperCase();
+    var approveRejectBtns = canApprove
+      ? '<div style="display:flex;gap:8px;margin-top:10px">'
+        +'<button class="claim-approve-btn" data-cid="'+c._id+'" style="flex:1;background:rgba(34,197,94,0.15);color:var(--green);border:1px solid rgba(34,197,94,0.3);border-radius:var(--radius-sm);padding:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">✅ Approve</button>'
+        +'<button class="claim-reject-btn" data-cid="'+c._id+'" style="flex:1;background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.2);border-radius:var(--radius-sm);padding:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">❌ Reject</button>'
+        +'</div>'
+      : '<div style="font-size:11px;color:var(--text3);font-weight:600;margin-top:8px">⏳ Waiting for Admin or Cashier to approve…</div>';
+    html += '<div style="background:var(--card);border:1.5px solid rgba(168,85,247,0.35);border-radius:var(--radius);padding:14px;position:relative;overflow:hidden">'
+      +'<div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--purple);border-radius:4px 0 0 4px;"></div>'
+      +'<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px">'
+      +'<div style="font-size:20px;font-weight:800;font-family:monospace;letter-spacing:0.05em">'+c.plate+'</div>'
+      +'<span style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;background:rgba(168,85,247,0.15);color:var(--purple);border:1px solid rgba(168,85,247,0.3)">⏳ PENDING</span>'
+      +'</div>'
+      +'<div style="font-size:12px;color:var(--text2);margin-bottom:8px">📅 '+(c.date||'—')+' · Sent: '+ts+'</div>'
+      +'<div style="display:flex;align-items:center;gap:8px">'
+      +'<div style="width:28px;height:28px;border-radius:50%;background:'+wc+'22;color:'+wc+';border:1.5px solid '+wc+'44;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700">'+initials+'</div>'
+      +'<span style="font-size:14px;font-weight:700;color:'+wc+'">'+(c.workerName||c.worker)+'</span>'
+      +'<span style="font-size:11px;color:var(--text3)">wants to claim this truck</span>'
+      +'</div>'
+      +approveRejectBtns
+      +'</div>';
+  });
+  html += '</div></div>';
+  container.innerHTML = html;
+}
+
 // ── ADVANCES ──
 window.openAddAdvance = function() {
   const workers = getWorkerList();
@@ -2493,26 +3400,36 @@ window.saveAdvance = function() {
   closeModal('modalAdvance');
 }
 function renderAdvances() {
-  const list = Object.entries(advances).map(([k,v])=>({...v,_id:k}))
-    .sort((a,b)=>(b.timestamp||0)-(a.timestamp||0));
-  const container = document.getElementById('advancesList');
+  var dateEl = document.getElementById('dateFilter');
+  var selDate = dateEl ? dateEl.value : getWorkingDate();
+  var isTodayAdv = selDate === getWorkingDate();
+  var dObj = new Date(selDate+'T12:00:00');
+  var dLabel = isTodayAdv ? 'Today' : dObj.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+  var list = Object.entries(advances)
+    .map(function(e){return Object.assign({},e[1],{_id:e[0]});})
+    .filter(function(a){return a.date===selDate;})
+    .sort(function(a,b){return (b.timestamp||0)-(a.timestamp||0);});
+  var container = document.getElementById('advancesList');
   if (!container) return;
+  var canDel = currentUser.role==='admin'||currentUser.role==='head';
+  var total = list.reduce(function(s,a){return s+(a.amount||0);},0);
+  var hdr = '<div style="padding:6px 0 10px;font-size:11px;font-weight:700;color:var(--text3);letter-spacing:0.08em;display:flex;justify-content:space-between;">'
+    +'<span>📅 '+dLabel.toUpperCase()+'</span>'
+    +(total>0?'<span style="color:var(--red);font-family:monospace">-'+total.toLocaleString()+' ETB</span>':'')
+    +'</div>';
   if (list.length===0) {
-    container.innerHTML = `<div class="empty-state"><div class="icon">💸</div><p>No advances yet</p></div>`;
+    container.innerHTML = hdr+'<div class="empty-state"><div class="icon">💸</div><p>No advances on this date</p></div>';
     return;
   }
-  const canDel = currentUser.role==='admin' || currentUser.role==='head';
-  container.innerHTML = list.map(a=>`
-    <div class="advance-card">
-      <div class="advance-icon">💸</div>
-      <div class="advance-info">
-        <div class="advance-worker">${a.worker}</div>
-        <div class="advance-meta">📅 ${a.date}${a.reason?' · '+a.reason:''}</div>
-      </div>
-      <div class="advance-amount">-${(a.amount||0).toLocaleString()}</div>
-      ${canDel?`<button class="advance-delete" onclick="deleteAdvance('${a._id}')">🗑️</button>`:''}
-    </div>
-  `).join('');
+  container.innerHTML = hdr+list.map(function(a){
+    return '<div class="advance-card">'
+      +'<div class="advance-icon">💸</div>'
+      +'<div class="advance-info"><div class="advance-worker">'+a.worker+'</div>'
+      +'<div class="advance-meta">📅 '+a.date+(a.reason?' · '+a.reason:'')+'</div></div>'
+      +'<div class="advance-amount">-'+(a.amount||0).toLocaleString()+'</div>'
+      +(canDel?'<button class="advance-delete adv-del-btn" data-aid="'+a._id+'">🗑️</button>':'')
+      +'</div>';
+  }).join('');
 }
 window.deleteAdvance = function(id) {
   if (!confirm('Delete this advance?')) return;
@@ -2831,7 +3748,7 @@ function renderManage() {
         <div class="manage-item" onclick="exportExcel()">
           <div class="manage-item-left">
             <div class="manage-item-icon">📊</div>
-            <div><div class="manage-item-name" style="color:var(--green)">Export to Excel (.csv)</div><div class="manage-item-sub">Download all truck data</div></div>
+            <div><div class="manage-item-name" style="color:var(--green)">Export to Excel (.csv)</div><div class="manage-item-sub">Export trucks for selected date</div></div>
           </div>
         </div>
         <div class="manage-item" onclick="document.getElementById('importFileInput').click()">
@@ -3709,30 +4626,83 @@ window.deleteDupEntry = function(id, btn) {
   showToast('🗑️ Deleted');
   updateDupChip();
 }
-window.exportExcel = function() {
-  const rows = [['Plate','Date','Sealer','Status','Total Fare','Sealer Pay','Company','Notes','Added By']];
-  const sorted = Object.values(trucks).sort((a,b) => {
-    if (a.date < b.date) return -1;
-    if (a.date > b.date) return 1;
-    return (a.timestamp||0) - (b.timestamp||0);
+// Format timestamp to readable datetime
+function fmtTimestamp(ts) {
+  if (!ts) return '';
+  return new Date(ts).toLocaleString('en-GB', {
+    day:'2-digit', month:'short', year:'numeric',
+    hour:'2-digit', minute:'2-digit', second:'2-digit'
   });
-  sorted.forEach(tk => {
-    const workerEarn = WORKER_PAY[tk.status]||0;
-    const totalFare = tk.status==='paid'||tk.status==='pending' ? CLIENT_PRICE : tk.status==='partial' ? 2800 : 0;
-    const statusDisplay = tk.status==='paid'||tk.status==='pending' ? 'Paid' : tk.status==='partial' ? 'Partial' : 'Unpaid';
+}
+
+window.exportExcel = function() {
+  // Get the currently selected date
+  var dateEl = document.getElementById('dateFilter');
+  var selDate = dateEl ? dateEl.value : getWorkingDate();
+  var role = currentUser ? currentUser.role : 'admin';
+
+  // Filter trucks by selected date
+  // Workers only export their own trucks
+  var filtered = Object.values(trucks).filter(function(tk) {
+    if (tk.date !== selDate) return false;
+    if (role === 'worker') return tk.worker === currentUser.id;
+    return true;
+  });
+
+  // Sort by timestamp (order added)
+  filtered.sort(function(a,b) { return (a.timestamp||0) - (b.timestamp||0); });
+
+  if (filtered.length === 0) {
+    showToast('⚠️ No trucks on ' + selDate + ' to export');
+    return;
+  }
+
+  // Build rows
+  var headers = [
+    'No.', 'Plate', 'Date', 'Added At', 'Sealer',
+    'Status', 'Total Fare (ETB)', 'Sealer Pay (ETB)', 'Company (ETB)',
+    'Added By', 'Modified At', 'Modified By', 'Notes'
+  ];
+  var rows = [headers];
+
+  filtered.forEach(function(tk, i) {
+    var workerEarn = WORKER_PAY[tk.status]||0;
+    var totalFare = (tk.status==='paid'||tk.status==='pending') ? CLIENT_PRICE : tk.status==='partial' ? 2800 : 0;
+    var statusDisplay = (tk.status==='paid'||tk.status==='pending') ? 'Paid' : tk.status==='partial' ? 'Partial' : 'Unpaid';
     rows.push([
-      tk.plate, tk.date, tk.worker||'', statusDisplay,
-      totalFare, workerEarn, totalFare - workerEarn,
-      tk.notes||'', tk.addedBy||''
+      i+1,
+      tk.plate||'',
+      tk.date||'',
+      fmtTimestamp(tk.timestamp),
+      tk.worker||'No sealer',
+      statusDisplay,
+      totalFare,
+      workerEarn,
+      totalFare - workerEarn,
+      tk.addedBy||'',
+      tk.modifiedAt ? fmtTimestamp(tk.modifiedAt) : '',
+      tk.modifiedBy||'',
+      tk.notes||''
     ]);
   });
-  let csv = rows.map(r => r.map(c => `"${c}"`).join(',')).join('\n');
-  const blob = new Blob([csv], {type:'text/csv'});
-  const a = document.createElement('a');
+
+  // Summary row
+  rows.push([]);
+  var totalRev = filtered.reduce(function(s,tk){ return s+((tk.status==='paid'||tk.status==='pending')?CLIENT_PRICE:tk.status==='partial'?2800:0); }, 0);
+  var totalPay = filtered.reduce(function(s,tk){ return s+(WORKER_PAY[tk.status]||0); }, 0);
+  rows.push(['TOTAL', '', '', '', '', filtered.length+' trucks', totalRev, totalPay, totalRev-totalPay, '', '', '', '']);
+
+  // Build CSV
+  var csv = rows.map(function(r) {
+    return r.map(function(c) { return '"'+String(c).replace(/"/g,'""')+'"'; }).join(',');
+  }).join('\n');
+
+  var blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  var a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = `hask-trucks-${new Date().toISOString().split('T')[0]}.csv`;
+  a.download = 'WKABE-Trucks-'+selDate+'.csv';
   a.click();
-  showToast('📊 Exported!');
+  showToast('📊 Exported: '+filtered.length+' trucks for '+selDate);
 }
 let deferredPrompt = null;
 let appInstalled = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
@@ -3951,10 +4921,77 @@ function maybeShowPWABanner() {
 }
 
 // ── INIT ──
+// ══════════════════════
+// EVENT DELEGATION — handles all dynamically generated buttons safely
+// ══════════════════════
+document.addEventListener('click', function(e) {
+  // Claim truck button (worker taps 🙋 Claim in pending section)
+  var claimBtn = e.target.closest('.claim-truck-btn');
+  if (claimBtn) {
+    var tid = claimBtn.getAttribute('data-tid');
+    var plate = claimBtn.getAttribute('data-plate');
+    var truck = trucks[tid];
+    if (truck) submitClaim(tid, truck.plate, truck.date);
+    return;
+  }
+  // Assign button in pending section
+  var assignBtn = e.target.closest('.pending-assign-btn');
+  if (assignBtn) {
+    var tid2 = assignBtn.getAttribute('data-tid');
+    if (tid2) openAssign(tid2);
+    return;
+  }
+  // Approve claim button
+  var approveBtn = e.target.closest('.claim-approve-btn');
+  if (approveBtn) {
+    var cid = approveBtn.getAttribute('data-cid');
+    if (cid) approveClaim(cid);
+    return;
+  }
+  // Reject claim button
+  var rejectBtn = e.target.closest('.claim-reject-btn');
+  if (rejectBtn) {
+    var cid2 = rejectBtn.getAttribute('data-cid');
+    if (cid2) rejectClaim(cid2);
+    return;
+  }
+  // Advance delete button
+  var advDelBtn = e.target.closest('.adv-del-btn');
+  if (advDelBtn) {
+    var aid = advDelBtn.getAttribute('data-aid');
+    if (aid) deleteAdvance(aid);
+    return;
+  }
+});
+
+// ══════════════════════
+// FORCE SYNC
+// ══════════════════════
+window.forceSync = async function() {
+  showToast('🔄 Clearing cache…');
+  try {
+    ['_unsubTrucks','_unsubAdvances','_unsubDeleted','_unsubSuspend',
+     '_unsubPins','_unsubPerms','_unsubWorkers','_unsubHead','_unsubClaims'].forEach(function(k){
+      try { if (window[k]) { window[k](); window[k]=null; } } catch(e) {}
+    });
+    var dbs = await indexedDB.databases();
+    for (var i=0;i<dbs.length;i++) {
+      var n=dbs[i].name;
+      if (n&&(n.includes('firestore')||n.includes('firebase')||n.includes('haaa'))) indexedDB.deleteDatabase(n);
+    }
+    showToast('✅ Cache cleared! Reloading…');
+    setTimeout(function(){window.location.reload(true);},1200);
+  } catch(e) {
+    showToast('🔄 Reloading…');
+    setTimeout(function(){window.location.reload(true);},800);
+  }
+};
+
 buildLogin();
 showScreen('loginScreen');
 initIcons();
 showSplash();
 </script>
-</body>
-</html>
+
+
+</body></html>
