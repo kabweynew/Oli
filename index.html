@@ -187,8 +187,24 @@
   /* ── STATS BAR ── */
   .stats-bar {
     display: grid; grid-template-columns: repeat(5, 1fr);
-    gap: 8px; padding: 12px 16px;
+    gap: 8px; padding: 12px 16px 6px;
   }
+  .meals-bar {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px; padding: 0 16px 10px;
+  }
+  .meal-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .meal-card:active { transform: scale(0.96); border-color: var(--accent); }
+  .meal-num { font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--red); }
+  .meal-label { font-size: 9px; color: var(--text3); font-weight: 600; letter-spacing: 0.05em; margin-top: 2px; }
   .stat-card {
     background: var(--card);
     border: 1px solid var(--border);
@@ -321,6 +337,43 @@
   .truck-meta span { margin-right: 8px; }
   .truck-earnings { font-size: 12px; color: var(--text2); margin-bottom: 10px; }
   .truck-actions { display: flex; gap: 8px; }
+
+  /* ── SELECT MODE ── */
+  .truck-card.selected { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .truck-checkbox {
+    width: 22px; height: 22px; flex-shrink: 0;
+    accent-color: var(--accent); cursor: pointer;
+  }
+  .bulk-bar {
+    position: fixed; bottom: 72px; left: 50%; transform: translateX(-50%);
+    background: var(--card); border: 1.5px solid var(--accent);
+    border-radius: 40px; padding: 10px 18px;
+    display: flex; align-items: center; gap: 12px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+    z-index: 900; white-space: nowrap;
+    opacity: 0; pointer-events: none; transition: opacity 0.2s;
+  }
+  .bulk-bar.active { opacity: 1; pointer-events: all; }
+  .bulk-count { font-size: 13px; font-weight: 700; color: var(--accent); }
+  .bulk-del-btn {
+    background: rgba(239,68,68,0.15); color: var(--red);
+    border: 1px solid rgba(239,68,68,0.35);
+    border-radius: 20px; padding: 7px 16px;
+    font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit;
+  }
+  .bulk-cancel-btn {
+    background: var(--bg3); color: var(--text2);
+    border: 1px solid var(--border);
+    border-radius: 20px; padding: 7px 14px;
+    font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit;
+  }
+  .select-mode-btn {
+    background: rgba(59,130,246,0.1); color: var(--accent);
+    border: 1px solid rgba(59,130,246,0.3);
+    border-radius: var(--radius-sm); padding: 6px 14px;
+    font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit;
+  }
+  .select-mode-btn.active { background: rgba(59,130,246,0.25); }
   .truck-action-btn {
     flex: 1;
     background: var(--bg3);
@@ -964,35 +1017,11 @@
       <div class="role-label">Sealer · My seals only</div>
     </button>
   
-    <button class="login-btn" onclick="goPin('Radwan')">
-      <div class="avatar" style="background:#22c55e22;color:#22c55e;border:2px solid #22c55e44">
-        RA
-      </div>
-      <div class="role-name">Radwan</div>
-      <div class="role-label">Sealer · My seals only</div>
-    </button>
-  
     <button class="login-btn" onclick="goPin('Oli')">
       <div class="avatar" style="background:#f59e0b22;color:#f59e0b;border:2px solid #f59e0b44">
         OL
       </div>
       <div class="role-name">Oli</div>
-      <div class="role-label">Sealer · My seals only</div>
-    </button>
-  
-    <button class="login-btn" onclick="goPin('Ali')">
-      <div class="avatar" style="background:#ef444422;color:#ef4444;border:2px solid #ef444444">
-        AL
-      </div>
-      <div class="role-name">Ali</div>
-      <div class="role-label">Sealer · My seals only</div>
-    </button>
-  
-    <button class="login-btn" onclick="goPin('Omar')">
-      <div class="avatar" style="background:#a855f722;color:#a855f7;border:2px solid #a855f744">
-        OM
-      </div>
-      <div class="role-name">Omar</div>
       <div class="role-label">Sealer · My seals only</div>
     </button>
   </div>
@@ -1049,19 +1078,30 @@
     <!-- Trucks Tab -->
     <div id="tabTrucks" style="display: none;">
       <div class="stats-bar">
-        <div class="stat-card"><div class="stat-num blue" id="statTotal">9</div><div class="stat-label">TRUCKS</div></div>
-        <div class="stat-card"><div class="stat-num green" id="statPaid">8</div><div class="stat-label">PAID</div></div>
+        <div class="stat-card"><div class="stat-num blue" id="statTotal">7</div><div class="stat-label">TRUCKS</div></div>
+        <div class="stat-card"><div class="stat-num green" id="statPaid">3</div><div class="stat-label">PAID</div></div>
         <div class="stat-card"><div class="stat-num orange" id="statPartial">0</div><div class="stat-label">PARTIAL</div></div>
-        <div class="stat-card"><div class="stat-num red" id="statUnpaid">1</div><div class="stat-label">UNPAID</div></div>
-        <div class="stat-card"><div class="stat-num teal" id="statETB">44.0k</div><div class="stat-label">ETB</div></div>
+        <div class="stat-card"><div class="stat-num red" id="statUnpaid">4</div><div class="stat-label">UNPAID</div></div>
+        <div class="stat-card"><div class="stat-num teal" id="statETB">16.5k</div><div class="stat-label">ETB</div></div>
+      </div>
+      <div class="meals-bar" id="mealsBar">
+        <div class="meal-card" onclick="openMealsModal()">
+          <div class="meal-num" id="statLunch">—</div><div class="meal-label">🥗 LUNCH</div>
+        </div>
+        <div class="meal-card" onclick="openMealsModal()">
+          <div class="meal-num" id="statDinner">—</div><div class="meal-label">🍽️ DINNER</div>
+        </div>
+        <div class="meal-card" onclick="openMealsModal()" style="border-color:rgba(239,68,68,0.3)">
+          <div class="meal-num" id="statNetCompany" style="color:var(--green)">—</div><div class="meal-label">🏦 NET</div>
+        </div>
       </div>
       <div class="date-bar">
         <button class="date-chip" id="todayChip" onclick="setToday()" style="background: var(--green); opacity: 1;">🟢 Today</button>
         <div class="date-input-wrap" style="cursor:pointer" onclick="openDatePicker()" id="datePickerBtn">
           <span style="color:var(--text3);font-size:13px;">📅</span>
-          <span id="dateFilterDisplay" style="flex:1;font-size:13px;font-weight:600">Today — Thu 9 Apr</span>
+          <span id="dateFilterDisplay" style="flex:1;font-size:13px;font-weight:600">Today — Wed 15 Apr</span>
           <span style="color:var(--text3);font-size:12px;">▼</span>
-          <input type="hidden" id="dateFilter" value="2026-04-09">
+          <input type="hidden" id="dateFilter" value="2026-04-15">
         </div>
       </div>
       <!-- SUSPEND BANNER -->
@@ -1078,12 +1118,12 @@
       <div class="worker-bar" id="workerFilterBar">
     <button class="worker-chip active" id="wchip_all" onclick="setWorkerFilter('all',this)">
       <div class="wdot" style="background:var(--accent)"></div>
-      👥 All <span class="wcount" id="wcount_all">9</span>
+      👥 All <span class="wcount" id="wcount_all">7</span>
     </button>
     
       <button class="worker-chip" id="wchip_Ahmed" onclick="setWorkerFilter('Ahmed',this)" style="border-color:#3b82f644">
         <div class="wdot" style="background:#3b82f6"></div>
-        Ahmed <span class="wcount" id="wcount_Ahmed">3</span>
+        Ahmed <span class="wcount" id="wcount_Ahmed">6</span>
       </button>
     
       <button class="worker-chip" id="wchip_Radwan" onclick="setWorkerFilter('Radwan',this)" style="border-color:#22c55e44">
@@ -1098,12 +1138,12 @@
     
       <button class="worker-chip" id="wchip_Ali" onclick="setWorkerFilter('Ali',this)" style="border-color:#ef444444">
         <div class="wdot" style="background:#ef4444"></div>
-        Ali <span class="wcount" id="wcount_Ali">1</span>
+        Ali <span class="wcount" id="wcount_Ali">0</span>
       </button>
     
       <button class="worker-chip" id="wchip_Omar" onclick="setWorkerFilter('Omar',this)" style="border-color:#a855f744">
         <div class="wdot" style="background:#a855f7"></div>
-        Omar <span class="wcount" id="wcount_Omar">2</span>
+        Omar <span class="wcount" id="wcount_Omar">0</span>
       </button>
     
   </div>
@@ -1115,8 +1155,9 @@
       <div class="section-header">
         <span class="section-title" id="trucksSectionTitle">TODAY'S TRUCKS</span>
         <div style="display:flex;gap:8px;align-items:center">
-          <button class="new-btn" style="color:var(--green);font-size:11px;" id="exportDateBtn" onclick="exportExcel()">📊 Export 2026-04-09</button>
+          <button class="new-btn" style="color:var(--green);font-size:11px;" id="exportDateBtn" onclick="exportExcel()">📊 Export 2026-04-15</button>
           <button class="new-btn" style="color:var(--teal)" onclick="openShareReport()">📤 Share</button>
+          <button class="select-mode-btn" id="selectModeBtn" onclick="toggleSelectMode()">☑️ Select</button>
           <button class="new-btn" onclick="openAddTruck()">+ New</button>
         </div>
       </div>
@@ -1124,20 +1165,20 @@
         <div class="assign-title">⏳ WAITING FOR SEALER</div>
         <div id="unassignedList"></div>
       </div>
-      <div class="trucks-list" id="trucksList"><div class="pending-section"><div class="pending-hdr"><span class="pending-title">⏳ Waiting for Sealer</span><span class="pending-count">3</span></div><div class="pending-row"><div style="flex:1"><div class="pending-plate">48433</div><div class="pending-meta">📅 2026-04-09 · Added by: Cashier 1</div><div class="pending-meta" style="color:#f1c40f;margin-top:2px;">💳 5,500 ETB · Sealer earns: 1,300 ETB</div></div><div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end;"><button class="t-btn-assign pending-assign-btn" data-tid="FEh6DI5IDOokToKr2E1y">👷 Assign</button></div></div><div class="pending-row"><div style="flex:1"><div class="pending-plate">310D105</div><div class="pending-meta">📅 2026-04-09 · Added by: Cashier 1</div><div class="pending-meta" style="color:#f1c40f;margin-top:2px;">💳 5,500 ETB · Sealer earns: 1,300 ETB</div></div><div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end;"><button class="t-btn-assign pending-assign-btn" data-tid="5YUKHNYXuUME91oMDVDX">👷 Assign</button></div></div><div class="pending-row"><div style="flex:1"><div class="pending-plate">80990</div><div class="pending-meta">📅 2026-04-09 · Added by: Cashier 1</div><div class="pending-meta" style="color:#f1c40f;margin-top:2px;">💳 5,500 ETB · Sealer earns: 1,300 ETB</div></div><div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end;"><button class="t-btn-assign pending-assign-btn" data-tid="jRe5IZoVIbVhEhdzsz6U">👷 Assign</button></div></div></div>
+      <div class="trucks-list" id="trucksList"><div class="pending-section"><div class="pending-hdr"><span class="pending-title">⏳ Waiting for Sealer</span><span class="pending-count">1</span></div><div class="pending-row"><div style="flex:1"><div class="pending-plate">80650</div><div class="pending-meta">📅 2026-04-15 · Added by: Cashier 1</div><div class="pending-meta" style="color:#f1c40f;margin-top:2px;">💳 5,500 ETB · Sealer earns: 1,300 ETB</div></div><div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end;"><button class="t-btn-assign pending-assign-btn" data-tid="vpiNOptCdFGJU0GeU2To">👷 Assign</button></div></div></div>
       <div class="truck-card paid">
         <div class="truck-top">
           <div style="display:flex;align-items:center;gap:8px">
             <span class="truck-number">#1</span>
-            <div class="truck-plate">48241</div>
+            <div class="truck-plate">A32535</div>
           </div>
           <span class="status-badge paid">✅ Paid</span>
         </div>
         <div class="truck-meta">
-          <span>📅 9 Apr 2026</span>
-           · Added by: Ahmed
+          <span>📅 15 Apr 2026</span>
+           · Added by: Cashier 1
         </div>
-        <div class="truck-meta" style="font-size:11px;color:var(--orange);font-weight:600">✏️ Modified: 9 Apr, 13:40 — by Cashier 1</div>
+        <div class="truck-meta" style="font-size:11px;color:var(--orange);font-weight:600">✏️ Modified: 15 Apr, 09:29 — by Cashier 1</div>
         
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
           <div style="text-align:center">
@@ -1157,97 +1198,27 @@
             <div style="font-size:12px;font-weight:700;color:var(--accent)">4,200 ETB</div>
           </div>
         </div>
-        <div class="truck-actions"><button class="truck-action-btn primary" onclick="openStatus('3kCifE3xD28jWrojBP9X')">🟡 Status</button><button class="truck-action-btn" onclick="openEditTruck('3kCifE3xD28jWrojBP9X')">✏️ Edit</button><button class="truck-action-btn danger" onclick="deleteTruck('3kCifE3xD28jWrojBP9X')">🗑️ Delete</button></div>
-      </div>
-    
-      <div class="truck-card paid">
-        <div class="truck-top">
-          <div style="display:flex;align-items:center;gap:8px">
-            <span class="truck-number">#2</span>
-            <div class="truck-plate">31076</div>
-          </div>
-          <span class="status-badge paid">✅ Paid</span>
-        </div>
-        <div class="truck-meta">
-          <span>📅 9 Apr 2026</span>
-           · Added by: Ahmed
-        </div>
-        <div class="truck-meta" style="font-size:11px;color:var(--orange);font-weight:600">✏️ Modified: 9 Apr, 13:40 — by Cashier 1</div>
-        
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
-            <div style="font-size:12px;font-weight:700;color:#3b82f6">Ahmed</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
-            <div style="font-size:12px;font-weight:700;color:var(--orange)">5,500 ETB</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
-            <div style="font-size:12px;font-weight:700;color:var(--teal)">1,300 ETB</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
-            <div style="font-size:12px;font-weight:700;color:var(--accent)">4,200 ETB</div>
-          </div>
-        </div>
-        <div class="truck-actions"><button class="truck-action-btn primary" onclick="openStatus('rJgmKgkyG3UpqsbfTuvn')">🟡 Status</button><button class="truck-action-btn" onclick="openEditTruck('rJgmKgkyG3UpqsbfTuvn')">✏️ Edit</button><button class="truck-action-btn danger" onclick="deleteTruck('rJgmKgkyG3UpqsbfTuvn')">🗑️ Delete</button></div>
+        <div class="truck-actions"><button class="truck-action-btn primary" onclick="openStatus('4qUBYwNYKaQr2r1YweMr')">🟡 Status</button><button class="truck-action-btn" onclick="openEditTruck('4qUBYwNYKaQr2r1YweMr')">✏️ Edit</button><button class="truck-action-btn danger" onclick="deleteTruck('4qUBYwNYKaQr2r1YweMr')">🗑️ Delete</button></div>
       </div>
     
       <div class="truck-card paid">
         <div class="truck-top">
           <div style="display:flex;align-items:center;gap:8px">
             <span class="truck-number">#3</span>
-            <div class="truck-plate">84654</div>
+            <div class="truck-plate">A32536</div>
           </div>
           <span class="status-badge paid">✅ Paid</span>
         </div>
         <div class="truck-meta">
-          <span>📅 9 Apr 2026</span>
-           · Added by: Omar
-        </div>
-        <div class="truck-meta" style="font-size:11px;color:var(--orange);font-weight:600">✏️ Modified: 9 Apr, 13:43 — by Cashier 1</div>
-        
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
-            <div style="font-size:12px;font-weight:700;color:#a855f7">Omar</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
-            <div style="font-size:12px;font-weight:700;color:var(--orange)">5,500 ETB</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
-            <div style="font-size:12px;font-weight:700;color:var(--teal)">1,300 ETB</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
-            <div style="font-size:12px;font-weight:700;color:var(--accent)">4,200 ETB</div>
-          </div>
-        </div>
-        <div class="truck-actions"><button class="truck-action-btn primary" onclick="openStatus('XZU0Hu2whqjWYFk6ztm9')">🟡 Status</button><button class="truck-action-btn" onclick="openEditTruck('XZU0Hu2whqjWYFk6ztm9')">✏️ Edit</button><button class="truck-action-btn danger" onclick="deleteTruck('XZU0Hu2whqjWYFk6ztm9')">🗑️ Delete</button></div>
-      </div>
-    
-      <div class="truck-card paid">
-        <div class="truck-top">
-          <div style="display:flex;align-items:center;gap:8px">
-            <span class="truck-number">#4</span>
-            <div class="truck-plate">93840</div>
-          </div>
-          <span class="status-badge paid">✅ Paid</span>
-        </div>
-        <div class="truck-meta">
-          <span>📅 9 Apr 2026</span>
+          <span>📅 15 Apr 2026</span>
            · Added by: Cashier 1
         </div>
-        <div class="truck-meta" style="font-size:11px;color:var(--orange);font-weight:600">✏️ Modified: 9 Apr, 13:58 — by Cashier 1</div>
+        <div class="truck-meta" style="font-size:11px;color:var(--orange);font-weight:600">✏️ Modified: 15 Apr, 11:34 — by Cashier 1</div>
         
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
           <div style="text-align:center">
             <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
-            <div style="font-size:12px;font-weight:700;color:#a855f7">Omar</div>
+            <div style="font-size:12px;font-weight:700;color:#3b82f6">Ahmed</div>
           </div>
           <div style="text-align:center">
             <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
@@ -1262,54 +1233,19 @@
             <div style="font-size:12px;font-weight:700;color:var(--accent)">4,200 ETB</div>
           </div>
         </div>
-        <div class="truck-actions"><button class="truck-action-btn primary" onclick="openStatus('R8wHGxw7Fdvd2kigOLFX')">🟡 Status</button><button class="truck-action-btn" onclick="openEditTruck('R8wHGxw7Fdvd2kigOLFX')">✏️ Edit</button><button class="truck-action-btn danger" onclick="deleteTruck('R8wHGxw7Fdvd2kigOLFX')">🗑️ Delete</button></div>
-      </div>
-    
-      <div class="truck-card paid">
-        <div class="truck-top">
-          <div style="display:flex;align-items:center;gap:8px">
-            <span class="truck-number">#5</span>
-            <div class="truck-plate">95512</div>
-          </div>
-          <span class="status-badge paid">✅ Paid</span>
-        </div>
-        <div class="truck-meta">
-          <span>📅 9 Apr 2026</span>
-           · Added by: Cashier 1
-        </div>
-        <div class="truck-meta" style="font-size:11px;color:var(--orange);font-weight:600">✏️ Modified: 9 Apr, 13:57 — by Cashier 1</div>
-        
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
-            <div style="font-size:12px;font-weight:700;color:#ef4444">Ali</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
-            <div style="font-size:12px;font-weight:700;color:var(--orange)">5,500 ETB</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
-            <div style="font-size:12px;font-weight:700;color:var(--teal)">1,300 ETB</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
-            <div style="font-size:12px;font-weight:700;color:var(--accent)">4,200 ETB</div>
-          </div>
-        </div>
-        <div class="truck-actions"><button class="truck-action-btn primary" onclick="openStatus('08WBWMoKxrDPB8vUHKpl')">🟡 Status</button><button class="truck-action-btn" onclick="openEditTruck('08WBWMoKxrDPB8vUHKpl')">✏️ Edit</button><button class="truck-action-btn danger" onclick="deleteTruck('08WBWMoKxrDPB8vUHKpl')">🗑️ Delete</button></div>
+        <div class="truck-actions"><button class="truck-action-btn primary" onclick="openStatus('jdITOLdfr3AdIO2gvl1b')">🟡 Status</button><button class="truck-action-btn" onclick="openEditTruck('jdITOLdfr3AdIO2gvl1b')">✏️ Edit</button><button class="truck-action-btn danger" onclick="deleteTruck('jdITOLdfr3AdIO2gvl1b')">🗑️ Delete</button></div>
       </div>
     
       <div class="truck-card unpaid">
         <div class="truck-top">
           <div style="display:flex;align-items:center;gap:8px">
-            <span class="truck-number">#8</span>
-            <div class="truck-plate">46441</div>
+            <span class="truck-number">#4</span>
+            <div class="truck-plate">09500</div>
           </div>
           <span class="status-badge unpaid">❌ Unpaid</span>
         </div>
         <div class="truck-meta">
-          <span>📅 9 Apr 2026</span>
+          <span>📅 15 Apr 2026</span>
            · Added by: Ahmed
         </div>
         
@@ -1332,7 +1268,112 @@
             <div style="font-size:12px;font-weight:700;color:var(--accent)">—</div>
           </div>
         </div>
-        <div class="truck-actions"><button class="truck-action-btn primary" onclick="openStatus('rdFjxzswmVQW3ht8QS4a')">🟡 Status</button><button class="truck-action-btn" onclick="openEditTruck('rdFjxzswmVQW3ht8QS4a')">✏️ Edit</button><button class="truck-action-btn danger" onclick="deleteTruck('rdFjxzswmVQW3ht8QS4a')">🗑️ Delete</button></div>
+        <div class="truck-actions"><button class="truck-action-btn primary" onclick="openStatus('LxpcKvWwCQ9NbP4KZTlb')">🟡 Status</button><button class="truck-action-btn" onclick="openEditTruck('LxpcKvWwCQ9NbP4KZTlb')">✏️ Edit</button><button class="truck-action-btn danger" onclick="deleteTruck('LxpcKvWwCQ9NbP4KZTlb')">🗑️ Delete</button></div>
+      </div>
+    
+      <div class="truck-card unpaid">
+        <div class="truck-top">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="truck-number">#5</span>
+            <div class="truck-plate">83350</div>
+          </div>
+          <span class="status-badge unpaid">❌ Unpaid</span>
+        </div>
+        <div class="truck-meta">
+          <span>📅 15 Apr 2026</span>
+           · Added by: Ahmed
+        </div>
+        
+        
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
+          <div style="text-align:center">
+            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
+            <div style="font-size:12px;font-weight:700;color:#3b82f6">Ahmed</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
+            <div style="font-size:12px;font-weight:700;color:var(--orange)">—</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
+            <div style="font-size:12px;font-weight:700;color:var(--teal)">—</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
+            <div style="font-size:12px;font-weight:700;color:var(--accent)">—</div>
+          </div>
+        </div>
+        <div class="truck-actions"><button class="truck-action-btn primary" onclick="openStatus('PEStadwOSmsLiNJZXowe')">🟡 Status</button><button class="truck-action-btn" onclick="openEditTruck('PEStadwOSmsLiNJZXowe')">✏️ Edit</button><button class="truck-action-btn danger" onclick="deleteTruck('PEStadwOSmsLiNJZXowe')">🗑️ Delete</button></div>
+      </div>
+    
+      <div class="truck-card unpaid">
+        <div class="truck-top">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="truck-number">#6</span>
+            <div class="truck-plate">58247</div>
+          </div>
+          <span class="status-badge unpaid">❌ Unpaid</span>
+        </div>
+        <div class="truck-meta">
+          <span>📅 15 Apr 2026</span>
+           · Added by: Ahmed
+        </div>
+        
+        
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
+          <div style="text-align:center">
+            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
+            <div style="font-size:12px;font-weight:700;color:#3b82f6">Ahmed</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
+            <div style="font-size:12px;font-weight:700;color:var(--orange)">—</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
+            <div style="font-size:12px;font-weight:700;color:var(--teal)">—</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
+            <div style="font-size:12px;font-weight:700;color:var(--accent)">—</div>
+          </div>
+        </div>
+        <div class="truck-actions"><button class="truck-action-btn primary" onclick="openStatus('gob8S8ERjvxSFmgH15vX')">🟡 Status</button><button class="truck-action-btn" onclick="openEditTruck('gob8S8ERjvxSFmgH15vX')">✏️ Edit</button><button class="truck-action-btn danger" onclick="deleteTruck('gob8S8ERjvxSFmgH15vX')">🗑️ Delete</button></div>
+      </div>
+    
+      <div class="truck-card unpaid">
+        <div class="truck-top">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="truck-number">#7</span>
+            <div class="truck-plate">647D102</div>
+          </div>
+          <span class="status-badge unpaid">❌ Unpaid</span>
+        </div>
+        <div class="truck-meta">
+          <span>📅 15 Apr 2026</span>
+           · Added by: Ahmed
+        </div>
+        
+        
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
+          <div style="text-align:center">
+            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
+            <div style="font-size:12px;font-weight:700;color:#3b82f6">Ahmed</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
+            <div style="font-size:12px;font-weight:700;color:var(--orange)">—</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
+            <div style="font-size:12px;font-weight:700;color:var(--teal)">—</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
+            <div style="font-size:12px;font-weight:700;color:var(--accent)">—</div>
+          </div>
+        </div>
+        <div class="truck-actions"><button class="truck-action-btn primary" onclick="openStatus('BVklEdm7SPoHxVqf1ZpE')">🟡 Status</button><button class="truck-action-btn" onclick="openEditTruck('BVklEdm7SPoHxVqf1ZpE')">✏️ Edit</button><button class="truck-action-btn danger" onclick="deleteTruck('BVklEdm7SPoHxVqf1ZpE')">🗑️ Delete</button></div>
       </div>
     </div>
     </div>
@@ -1359,22 +1400,22 @@
           <div class="worker-info">
             <div class="worker-name">Ahmed</div>
             <div class="worker-stats-row">
-              <div class="worker-stat">Trucks: <span>3</span></div>
+              <div class="worker-stat">Trucks: <span>6</span></div>
               <div class="worker-stat">Earned: <span style="color:var(--green)">2,600</span></div>
-              <div class="worker-stat">Net: <span style="color:var(--red)">-7,400</span></div>
+              <div class="worker-stat">Net: <span style="color:var(--green)">2,600</span></div>
             </div>
           </div>
           <div class="expand-icon">▼</div>
         </div>
         <div class="worker-details">
           <div class="detail-row"><span class="detail-label">📅 Date</span><span class="detail-val">Today</span></div>
-          <div class="detail-row"><span class="detail-label">Trucks worked</span><span class="detail-val">3</span></div>
+          <div class="detail-row"><span class="detail-label">Trucks worked</span><span class="detail-val">6</span></div>
           <div class="detail-row"><span class="detail-label">Paid trucks</span><span class="detail-val green">2</span></div>
           <div class="detail-row"><span class="detail-label">Partial trucks</span><span class="detail-val orange">0</span></div>
-          <div class="detail-row"><span class="detail-label">Unpaid trucks</span><span class="detail-val red">1</span></div>
+          <div class="detail-row"><span class="detail-label">Unpaid trucks</span><span class="detail-val red">4</span></div>
           <div class="detail-row"><span class="detail-label">Earned today</span><span class="detail-val green">2,600 ETB</span></div>
-          <div class="detail-row"><span class="detail-label">Total advances</span><span class="detail-val red">-10,000 ETB</span></div>
-          <div class="detail-row"><span class="detail-label">Net balance</span><span class="detail-val" style="color:var(--red)">-7,400 ETB</span></div>
+          <div class="detail-row"><span class="detail-label">Total advances</span><span class="detail-val red">-0 ETB</span></div>
+          <div class="detail-row"><span class="detail-label">Net balance</span><span class="detail-val" style="color:var(--green)">2,600 ETB</span></div>
           
             <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
               <button class="manage-btn" onclick="viewWorkerList('Ahmed')">📋 List</button>
@@ -1396,7 +1437,7 @@
             <div class="worker-stats-row">
               <div class="worker-stat">Trucks: <span>0</span></div>
               <div class="worker-stat">Earned: <span style="color:var(--green)">0</span></div>
-              <div class="worker-stat">Net: <span style="color:var(--red)">-1,200</span></div>
+              <div class="worker-stat">Net: <span style="color:var(--green)">0</span></div>
             </div>
           </div>
           <div class="expand-icon">▼</div>
@@ -1408,8 +1449,8 @@
           <div class="detail-row"><span class="detail-label">Partial trucks</span><span class="detail-val orange">0</span></div>
           <div class="detail-row"><span class="detail-label">Unpaid trucks</span><span class="detail-val red">0</span></div>
           <div class="detail-row"><span class="detail-label">Earned today</span><span class="detail-val green">0 ETB</span></div>
-          <div class="detail-row"><span class="detail-label">Total advances</span><span class="detail-val red">-1,200 ETB</span></div>
-          <div class="detail-row"><span class="detail-label">Net balance</span><span class="detail-val" style="color:var(--red)">-1,200 ETB</span></div>
+          <div class="detail-row"><span class="detail-label">Total advances</span><span class="detail-val red">-0 ETB</span></div>
+          <div class="detail-row"><span class="detail-label">Net balance</span><span class="detail-val" style="color:var(--green)">0 ETB</span></div>
           
             <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
               <button class="manage-btn" onclick="viewWorkerList('Radwan')">📋 List</button>
@@ -1464,8 +1505,8 @@
           <div class="worker-info">
             <div class="worker-name">Ali</div>
             <div class="worker-stats-row">
-              <div class="worker-stat">Trucks: <span>1</span></div>
-              <div class="worker-stat">Earned: <span style="color:var(--green)">1,300</span></div>
+              <div class="worker-stat">Trucks: <span>0</span></div>
+              <div class="worker-stat">Earned: <span style="color:var(--green)">0</span></div>
               <div class="worker-stat">Net: <span style="color:var(--green)">0</span></div>
             </div>
           </div>
@@ -1473,12 +1514,12 @@
         </div>
         <div class="worker-details">
           <div class="detail-row"><span class="detail-label">📅 Date</span><span class="detail-val">Today</span></div>
-          <div class="detail-row"><span class="detail-label">Trucks worked</span><span class="detail-val">1</span></div>
-          <div class="detail-row"><span class="detail-label">Paid trucks</span><span class="detail-val green">1</span></div>
+          <div class="detail-row"><span class="detail-label">Trucks worked</span><span class="detail-val">0</span></div>
+          <div class="detail-row"><span class="detail-label">Paid trucks</span><span class="detail-val green">0</span></div>
           <div class="detail-row"><span class="detail-label">Partial trucks</span><span class="detail-val orange">0</span></div>
           <div class="detail-row"><span class="detail-label">Unpaid trucks</span><span class="detail-val red">0</span></div>
-          <div class="detail-row"><span class="detail-label">Earned today</span><span class="detail-val green">1,300 ETB</span></div>
-          <div class="detail-row"><span class="detail-label">Total advances</span><span class="detail-val red">-1,300 ETB</span></div>
+          <div class="detail-row"><span class="detail-label">Earned today</span><span class="detail-val green">0 ETB</span></div>
+          <div class="detail-row"><span class="detail-label">Total advances</span><span class="detail-val red">-0 ETB</span></div>
           <div class="detail-row"><span class="detail-label">Net balance</span><span class="detail-val" style="color:var(--green)">0 ETB</span></div>
           
             <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
@@ -1499,22 +1540,22 @@
           <div class="worker-info">
             <div class="worker-name">Omar</div>
             <div class="worker-stats-row">
-              <div class="worker-stat">Trucks: <span>2</span></div>
-              <div class="worker-stat">Earned: <span style="color:var(--green)">2,600</span></div>
-              <div class="worker-stat">Net: <span style="color:var(--green)">2,100</span></div>
+              <div class="worker-stat">Trucks: <span>0</span></div>
+              <div class="worker-stat">Earned: <span style="color:var(--green)">0</span></div>
+              <div class="worker-stat">Net: <span style="color:var(--green)">0</span></div>
             </div>
           </div>
           <div class="expand-icon">▼</div>
         </div>
         <div class="worker-details">
           <div class="detail-row"><span class="detail-label">📅 Date</span><span class="detail-val">Today</span></div>
-          <div class="detail-row"><span class="detail-label">Trucks worked</span><span class="detail-val">2</span></div>
-          <div class="detail-row"><span class="detail-label">Paid trucks</span><span class="detail-val green">2</span></div>
+          <div class="detail-row"><span class="detail-label">Trucks worked</span><span class="detail-val">0</span></div>
+          <div class="detail-row"><span class="detail-label">Paid trucks</span><span class="detail-val green">0</span></div>
           <div class="detail-row"><span class="detail-label">Partial trucks</span><span class="detail-val orange">0</span></div>
           <div class="detail-row"><span class="detail-label">Unpaid trucks</span><span class="detail-val red">0</span></div>
-          <div class="detail-row"><span class="detail-label">Earned today</span><span class="detail-val green">2,600 ETB</span></div>
-          <div class="detail-row"><span class="detail-label">Total advances</span><span class="detail-val red">-500 ETB</span></div>
-          <div class="detail-row"><span class="detail-label">Net balance</span><span class="detail-val" style="color:var(--green)">2,100 ETB</span></div>
+          <div class="detail-row"><span class="detail-label">Earned today</span><span class="detail-val green">0 ETB</span></div>
+          <div class="detail-row"><span class="detail-label">Total advances</span><span class="detail-val red">-0 ETB</span></div>
+          <div class="detail-row"><span class="detail-label">Net balance</span><span class="detail-val" style="color:var(--green)">0 ETB</span></div>
           
             <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
               <button class="manage-btn" onclick="viewWorkerList('Omar')">📋 List</button>
@@ -1534,14 +1575,14 @@
         <span class="section-title">ALL CREDIT RECORDS</span>
         <button class="new-btn" onclick="openAddAdvance()">+ Add</button>
       </div>
-      <div class="advances-list" id="advancesList"><div style="padding:6px 0 10px;font-size:11px;font-weight:700;color:var(--text3);letter-spacing:0.08em;display:flex;justify-content:space-between;"><span>📅 TODAY</span><span style="color:var(--red);font-family:monospace">-700 ETB</span></div><div class="advance-card"><div class="advance-icon">💸</div><div class="advance-info"><div class="advance-worker">Ali</div><div class="advance-meta">📅 2026-04-09</div></div><div class="advance-amount">-200</div><button class="advance-delete adv-del-btn" data-aid="WOIpMcrzSWiiHmJLJgxL">🗑️</button></div><div class="advance-card"><div class="advance-icon">💸</div><div class="advance-info"><div class="advance-worker">Omar</div><div class="advance-meta">📅 2026-04-09</div></div><div class="advance-amount">-500</div><button class="advance-delete adv-del-btn" data-aid="i4wYXejiqW8Dx3pSzdQY">🗑️</button></div></div>
+      <div class="advances-list" id="advancesList"><div style="padding:6px 0 10px;font-size:11px;font-weight:700;color:var(--text3);letter-spacing:0.08em;display:flex;justify-content:space-between;"><span>📅 TODAY</span></div><div class="empty-state"><div class="icon">💸</div><p>No advances on this date</p></div></div>
     </div>
 
     <!-- Reports Tab -->
     <div id="tabReports" style="display:none;">
       <div class="reports-content" id="reportsContent">
     <div style="padding:12px 0 4px">
-      <div style="font-size:11px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:8px">📅 SHOWING: 2026-04-09  </div>
+      <div style="font-size:11px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:8px">📅 SHOWING: 2026-04-15  </div>
       <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none">
     <button class="filter-chip active" onclick="setReportFilter('all',this)" style="font-size:11px;padding:4px 10px">
       All
@@ -1587,18 +1628,18 @@
     </div>
     <div class="report-card">
       <div class="report-title">📊 SUMMARY</div>
-      <div class="report-row"><span class="report-label">🚛 Total Trucks</span><span class="report-val">9</span></div>
-      <div class="report-row"><span class="report-label">✅ Paid</span><span class="report-val" style="color:var(--green)">8</span></div>
+      <div class="report-row"><span class="report-label">🚛 Total Trucks</span><span class="report-val">7</span></div>
+      <div class="report-row"><span class="report-label">✅ Paid</span><span class="report-val" style="color:var(--green)">3</span></div>
       <div class="report-row"><span class="report-label">⚡ Partial</span><span class="report-val" style="color:var(--orange)">0</span></div>
-      <div class="report-row"><span class="report-label">❌ Unpaid</span><span class="report-val" style="color:var(--red)">1</span></div>
-      <div class="report-row"><span class="report-label">💰 Total Client Revenue</span><span class="report-val" style="color:var(--teal)">44,000 ETB</span></div>
-      <div class="report-row"><span class="report-label">👷 Total Sealer Pay</span><span class="report-val">10,400 ETB</span></div>
-      <div class="report-row"><span class="report-label">🏢 Company Earnings</span><span class="report-val" style="color:var(--green)">33,600 ETB</span></div>
+      <div class="report-row"><span class="report-label">❌ Unpaid</span><span class="report-val" style="color:var(--red)">4</span></div>
+      <div class="report-row"><span class="report-label">💰 Total Client Revenue</span><span class="report-val" style="color:var(--teal)">16,500 ETB</span></div>
+      <div class="report-row"><span class="report-label">👷 Total Sealer Pay</span><span class="report-val">3,900 ETB</span></div>
+      <div class="report-row"><span class="report-label">🏢 Company Earnings</span><span class="report-val" style="color:var(--green)">12,600 ETB</span></div>
       <div class="report-row"><span class="report-label">💸 Total Advances</span><span class="report-val" style="color:var(--red)">-0 ETB</span></div>
       
       <div class="report-row" style="background:rgba(239,68,68,0.1);border-radius:var(--radius-sm);padding:10px;margin-top:6px;border:1px solid rgba(239,68,68,0.3)">
         <span class="report-label" style="color:var(--red);font-weight:700">⚠️ Missing Money (Unpaid)</span>
-        <span class="report-val" style="color:var(--red)">-5,500 ETB</span>
+        <span class="report-val" style="color:var(--red)">-22,000 ETB</span>
       </div>
     </div>
     <div class="report-card">
@@ -1607,11 +1648,11 @@
           <div class="report-row">
             <span class="report-label">
               <span style="width:8px;height:8px;border-radius:50%;background:#3b82f6;display:inline-block;margin-right:4px"></span>
-              Ahmed <span style="color:var(--text3);font-size:11px">(3 trucks)</span>
+              Ahmed <span style="color:var(--text3);font-size:11px">(6 trucks)</span>
             </span>
             <div style="text-align:right">
               <div class="report-val" style="color:var(--green)">2,600 ETB</div>
-              <div style="font-size:10px;color:var(--red);font-weight:600">⚠️ -5,500 unpaid</div>
+              <div style="font-size:10px;color:var(--red);font-weight:600">⚠️ -22,000 unpaid</div>
             </div>
           </div>
           <div class="report-row">
@@ -1631,22 +1672,16 @@
           <div class="report-row">
             <span class="report-label">
               <span style="width:8px;height:8px;border-radius:50%;background:#ef4444;display:inline-block;margin-right:4px"></span>
-              Ali <span style="color:var(--text3);font-size:11px">(1 truck)</span>
+              Ali
             </span>
-            <div style="text-align:right">
-              <div class="report-val" style="color:var(--green)">1,300 ETB</div>
-              
-            </div>
+            <span class="report-val" style="color:var(--text3)">0 ETB</span>
           </div>
           <div class="report-row">
             <span class="report-label">
               <span style="width:8px;height:8px;border-radius:50%;background:#a855f7;display:inline-block;margin-right:4px"></span>
-              Omar <span style="color:var(--text3);font-size:11px">(2 trucks)</span>
+              Omar
             </span>
-            <div style="text-align:right">
-              <div class="report-val" style="color:var(--green)">2,600 ETB</div>
-              
-            </div>
+            <span class="report-val" style="color:var(--text3)">0 ETB</span>
           </div>
     </div>
   </div>
@@ -1676,21 +1711,6 @@
         
           <div class="manage-item">
             <div class="manage-item-left">
-              <div style="width:32px;height:32px;border-radius:50%;background:#22c55e22;color:#22c55e;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">RA</div>
-              <div>
-                <div class="manage-item-name">Radwan</div>
-                <div class="manage-item-sub">Worker · PIN: ••••</div>
-              </div>
-            </div>
-            <div class="manage-item-right">
-              <button class="manage-btn" onclick="openWorkerPerms('Radwan')">⚙️ Perms</button>
-              <button class="manage-btn" onclick="openPinChange('Radwan')">🔐 PIN</button>
-              <button class="manage-btn danger" onclick="removeWorker('Radwan')">🗑️</button>
-            </div>
-          </div>
-        
-          <div class="manage-item">
-            <div class="manage-item-left">
               <div style="width:32px;height:32px;border-radius:50%;background:#f59e0b22;color:#f59e0b;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">OL</div>
               <div>
                 <div class="manage-item-name">Oli</div>
@@ -1701,36 +1721,6 @@
               <button class="manage-btn" onclick="openWorkerPerms('Oli')">⚙️ Perms</button>
               <button class="manage-btn" onclick="openPinChange('Oli')">🔐 PIN</button>
               <button class="manage-btn danger" onclick="removeWorker('Oli')">🗑️</button>
-            </div>
-          </div>
-        
-          <div class="manage-item">
-            <div class="manage-item-left">
-              <div style="width:32px;height:32px;border-radius:50%;background:#ef444422;color:#ef4444;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">AL</div>
-              <div>
-                <div class="manage-item-name">Ali</div>
-                <div class="manage-item-sub">Worker · PIN: ••••</div>
-              </div>
-            </div>
-            <div class="manage-item-right">
-              <button class="manage-btn" onclick="openWorkerPerms('Ali')">⚙️ Perms</button>
-              <button class="manage-btn" onclick="openPinChange('Ali')">🔐 PIN</button>
-              <button class="manage-btn danger" onclick="removeWorker('Ali')">🗑️</button>
-            </div>
-          </div>
-        
-          <div class="manage-item">
-            <div class="manage-item-left">
-              <div style="width:32px;height:32px;border-radius:50%;background:#a855f722;color:#a855f7;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">OM</div>
-              <div>
-                <div class="manage-item-name">Omar</div>
-                <div class="manage-item-sub">Worker · PIN: ••••</div>
-              </div>
-            </div>
-            <div class="manage-item-right">
-              <button class="manage-btn" onclick="openWorkerPerms('Omar')">⚙️ Perms</button>
-              <button class="manage-btn" onclick="openPinChange('Omar')">🔐 PIN</button>
-              <button class="manage-btn danger" onclick="removeWorker('Omar')">🗑️</button>
             </div>
           </div>
         
@@ -1845,6 +1835,13 @@
           <div class="manage-item-left">
             <div class="manage-item-icon">📲</div>
             <div><div class="manage-item-name" id="manageInstallBtn">Install App on Phone</div><div class="manage-item-sub">Add WKABE to your home screen</div></div>
+          </div>
+          <div>›</div>
+        </div>
+        <div class="manage-item" onclick="shareAppLink()">
+          <div class="manage-item-left">
+            <div class="manage-item-icon">🔗</div>
+            <div><div class="manage-item-name" style="color:var(--teal)">Share App Link</div><div class="manage-item-sub">WhatsApp · Copy link · More…</div></div>
           </div>
           <div>›</div>
         </div>
@@ -1990,9 +1987,9 @@
       <div class="nav-label">Rapports</div>
     </button>
   
-    <button class="nav-btn" id="nav_claims" onclick="switchTab('claims')" style="color: var(--purple); font-weight: 800;">
+    <button class="nav-btn" id="nav_claims" onclick="switchTab('claims')">
       <div class="nav-icon">🙋</div>
-      <div class="nav-label">Claims (1)</div>
+      <div class="nav-label">Claims</div>
     </button>
   
     <button class="nav-btn active" id="nav_manage" onclick="switchTab('manage')">
@@ -2002,7 +1999,7 @@
   
     <button class="nav-btn" id="nav_recycle" onclick="switchTab('recycle')">
       <div class="nav-icon">🗑️</div>
-      <div class="nav-label">Bin (3)</div>
+      <div class="nav-label">Bin (2)</div>
     </button>
   </div>
 </div>
@@ -2019,7 +2016,7 @@
     </div>
     <div class="form-group">
       <label class="form-label">DATE</label>
-      <input class="form-input" type="date" id="truckDate">
+      <input class="form-input" type="date" id="truckDate" onchange="checkDuplicate()">
     </div>
     <div class="form-group" id="workerGroup">
       <label class="form-label">SEALER/label&gt;
@@ -2035,7 +2032,7 @@
     </div>
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeModal('modalTruck')">Cancel</button>
-      <button class="btn-primary" onclick="saveTruck()">Save Truck</button>
+      <button class="btn-primary" id="saveTruckBtn" onclick="saveTruck()">Save Truck</button>
     </div>
   </div>
 </div>
@@ -2209,6 +2206,30 @@
   </div>
 </div>
 
+<!-- SHARE APP MODAL -->
+<div class="modal-overlay" id="modalShareApp" onclick="if(event.target===this)closeModal('modalShareApp')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🔗 Share App Link</div>
+    <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:16px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--teal);word-break:break-all" id="shareAppUrlDisplay"></div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
+      <button id="shareAppWhatsAppBtn" style="display:flex;align-items:center;gap:12px;padding:14px;background:rgba(37,211,102,0.12);border:1.5px solid rgba(37,211,102,0.35);border-radius:var(--radius-sm);cursor:pointer;font-family:inherit;color:var(--text);font-size:14px;font-weight:600">
+        <span style="font-size:22px">📱</span>
+        <span>Share via WhatsApp</span>
+      </button>
+      <button id="shareAppCopyBtn" style="display:flex;align-items:center;gap:12px;padding:14px;background:rgba(59,130,246,0.1);border:1.5px solid rgba(59,130,246,0.3);border-radius:var(--radius-sm);cursor:pointer;font-family:inherit;color:var(--text);font-size:14px;font-weight:600">
+        <span style="font-size:22px">📋</span>
+        <span>Copy Link</span>
+      </button>
+      <button id="shareAppEmailBtn" style="display:flex;align-items:center;gap:12px;padding:14px;background:rgba(245,158,11,0.1);border:1.5px solid rgba(245,158,11,0.3);border-radius:var(--radius-sm);cursor:pointer;font-family:inherit;color:var(--text);font-size:14px;font-weight:600">
+        <span style="font-size:22px">✉️</span>
+        <span>Share via Email</span>
+      </button>
+    </div>
+    <button class="btn-secondary" onclick="closeModal('modalShareApp')" style="width:100%">Close</button>
+  </div>
+</div>
+
 <!-- DUPLICATE MANAGER MODAL -->
 <div class="modal-overlay" id="modalDuplicates">
   <div class="modal" style="max-height:85vh">
@@ -2220,6 +2241,35 @@
       <button class="btn-secondary" onclick="closeModal('modalDuplicates')">Close</button>
     </div>
   </div>
+</div>
+
+<!-- MEALS DEDUCTIONS MODAL -->
+<div class="modal-overlay" id="modalMeals">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🍽️ Lunch &amp; Dinner</div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:14px">Amounts deducted from company earnings for this day.</div>
+    <div class="form-group">
+      <label class="form-label">🥗 LUNCH (ETB)</label>
+      <input class="form-input" type="number" id="mealLunchInput" placeholder="0" min="0" style="font-family:'JetBrains Mono',monospace">
+    </div>
+    <div class="form-group">
+      <label class="form-label">🍽️ DINNER (ETB)</label>
+      <input class="form-input" type="number" id="mealDinnerInput" placeholder="0" min="0" style="font-family:'JetBrains Mono',monospace">
+    </div>
+    <input type="hidden" id="mealDateHidden">
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modalMeals')">Cancel</button>
+      <button class="btn-primary" onclick="saveMeals()">💾 Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- BULK DELETE BAR -->
+<div class="bulk-bar" id="bulkBar">
+  <span class="bulk-count" id="bulkCount">0 selected</span>
+  <button class="bulk-del-btn" onclick="deleteSelected()">🗑️ Delete Selected</button>
+  <button class="bulk-cancel-btn" onclick="toggleSelectMode(false)">✕ Cancel</button>
 </div>
 
 <!-- TOAST -->
@@ -2282,6 +2332,9 @@ let trucks = {};
 let advances = {};
 let deletedTrucks = {};
 let claims = {};
+let dailyDeductions = {}; // { date: { lunch, dinner } }
+let selectMode = false;
+let selectedTrucks = new Set();
 let currentUser = null;
 let filterStatus = 'all';
 let filterWorker = 'all';
@@ -2469,6 +2522,7 @@ function getWorkerList() {
 function saveWorkerList(w) {
   _cloudWorkers = w;
   setDoc(doc(db, 'settings', 'workers'), { list: w });
+  buildLogin(); // Keep login screen in sync with worker list
 }
 
 // ── FIREBASE LISTENERS ──
@@ -2563,6 +2617,14 @@ function initFirebase() {
       if (currentTab === 'manage') renderManage();
     }
   }, () => {});
+
+  // ── Daily Deductions (Lunch & Dinner) — stored in settings/meals ──
+  window._unsubDeductions = onSnapshot(doc(db,'settings','meals'), snap => {
+    dailyDeductions = snap.exists() ? (snap.data().byDate || {}) : {};
+    if (!currentUser) return;
+    if (currentTab === 'reports') renderReports();
+    if (currentTab === 'trucks') renderTrucks();
+  }, function() {});
 }
 
 function setSyncing() {
@@ -3001,6 +3063,25 @@ function renderTrucks() {
   const earn = statsBase.reduce((s,t)=>s+(t.status==='paid'||t.status==='pending'?CLIENT_PRICE:t.status==='partial'?2800:0),0);
   document.getElementById('statETB').textContent = earn>=1000 ? (earn/1000).toFixed(1)+'k' : earn;
 
+  // ── Meals bar (Lunch / Dinner / Net) ──
+  const dedForBar = dailyDeductions[date] || {};
+  const barLunch = dedForBar.lunch || 0;
+  const barDinner = dedForBar.dinner || 0;
+  const totalMeals = barLunch + barDinner;
+  const totalClientEarn = statsBase.reduce((s,t)=>s+(t.status==='paid'||t.status==='pending'?CLIENT_PRICE:t.status==='partial'?2800:0),0);
+  const totalWorkerPay = statsBase.reduce((s,t)=>s+(t.status==='pending'?WORKER_PAY.paid:(WORKER_PAY[t.status]||0)),0);
+  const companyEarn = totalClientEarn - totalWorkerPay;
+  const netAfterMeals = companyEarn - totalMeals;
+  const lunchEl = document.getElementById('statLunch');
+  const dinnerEl = document.getElementById('statDinner');
+  const netEl = document.getElementById('statNetCompany');
+  if (lunchEl) lunchEl.textContent = barLunch > 0 ? (barLunch>=1000?(barLunch/1000).toFixed(1)+'k':barLunch) : '—';
+  if (dinnerEl) dinnerEl.textContent = barDinner > 0 ? (barDinner>=1000?(barDinner/1000).toFixed(1)+'k':barDinner) : '—';
+  if (netEl) {
+    netEl.textContent = totalClientEarn > 0 ? (Math.abs(netAfterMeals)>=1000?(netAfterMeals/1000).toFixed(1)+'k':netAfterMeals) : '—';
+    netEl.style.color = netAfterMeals >= 0 ? 'var(--green)' : 'var(--red)';
+  }
+
   // ── Worker chip counts — only for today's date ──
   const workers = getWorkerList();
   const allDateTrucks = allForDateUnfiltered;
@@ -3099,7 +3180,11 @@ function renderTrucks() {
   const perms = getUserPerms(id);
   const canEditStatus = isToday && (role==='admin' || role==='head' || (role==='cashier' && perms.editStatus));
   const canDelete = isToday && (role==='admin' || role==='head' || (role==='cashier' && perms.deleteTrucks));
-  const canEdit = isToday && (role==='admin' || role==='head' || (role==='cashier' && perms.addTrucks)); // full edit: plate+worker+status
+  const canEdit = isToday && (role==='admin' || role==='head' || (role==='cashier' && perms.addTrucks));
+
+  // Show select mode button only for admin
+  const selBtn = document.getElementById('selectModeBtn');
+  if (selBtn) selBtn.style.display = (role === 'admin') ? '' : 'none';
 
   container.innerHTML = historyNotice + pendingHTML + (assignedTrucks.length === 0
     ? `<div class="empty-state"><div class="icon">🚛</div><p>${pendingTrucks.length ? 'No assigned trucks today' : t('noTrucks')}</p></div>`
@@ -3110,8 +3195,8 @@ function renderTrucks() {
     const workerEarn = WORKER_PAY[truck.status]||0;
     const totalFare = truck.status==='paid'?CLIENT_PRICE:truck.status==='partial'?2800:0;
     const company = totalFare - workerEarn;
-    // dateStr = date only (no added time shown on card — only modification time is shown)
     const dateStr = truck.timestamp ? new Date(truck.timestamp).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : truck.date;
+    const timeStr = truck.timestamp ? new Date(truck.timestamp).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}) : null;
     const modStr = truck.modifiedAt ? new Date(truck.modifiedAt).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}) : null;
 
     let actions = '';
@@ -3126,16 +3211,17 @@ function renderTrucks() {
       ? truck.plate.replace(new RegExp('('+filterPlate+')', 'gi'), '<mark style="background:rgba(59,130,246,0.3);color:var(--accent);border-radius:3px;padding:0 2px">$1</mark>')
       : truck.plate;
     return `
-      <div class="truck-card ${statusClass}">
+      <div class="truck-card ${statusClass}${selectedTrucks.has(truck._id)?' selected':''}" id="tcard-${truck._id}">
         <div class="truck-top">
           <div style="display:flex;align-items:center;gap:8px">
+            ${selectMode && role==='admin' ? `<input type="checkbox" class="truck-checkbox" ${selectedTrucks.has(truck._id)?'checked':''} onchange="toggleTruckSelect('${truck._id}',this.checked)">` : ''}
             <span class="truck-number">#${truckNum}</span>
             <div class="truck-plate">${plateHighlight}</div>
           </div>
           <span class="status-badge ${statusClass}">${statusLabel}</span>
         </div>
         <div class="truck-meta">
-          <span>📅 ${dateStr}</span>
+          <span>📅 ${dateStr}</span>${timeStr ? `<span style="color:var(--teal);font-weight:700"> · 🕐 ${timeStr}</span>` : ''}
           ${truck.addedBy ? ` · Added by: ${truck.addedBy}` : ''}
         </div>
         ${modStr ? `<div class="truck-meta" style="font-size:11px;color:var(--orange);font-weight:600">✏️ Modified: ${modStr}${truck.modifiedBy ? ' — by ' + truck.modifiedBy : ''}</div>` : ''}
@@ -3195,7 +3281,8 @@ window.openEditTruck = function(id) {
   document.getElementById('truckDate').value = truck.date||'';
   document.getElementById('truckNotes').value = truck.notes||'';
   const warn = document.getElementById('dupWarning');
-  if (warn) warn.classList.remove('visible');
+  if (warn) { warn.classList.remove('visible'); warn.style.cssText=''; }
+  var sb = document.getElementById('saveTruckBtn'); if (sb) { sb.disabled=false; sb.style.opacity=''; sb.style.cursor=''; sb.textContent='Save Truck'; }
   const workers = getWorkerList();
   const sel = document.getElementById('truckWorker');
   if (currentUser.role === 'worker') {
@@ -3219,8 +3306,16 @@ window.checkDuplicate = function() {
   const plate = (document.getElementById('truckPlate').value || '').trim().toUpperCase();
   const date = document.getElementById('truckDate').value;
   const warn = document.getElementById('dupWarning');
+  const saveBtn = document.getElementById('saveTruckBtn');
   if (!warn) return;
-  if (!plate || plate.length < 2) { warn.classList.remove('visible'); return; }
+
+  function unblockSave() {
+    warn.classList.remove('visible');
+    warn.style.cssText = '';
+    if (saveBtn) { saveBtn.disabled = false; saveBtn.style.opacity = ''; saveBtn.style.cursor = ''; saveBtn.textContent = 'Save Truck'; }
+  }
+
+  if (!plate || plate.length < 2) { unblockSave(); return; }
 
   const matches = Object.entries(trucks).filter(([k,v]) =>
     v.plate && v.plate.toUpperCase() === plate &&
@@ -3229,12 +3324,27 @@ window.checkDuplicate = function() {
   );
 
   if (matches.length > 0) {
-    const m = matches[0][1];
+    const m = matches[0][1]; const mId = matches[0][0];
     const workerColor = WORKER_COLORS[m.worker] || '#6b7280';
-    warn.innerHTML = `⚠️ <strong>${plate}</strong> already recorded on ${date} — Worker: <span style="color:${workerColor}">${m.worker||'No sealer yet'}</span>, Status: ${m.status}`;
-    warn.classList.add('visible');
+    const hasSealer = m.worker && m.status !== 'pending';
+    if (hasSealer) {
+      // Hard block — truck already has a sealer
+      warn.innerHTML = '🚫 <strong>DUPLICATE — ' + plate + '</strong> already recorded for ' + date
+        + '<br>Sealer: <span style="color:' + workerColor + '">' + m.worker + '</span> · Status: <strong>' + m.status + '</strong>'
+        + '<br><span style="font-size:11px;opacity:0.8">Cannot save — this truck already has a sealer assigned.</span>';
+      warn.classList.add('visible');
+      warn.style.cssText = 'background:rgba(239,68,68,0.12);border-color:rgba(239,68,68,0.5);color:var(--red);display:block;';
+      if (saveBtn) { saveBtn.disabled = true; saveBtn.style.opacity = '0.35'; saveBtn.style.cursor = 'not-allowed'; }
+    } else {
+      // Claimable — no sealer yet, convert to claim on save
+      warn.innerHTML = '⚠️ <strong>' + plate + '</strong> already recorded for ' + date + ' (no sealer yet)'
+        + '<br><span style="font-size:11px;opacity:0.8">Saving will convert this into a “claim” instead of a duplicate.</span>';
+      warn.classList.add('visible');
+      warn.style.cssText = 'background:rgba(245,158,11,0.12);border-color:rgba(245,158,11,0.45);color:var(--orange);display:block;';
+      if (saveBtn) { saveBtn.disabled = false; saveBtn.style.opacity = ''; saveBtn.style.cursor = ''; saveBtn.textContent = '🙋 Claim Truck'; }
+    }
   } else {
-    warn.classList.remove('visible');
+    unblockSave();
   }
 }
 
@@ -3243,6 +3353,7 @@ window.openAddTruck = function() {
   editingTruckId = null;
   document.getElementById('truckModalTitle').textContent = '🚛 '+t('addTruck');
   document.getElementById('truckPlate').value = '';
+  var sb = document.getElementById('saveTruckBtn'); if (sb) { sb.disabled=false; sb.style.opacity=''; sb.style.cursor=''; sb.textContent='Save Truck'; }
   document.getElementById('truckDate').value = document.getElementById('dateFilter').value;
   document.getElementById('truckNotes').value = '';
   const warn = document.getElementById('dupWarning');
@@ -3300,12 +3411,10 @@ window.saveTruck = function() {
     ? currentUser.id
     : document.getElementById('truckWorker').value;
   let status = currentUser.role === 'worker' ? 'unpaid' : getRadioVal('statusRadio');
-  // No worker selected → paid (client already paid, worker not assigned yet)
   if (!worker) status = 'pending';
   const notes = document.getElementById('truckNotes').value.trim();
   if (!plate) { showToast('⚠️ Enter plate number'); return; }
   if (!date) { showToast('⚠️ Select date'); return; }
-  // Block if suspended (non-admin)
   if (addingSuspended && currentUser.role !== 'admin') {
     showToast('🚫 Adding trucks is currently suspended');
     return;
@@ -3315,30 +3424,32 @@ window.saveTruck = function() {
   const today2 = getWorkingDate();
   const nextWork2 = getNextWorkDate();
   if (!editingTruckId && date !== today2 && date !== nextWork2) {
-    // Allow today's working date and next work date only
     if (date < today2) {
       showToast('⚠️ Cannot add trucks for past dates');
       return;
     }
   }
+
+  // ── DUPLICATE CHECK (works online AND offline via Firestore local cache) ──
+  // This catches both real-time duplicates AND offline-queued duplicates from
+  // other devices, because Firestore IndexedDB cache is always up-to-date on
+  // the current device. The post-write server check below catches cross-device
+  // offline races that weren’t yet synced.
   var dupEntry = Object.entries(trucks).find(function(e){
     return e[1].plate && e[1].plate.toUpperCase()===plate && e[1].date===date && e[0]!==editingTruckId;
   });
+
   if (dupEntry) {
     var dupTruck = dupEntry[1]; var dupId = dupEntry[0];
-    // Workers: offer to claim if truck has no sealer yet
-    if (currentUser.role==='worker' && (!dupTruck.worker || dupTruck.status==='pending')) {
-      closeModal('modalTruck');
-      submitClaim(dupId, dupTruck.plate, dupTruck.date);
-      return;
+    closeModal('modalTruck');
+    // For any role: if truck has no sealer yet, convert to claim
+    if (!dupTruck.worker || dupTruck.status==='pending') {
+      showToast('⚠️ ' + plate + ' already recorded — converting to claim…');
+      setTimeout(function() { submitClaim(dupId, dupTruck.plate, dupTruck.date); }, 400);
+    } else {
+      // Truck already has a sealer assigned — hard block for everyone
+      showToast('🚫 ' + plate + ' already recorded on ' + date + ' (Sealer: ' + dupTruck.worker + ')');
     }
-    // Workers: block if truck already has a sealer
-    if (currentUser.role==='worker') {
-      showToast('🚫 '+plate+' already recorded and assigned to '+(dupTruck.worker||'another sealer'));
-      return;
-    }
-    // Admin/Cashier/CEO: NEVER allow duplicate — hard block
-    showToast('🚫 DUPLICATE — '+plate+' already exists for '+date+'. Use the Duplicates chip to manage it.');
     return;
   }
 
@@ -3349,19 +3460,50 @@ window.saveTruck = function() {
   };
 
   if (editingTruckId) {
-    const original = trucks[editingTruckId];
-    // Preserve original timestamp and addedBy — only update content fields
     updateDoc(doc(db,'trucks',editingTruckId), {
       plate, date, worker, status, notes,
       modifiedAt: Date.now(),
       modifiedBy: currentUser.name || currentUser.id
     });
     showToast('✅ Truck updated');
+    closeModal('modalTruck');
   } else {
-    addDoc(collection(db,'trucks'), data);
-    showToast('✅ Truck added');
+    // ── OFFLINE-SAFE WRITE: add then verify no race-condition duplicate ──
+    // When two devices add the same plate offline and both sync, Firestore
+    // creates two documents. We detect and fix this after the write by querying
+    // Firestore directly (works even briefly after coming online).
+    closeModal('modalTruck');
+    addDoc(collection(db,'trucks'), data).then(function(docRef) {
+      showToast('✅ Truck added');
+      // After the write succeeds (online), check if a duplicate now exists
+      // (e.g. another device added same plate while we were offline)
+      setTimeout(function() {
+        var dups = Object.entries(trucks).filter(function(e){
+          return e[1].plate && e[1].plate.toUpperCase()===plate &&
+                 e[1].date===date && e[0]!==docRef.id;
+        });
+        if (dups.length > 0) {
+          var existing = dups[0]; var existId = existing[0]; var existTruck = existing[1];
+          // Our newly added entry is the "extra" one — delete it and claim the original
+          deleteDoc(doc(db,'trucks', docRef.id));
+          showToast('⚠️ Duplicate detected on sync — converting to claim…');
+          setTimeout(function() {
+            if (!existTruck.worker || existTruck.status==='pending') {
+              if (currentUser.role==='worker') {
+                submitClaim(existId, existTruck.plate, existTruck.date);
+              } else {
+                showToast('🚫 ' + plate + ' already exists on server. Use Assign to set sealer.');
+              }
+            } else {
+              showToast('🚫 ' + plate + ' already on server with sealer: ' + existTruck.worker);
+            }
+          }, 600);
+        }
+      }, 3000); // Wait 3s for Firestore to reflect other device’s write
+    }).catch(function(e) {
+      showToast('❌ Failed to save truck: ' + (e.code || e.message || 'unknown'));
+    });
   }
-  closeModal('modalTruck');
 }
 
 // ── DELETE TRUCK ──
@@ -3737,6 +3879,14 @@ function renderReports() {
   const totalAdv = allAdvances.reduce((s,a)=>s+(a.amount||0),0);
   const unpaidAmount = unpaidCount * CLIENT_PRICE;
 
+  // ── Lunch & Dinner deductions for selected date ──
+  const dedKey = selectedDate || '';
+  const dedForDate = dailyDeductions[dedKey] || {};
+  const dedLunch = dedForDate.lunch || 0;
+  const dedDinner = dedForDate.dinner || 0;
+  const totalDed = dedLunch + dedDinner;
+  const netCompany = totalCompany - totalDed;
+
   // Filter chips for report
   const statusChips = ['all','paid','partial','unpaid'].map(s=>`
     <button class="filter-chip${sf===s?' active':''}" onclick="setReportFilter('${s}',this)" style="font-size:11px;padding:4px 10px">
@@ -3766,6 +3916,10 @@ function renderReports() {
       <div class="report-row"><span class="report-label">👷 Total Sealer Pay</span><span class="report-val">${totalWorker.toLocaleString()} ETB</span></div>
       <div class="report-row"><span class="report-label">🏢 Company Earnings</span><span class="report-val" style="color:var(--green)">${totalCompany.toLocaleString()} ETB</span></div>
       <div class="report-row"><span class="report-label">💸 Total Advances</span><span class="report-val" style="color:var(--red)">-${totalAdv.toLocaleString()} ETB</span></div>
+      <div class="report-row"><span class="report-label">🥗 Lunch</span><span class="report-val" style="color:var(--red)">${dedLunch>0?'-'+dedLunch.toLocaleString()+' ETB':'—'}</span></div>
+      <div class="report-row"><span class="report-label">🍽️ Dinner</span><span class="report-val" style="color:var(--red)">${dedDinner>0?'-'+dedDinner.toLocaleString()+' ETB':'—'}</span></div>
+      ${totalDed>0?`<div class="report-row" style="border-top:2px solid var(--border);margin-top:4px;padding-top:8px"><span class="report-label" style="font-weight:700;color:var(--text)">🏦 Net Company (after meals)</span><span class="report-val" style="color:${netCompany>=0?'var(--green)':'var(--red)'};font-size:16px">${netCompany.toLocaleString()} ETB</span></div>`:''}
+      <div style="margin-top:10px"><button onclick="openMealsModal('${selectedDate||''}')" style="width:100%;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.3);color:var(--accent);border-radius:var(--radius-sm);padding:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">🍽️ Set Lunch / Dinner Amounts</button></div>
       ${unpaidCount > 0 ? `
       <div class="report-row" style="background:rgba(239,68,68,0.1);border-radius:var(--radius-sm);padding:10px;margin-top:6px;border:1px solid rgba(239,68,68,0.3)">
         <span class="report-label" style="color:var(--red);font-weight:700">⚠️ Missing Money (Unpaid)</span>
@@ -3810,6 +3964,27 @@ function renderReports() {
     </div>
   `;
 }
+
+// ── MEALS (Lunch & Dinner) ──
+window.openMealsModal = function(date) {
+  const d = (date && date.length === 10) ? date : getWorkingDate();
+  document.getElementById('mealDateHidden').value = d;
+  const ded = dailyDeductions[d] || {};
+  document.getElementById('mealLunchInput').value = ded.lunch || '';
+  document.getElementById('mealDinnerInput').value = ded.dinner || '';
+  openModal('modalMeals');
+};
+window.saveMeals = function() {
+  let date = document.getElementById('mealDateHidden').value;
+  if (!date || date.length !== 10) date = getWorkingDate();
+  const lunch = parseFloat(document.getElementById('mealLunchInput').value) || 0;
+  const dinner = parseFloat(document.getElementById('mealDinnerInput').value) || 0;
+  const updated = Object.assign({}, dailyDeductions);
+  updated[date] = { lunch, dinner };
+  setDoc(doc(db,'settings','meals'), { byDate: updated })
+    .then(function() { showToast('✅ Meals saved'); closeModal('modalMeals'); if (currentTab==='reports') renderReports(); renderTrucks(); })
+    .catch(function(e) { showToast('❌ ' + (e.code || e.message || 'Failed')); });
+};
 
 window.setReportFilter = function(f, el) {
   filterStatus = f;
@@ -3947,6 +4122,13 @@ function renderManage() {
           <div class="manage-item-left">
             <div class="manage-item-icon">📲</div>
             <div><div class="manage-item-name" id="manageInstallBtn">Install App on Phone</div><div class="manage-item-sub">Add WKABE to your home screen</div></div>
+          </div>
+          <div>›</div>
+        </div>
+        <div class="manage-item" onclick="shareAppLink()">
+          <div class="manage-item-left">
+            <div class="manage-item-icon">🔗</div>
+            <div><div class="manage-item-name" style="color:var(--teal)">Share App Link</div><div class="manage-item-sub">WhatsApp · Copy link · More…</div></div>
           </div>
           <div>›</div>
         </div>
@@ -4426,10 +4608,59 @@ window.emptyRecycleBin = function() {
   renderRecycleList();
 }
 window.clearAllData = function() {
-  if (!confirm('Clear ALL truck data? This cannot be undone!')) return;
-  getDocs(collection(db,'trucks')).then(snap => { snap.forEach(d => deleteDoc(d.ref)); });
-  showToast('⚠️ All data cleared');
-}
+  const date = document.getElementById('dateFilter')?.value || getWorkingDate();
+  const dateLabel = new Date(date).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+  if (!confirm('Move ALL trucks for ' + dateLabel + ' to the Recycle Bin?')) return;
+  // Query Firestore directly — in-memory may only hold today
+  getDocs(collection(db,'trucks')).then(function(snap) {
+    const toDelete = [];
+    snap.forEach(function(d) { if ((d.data().date || '') === date) toDelete.push({id: d.id, data: d.data()}); });
+    if (toDelete.length === 0) { showToast('⚠️ No trucks for ' + dateLabel); return; }
+    const ops = toDelete.map(function(t) {
+      return setDoc(doc(db,'deleted',t.id), {...t.data, deletedAt: Date.now(), deletedBy: currentUser.id})
+        .then(function() { return deleteDoc(doc(db,'trucks',t.id)); });
+    });
+    Promise.all(ops).then(function() {
+      showToast('🗑️ ' + toDelete.length + ' trucks moved to Bin');
+    }).catch(function() { showToast('❌ Error clearing data'); });
+  }).catch(function() { showToast('❌ Failed to load trucks'); });
+};
+
+// ── SELECT MODE ──
+window.toggleSelectMode = function(force) {
+  selectMode = (force === false) ? false : !selectMode;
+  selectedTrucks.clear();
+  const btn = document.getElementById('selectModeBtn');
+  const bar = document.getElementById('bulkBar');
+  if (btn) btn.classList.toggle('active', selectMode);
+  if (bar) bar.classList.toggle('active', false);
+  renderTrucks();
+};
+window.toggleTruckSelect = function(id, checked) {
+  if (checked) selectedTrucks.add(id);
+  else selectedTrucks.delete(id);
+  const card = document.getElementById('tcard-' + id);
+  if (card) card.classList.toggle('selected', checked);
+  const bar = document.getElementById('bulkBar');
+  const cnt = document.getElementById('bulkCount');
+  if (bar) bar.classList.toggle('active', selectedTrucks.size > 0);
+  if (cnt) cnt.textContent = selectedTrucks.size + ' selected';
+};
+window.deleteSelected = function() {
+  if (selectedTrucks.size === 0) return;
+  if (!confirm('Move ' + selectedTrucks.size + ' truck(s) to Recycle Bin?')) return;
+  const ids = Array.from(selectedTrucks);
+  const batch = ids.map(id => {
+    const truck = trucks[id];
+    if (!truck) return Promise.resolve();
+    return setDoc(doc(db,'deleted',id), {...truck, deletedAt: Date.now(), deletedBy: currentUser.id})
+      .then(function() { return deleteDoc(doc(db,'trucks',id)); });
+  });
+  Promise.all(batch).then(function() {
+    showToast('🗑️ ' + ids.length + ' truck(s) moved to Bin');
+    toggleSelectMode(false);
+  }).catch(function() { showToast('❌ Error deleting trucks'); });
+};
 
 // ── MODAL HELPERS ──
 window.openModal = function(id) { document.getElementById(id).classList.add('active'); }
@@ -4956,6 +5187,69 @@ window.installApp = function() {
     }
   }
 }
+// ── SHARE APP LINK ──
+window.shareAppLink = function() {
+  var appUrl = 'https://kabweynew.github.io/Oli';
+  var appName = 'WKABE — Hask Truck Tracker';
+  var msg = '🚛 *' + appName + '*\n📲 Track trucks & payments for Hask Services\n🔗 ' + appUrl;
+
+  // If Web Share API is available (native share sheet)
+  if (navigator.share) {
+    navigator.share({
+      title: appName,
+      text: '🚛 Track trucks & payments for Hask Services\n',
+      url: appUrl
+    }).then(function() {
+      showToast('✅ Shared!');
+    }).catch(function(err) {
+      if (err.name !== 'AbortError') {
+        // Fallback: copy link
+        _copyAppLink(appUrl);
+      }
+    });
+    return;
+  }
+
+  // No Web Share API — show the share modal
+  openModal('modalShareApp');
+  document.getElementById('shareAppUrlDisplay').textContent = appUrl;
+  document.getElementById('shareAppWhatsAppBtn').onclick = function() {
+    var waUrl = 'https://wa.me/?text=' + encodeURIComponent(msg);
+    window.open(waUrl, '_blank');
+  };
+  document.getElementById('shareAppCopyBtn').onclick = function() {
+    _copyAppLink(appUrl);
+  };
+  document.getElementById('shareAppEmailBtn').onclick = function() {
+    var subject = encodeURIComponent(appName);
+    var body = encodeURIComponent('Hi,\n\nHere is the link to ' + appName + ':\n' + appUrl + '\n\nOpen it in your browser to track trucks and payments.');
+    window.open('mailto:?subject=' + subject + '&body=' + body);
+  };
+}
+
+function _copyAppLink(url) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(function() {
+      showToast('✅ Link copied! Paste it anywhere.');
+    }).catch(function() {
+      _fallbackCopy(url);
+    });
+  } else {
+    _fallbackCopy(url);
+  }
+}
+
+function _fallbackCopy(text) {
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0';
+  document.body.appendChild(ta);
+  ta.focus(); ta.select();
+  try { document.execCommand('copy'); showToast('✅ Link copied!'); }
+  catch(e) { showToast('🔗 ' + text); }
+  document.body.removeChild(ta);
+}
+
 window.downloadHTML = function() {
   const html = document.documentElement.outerHTML;
   const blob = new Blob([html],{type:'text/html'});
@@ -5185,6 +5479,18 @@ buildLogin();
 showScreen('loginScreen');
 initIcons();
 showSplash();
+
+// ── PRE-LOGIN: load workers list so deleted sealers don't appear on login ──
+(function() {
+  try {
+    onSnapshot(doc(db, 'settings', 'workers'), function(snap) {
+      var list = snap.exists() ? (snap.data().list || DEFAULT_WORKERS) : DEFAULT_WORKERS;
+      _cloudWorkers = list;
+      // Only rebuild login if user hasn't logged in yet
+      if (!currentUser) buildLogin();
+    });
+  } catch(e) {}
+})();
 </script>
 
 
