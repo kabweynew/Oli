@@ -2536,6 +2536,37 @@ function initFirebase() {
   window._unsubTrucks = onSnapshot(collection(db,'trucks'), snap => {
     trucks = {};
     snap.forEach(d => { trucks[d.id] = d.data(); });
+
+    // ── OFFLINE SYNC DEDUP GUARD ──
+    // When a sealer adds trucks offline and syncs, Firestore may briefly have
+    // two documents with the same plate. Detect and immediately delete the newer one.
+    // This runs silently — no claims, no prompts, just hard removal.
+    if (currentUser && (currentUser.role === 'admin' || currentUser.role === 'head')) {
+      var seen = {}; // plate → {id, timestamp}
+      Object.entries(trucks).forEach(function(e) {
+        var id = e[0]; var t = e[1];
+        var pl = t.plate ? t.plate.toUpperCase() : null;
+        if (!pl) return;
+        if (seen[pl]) {
+          // Keep the older one (lower timestamp), delete the newer
+          var older = seen[pl].ts <= (t.timestamp || 0) ? seen[pl].id : id;
+          var newer = seen[pl].ts <= (t.timestamp || 0) ? id : seen[pl].id;
+          // Move newer to bin then delete
+          var newerData = trucks[newer];
+          if (newerData) {
+            setDoc(doc(db,'deleted',newer), Object.assign({}, newerData, {
+              deletedAt: Date.now(),
+              deletedBy: 'system-dedup',
+              dupOf: older
+            })).then(function() { deleteDoc(doc(db,'trucks',newer)); });
+          }
+          seen[pl] = { id: older, ts: Math.min(seen[pl].ts, t.timestamp || 0) };
+        } else {
+          seen[pl] = { id: id, ts: t.timestamp || 0 };
+        }
+      });
+    }
+
     renderTrucks();
     renderWorkers();
     renderReports();
@@ -3123,7 +3154,9 @@ function renderTrucks() {
 
   // Pending = no worker assigned — ALL roles see these so workers can claim
   var pendingTrucks = isToday ? list.filter(function(t){return !t.worker || t.status==='pending';}) : [];
-  var assignedTrucks = list.filter(function(t){return t.worker && t.status!=='pending';});
+  var assignedTrucks = isToday
+    ? list.filter(function(t){return t.worker && t.status!=='pending';})
+    : list;
 
   // Show/hide suspend banner
   const suspendBanner = document.getElementById('suspendBanner');
@@ -3319,29 +3352,34 @@ window.checkDuplicate = function() {
 
   const matches = Object.entries(trucks).filter(([k,v]) =>
     v.plate && v.plate.toUpperCase() === plate &&
-    v.date === date &&
     k !== editingTruckId
   );
 
   if (matches.length > 0) {
-    const m = matches[0][1]; const mId = matches[0][0];
+    const m = matches[0][1];
     const workerColor = WORKER_COLORS[m.worker] || '#6b7280';
     const hasSealer = m.worker && m.status !== 'pending';
+    const isWorker = currentUser && currentUser.role === 'worker';
+
     if (hasSealer) {
-      // Hard block — truck already has a sealer
-      warn.innerHTML = '🚫 <strong>DUPLICATE — ' + plate + '</strong> already recorded for ' + date
+      warn.innerHTML = '🚫 <strong>DUPLICATE — ' + plate + '</strong> already recorded on ' + (m.date||'?')
         + '<br>Sealer: <span style="color:' + workerColor + '">' + m.worker + '</span> · Status: <strong>' + m.status + '</strong>'
-        + '<br><span style="font-size:11px;opacity:0.8">Cannot save — this truck already has a sealer assigned.</span>';
+        + '<br><span style="font-size:11px;opacity:0.8">This truck cannot be added again.</span>';
       warn.classList.add('visible');
       warn.style.cssText = 'background:rgba(239,68,68,0.12);border-color:rgba(239,68,68,0.5);color:var(--red);display:block;';
-      if (saveBtn) { saveBtn.disabled = true; saveBtn.style.opacity = '0.35'; saveBtn.style.cursor = 'not-allowed'; }
-    } else {
-      // Claimable — no sealer yet, convert to claim on save
-      warn.innerHTML = '⚠️ <strong>' + plate + '</strong> already recorded for ' + date + ' (no sealer yet)'
-        + '<br><span style="font-size:11px;opacity:0.8">Saving will convert this into a “claim” instead of a duplicate.</span>';
+      if (saveBtn) { saveBtn.disabled = true; saveBtn.style.opacity = '0.35'; saveBtn.style.cursor = 'not-allowed'; saveBtn.textContent = 'Save Truck'; }
+    } else if (isWorker) {
+      warn.innerHTML = '⚠️ <strong>' + plate + '</strong> already recorded on ' + (m.date||'?') + ' (no sealer yet)'
+        + '<br><span style="font-size:11px;opacity:0.8">Saving will send a claim request for approval.</span>';
       warn.classList.add('visible');
       warn.style.cssText = 'background:rgba(245,158,11,0.12);border-color:rgba(245,158,11,0.45);color:var(--orange);display:block;';
       if (saveBtn) { saveBtn.disabled = false; saveBtn.style.opacity = ''; saveBtn.style.cursor = ''; saveBtn.textContent = '🙋 Claim Truck'; }
+    } else {
+      warn.innerHTML = '🚫 <strong>DUPLICATE — ' + plate + '</strong> already recorded on ' + (m.date||'?')
+        + '<br><span style="font-size:11px;opacity:0.8">This truck is already in the system. Cannot add again.</span>';
+      warn.classList.add('visible');
+      warn.style.cssText = 'background:rgba(239,68,68,0.12);border-color:rgba(239,68,68,0.5);color:var(--red);display:block;';
+      if (saveBtn) { saveBtn.disabled = true; saveBtn.style.opacity = '0.35'; saveBtn.style.cursor = 'not-allowed'; saveBtn.textContent = 'Save Truck'; }
     }
   } else {
     unblockSave();
@@ -3430,80 +3468,56 @@ window.saveTruck = function() {
     }
   }
 
-  // ── DUPLICATE CHECK (works online AND offline via Firestore local cache) ──
-  // This catches both real-time duplicates AND offline-queued duplicates from
-  // other devices, because Firestore IndexedDB cache is always up-to-date on
-  // the current device. The post-write server check below catches cross-device
-  // offline races that weren’t yet synced.
-  var dupEntry = Object.entries(trucks).find(function(e){
-    return e[1].plate && e[1].plate.toUpperCase()===plate && e[1].date===date && e[0]!==editingTruckId;
-  });
+  // ── DUPLICATE CHECK — query Firestore across ALL dates ──
+  getDocs(collection(db,'trucks')).then(function(snap) {
+    var allTrucks = {};
+    snap.forEach(function(d) { allTrucks[d.id] = d.data(); });
 
-  if (dupEntry) {
-    var dupTruck = dupEntry[1]; var dupId = dupEntry[0];
-    closeModal('modalTruck');
-    // For any role: if truck has no sealer yet, convert to claim
-    if (!dupTruck.worker || dupTruck.status==='pending') {
-      showToast('⚠️ ' + plate + ' already recorded — converting to claim…');
-      setTimeout(function() { submitClaim(dupId, dupTruck.plate, dupTruck.date); }, 400);
-    } else {
-      // Truck already has a sealer assigned — hard block for everyone
-      showToast('🚫 ' + plate + ' already recorded on ' + date + ' (Sealer: ' + dupTruck.worker + ')');
+    var dupEntry = Object.entries(allTrucks).find(function(e){
+      return e[1].plate && e[1].plate.toUpperCase() === plate && e[0] !== editingTruckId;
+    });
+
+    if (dupEntry) {
+      var dupTruck = dupEntry[1]; var dupId = dupEntry[0];
+      closeModal('modalTruck');
+      var role = currentUser.role;
+      // Workers only: if truck has no sealer, offer claim
+      if (role === 'worker' && (!dupTruck.worker || dupTruck.status === 'pending')) {
+        showToast('⚠️ ' + plate + ' already recorded (' + (dupTruck.date||'') + ') — you can claim it');
+        setTimeout(function() { submitClaim(dupId, dupTruck.plate, dupTruck.date); }, 400);
+      } else {
+        // Admin / cashier / head — hard block, no claim ever
+        showToast('🚫 DUPLICATE: ' + plate + ' already in the system (Date: ' + (dupTruck.date||'?') + ', Sealer: ' + (dupTruck.worker||'none assigned') + ')');
+      }
+      return;
     }
-    return;
-  }
 
-  const data = {
-    plate, date, worker, status, notes,
-    addedBy: currentUser.name || currentUser.id,
-    timestamp: Date.now()
-  };
-
-  if (editingTruckId) {
-    updateDoc(doc(db,'trucks',editingTruckId), {
+    // ── No duplicate — proceed ──
+    const data = {
       plate, date, worker, status, notes,
-      modifiedAt: Date.now(),
-      modifiedBy: currentUser.name || currentUser.id
-    });
-    showToast('✅ Truck updated');
-    closeModal('modalTruck');
-  } else {
-    // ── OFFLINE-SAFE WRITE: add then verify no race-condition duplicate ──
-    // When two devices add the same plate offline and both sync, Firestore
-    // creates two documents. We detect and fix this after the write by querying
-    // Firestore directly (works even briefly after coming online).
-    closeModal('modalTruck');
-    addDoc(collection(db,'trucks'), data).then(function(docRef) {
-      showToast('✅ Truck added');
-      // After the write succeeds (online), check if a duplicate now exists
-      // (e.g. another device added same plate while we were offline)
-      setTimeout(function() {
-        var dups = Object.entries(trucks).filter(function(e){
-          return e[1].plate && e[1].plate.toUpperCase()===plate &&
-                 e[1].date===date && e[0]!==docRef.id;
-        });
-        if (dups.length > 0) {
-          var existing = dups[0]; var existId = existing[0]; var existTruck = existing[1];
-          // Our newly added entry is the "extra" one — delete it and claim the original
-          deleteDoc(doc(db,'trucks', docRef.id));
-          showToast('⚠️ Duplicate detected on sync — converting to claim…');
-          setTimeout(function() {
-            if (!existTruck.worker || existTruck.status==='pending') {
-              if (currentUser.role==='worker') {
-                submitClaim(existId, existTruck.plate, existTruck.date);
-              } else {
-                showToast('🚫 ' + plate + ' already exists on server. Use Assign to set sealer.');
-              }
-            } else {
-              showToast('🚫 ' + plate + ' already on server with sealer: ' + existTruck.worker);
-            }
-          }, 600);
-        }
-      }, 3000); // Wait 3s for Firestore to reflect other device’s write
-    }).catch(function(e) {
-      showToast('❌ Failed to save truck: ' + (e.code || e.message || 'unknown'));
-    });
-  }
+      addedBy: currentUser.name || currentUser.id,
+      timestamp: Date.now()
+    };
+
+    if (editingTruckId) {
+      updateDoc(doc(db,'trucks',editingTruckId), {
+        plate, date, worker, status, notes,
+        modifiedAt: Date.now(),
+        modifiedBy: currentUser.name || currentUser.id
+      });
+      showToast('✅ Truck updated');
+      closeModal('modalTruck');
+    } else {
+      closeModal('modalTruck');
+      addDoc(collection(db,'trucks'), data).then(function(docRef) {
+        showToast('✅ Truck added');
+      }).catch(function(e) {
+        showToast('❌ Failed to save: ' + (e.code || e.message || 'unknown'));
+      });
+    }
+  }).catch(function() {
+    showToast('❌ Could not verify duplicate — check connection');
+  });
 }
 
 // ── DELETE TRUCK ──
@@ -3644,7 +3658,8 @@ window.rejectClaim = function(claimId) {
 // Update claims badge in nav
 function updateClaimsBadge() {
   if (!currentUser) return;
-  var count = Object.values(claims).filter(function(c){return c.status==='pending';}).length;
+  var today = getWorkingDate();
+  var count = Object.values(claims).filter(function(c){return c.status==='pending' && c.date===today;}).length;
   var nav = document.getElementById('nav_claims');
   if (!nav) return;
   var lbl = nav.querySelector('.nav-label');
@@ -3659,10 +3674,11 @@ function renderClaimsTab() {
   if (!container) return;
   var role = currentUser.role;
   var uid = currentUser.id;
+  var today = getWorkingDate();
   var canApprove = role==='admin'||role==='cashier'||role==='head';
   var all = Object.entries(claims)
     .map(function(e){ return Object.assign({},e[1],{_id:e[0]}); })
-    .filter(function(c){ return c.status==='pending'; })
+    .filter(function(c){ return c.status==='pending' && c.date===today; })
     .sort(function(a,b){ return (a.createdAt||0)-(b.createdAt||0); });
   // Workers only see their own; others see all
   var visible = role==='worker'
