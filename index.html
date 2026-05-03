@@ -2302,33 +2302,6 @@ function initFirebase() {
     }
   }, () => { setOffline(); });
 
-  // ── Listen to Agash kab_trucks collection and merge into trucks ──
-  window._unsubAgashTrucks = onSnapshot(collection(db,'kab_trucks'), snap => {
-    snap.forEach(d => {
-      const t = d.data();
-      // Only merge if not already in trucks (avoid overwriting sealer data)
-      if (!trucks[d.id]) {
-        trucks[d.id] = {
-          plate:     t.plate || '',
-          date:      t.workDay || t.date || '',
-          worker:    '',
-          status:    'unpaid',
-          notes:     (t.type ? 'Type: ' + t.type : '') + (t.postLabel ? ' · ' + t.postLabel : ''),
-          addedBy:   'Agash' + (t.addedBy ? ' · ' + t.addedBy : ''),
-          timestamp: t.ts || Date.now(),
-          fromAgash: true,
-          agashType: t.type || '',
-          agashPost: t.postLabel || t.postId || ''
-        };
-      }
-    });
-    renderTrucks();
-    renderReports();
-    if (currentTab === 'list') renderTruckList();
-    // Update Agash badge
-    updateAgashIncomingBadge();
-  }, () => {});
-
   window._unsubAdvances = onSnapshot(collection(db,'advances'), snap => {
     advances = {};
     snap.forEach(d => { advances[d.id] = d.data(); });
@@ -2738,6 +2711,7 @@ window.selectDate = function(d) {
   closeModal('modalDatePicker');
   renderTrucks();
   updateDupChip();
+  if (currentTab === 'agash') renderAgashIncoming();
 }
 
 window.setFilter = function(f, el) {
@@ -4909,8 +4883,7 @@ window.exportExcel = function() {
 // ══════════════════════════════════════════════
 function updateAgashIncomingBadge() {
   const today = getWorkingDate();
-  const count = Object.values(kabIncoming).filter(t => t.date === today).length
-              + Object.values(trucks).filter(t => t.fromAgash && t.date === today).length;
+  const count = Object.values(kabIncoming).filter(t => t.date === today).length;
   const navEl = document.getElementById('nav_agash');
   if (!navEl) return;
   const lbl = navEl.querySelector('.nav-label');
@@ -4924,41 +4897,40 @@ function renderAgashIncoming() {
 
   const TYPE_LABELS = { shirac:'🚛 Shirac', bilashirac:'🚚 Bila Shirac', metal:'🏗️ Metal' };
   const TYPE_COLORS = { shirac:'#10b981', bilashirac:'#3b82f6', metal:'#ef4444', bashal:'#e879f9' };
+
+  // Match the same date filter used by the whole app
+  const selectedDate = document.getElementById('dateFilter')?.value || getWorkingDate();
   const today = getWorkingDate();
+  const isToday = selectedDate === today;
+  const dateObj = new Date(selectedDate + 'T12:00:00');
+  const dateLabel = isToday
+    ? 'Today — ' + dateObj.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})
+    : dateObj.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
 
-  // Combine kab_incoming + trucks with fromAgash flag
-  const fromKabIncoming = Object.entries(kabIncoming).map(([k,v]) => ({
-    _id: k, plate: v.plate, type: v.type, status: v.status,
-    postLabel: v.postLabel||v.postId||'—', date: v.date, ts: v.ts, addedBy: v.addedBy
-  }));
-  const fromKabTrucks = Object.entries(trucks)
-    .filter(([k,v]) => v.fromAgash)
-    .map(([k,v]) => ({
-      _id: k, plate: v.plate, type: v.agashType||'', status: 'loaded',
-      postLabel: v.agashPost||'—', date: v.date, ts: v.timestamp, addedBy: v.addedBy
-    }));
-
-  // Merge, deduplicate by plate+date
-  const seen = new Set();
-  const all = [...fromKabIncoming, ...fromKabTrucks]
-    .filter(t => { const key = t.plate+t.date; if (seen.has(key)) return false; seen.add(key); return true; })
+  // All trucks from Agash — from kab_incoming collection
+  const all = Object.entries(kabIncoming)
+    .map(([k,v]) => ({ _id:k, plate:v.plate||'', type:v.type||'', status:v.status||'',
+      postLabel:v.postLabel||v.postId||'—', date:v.date||'', ts:v.ts||0, addedBy:v.addedBy||'' }))
     .sort((a,b) => (b.ts||0)-(a.ts||0));
 
-  const todayItems = all.filter(t => t.date === today);
-  const oldItems   = all.filter(t => t.date !== today);
+  // Filter to selected date only
+  const filtered = all.filter(t => t.date === selectedDate);
 
-  if (subEl) subEl.textContent = todayItems.length + ' today · ' + all.length + ' total';
+  if (subEl) subEl.textContent = filtered.length + ' truck' + (filtered.length!==1?'s':'') + ' · ' + dateLabel;
 
-  if (all.length === 0) {
-    container.innerHTML = '<div style="text-align:center;padding:60px 0;color:var(--text3);"><div style="font-size:48px;margin-bottom:12px;">📥</div><div style="font-size:14px;font-weight:600;">No trucks from Agash yet</div><div style="font-size:12px;margin-top:6px;">Trucks added in Agash will appear here live</div></div>';
+  if (filtered.length === 0) {
+    container.innerHTML =
+      '<div style="text-align:center;padding:60px 0;color:var(--text3);">'
+      + '<div style="font-size:48px;margin-bottom:12px;">📥</div>'
+      + '<div style="font-size:14px;font-weight:600;">No Agash trucks on ' + dateLabel + '</div>'
+      + '<div style="font-size:12px;margin-top:6px;opacity:0.6;">Change date or wait for trucks to be added</div>'
+      + '</div>';
     return;
   }
 
-  function renderGroup(items, label) {
-    if (!items.length) return '';
-    const hdr = '<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin:14px 0 8px;padding-bottom:5px;border-bottom:1px solid var(--border);">'
-      + label + ' — ' + items.length + ' truck' + (items.length!==1?'s':'') + '</div>';
-    return hdr + items.map(t => {
+  container.innerHTML =
+    '<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin:8px 0 10px;padding-bottom:5px;border-bottom:1px solid var(--border);">📅 ' + dateLabel + ' — ' + filtered.length + ' truck' + (filtered.length!==1?'s':'') + '</div>'
+    + filtered.map(t => {
       const isBashal = t.status === 'bashal';
       const tc = isBashal ? '#e879f9' : (TYPE_COLORS[t.type] || '#6b7280');
       const tl = isBashal ? '🔮 Bashal' : (TYPE_LABELS[t.type] || t.type || '—');
@@ -4970,46 +4942,37 @@ function renderAgashIncoming() {
         + '</div>'
         + '<div style="display:flex;justify-content:space-between;align-items:center;">'
         + '<span style="font-size:12px;font-weight:700;color:'+tc+';">🏗️ '+t.postLabel+'</span>'
-        + '<span style="font-size:11px;color:var(--text3);">🕐 '+timeStr+' · '+(t.date||'')+'</span>'
+        + '<span style="font-size:11px;color:var(--text3);">🕐 '+timeStr+'</span>'
         + '</div></div>';
     }).join('');
-  }
-
-  container.innerHTML = renderGroup(todayItems, '📅 Today') + renderGroup(oldItems, '📦 Previous');
 }
 
 window.exportAgashExcel = function() {
   const TYPE_LABELS = { shirac:'Shirac', bilashirac:'Bila Shirac', metal:'Metal' };
-  const seen = new Set();
-  const fromKabIncoming = Object.entries(kabIncoming).map(([k,v]) => ({
-    plate: v.plate, date: v.date, type: v.type, postLabel: v.postLabel||v.postId||'—',
-    ts: v.ts, addedBy: v.addedBy, status: v.status
-  }));
-  const fromKabTrucks = Object.entries(trucks)
-    .filter(([k,v]) => v.fromAgash)
-    .map(([k,v]) => ({
-      plate: v.plate, date: v.date, type: v.agashType||'', postLabel: v.agashPost||'—',
-      ts: v.timestamp, addedBy: v.addedBy, status: 'loaded'
-    }));
-  const all = [...fromKabIncoming, ...fromKabTrucks]
-    .filter(t => { const key = t.plate+t.date; if (seen.has(key)) return false; seen.add(key); return true; })
+  const selectedDate = document.getElementById('dateFilter')?.value || getWorkingDate();
+
+  const all = Object.entries(kabIncoming)
+    .map(([k,v]) => ({ plate:v.plate||'', date:v.date||'', type:v.type||'',
+      postLabel:v.postLabel||v.postId||'—', ts:v.ts||0, addedBy:v.addedBy||'', status:v.status||'' }))
+    .filter(t => t.date === selectedDate)
     .sort((a,b) => (b.ts||0)-(a.ts||0));
 
-  if (all.length === 0) { showToast('⚠️ No Agash trucks to export'); return; }
+  if (all.length === 0) { showToast('⚠️ No Agash trucks on this date'); return; }
+
   const headers = ['No.','Plate','Date','Time','Type','Post','Added By'];
   const rows = [headers];
   all.forEach((t,i) => {
     const tl = t.status==='bashal'?'Bashal':(TYPE_LABELS[t.type]||t.type||'—');
     const timeStr = t.ts ? new Date(t.ts).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}) : '—';
-    rows.push([i+1, t.plate||'', t.date||'', timeStr, tl, t.postLabel, t.addedBy||'—']);
+    rows.push([i+1, t.plate, t.date, timeStr, tl, t.postLabel, t.addedBy]);
   });
   const csv = rows.map(r => r.map(c => '"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
   const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'Agash-' + getWorkingDate() + '.csv';
+  a.download = 'Agash-' + selectedDate + '.csv';
   a.click();
-  showToast('📊 Exported ' + all.length + ' Agash trucks');
+  showToast('📊 Exported ' + all.length + ' trucks for ' + selectedDate);
 };
 
 let deferredPrompt = null;
