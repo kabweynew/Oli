@@ -2377,10 +2377,22 @@ function initFirebase() {
     if (currentTab === 'reports') renderReports();
     if (currentTab === 'trucks') renderTrucks();
   }, function() {});
-  // ── Agash Incoming Trucks (kab_incoming) ──
-  window._unsubKabIncoming = onSnapshot(collection(db,'kab_incoming'), snap => {
+  // ── Agash Trucks — listen to kab_trucks (what Agash actually writes) ──
+  window._unsubKabIncoming = onSnapshot(collection(db,'kab_trucks'), snap => {
     kabIncoming = {};
-    snap.forEach(d => { kabIncoming[d.id] = d.data(); });
+    snap.forEach(d => {
+      const t = d.data();
+      kabIncoming[d.id] = {
+        plate:     t.plate || '',
+        type:      t.type || '',
+        status:    t.status || '',
+        postId:    t.postId || '',
+        postLabel: t.postLabel || t.postId || '',
+        date:      t.workDay || t.date || '',
+        ts:        t.ts || 0,
+        addedBy:   t.addedBy || ''
+      };
+    });
     updateAgashIncomingBadge();
     if (currentTab === 'agash') renderAgashIncoming();
     if (currentTab === 'reports') renderReports();
@@ -4907,7 +4919,7 @@ function renderAgashIncoming() {
     ? 'Today — ' + dateObj.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})
     : dateObj.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
 
-  // All trucks from Agash — from kab_incoming collection
+  // All trucks from Agash — from kab_trucks collection
   const all = Object.entries(kabIncoming)
     .map(([k,v]) => ({ _id:k, plate:v.plate||'', type:v.type||'', status:v.status||'',
       postLabel:v.postLabel||v.postId||'—', date:v.date||'', ts:v.ts||0, addedBy:v.addedBy||'' }))
