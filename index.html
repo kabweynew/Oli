@@ -1112,6 +1112,10 @@
           <input type="hidden" id="dateFilter" value="2026-05-09">
         </div>
       </div>
+      <!-- 6AM RULE NOTICE -->
+      <div id="shiftRuleBanner" style="display:none;margin:0 16px 6px;padding:7px 12px;background:rgba(20,184,166,0.1);border:1px solid rgba(20,184,166,0.3);border-radius:8px;font-size:11px;color:var(--teal);font-weight:600;display:flex;align-items:center;gap:6px">
+        🕕 Working day: <span id="shiftRuleText">06:00 → next day 05:59 (Djibouti time)</span>
+      </div>
       <!-- SUSPEND BANNER -->
       <div id="suspendBanner">
         <span>🚫 Adding trucks is currently suspended by Admin</span>
@@ -2000,6 +2004,46 @@
 <!-- TOAST -->
 <div id="toast"></div>
 
+<!-- GLOBAL FUNCTION STUBS -->
+<!-- These run immediately so onclick handlers never throw ReferenceError,
+     even if tapped before the module script finishes loading -->
+<script>
+  // Queue calls that arrive before the module is ready
+  var _pendingTab = null;
+  var _moduleReady = false;
+
+  // All onclick-called functions get safe stubs here
+  ['switchTab','goPin','pinKey','pinDel','goLogin','setToday','openDatePicker',
+   'selectDate','setFilter','setWorkerFilter','openAddTruck','saveTruck',
+   'checkDuplicate','selectRadio','deleteTruck','openStatus','saveStatus',
+   'openAssign','doAssign','openEditTruck','openEditPlate','saveEditPlate',
+   'submitClaim','approveClaim','rejectClaim','openAddAdvance','saveAdvance',
+   'deleteAdvance','toggleWorker','openMealsModal','saveMeals','setReportFilter',
+   'setReportWorkerFilter','setLang','openEditHeadName','saveHeadName',
+   'openPinChange','togglePinVisibility','resetPinToDefault','savePin',
+   'openCashierPerms','openWorkerPerms','togglePerm','savePerms','saveNewWorker',
+   'openModal','closeModal','openDuplicateSpotter','clearPlateSearch','onPlateSearch',
+   'forceSync','doInstallPWA','dismissPWABanner','toggleSelectMode','deleteSelected',
+   'toggleTruckSelect','renderRecycle','restoreTruck','hardDeleteTruck',
+   'renderTruckList','updateDupChip'
+  ].forEach(function(fn) {
+    if (!window[fn]) {
+      window[fn] = function() {
+        var args = arguments;
+        // Retry once module is ready
+        var wait = setInterval(function() {
+          if (window._moduleReady && typeof window[fn] === 'function' && window[fn] !== arguments.callee) {
+            clearInterval(wait);
+            window[fn].apply(window, args);
+          }
+        }, 50);
+        // Timeout after 5s
+        setTimeout(function() { clearInterval(wait); }, 5000);
+      };
+    }
+  });
+</script>
+
 <!-- FIREBASE SDK -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -2255,7 +2299,15 @@ let _cloudHeadName = null; // null until Firebase loads — prevents flash to de
 function getHeadName() { return _cloudHeadName || 'CEO'; }
 
 // ── PIN MANAGEMENT (Firestore-backed) ──
-function getPin(user) { return _cloudPins[user] || DEFAULT_PINS[user] || '0000'; }
+function getPin(user) {
+  // If cloud PINs have loaded, use them exclusively — never fall back to hardcoded defaults
+  // This ensures admin-changed PINs are always respected
+  if (Object.keys(_cloudPins).length > 0) {
+    return _cloudPins[user] || DEFAULT_PINS[user] || '0000';
+  }
+  // Cloud not yet loaded — use default temporarily
+  return DEFAULT_PINS[user] || '0000';
+}
 function setPin(user, pin) {
   _cloudPins[user] = pin;
   setDoc(doc(db, 'settings', 'pins'), _cloudPins);
@@ -2546,6 +2598,21 @@ function updatePinDots() {
   }
 }
 function checkPin() {
+  // Wait for cloud PINs to load — if still empty, show a brief message and retry
+  if (Object.keys(_cloudPins).length === 0) {
+    document.getElementById('pinError').textContent = '⏳ Connecting… please wait';
+    pinEntry=''; updatePinDots();
+    // Retry automatically once PINs arrive (up to 5s)
+    var retries = 0;
+    var wait = setInterval(function() {
+      retries++;
+      if (Object.keys(_cloudPins).length > 0 || retries > 10) {
+        clearInterval(wait);
+        document.getElementById('pinError').textContent = retries > 10 ? '⚠️ No connection — try again' : '';
+      }
+    }, 500);
+    return;
+  }
   if (pinEntry === getPin(currentUser.id)) {
     loginSuccess();
   } else {
@@ -2625,6 +2692,28 @@ function buildApp() {
 
   // Date — use working date (respects 6am rule)
   document.getElementById('dateFilter').value = getWorkingDate();
+
+  // ── 6AM SHIFT RULE BANNER ──
+  // Show the current working day's shift window so all users know which day they're on
+  (function() {
+    var now = getDjiboutiNow();
+    var hh = now.getUTCHours();
+    // Working day started today at 06:00 if hh >= 6, else started yesterday
+    var startDay = new Date(now);
+    if (hh < 6) startDay.setUTCDate(startDay.getUTCDate() - 1);
+    var endDay = new Date(startDay);
+    endDay.setUTCDate(endDay.getUTCDate() + 1);
+    function fmtDate(d) {
+      return d.toLocaleDateString('en-GB', {weekday:'short', day:'numeric', month:'short', timeZone:'UTC'});
+    }
+    var text = fmtDate(startDay) + ' 06:00 → ' + fmtDate(endDay) + ' 05:59  (Djibouti time)';
+    var banner = document.getElementById('shiftRuleBanner');
+    var textEl = document.getElementById('shiftRuleText');
+    if (banner && textEl) {
+      textEl.textContent = text;
+      banner.style.display = 'flex';
+    }
+  })();
 
   // Worker filter bar
   buildWorkerFilterBar();
@@ -5399,15 +5488,25 @@ buildLogin();
 showScreen('loginScreen');
 initIcons();
 showSplash();
+// Signal that module is fully loaded — stubs will now hand off to real functions
+window._moduleReady = true;
 
-// ── PRE-LOGIN: load workers list so deleted sealers don't appear on login ──
+// ── PRE-LOGIN: load workers + PINs before login screen so correct credentials are always used ──
 (function() {
   try {
+    // Workers list — so removed sealers don't appear on login
     onSnapshot(doc(db, 'settings', 'workers'), function(snap) {
-      var list = snap.exists() ? (snap.data().list || DEFAULT_WORKERS) : DEFAULT_WORKERS;
+      var list = snap.exists() ? (snap.data().list || []) : [];
       _cloudWorkers = list;
-      // Only rebuild login if user hasn't logged in yet
       if (!currentUser) buildLogin();
+    });
+  } catch(e) {}
+
+  try {
+    // PINs — CRITICAL: must load before PIN entry screen so cloud PINs are used,
+    // not hardcoded defaults. Without this, changed PINs are ignored at login.
+    onSnapshot(doc(db, 'settings', 'pins'), function(snap) {
+      _cloudPins = snap.exists() ? snap.data() : {};
     });
   } catch(e) {}
 })();
