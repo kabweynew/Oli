@@ -1107,9 +1107,9 @@
         <button class="date-chip" id="todayChip" onclick="setToday()" style="background: var(--green); opacity: 1;">🟢 Today</button>
         <div class="date-input-wrap" style="cursor:pointer" onclick="openDatePicker()" id="datePickerBtn">
           <span style="color:var(--text3);font-size:13px;">📅</span>
-          <span id="dateFilterDisplay" style="flex:1;font-size:13px;font-weight:600">Today — Sat 2 May</span>
+          <span id="dateFilterDisplay" style="flex:1;font-size:13px;font-weight:600">Today — Sat 9 May</span>
           <span style="color:var(--text3);font-size:12px;">▼</span>
-          <input type="hidden" id="dateFilter" value="2026-05-02">
+          <input type="hidden" id="dateFilter" value="2026-05-09">
         </div>
       </div>
       <!-- SUSPEND BANNER -->
@@ -1153,7 +1153,7 @@
       <div class="section-header">
         <span class="section-title" id="trucksSectionTitle">TODAY'S TRUCKS</span>
         <div style="display:flex;gap:8px;align-items:center">
-          <button class="new-btn" style="color:var(--green);font-size:11px;" id="exportDateBtn" onclick="exportExcel()">📊 Export 2026-05-02</button>
+          <button class="new-btn" style="color:var(--green);font-size:11px;" id="exportDateBtn" onclick="exportExcel()">📊 Export 2026-05-09</button>
           <button class="new-btn" style="color:var(--teal)" onclick="openShareReport()">📤 Share</button>
           <button class="select-mode-btn" id="selectModeBtn" onclick="toggleSelectMode()">☑️ Select</button>
           <button class="new-btn" onclick="openAddTruck()">+ New</button>
@@ -1300,7 +1300,7 @@
     <div id="tabReports" style="display:none;">
       <div class="reports-content" id="reportsContent">
     <div style="padding:12px 0 4px">
-      <div style="font-size:11px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:8px">📅 SHOWING: 2026-05-02  </div>
+      <div style="font-size:11px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:8px">📅 SHOWING: 2026-05-09  </div>
       <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none">
     <button class="filter-chip active" onclick="setReportFilter('all',this)" style="font-size:11px;padding:4px 10px">
       All
@@ -1349,7 +1349,7 @@
       <div class="report-row"><span class="report-label">🥗 Lunch</span><span class="report-val" style="color:var(--red)">—</span></div>
       <div class="report-row"><span class="report-label">🍽️ Dinner</span><span class="report-val" style="color:var(--red)">—</span></div>
       
-      <div style="margin-top:10px"><button onclick="openMealsModal('2026-05-02')" style="width:100%;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.3);color:var(--accent);border-radius:var(--radius-sm);padding:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">🍽️ Set Lunch / Dinner Amounts</button></div>
+      <div style="margin-top:10px"><button onclick="openMealsModal('2026-05-09')" style="width:100%;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.3);color:var(--accent);border-radius:var(--radius-sm);padding:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">🍽️ Set Lunch / Dinner Amounts</button></div>
       
     </div>
     <div class="report-card">
@@ -1712,6 +1712,11 @@
       <div class="nav-label">Claims</div>
     </button>
   
+    <button class="nav-btn" id="nav_agash" onclick="switchTab('agash')">
+      <div class="nav-icon">📥</div>
+      <div class="nav-label">Agash</div>
+    </button>
+  
     <button class="nav-btn active" id="nav_manage" onclick="switchTab('manage')">
       <div class="nav-icon">⚙️</div>
       <div class="nav-label">Gérer</div>
@@ -1719,7 +1724,7 @@
   
     <button class="nav-btn" id="nav_recycle" onclick="switchTab('recycle')">
       <div class="nav-icon">🗑️</div>
-      <div class="nav-label">Bin (14)</div>
+      <div class="nav-label">Bin (17)</div>
     </button>
   </div>
 </div>
@@ -2002,7 +2007,8 @@ import {
   getFirestore,
   initializeFirestore,
   persistentLocalCache,
-  persistentMultipleTabManager,
+  persistentSingleTabManager,
+  enableNetwork,
   collection, doc,
   setDoc, addDoc, getDoc, getDocs,
   updateDoc, deleteDoc,
@@ -2029,7 +2035,7 @@ let db;
 try {
   db = initializeFirestore(app, {
     localCache: persistentLocalCache({
-      tabManager: persistentMultipleTabManager()
+      tabManager: persistentSingleTabManager({forceOwnership: true})
     })
   });
 } catch(e) {
@@ -2041,10 +2047,37 @@ try {
 window.addEventListener('online', () => {
   setOnline();
   showToast('☁️ Back online — syncing...');
+  // Re-enable Firestore network so data flows immediately
+  if (typeof db !== 'undefined') { try { enableNetwork(db); } catch(e){} }
 });
 window.addEventListener('offline', () => {
   setOffline();
   showToast('📴 Offline — changes saved locally');
+});
+
+// ── WAKE-UP SYNC ── Re-sync when app comes back from background
+// Mobile browsers freeze JS when minimized — this forces a fresh sync on return
+document.addEventListener('visibilitychange', function() {
+  if (document.visibilityState === 'visible' && currentUser) {
+    // Nudge Firestore to re-check connection
+    if (typeof db !== 'undefined') { try { enableNetwork(db); } catch(e){} }
+    // If we've been away for more than 30s, force re-init all listeners
+    var now = Date.now();
+    if (window._lastHidden && (now - window._lastHidden) > 30000) {
+      setSyncing();
+      initFirebase();
+    }
+  }
+  if (document.visibilityState === 'hidden') {
+    window._lastHidden = Date.now();
+  }
+});
+
+// ── FOCUS SYNC ── Catch cases where visibilitychange doesn't fire (some Android)
+window.addEventListener('focus', function() {
+  if (currentUser && typeof db !== 'undefined') {
+    try { enableNetwork(db); } catch(e){}
+  }
 });
 
 // ── STATE ──
@@ -2069,11 +2102,18 @@ let currentTab = 'trucks';
 let currentLang = localStorage.getItem('hask_lang') || 'en';
 let addingSuspended = false;
 
-// ── WORKING DATE HELPERS ── LOCAL time (Djibouti=UTC+3) 6am rule
+// ── WORKING DATE HELPERS ── Always Djibouti time (UTC+3), 6am rule
+// Device timezone is ignored — all roles see the same date
+function getDjiboutiNow() {
+  // UTC offset for Djibouti is always +3h (no DST)
+  var utcMs = Date.now() + (3 * 60 * 60 * 1000);
+  return new Date(utcMs);
+}
 function getWorkingDate() {
-  var now = new Date();
-  if (now.getHours() < 6) now.setDate(now.getDate() - 1);
-  return now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
+  var now = getDjiboutiNow();
+  // Before 6am Djibouti time → still the previous working day
+  if (now.getUTCHours() < 6) now.setUTCDate(now.getUTCDate() - 1);
+  return now.getUTCFullYear()+'-'+String(now.getUTCMonth()+1).padStart(2,'0')+'-'+String(now.getUTCDate()).padStart(2,'0');
 }
 
 // Next working date = 5 days after the last date that has any truck recorded
@@ -2238,7 +2278,9 @@ function setUserPerms(user, p) {
 
 // ── WORKERS LIST (Firestore-backed) ──
 function getWorkerList() {
-  return _cloudWorkers !== null ? _cloudWorkers : DEFAULT_WORKERS;
+  // Always prefer cloud list; only use DEFAULT_WORKERS before Firebase loads (_cloudWorkers===null)
+  if (_cloudWorkers !== null) return _cloudWorkers;
+  return DEFAULT_WORKERS;
 }
 function saveWorkerList(w) {
   _cloudWorkers = w;
@@ -2263,15 +2305,16 @@ function initFirebase() {
     // two documents with the same plate. Detect and immediately delete the newer one.
     // This runs silently — no claims, no prompts, just hard removal.
     if (currentUser && (currentUser.role === 'admin' || currentUser.role === 'head')) {
-      var seen = {}; // plate → {id, timestamp}
+      var seen = {}; // "plate|date" → {id, timestamp}
       Object.entries(trucks).forEach(function(e) {
         var id = e[0]; var t = e[1];
         var pl = t.plate ? t.plate.toUpperCase() : null;
         if (!pl) return;
-        if (seen[pl]) {
+        var key = pl + '|' + (t.date || '');
+        if (seen[key]) {
           // Keep the older one (lower timestamp), delete the newer
-          var older = seen[pl].ts <= (t.timestamp || 0) ? seen[pl].id : id;
-          var newer = seen[pl].ts <= (t.timestamp || 0) ? id : seen[pl].id;
+          var older = seen[key].ts <= (t.timestamp || 0) ? seen[key].id : id;
+          var newer = seen[key].ts <= (t.timestamp || 0) ? id : seen[key].id;
           // Move newer to bin then delete
           var newerData = trucks[newer];
           if (newerData) {
@@ -2281,9 +2324,9 @@ function initFirebase() {
               dupOf: older
             })).then(function() { deleteDoc(doc(db,'trucks',newer)); });
           }
-          seen[pl] = { id: older, ts: Math.min(seen[pl].ts, t.timestamp || 0) };
+          seen[key] = { id: older, ts: Math.min(seen[key].ts, t.timestamp || 0) };
         } else {
-          seen[pl] = { id: id, ts: t.timestamp || 0 };
+          seen[key] = { id: id, ts: t.timestamp || 0 };
         }
       });
     }
@@ -2339,11 +2382,22 @@ function initFirebase() {
 
   // ── Cloud Worker List ──
   window._unsubWorkers = onSnapshot(doc(db,'settings','workers'), snap => {
-    _cloudWorkers = snap.exists() ? (snap.data().list || DEFAULT_WORKERS) : DEFAULT_WORKERS;
+    _cloudWorkers = snap.exists() ? (snap.data().list || []) : [];
     buildLogin();
     if (currentTab === 'trucks') renderTrucks();
     if (currentTab === 'workers') renderWorkers();
     if (currentTab === 'manage') renderManage();
+    // Refresh sealer dropdown if Add/Edit Truck modal is open
+    var modalOpen = document.getElementById('modalTruck') && document.getElementById('modalTruck').classList.contains('active');
+    if (modalOpen && currentUser && currentUser.role !== 'worker') {
+      var sel = document.getElementById('truckWorker');
+      var curVal = sel ? sel.value : '';
+      if (sel) {
+        sel.innerHTML = '<option value="">— No sealer yet (Pending) —</option>' +
+          _cloudWorkers.map(function(w){ return '<option value="'+w+'">'+w+'</option>'; }).join('');
+        sel.value = curVal;
+      }
+    }
   }, () => {});
 
   // ── Claims ──
@@ -2409,11 +2463,15 @@ function setSyncing() {
 }
 function setOnline() {
   document.getElementById('syncDot').className='';
-  document.getElementById('syncLabel').textContent='☁️ Live';
+  // Show last-synced time so sealers can confirm data is fresh
+  var now = getDjiboutiNow();
+  var hh = String(now.getUTCHours()).padStart(2,'0');
+  var mm = String(now.getUTCMinutes()).padStart(2,'0');
+  document.getElementById('syncLabel').textContent='☁️ Live ' + hh + ':' + mm;
   const d = document.getElementById('syncDotManage');
   if (d) { d.style.background='var(--green)'; d.style.animation=''; }
   const s = document.getElementById('cloudSyncStatus');
-  if (s) { s.textContent='Connected — all data synced'; s.style.color='var(--green)'; }
+  if (s) { s.textContent='Connected — synced at ' + hh + ':' + mm; s.style.color='var(--green)'; }
 }
 function setOffline() {
   document.getElementById('syncDot').className='offline';
@@ -2426,21 +2484,24 @@ function setOffline() {
 
 // ── LOGIN ──
 function buildLogin() {
-  const workers = getWorkerList();
   const grid = document.getElementById('loginGrid');
-  const users = [
+  const fixedUsers = [
     {id:'admin', label:'Admin', role:'Full access', icon:'👑', color:'#a855f7'},
     {id:'head', label:getHeadName(), role:'CEO', icon:'🏢', color:'#f59e0b'},
     {id:'cashier1', label:'Cashier 1', role:'Cashier', icon:'💼', color:'#3b82f6'},
     {id:'cashier2', label:'Cashier 2', role:'Cashier', icon:'💼', color:'#14b8a6'},
-    ...workers.map(w => ({
-      id:w, label:w, role:'Sealer · My seals only',
-      icon: w.substring(0,2).toUpperCase(), color: WORKER_COLORS[w]||'#6b7280'
-    }))
   ];
+  // Only show cloud workers — never show hardcoded defaults
+  const workerUsers = _cloudWorkers !== null
+    ? _cloudWorkers.map(w => ({
+        id:w, label:w, role:'Sealer · My seals only',
+        icon: w.substring(0,2).toUpperCase(), color: WORKER_COLORS[w]||'#6b7280'
+      }))
+    : [{id:'__loading__', label:'Loading...', role:'Fetching sealers', icon:'⏳', color:'#5a6f8a', disabled:true}];
+  const users = [...fixedUsers, ...workerUsers];
 
   grid.innerHTML = users.map((u,i) => `
-    <button class="login-btn${i===0?' admin-btn':''}" onclick="goPin('${u.id}')">
+    <button class="login-btn${i===0?' admin-btn':''}" ${u.disabled?'disabled style="opacity:0.45;cursor:default"':''} onclick="${u.disabled?'':'goPin(\'' + u.id + '\')'}">
       <div class="avatar" style="background:${u.color}22;color:${u.color};border:2px solid ${u.color}44">
         ${u.icon}
       </div>
@@ -3097,6 +3158,7 @@ window.checkDuplicate = function() {
 
   const matches = Object.entries(trucks).filter(([k,v]) =>
     v.plate && v.plate.toUpperCase() === plate &&
+    v.date === date &&
     k !== editingTruckId
   );
 
@@ -3213,13 +3275,13 @@ window.saveTruck = function() {
     }
   }
 
-  // ── DUPLICATE CHECK — query Firestore across ALL dates ──
+  // ── DUPLICATE CHECK — same plate on same date only ──
   getDocs(collection(db,'trucks')).then(function(snap) {
     var allTrucks = {};
     snap.forEach(function(d) { allTrucks[d.id] = d.data(); });
 
     var dupEntry = Object.entries(allTrucks).find(function(e){
-      return e[1].plate && e[1].plate.toUpperCase() === plate && e[0] !== editingTruckId;
+      return e[1].plate && e[1].plate.toUpperCase() === plate && e[1].date === date && e[0] !== editingTruckId;
     });
 
     if (dupEntry) {
