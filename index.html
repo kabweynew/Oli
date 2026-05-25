@@ -7343,60 +7343,128 @@ function updateAgashIncomingBadge() {
 }
 
 function renderAgashIncoming() {
-  const container = document.getElementById('agashIncomingList');
-  const subEl = document.getElementById('agashIncomingSub');
+  var container = document.getElementById('agashIncomingList');
+  var subEl = document.getElementById('agashIncomingSub');
   if (!container) return;
 
-  const TYPE_LABELS = { shirac:'🚛 Shirac', bilashirac:'🚚 Bila Shirac', metal:'🏗️ Metal' };
-  const TYPE_COLORS = { shirac:'#10b981', bilashirac:'#3b82f6', metal:'#ef4444', bashal:'#e879f9' };
+  var TYPE_LABELS = { shirac:'🚛 Shirac', bilashirac:'🚚 Bila Shirac', metal:'🏗️ Metal' };
+  var TYPE_COLORS = { shirac:'#10b981', bilashirac:'#3b82f6', metal:'#ef4444' };
 
-  // Match the same date filter used by the whole app
-  const selectedDate = document.getElementById('dateFilter')?.value || getWorkingDate();
-  const today = getWorkingDate();
-  const isToday = selectedDate === today;
-  const dateObj = new Date(selectedDate + 'T12:00:00');
-  const dateLabel = isToday
+  var selectedDate = document.getElementById('dateFilter') ? document.getElementById('dateFilter').value : getWorkingDate();
+  if (!selectedDate) selectedDate = getWorkingDate();
+  var today = getWorkingDate();
+  var isToday = selectedDate === today;
+  var dateObj = new Date(selectedDate + 'T12:00:00');
+  var dateLabel = isToday
     ? 'Today — ' + dateObj.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})
     : dateObj.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
 
-  // All trucks from Agash — from kab_trucks collection
-  const all = Object.entries(kabIncoming)
-    .map(([k,v]) => ({ _id:k, plate:v.plate||'', type:v.type||'', status:v.status||'',
-      postLabel:v.postLabel||v.postId||'—', date:v.date||'', ts:v.ts||0, addedBy:v.addedBy||'' }))
-    .sort((a,b) => (b.ts||0)-(a.ts||0));
+  var all = Object.entries(kabIncoming)
+    .map(function(e) {
+      var k=e[0], v=e[1];
+      return { _id:k, plate:v.plate||'', type:v.type||'', status:v.status||'',
+        postLabel:v.postLabel||v.postId||'—', date:v.date||'', ts:v.ts||0, addedBy:v.addedBy||'' };
+    })
+    .sort(function(a,b){ return (b.ts||0)-(a.ts||0); });
 
-  // Filter to selected date only
-  const filtered = all.filter(t => t.date === selectedDate);
+  var filtered = all.filter(function(t){ return t.date === selectedDate; });
 
   if (subEl) subEl.textContent = filtered.length + ' truck' + (filtered.length!==1?'s':'') + ' · ' + dateLabel;
 
+  // ── Build summary grid ──
+  var POSTS = ['Post 1','Post 2','Post 3','Post 4','Post 5','Post 6','Post 7'];
+  var grid = {};
+  POSTS.forEach(function(p){ grid[p] = {shirac:0, metal:0, bilashirac:0}; });
+
+  filtered.forEach(function(t) {
+    var pl = (t.postLabel||'').trim().toLowerCase().replace(/\s+/g,'');
+    var matched = null;
+    for (var pi=0; pi<POSTS.length; pi++) {
+      if (POSTS[pi].toLowerCase().replace(/\s+/g,'') === pl) { matched = POSTS[pi]; break; }
+    }
+    if (!matched) {
+      for (var pi=0; pi<POSTS.length; pi++) {
+        if (pl.indexOf(POSTS[pi].toLowerCase().replace(/\s+/g,'')) !== -1) { matched = POSTS[pi]; break; }
+      }
+    }
+    if (matched && (t.type==='shirac'||t.type==='metal'||t.type==='bilashirac')) {
+      grid[matched][t.type]++;
+    }
+  });
+
+  var totS=0, totM=0, totB=0;
+  POSTS.forEach(function(p){ totS+=grid[p].shirac; totM+=grid[p].metal; totB+=grid[p].bilashirac; });
+  var grandTotal = totS+totM+totB;
+
+  function cell(val, color) {
+    var c = val ? color : 'var(--text3)';
+    var v = val || '—';
+    return '<div style="font-size:13px;font-weight:700;color:'+c+';text-align:center;font-family:\'JetBrains Mono\',monospace">'+v+'</div>';
+  }
+
+  var tableHTML =
+    '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:16px">'
+    // thead
+    + '<div style="display:grid;grid-template-columns:1fr 52px 52px 80px 52px;background:var(--bg4);padding:8px 10px;border-bottom:1px solid var(--border);align-items:center">'
+    + '<div style="font-size:9px;font-weight:800;color:var(--text3);letter-spacing:.07em">PAR POST</div>'
+    + '<div style="font-size:9px;font-weight:800;color:#10b981;letter-spacing:.07em;text-align:center">SHIRAC</div>'
+    + '<div style="font-size:9px;font-weight:800;color:#ef4444;letter-spacing:.07em;text-align:center">METAL</div>'
+    + '<div style="font-size:9px;font-weight:800;color:#3b82f6;letter-spacing:.07em;text-align:center">BILA SHIRAC</div>'
+    + '<div style="font-size:9px;font-weight:800;color:var(--text3);letter-spacing:.07em;text-align:center">TOTAL</div>'
+    + '</div>'
+    // rows
+    + POSTS.map(function(p, i) {
+        var r = grid[p];
+        var rowTotal = r.shirac + r.metal + r.bilashirac;
+        var bg = i%2===0 ? 'transparent' : 'rgba(255,255,255,0.02)';
+        return '<div style="display:grid;grid-template-columns:1fr 52px 52px 80px 52px;padding:8px 10px;border-bottom:1px solid var(--border);background:'+bg+';align-items:center">'
+          + '<div style="font-size:12px;font-weight:700;color:var(--text)">'+p+'</div>'
+          + cell(r.shirac,   '#10b981')
+          + cell(r.metal,    '#ef4444')
+          + cell(r.bilashirac,'#3b82f6')
+          + cell(rowTotal,   'var(--text)')
+          + '</div>';
+      }).join('')
+    // footer
+    + '<div style="display:grid;grid-template-columns:1fr 52px 52px 80px 52px;padding:9px 10px;background:rgba(59,130,246,0.07);border-top:2px solid var(--border);align-items:center">'
+    + '<div style="font-size:11px;font-weight:800;color:var(--text)">TOTAL</div>'
+    + '<div style="font-size:14px;font-weight:800;color:#10b981;text-align:center;font-family:\'JetBrains Mono\',monospace">'+(totS||'0')+'</div>'
+    + '<div style="font-size:14px;font-weight:800;color:#ef4444;text-align:center;font-family:\'JetBrains Mono\',monospace">'+(totM||'0')+'</div>'
+    + '<div style="font-size:14px;font-weight:800;color:#3b82f6;text-align:center;font-family:\'JetBrains Mono\',monospace">'+(totB||'0')+'</div>'
+    + '<div style="font-size:14px;font-weight:800;color:var(--accent);text-align:center;font-family:\'JetBrains Mono\',monospace">'+grandTotal+'</div>'
+    + '</div>'
+    + '</div>';
+
   if (filtered.length === 0) {
-    container.innerHTML =
-      '<div style="text-align:center;padding:60px 0;color:var(--text3);">'
-      + '<div style="font-size:48px;margin-bottom:12px;">📥</div>'
-      + '<div style="font-size:14px;font-weight:600;">No Agash trucks on ' + dateLabel + '</div>'
-      + '<div style="font-size:12px;margin-top:6px;opacity:0.6;">Change date or wait for trucks to be added</div>'
+    container.innerHTML = tableHTML
+      + '<div style="text-align:center;padding:40px 0;color:var(--text3)">'
+      + '<div style="font-size:40px;margin-bottom:10px">📥</div>'
+      + '<div style="font-size:14px;font-weight:600">No Agash trucks on ' + dateLabel + '</div>'
+      + '<div style="font-size:12px;margin-top:6px;opacity:0.6">Change date or wait for trucks to be added</div>'
       + '</div>';
     return;
   }
 
+  var truckList = filtered.map(function(t) {
+    var isBashal = t.status === 'bashal';
+    var tc = isBashal ? '#e879f9' : (TYPE_COLORS[t.type] || '#6b7280');
+    var tl = isBashal ? '🔮 Bashal' : (TYPE_LABELS[t.type] || t.type || '—');
+    var timeStr = t.ts ? new Date(t.ts).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}) : '—';
+    return '<div style="background:var(--bg3);border:1px solid var(--border);border-left:3px solid '+tc+';border-radius:8px;padding:12px;margin-bottom:8px">'
+      + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">'
+      + '<div style="font-size:18px;font-weight:800;font-family:monospace;letter-spacing:0.05em">'+t.plate+'</div>'
+      + '<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;background:'+tc+'22;color:'+tc+';border:1px solid '+tc+'44">'+tl+'</span>'
+      + '</div>'
+      + '<div style="display:flex;justify-content:space-between;align-items:center">'
+      + '<span style="font-size:12px;font-weight:700;color:'+tc+'">🏗️ '+t.postLabel+'</span>'
+      + '<span style="font-size:11px;color:var(--text3)">🕐 '+timeStr+'</span>'
+      + '</div></div>';
+  }).join('');
+
   container.innerHTML =
-    '<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin:8px 0 10px;padding-bottom:5px;border-bottom:1px solid var(--border);">📅 ' + dateLabel + ' — ' + filtered.length + ' truck' + (filtered.length!==1?'s':'') + '</div>'
-    + filtered.map(t => {
-      const isBashal = t.status === 'bashal';
-      const tc = isBashal ? '#e879f9' : (TYPE_COLORS[t.type] || '#6b7280');
-      const tl = isBashal ? '🔮 Bashal' : (TYPE_LABELS[t.type] || t.type || '—');
-      const timeStr = t.ts ? new Date(t.ts).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}) : '—';
-      return '<div style="background:var(--bg3);border:1px solid var(--border);border-left:3px solid '+tc+';border-radius:8px;padding:12px;margin-bottom:8px;">'
-        + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">'
-        + '<div style="font-size:18px;font-weight:800;font-family:monospace;letter-spacing:0.05em;">'+t.plate+'</div>'
-        + '<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;background:'+tc+'22;color:'+tc+';border:1px solid '+tc+'44;">'+tl+'</span>'
-        + '</div>'
-        + '<div style="display:flex;justify-content:space-between;align-items:center;">'
-        + '<span style="font-size:12px;font-weight:700;color:'+tc+';">🏗️ '+t.postLabel+'</span>'
-        + '<span style="font-size:11px;color:var(--text3);">🕐 '+timeStr+'</span>'
-        + '</div></div>';
-    }).join('');
+    tableHTML
+    + '<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin:8px 0 10px;padding-bottom:5px;border-bottom:1px solid var(--border)">📅 ' + dateLabel + ' — ' + filtered.length + ' truck' + (filtered.length!==1?'s':'') + '</div>'
+    + truckList;
 }
 
 window.exportAgashExcel = function() {
@@ -8048,12 +8116,12 @@ function renderSettlementFormCard(cashierId, cashierName, date, dayTrucks, unpai
     + '<div class="two-col">'
     + '<div>'
     + '<div class="stl-label">💰 Submitted by H. of Agash</div>'
-    + '<input class="stl-input" type="number" id="stlAgashSubmit_'+cashierId+'" placeholder="0 ETB" value="'+savedAgashSubmit+'" oninput="stlCheckAgashDisc(\''+cashierId+'\')" min="0">'
+    + '<input class="stl-input" type="number" id="stlAgashSubmit_'+cashierId+'" placeholder="0" value="'+savedAgashSubmit+'" oninput="stlCheckAgashDisc(\''+cashierId+'\')" min="0">'
     + '<div class="stl-discrepancy" id="stlAgashDisc_'+cashierId+'"></div>'
     + '</div>'
     + '<div>'
     + '<div class="stl-label">👷 Given to Shibo Workers</div>'
-    + '<input class="stl-input" type="number" id="stlShiboGiven_'+cashierId+'" placeholder="0 ETB" value="'+savedShiboGiven+'" min="0">'
+    + '<input class="stl-input" type="number" id="stlShiboGiven_'+cashierId+'" placeholder="0" value="'+savedShiboGiven+'" min="0">'
     + '</div>'
     + '</div>'
 
@@ -8074,10 +8142,30 @@ function renderSettlementFormCard(cashierId, cashierName, date, dayTrucks, unpai
     + '</div>'
     + '<div id="stlUnpaidList_'+cashierId+'" style="margin-bottom:14px"></div>'
 
-    // Submitted to company
-    + '<div style="margin-bottom:14px">'
-    + '<div class="stl-label">🏦 Submitted to Company (ETB)</div>'
-    + '<input class="stl-input" type="number" id="stlCashSubmitted_'+cashierId+'" placeholder="0 ETB" value="'+(existing&&existing.cashSubmitted?existing.cashSubmitted:'')+'" min="0">'
+    // Auto-calculated: IF ALL PAID + MISSING
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">'
+    + '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 10px;text-align:center">'
+    + '<div style="font-size:9px;font-weight:800;color:var(--text3);letter-spacing:0.07em;margin-bottom:5px">💡 IF ALL PAID</div>'
+    + '<div style="font-size:17px;font-weight:800;font-family:\'JetBrains Mono\',monospace;color:var(--accent)">'+(t2Total*5500).toLocaleString()+'</div>'
+    + '<div style="font-size:9px;color:var(--text3);margin-top:3px">'+t2Total+' × 5,500 ETB</div>'
+    + '</div>'
+    + '<div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);border-radius:var(--radius-sm);padding:12px 10px;text-align:center">'
+    + '<div style="font-size:9px;font-weight:800;color:var(--red);letter-spacing:0.07em;margin-bottom:5px">❌ MISSING</div>'
+    + '<div style="font-size:17px;font-weight:800;font-family:\'JetBrains Mono\',monospace;color:var(--red)">'+(t2Unpaid*5500).toLocaleString()+'</div>'
+    + '<div style="font-size:9px;color:var(--text3);margin-top:3px">'+t2Unpaid+' unpaid × 5,500</div>'
+    + '</div>'
+    + '</div>'
+
+    // Submitted to company — inside Table 2
+    + '<div style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.3);border-radius:var(--radius-sm);padding:12px;margin-bottom:12px">'
+    + '<div class="stl-label" style="color:var(--accent);margin-bottom:8px">🏦 SUBMITTED TO COMPANY (ETB)</div>'
+    + '<input class="stl-input" type="number" id="stlCashSubmitted_'+cashierId+'" placeholder="Enter amount..." value="'+(existing&&existing.cashSubmitted?existing.cashSubmitted:'')+'" min="0">'
+    + '</div>'
+
+    // Reporter name
+    + '<div style="margin-bottom:12px">'
+    + '<div class="stl-label">📋 Reporter Name</div>'
+    + '<input class="stl-input" type="text" id="stlReporterName_'+cashierId+'" placeholder="Enter name..." value="'+(existing&&existing.reporterName?existing.reporterName:(currentUser.name||''))+'">'
     + '</div>'
 
     // Notes
@@ -8225,7 +8313,7 @@ function renderLockedSettlement(s, cashierName, cashierId, date, role, expectedC
     // Reporter name
     + '<div style="text-align:center;padding:10px 0 4px;border-top:1px solid var(--border)">'
     + '<div style="font-size:10px;color:var(--text3);margin-bottom:3px">📋 Reported by</div>'
-    + '<div style="font-size:13px;font-weight:700;color:var(--text)">'+(s.submittedBy||cashierName)+'</div>'
+    + '<div style="font-size:13px;font-weight:700;color:var(--text)">'+(s.reporterName||s.submittedBy||cashierName)+'</div>'
     + '</div>';
 
   return '<div class="stl-card locked" style="margin-bottom:14px">'
@@ -8472,7 +8560,8 @@ window.submitSettlement = function(cashierId, date, expectedCompany) {
     t2Total: t2Total, t2Paid: t2Paid, t2Unpaid: t2Unpaid,
     t2IfAllPaid: t2Total * CLIENT, t2Missing: t2Unpaid * CLIENT, t2Collected: t2Paid * CLIENT,
     unpaidTrucks: unpaidTrucks,
-    cashSubmitted: parseFloat(document.getElementById('stlCashSubmitted_'+cashierId)?.value)||0,
+    cashSubmitted:  parseFloat(document.getElementById('stlCashSubmitted_' +cashierId)?.value)||0,
+    reporterName:   (document.getElementById('stlReporterName_'+cashierId)?.value||'').trim() || (currentUser.name||currentUser.id),
     notes: notes, unlockedBy: null, unlockedAt: null
   };
 
@@ -8726,16 +8815,17 @@ function _renderSettlementCanvas(s, cashierId, date, inclT1, inclT2, unpaidList)
 
   if (inclT1) {
     // Table 1: header + 3 rows + footer + 2 input rows + divider
-    sections.push({ type:'table1', h: SEC_H + 36 + (3*ROW_H) + ROW_H + 48 + 60 });
+    sections.push({ type:'table1', h: 26+20+(3*ROW_H)+ROW_H+16+52+10+28+18 });
   }
   if (inclT2) {
-    sections.push({ type:'table2', h: SEC_H + 36 + (3*ROW_H) + 48 });
+    sections.push({ type:'table2', h: 26+10+56+14+54+10+44+18 });
   }
   if (unpaidList !== null) {
-    var upH = SEC_H + 20 + (unpaidList.length > 0 ? unpaidList.length * 52 : 36);
+    var upH = 28+6 + (unpaidList.length > 0 ? unpaidList.length*56+10 : 42);
     sections.push({ type:'unpaid', h: upH });
   }
-  if (s.notes) sections.push({ type:'notes', h: 56 });
+  if (s.notes) sections.push({ type:'notes', h: 52 });
+  if (s.reporterName || s.submittedBy) sections.push({ type:'reporter', h: 38 });
 
   var totalH = headerH + sections.reduce(function(a,b){return a+b.h;},0) + PAD * 2 + 32; // footer
 
@@ -8820,261 +8910,212 @@ function _renderSettlementCanvas(s, cashierId, date, inclT1, inclT2, unpaidList)
     return y + SEC_H + 8;
   }
 
-  // ── Background ──
-  ctx.fillStyle = BG;
+  // ── Background — light white ──
+  ctx.fillStyle = '#f4f6fb';
   ctx.fillRect(0, 0, W, totalH);
 
-  // ── Header band ──
-  var grad = ctx.createLinearGradient(0,0,W,0);
-  grad.addColorStop(0,'#162038');
-  grad.addColorStop(1,'#0f1623');
-  ctx.fillStyle = grad;
+  // ── Header — blue gradient ──
+  var hGrad = ctx.createLinearGradient(0, 0, W, headerH);
+  hGrad.addColorStop(0, '#1e3a8a');
+  hGrad.addColorStop(0.6, '#2563eb');
+  hGrad.addColorStop(1, '#3b82f6');
+  ctx.fillStyle = hGrad;
   ctx.fillRect(0, 0, W, headerH);
-  hline(headerH, BORDER);
 
-  // Logo circle
-  var lgr = ctx.createLinearGradient(PAD, 24, PAD+48, 72);
-  lgr.addColorStop(0, ACCENT); lgr.addColorStop(1, PURPLE);
-  fillRoundRect(PAD, 24, 48, 48, 12, lgr + '');
-  // fallback solid gradient
-  ctx.save();
-  var lc = ctx.createLinearGradient(PAD, 24, PAD+48, 72);
-  lc.addColorStop(0, ACCENT); lc.addColorStop(1, PURPLE);
-  ctx.fillStyle = lc;
-  ctx.beginPath();
-  ctx.moveTo(PAD+12,24); ctx.lineTo(PAD+36,24); ctx.quadraticCurveTo(PAD+48,24,PAD+48,36);
-  ctx.lineTo(PAD+48,60); ctx.quadraticCurveTo(PAD+48,72,PAD+36,72);
-  ctx.lineTo(PAD+12,72); ctx.quadraticCurveTo(PAD,72,PAD,60);
-  ctx.lineTo(PAD,36); ctx.quadraticCurveTo(PAD,24,PAD+12,24);
-  ctx.closePath(); ctx.fill(); ctx.restore();
-  txt('W', PAD+15, 48, '#fff', 18, '800');
+  // Circle decoration
+  ctx.save(); ctx.globalAlpha=0.07; ctx.fillStyle='#fff';
+  ctx.beginPath(); ctx.arc(W-30,30,80,0,Math.PI*2); ctx.fill(); ctx.restore();
 
-  // Company name & title
-  txt('WKABE Hask Services', PAD+62, 36, TEXT, 17, '800');
-  txt('Rapport de règlement journalier', PAD+62, 56, TEXT2, 12, '600');
+  // Logo
+  fillRoundRect(PAD, 22, 46, 46, 12, 'rgba(255,255,255,0.2)');
+  strokeRoundRect(PAD, 22, 46, 46, 12, 'rgba(255,255,255,0.3)');
+  ctx.save(); ctx.font='800 20px "Space Grotesk",sans-serif';
+  ctx.fillStyle='#fff'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText('W', PAD+23, 45); ctx.restore();
+
+  ctx.save(); ctx.font='800 17px "Space Grotesk",sans-serif';
+  ctx.fillStyle='#fff'; ctx.textAlign='left'; ctx.textBaseline='middle';
+  ctx.fillText('WKABE Hask Services', PAD+58, 33); ctx.restore();
+  ctx.save(); ctx.font='500 11px "Space Grotesk",sans-serif';
+  ctx.fillStyle='rgba(255,255,255,0.65)'; ctx.textAlign='left'; ctx.textBaseline='middle';
+  ctx.fillText('Rapport de règlement journalier', PAD+58, 53); ctx.restore();
 
   // Date chip
-  var dcW = 260;
-  fillRoundRect(PAD, 82, dcW, 26, 8, BG3);
-  strokeRoundRect(PAD, 82, dcW, 26, 8, BORDER);
-  txt('📅 ' + dateLabel, PAD+10, 95, TEXT2, 11, '600');
+  fillRoundRect(PAD, 76, 240, 24, 12, 'rgba(255,255,255,0.2)');
+  ctx.save(); ctx.font='600 10px "Space Grotesk",sans-serif'; ctx.fillStyle='#fff';
+  ctx.textAlign='left'; ctx.textBaseline='middle'; ctx.fillText('📅 '+dateLabel, PAD+10, 88); ctx.restore();
 
   // Cashier chip
-  fillRoundRect(W-PAD-160, 82, 160, 26, 8, 'rgba(59,130,246,0.12)');
-  strokeRoundRect(W-PAD-160, 82, 160, 26, 8, 'rgba(59,130,246,0.3)');
-  txt('💼 ' + cashierName, W-PAD-152, 95, ACCENT, 11, '700');
+  fillRoundRect(W-PAD-140, 76, 140, 24, 12, 'rgba(255,255,255,0.15)');
+  strokeRoundRect(W-PAD-140, 76, 140, 24, 12, 'rgba(255,255,255,0.3)');
+  ctx.save(); ctx.font='700 10px "Space Grotesk",sans-serif'; ctx.fillStyle='#fff';
+  ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('💼 '+cashierName, W-PAD-70, 88); ctx.restore();
 
-  var cy = headerH + PAD;
+  var cy = headerH + 14;
 
-  // ══════════════════════════════════
-  // TABLE 1 — AGASH REPORT
-  // ══════════════════════════════════
+  function lightCard(x, y, w, h, r) {
+    ctx.save(); ctx.shadowColor='rgba(0,0,0,0.07)'; ctx.shadowBlur=8; ctx.shadowOffsetY=2;
+    fillRoundRect(x,y,w,h,r,'#ffffff'); ctx.restore();
+    strokeRoundRect(x,y,w,h,r,'rgba(0,0,0,0.06)');
+  }
+  function cardTitle(x, y, w, h, label) {
+    ctx.fillStyle='#f8faff'; ctx.fillRect(x,y,w,h);
+    ctx.save(); ctx.strokeStyle='#e8eef8'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(x,y+h); ctx.lineTo(x+w,y+h); ctx.stroke(); ctx.restore();
+    ctx.save(); ctx.font='700 9px "Space Grotesk",sans-serif';
+    ctx.fillStyle='#6b7280'; ctx.textAlign='left'; ctx.textBaseline='middle';
+    ctx.fillText(label, x+12, y+h/2); ctx.restore();
+  }
+
+  // ══ TABLE 1 ══
   if (inclT1) {
-    cy = sectionTitle(cy, '📋 TABLEAU 1 — RAPPORT AGASH · 1 300 ETB / camion');
+    var t1X=PAD, t1W=W-PAD*2;
+    var t1CardH = 26 + 20 + 3*ROW_H + ROW_H + 12;
+    lightCard(t1X, cy, t1W, t1CardH, 10);
+    cardTitle(t1X, cy, t1W, 26, '📋 TABLEAU 1 — RAPPORT AGASH · 1 300 ETB / camion');
+    cy += 26;
 
-    var t1X = PAD;
-    var t1W = W - PAD*2;
-    var cols1 = [0.38, 0.18, 0.22, 0.22]; // type, trucks, total, paid
-    var cx1 = [
-      t1X + t1W*0,
-      t1X + t1W*(cols1[0]),
-      t1X + t1W*(cols1[0]+cols1[1]),
-      t1X + t1W*(cols1[0]+cols1[1]+cols1[2])
+    var c0=t1X+12, c1=t1X+t1W*0.55, c2=t1X+t1W-12;
+    ctx.save(); ctx.font='700 9px "Space Grotesk",sans-serif'; ctx.fillStyle='#9ca3af';
+    ctx.textAlign='left'; ctx.textBaseline='middle'; ctx.fillText('TYPE', c0, cy+10);
+    ctx.textAlign='center'; ctx.fillText('CAMIONS', c1, cy+10);
+    ctx.textAlign='right'; ctx.fillText('MONTANT (ETB)', c2, cy+10); ctx.restore();
+    cy += 20;
+
+    var agashRows=[
+      {label:'🚛 Shirac',     color:'#065f46', dot:'#10b981', cnt:s.cntShirac||0},
+      {label:'🚚 Bila Shirac',color:'#1e40af', dot:'#3b82f6', cnt:s.cntBilaShirac||0},
+      {label:'🏗️ Métal',    color:'#991b1b', dot:'#ef4444', cnt:s.cntMetal||0}
     ];
-
-    // Table header row
-    fillRoundRect(t1X, cy, t1W, 28, 0, BG4);
-    ctx.save(); ctx.fillStyle = BG4; ctx.fillRect(t1X, cy+14, t1W, 14); ctx.restore(); // flatten bottom
-    txt('TYPE', cx1[0]+8, cy+14, TEXT3, 9, '800');
-    txt('CAMIONS', cx1[1]+6, cy+14, TEXT3, 9, '800');
-    txt('TOTAL (ETB)', cx1[2]+6, cy+14, TEXT3, 9, '800');
-    txt('PAYÉ (ETB)', cx1[3]+6, cy+14, '#22c55e', 9, '800');
-    cy += 28;
-
-    // Draw table rows
-    var agashRows = [
-      { label:'Shirac',     color:'#10b981', cnt:s.cntShirac||0,     paid:s.paidShirac||0 },
-      { label:'Bila Shirac',color:'#3b82f6', cnt:s.cntBilaShirac||0, paid:s.paidBilaShirac||0 },
-      { label:'Métal',      color:'#ef4444', cnt:s.cntMetal||0,      paid:s.paidMetal||0 }
-    ];
-    var t1Total=0, t1Should=0, t1Collected=0;
-    agashRows.forEach(function(row, ri) {
-      var rowY = cy + ri*ROW_H;
-      var bgC = ri%2===0 ? BG2 : BG3;
-      ctx.fillStyle = bgC; ctx.fillRect(t1X, rowY, t1W, ROW_H);
-      // left color bar
-      ctx.fillStyle = row.color; ctx.fillRect(t1X, rowY, 3, ROW_H);
-      // label
-      txt(row.label, cx1[0]+10, rowY+ROW_H/2, row.color, 12, '700');
-      // trucks
-      monoR(String(row.cnt), cx1[1]+t1W*cols1[1]-8, rowY+ROW_H/2, TEXT2, 12);
-      // total ETB
-      var should = row.cnt * PRICE;
-      monoR(should.toLocaleString(), cx1[2]+t1W*cols1[2]-8, rowY+ROW_H/2, TEXT2, 11);
-      // paid ETB
-      var paid = row.paid * PRICE;
-      monoR(paid.toLocaleString(), cx1[3]+t1W*cols1[3]-8, rowY+ROW_H/2, GREEN, 11);
-      t1Total += row.cnt; t1Should += should; t1Collected += paid;
-      // divider
-      ctx.save(); ctx.strokeStyle = BORDER; ctx.lineWidth=0.5;
-      ctx.beginPath(); ctx.moveTo(t1X,rowY+ROW_H); ctx.lineTo(t1X+t1W,rowY+ROW_H); ctx.stroke(); ctx.restore();
+    var t1Total=0, t1Amount=0;
+    agashRows.forEach(function(row,ri) {
+      var ry=cy+ri*ROW_H;
+      if(ri>0){ctx.save();ctx.strokeStyle='#f3f4f6';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(t1X,ry);ctx.lineTo(t1X+t1W,ry);ctx.stroke();ctx.restore();}
+      ctx.save();ctx.fillStyle=row.dot;ctx.beginPath();ctx.arc(c0+4,ry+ROW_H/2,4,0,Math.PI*2);ctx.fill();ctx.restore();
+      ctx.save();ctx.font='600 12px "Space Grotesk",sans-serif';ctx.fillStyle=row.color;ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(row.label,c0+14,ry+ROW_H/2);ctx.restore();
+      ctx.save();ctx.font='700 14px "JetBrains Mono",monospace';ctx.fillStyle='#111827';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(String(row.cnt),c1,ry+ROW_H/2);ctx.restore();
+      var amt=row.cnt*PRICE;
+      ctx.save();ctx.font='600 12px "JetBrains Mono",monospace';ctx.fillStyle='#059669';ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText(amt.toLocaleString(),c2,ry+ROW_H/2);ctx.restore();
+      t1Total+=row.cnt; t1Amount+=amt;
     });
-    cy += 3*ROW_H;
+    cy+=3*ROW_H;
 
-    // Total footer
-    fillRoundRect(t1X, cy, t1W, ROW_H, 0, 'rgba(59,130,246,0.08)');
-    ctx.fillStyle='rgba(59,130,246,0.08)'; ctx.fillRect(t1X, cy, t1W, ROW_H);
-    ctx.save(); ctx.strokeStyle=BORDER; ctx.lineWidth=1.5;
-    ctx.beginPath(); ctx.moveTo(t1X,cy); ctx.lineTo(t1X+t1W,cy); ctx.stroke(); ctx.restore();
-    txt('TOTAL', cx1[0]+8, cy+ROW_H/2, TEXT, 11, '800');
-    monoR(String(t1Total), cx1[1]+t1W*cols1[1]-8, cy+ROW_H/2, ACCENT, 13);
-    monoR(t1Should.toLocaleString(), cx1[2]+t1W*cols1[2]-8, cy+ROW_H/2, TEXT2, 11);
-    monoR(t1Collected.toLocaleString(), cx1[3]+t1W*cols1[3]-8, cy+ROW_H/2, GREEN, 11);
-    cy += ROW_H + 10;
+    ctx.fillStyle='#eff6ff'; ctx.fillRect(t1X,cy,t1W,ROW_H);
+    ctx.save();ctx.strokeStyle='#dbeafe';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(t1X,cy);ctx.lineTo(t1X+t1W,cy);ctx.stroke();ctx.restore();
+    ctx.save();ctx.font='800 12px "Space Grotesk",sans-serif';ctx.fillStyle='#1e3a8a';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText('TOTAL',c0,cy+ROW_H/2);ctx.restore();
+    ctx.save();ctx.font='800 16px "JetBrains Mono",monospace';ctx.fillStyle='#2563eb';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(String(t1Total),c1,cy+ROW_H/2);ctx.restore();
+    ctx.save();ctx.font='700 13px "JetBrains Mono",monospace';ctx.fillStyle='#059669';ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText(t1Amount.toLocaleString()+' ETB',c2,cy+ROW_H/2);ctx.restore();
+    cy+=ROW_H+16;
 
-    // Submitted / Shibo row
-    var hw = (t1W-8)/2;
-    fillRoundRect(t1X, cy, hw, 44, 8, BG3);
-    strokeRoundRect(t1X, cy, hw, 44, 8, BORDER);
-    txt('SOUMIS PAR SUP. AGASH', t1X+10, cy+14, TEXT3, 9, '800');
-    monoR((s.agashSubmitted||0).toLocaleString()+' ETB', t1X+hw-10, cy+30, GREEN, 14);
+    var hw=(t1W-8)/2;
+    lightCard(t1X,cy,hw,52,8);
+    ctx.save();ctx.font='700 8px "Space Grotesk",sans-serif';ctx.fillStyle='#16a34a';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText('SOUMIS PAR SUP. AGASH',t1X+10,cy+14);ctx.restore();
+    ctx.save();ctx.font='700 17px "JetBrains Mono",monospace';ctx.fillStyle='#15803d';ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText((s.agashSubmitted||0).toLocaleString()+' ETB',t1X+hw-10,cy+34);ctx.restore();
 
-    fillRoundRect(t1X+hw+8, cy, hw, 44, 8, BG3);
-    strokeRoundRect(t1X+hw+8, cy, hw, 44, 8, BORDER);
-    txt('DONNÉ AUX WORKERS SHIBO', t1X+hw+18, cy+14, TEXT3, 9, '800');
-    monoR((s.shiboGiven||0).toLocaleString()+' ETB', t1X+t1W-10, cy+30, PURPLE, 14);
-    cy += 44 + 12;
+    lightCard(t1X+hw+8,cy,hw,52,8);
+    ctx.save();ctx.font='700 8px "Space Grotesk",sans-serif';ctx.fillStyle='#9333ea';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText('DONNÉ AUX WORKERS SHIBO',t1X+hw+18,cy+14);ctx.restore();
+    ctx.save();ctx.font='700 17px "JetBrains Mono",monospace';ctx.fillStyle='#7e22ce';ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText((s.shiboGiven||0).toLocaleString()+' ETB',t1X+t1W-10,cy+34);ctx.restore();
+    cy+=52+10;
 
-    // Agash discrepancy
-    var agashDiff = (s.agashSubmitted||0) - t1Collected;
-    var discColor = agashDiff===0 ? GREEN : RED;
-    var discText  = agashDiff===0 ? '✅ Aucun écart' : (agashDiff>0?'⬆️ +':'⬇️ ') + Math.abs(agashDiff).toLocaleString() + ' ETB';
-    fillRoundRect(t1X, cy, t1W, 28, 6, agashDiff===0?'rgba(34,197,94,0.08)':'rgba(239,68,68,0.08)');
-    strokeRoundRect(t1X, cy, t1W, 28, 6, agashDiff===0?'rgba(34,197,94,0.25)':'rgba(239,68,68,0.25)');
-    txt(discText, t1X + t1W/2, cy+14, discColor, 11, '700', 'center');
-    cy += 28 + 16;
+    var agashDiff=(s.agashSubmitted||0)-t1Amount;
+    var dBg=agashDiff===0?'#f0fdf4':'#fef2f2', dBd=agashDiff===0?'#bbf7d0':'#fecaca';
+    var dTxt=agashDiff===0?'✅ Montant soumis correspond exactement':(agashDiff>0?'⬆️ +':'⬇️ ')+Math.abs(agashDiff).toLocaleString()+' ETB';
+    var dCol=agashDiff===0?'#15803d':'#dc2626';
+    fillRoundRect(t1X,cy,t1W,28,6,dBg); strokeRoundRect(t1X,cy,t1W,28,6,dBd);
+    ctx.save();ctx.font='700 11px "Space Grotesk",sans-serif';ctx.fillStyle=dCol;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(dTxt,t1X+t1W/2,cy+14);ctx.restore();
+    cy+=28+18;
   }
 
-  // ══════════════════════════════════
-  // TABLE 2 — TRUCK SUMMARY
-  // ══════════════════════════════════
+  // ══ TABLE 2 ══
   if (inclT2) {
-    cy = sectionTitle(cy, '🚛 TABLEAU 2 — RÉSUMÉ DES CAMIONS');
+    var t2X=PAD, t2W=W-PAD*2;
+    var t2n=s.t2Total||0, t2p=s.t2Paid||0, t2u=s.t2Unpaid||0;
+    var ifAll=s.t2IfAllPaid||t2n*5500, miss=s.t2Missing||t2u*5500, coll=s.t2Collected||t2p*5500;
 
-    var t2W = W - PAD*2;
-    var bw  = (t2W-16)/3;
+    lightCard(t2X, cy, t2W, 26+10+64+14+62+12+52+18, 10);
+    cardTitle(t2X, cy, t2W, 26, '🚛 TABLEAU 2 — RÉSUMÉ DES CAMIONS');
+    cy+=26+10;
 
-    // 3 stat boxes
-    var stats2 = [
-      { label:'TOTAL',     val:String(s.t2Total  ||0), color:ACCENT },
-      { label:'PAYÉS',     val:String(s.t2Paid   ||0), color:GREEN  },
-      { label:'NON PAYÉS', val:String(s.t2Unpaid ||0), color:RED    }
-    ];
-    stats2.forEach(function(st, i) {
-      var bx = PAD + i*(bw+8);
-      fillRoundRect(bx, cy, bw, 52, 8, BG3);
-      strokeRoundRect(bx, cy, bw, 52, 8, BORDER);
-      txt(st.label, bx+bw/2, cy+16, TEXT3, 9, '800', 'center');
-      monoR(st.val, bx+bw/2+(ctx.measureText(st.val).width/2), cy+36, st.color, 20);
+    var bw=(t2W-16)/3;
+    [{l:'TOTAL',v:String(t2n),bg:'#eff6ff',bd:'#bfdbfe',c:'#2563eb'},
+     {l:'PAYÉS',v:String(t2p),bg:'#f0fdf4',bd:'#bbf7d0',c:'#16a34a'},
+     {l:'NON PAYÉS',v:String(t2u),bg:'#fef2f2',bd:'#fecaca',c:'#dc2626'}
+    ].forEach(function(st,i){
+      var bx=t2X+i*(bw+8);
+      fillRoundRect(bx,cy,bw,56,8,st.bg); strokeRoundRect(bx,cy,bw,56,8,st.bd);
+      ctx.save();ctx.font='700 9px "Space Grotesk",sans-serif';ctx.fillStyle='#6b7280';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(st.l,bx+bw/2,cy+15);ctx.restore();
+      ctx.save();ctx.font='800 26px "JetBrains Mono",monospace';ctx.fillStyle=st.c;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(st.v,bx+bw/2,cy+38);ctx.restore();
     });
-    cy += 52 + 12;
+    cy+=56+14;
 
-    // Financial row — Table 2 data only (app trucks)
-    var fw = (t2W-8)/2;
-    var cv_ifAll   = (s.t2IfAllPaid  || (s.t2Total  ||0)*5500);
-    var cv_missing = (s.t2Missing    || (s.t2Unpaid ||0)*5500);
-    var cv_coll    = (s.t2Collected  || (s.t2Paid   ||0)*5500);
+    var fw=(t2W-8)/2;
+    fillRoundRect(t2X,cy,fw,54,8,'#eff6ff'); strokeRoundRect(t2X,cy,fw,54,8,'#bfdbfe');
+    ctx.save();ctx.font='700 8px "Space Grotesk",sans-serif';ctx.fillStyle='#1d4ed8';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('💡 SI TOUT PAYÉ',t2X+fw/2,cy+14);ctx.restore();
+    ctx.save();ctx.font='700 17px "JetBrains Mono",monospace';ctx.fillStyle='#1d4ed8';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(ifAll.toLocaleString()+' ETB',t2X+fw/2,cy+34);ctx.restore();
+    ctx.save();ctx.font='500 9px "Space Grotesk",sans-serif';ctx.fillStyle='#9ca3af';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(String(t2n)+' × 5,500',t2X+fw/2,cy+47);ctx.restore();
 
-    fillRoundRect(PAD, cy, fw, 52, 8, BG3);
-    strokeRoundRect(PAD, cy, fw, 52, 8, BORDER);
-    txt('SI TOUT PAYÉ', PAD+10, cy+14, TEXT3, 9, '800');
-    monoR(cv_ifAll.toLocaleString(), PAD+fw-10, cy+34, TEXT2, 14);
+    fillRoundRect(t2X+fw+8,cy,fw,54,8,'#fef2f2'); strokeRoundRect(t2X+fw+8,cy,fw,54,8,'#fecaca');
+    ctx.save();ctx.font='700 8px "Space Grotesk",sans-serif';ctx.fillStyle='#dc2626';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('❌ MANQUANT',t2X+fw+8+fw/2,cy+14);ctx.restore();
+    ctx.save();ctx.font='700 17px "JetBrains Mono",monospace';ctx.fillStyle='#dc2626';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(miss.toLocaleString()+' ETB',t2X+fw+8+fw/2,cy+34);ctx.restore();
+    ctx.save();ctx.font='500 9px "Space Grotesk",sans-serif';ctx.fillStyle='#9ca3af';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(String(t2u)+' × 5,500',t2X+fw+8+fw/2,cy+47);ctx.restore();
+    cy+=54+10;
 
-    fillRoundRect(PAD+fw+8, cy, fw, 52, 8, 'rgba(239,68,68,0.08)');
-    strokeRoundRect(PAD+fw+8, cy, fw, 52, 8, 'rgba(239,68,68,0.25)');
-    txt('MANQUANT', PAD+fw+18, cy+14, RED, 9, '800');
-    monoR(cv_missing.toLocaleString(), PAD+t2W-10, cy+34, RED, 14);
-    cy += 52 + 8;
-
-    fillRoundRect(PAD, cy, fw, 52, 8, 'rgba(34,197,94,0.08)');
-    strokeRoundRect(PAD, cy, fw, 52, 8, 'rgba(34,197,94,0.25)');
-    txt('✅ COLLECTÉ', PAD+10, cy+14, GREEN, 9, '800');
-    monoR(cv_coll.toLocaleString(), PAD+fw-10, cy+34, GREEN, 14);
-    cy += 52 + 16;
+    fillRoundRect(t2X,cy,t2W,44,8,'#f0fdf4'); strokeRoundRect(t2X,cy,t2W,44,8,'#bbf7d0');
+    ctx.save();ctx.font='700 9px "Space Grotesk",sans-serif';ctx.fillStyle='#16a34a';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText('✅ COLLECTÉ',t2X+12,cy+16);ctx.restore();
+    ctx.save();ctx.font='700 17px "JetBrains Mono",monospace';ctx.fillStyle='#15803d';ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText(coll.toLocaleString()+' ETB',t2X+t2W-12,cy+28);ctx.restore();
+    cy+=44+18;
   }
 
-  // ══════════════════════════════════
-  // UNPAID TRUCKS LIST
-  // ══════════════════════════════════
+  // ══ UNPAID LIST ══
   if (unpaidList !== null) {
-    cy = sectionTitle(cy, '❌ CAMIONS NON PAYÉS (' + unpaidList.length + ')');
+    var ulX=PAD, ulW=W-PAD*2;
+    fillRoundRect(ulX,cy,ulW,28,8,'#fef2f2'); strokeRoundRect(ulX,cy,ulW,28,8,'#fecaca');
+    ctx.save();ctx.font='700 9px "Space Grotesk",sans-serif';ctx.fillStyle='#dc2626';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText('❌ CAMIONS NON PAYÉS ('+unpaidList.length+')',ulX+12,cy+14);ctx.restore();
+    cy+=28+6;
 
-    if (unpaidList.length === 0) {
-      fillRoundRect(PAD, cy, W-PAD*2, 32, 6, BG3);
-      txt('✅ Aucun camion non payé', W/2, cy+16, GREEN, 11, '600', 'center');
-      cy += 32 + 10;
+    if(unpaidList.length===0){
+      fillRoundRect(ulX,cy,ulW,34,8,'#f0fdf4'); strokeRoundRect(ulX,cy,ulW,34,8,'#bbf7d0');
+      ctx.save();ctx.font='700 12px "Space Grotesk",sans-serif';ctx.fillStyle='#15803d';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('✅ Aucun camion non payé',W/2,cy+17);ctx.restore();
+      cy+=34+8;
     } else {
-      var numW = 24; // renumbering badge
-      unpaidList.forEach(function(ut, i) {
-        var col  = TYPE_COL[ut.truckType] || TEXT3;
-        var tyl  = TYPE_LBL[ut.truckType] || '';
-        var dyl  = DATE_LBL[ut.payDate]   || ut.payDate || '—';
-        var cyl  = COLL_LBL[ut.collector] || ut.collector || '—';
-        var rowH2 = 48;
-        var ry = cy + i * (rowH2 + 6);
-
-        fillRoundRect(PAD, ry, W-PAD*2, rowH2, 8, BG3);
-        strokeRoundRect(PAD, ry, W-PAD*2, rowH2, 8, BORDER);
-        // left accent bar
-        ctx.save(); ctx.fillStyle = col;
-        ctx.beginPath();
-        ctx.moveTo(PAD+8, ry); ctx.lineTo(PAD+11, ry); ctx.lineTo(PAD+11, ry+rowH2); ctx.lineTo(PAD+8, ry+rowH2);
-        ctx.quadraticCurveTo(PAD, ry+rowH2, PAD, ry+rowH2-8); ctx.lineTo(PAD, ry+8); ctx.quadraticCurveTo(PAD, ry, PAD+8, ry);
-        ctx.closePath(); ctx.fill(); ctx.restore();
-
-        // renumber badge
-        fillRoundRect(PAD+16, ry+rowH2/2-10, 22, 20, 4, col+'33');
-        txt(String(i+1), PAD+27, ry+rowH2/2, col, 11, '800', 'center');
-
-        // plate
-        ctx.save();
-        ctx.fillStyle = '#fff';
-        ctx.font = '800 16px "JetBrains Mono", monospace';
-        ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-        ctx.fillText(ut.plate, PAD+46, ry+rowH2/2-6);
-        ctx.restore();
-
-        // type tag if any
-        if (tyl) {
-          var tw = ctx.measureText(tyl).width + 14;
-          fillRoundRect(PAD+46, ry+rowH2/2+8, tw, 14, 3, col+'22');
-          txt(tyl, PAD+46+tw/2, ry+rowH2/2+15, col, 8, '700', 'center');
-        }
-
-        // right side: date + collector
-        txt(dyl, W-PAD-10, ry+rowH2/2-8, ACCENT, 11, '700', 'right');
-        txt(cyl, W-PAD-10, ry+rowH2/2+10, TEXT3, 10, '600', 'right');
+      unpaidList.forEach(function(ut,i){
+        var col=TYPE_COL[ut.truckType]||'#6b7280';
+        var dyl=DATE_LBL[ut.payDate]||ut.payDate||'—';
+        var cyl=COLL_LBL[ut.collector]||ut.collector||'—';
+        var rh=50, ry=cy+i*(rh+6);
+        lightCard(ulX,ry,ulW,rh,8);
+        fillRoundRect(ulX,ry,5,rh,8,col);
+        fillRoundRect(ulX+14,ry+rh/2-12,24,24,6,col+'20');
+        ctx.save();ctx.font='700 10px "Space Grotesk",sans-serif';ctx.fillStyle=col;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(String(i+1),ulX+26,ry+rh/2);ctx.restore();
+        ctx.save();ctx.font='700 16px "JetBrains Mono",monospace';ctx.fillStyle='#111827';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(ut.plate,ulX+46,ry+rh/2);ctx.restore();
+        ctx.save();ctx.font='700 11px "Space Grotesk",sans-serif';ctx.fillStyle='#2563eb';ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText(dyl,ulX+ulW-10,ry+rh/2-9);ctx.restore();
+        ctx.save();ctx.font='500 10px "Space Grotesk",sans-serif';ctx.fillStyle='#9ca3af';ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText(cyl,ulX+ulW-10,ry+rh/2+9);ctx.restore();
       });
-      cy += unpaidList.length * (48 + 6) + 10;
+      cy+=unpaidList.length*(50+6)+10;
     }
   }
 
   // ── Notes ──
-  if (s.notes) {
-    fillRoundRect(PAD, cy, W-PAD*2, 44, 8, BG3);
-    strokeRoundRect(PAD, cy, W-PAD*2, 44, 8, BORDER);
-    txt('📝 ' + s.notes, PAD+12, cy+22, TEXT2, 11, '600', 'left', W-PAD*2-24);
-    cy += 44 + 12;
+  if(s.notes){
+    fillRoundRect(PAD,cy,W-PAD*2,42,8,'#fff'); strokeRoundRect(PAD,cy,W-PAD*2,42,8,'#e5e7eb');
+    ctx.save();ctx.font='500 11px "Space Grotesk",sans-serif';ctx.fillStyle='#374151';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText('📝 '+s.notes,PAD+12,cy+21);ctx.restore();
+    cy+=42+10;
+  }
+
+  // ── Reporter ──
+  if(s.reporterName||s.submittedBy){
+    cy+=6;
+    ctx.save();ctx.strokeStyle='#e5e7eb';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(PAD,cy);ctx.lineTo(W-PAD,cy);ctx.stroke();ctx.restore();
+    ctx.save();ctx.font='500 10px "Space Grotesk",sans-serif';ctx.fillStyle='#9ca3af';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText('📋 Rapporté par',PAD,cy+18);ctx.restore();
+    ctx.save();ctx.font='700 12px "Space Grotesk",sans-serif';ctx.fillStyle='#1e3a8a';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(s.reporterName||s.submittedBy,PAD+115,cy+18);ctx.restore();
+    cy+=32;
   }
 
   // ── Footer ──
-  cy += 8;
-  hline(cy, BORDER);
-  ctx.save();
-  ctx.fillStyle = TEXT3;
-  ctx.font = '500 10px "Space Grotesk", sans-serif';
-  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.fillText('WKABE Hask Tracker · Généré le ' + new Date().toLocaleString('fr-FR',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}), W/2, cy+18);
+  cy+=8;
+  ctx.save();ctx.strokeStyle='#e5e7eb';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();ctx.restore();
+  ctx.save();ctx.font='500 10px "Space Grotesk",sans-serif';ctx.fillStyle='#9ca3af';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText('WKABE Hask Tracker · Généré le '+new Date().toLocaleString('fr-FR',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}),W/2,cy+18);
   ctx.restore();
 
   // ── Export ──
