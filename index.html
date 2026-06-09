@@ -1413,9 +1413,9 @@
       </div>
     </div>
     <div class="header-right">
-      <div class="online-badge"><div id="syncDot" class=""></div><span id="syncLabel">☁️ Live 21:20</span></div>
+      <div class="online-badge"><div id="syncDot" class=""></div><span id="syncLabel">☁️ Live 10:13</span></div>
       <span class="role-badge admin" id="roleBadge">ADMIN</span>
-      <button class="add-btn" id="headerAddBtn" onclick="openAddTruck()" style="display: none;">+ Add</button>
+      <button class="add-btn" id="headerAddBtn" onclick="openAddTruck()" style="">+ Add</button>
     </div>
   </div>
 
@@ -1433,35 +1433,35 @@
     <!-- Trucks Tab -->
     <div id="tabTrucks" style="display: none;">
       <div class="stats-bar">
-        <div class="stat-card"><div class="stat-num blue" id="statTotal">37</div><div class="stat-label">TRUCKS</div></div>
-        <div class="stat-card"><div class="stat-num green" id="statPaid">18</div><div class="stat-label">PAID</div></div>
+        <div class="stat-card"><div class="stat-num blue" id="statTotal">0</div><div class="stat-label">TRUCKS</div></div>
+        <div class="stat-card"><div class="stat-num green" id="statPaid">0</div><div class="stat-label">PAID</div></div>
         <div class="stat-card"><div class="stat-num orange" id="statPartial">0</div><div class="stat-label">PARTIAL</div></div>
-        <div class="stat-card"><div class="stat-num red" id="statUnpaid">19</div><div class="stat-label">UNPAID</div></div>
-        <div class="stat-card"><div class="stat-num teal" id="statETB">99.0k</div><div class="stat-label">ETB</div></div>
+        <div class="stat-card"><div class="stat-num red" id="statUnpaid">0</div><div class="stat-label">UNPAID</div></div>
+        <div class="stat-card"><div class="stat-num teal" id="statETB">0</div><div class="stat-label">ETB</div></div>
       </div>
       <div class="meals-bar" id="mealsBar">
         <div class="meal-card" onclick="openMealsModal()">
-          <div class="meal-num" id="statLunch">1.0k</div><div class="meal-label">🥗 LUNCH</div>
+          <div class="meal-num" id="statLunch">—</div><div class="meal-label">🥗 LUNCH</div>
         </div>
         <div class="meal-card" onclick="openMealsModal()">
-          <div class="meal-num" id="statDinner">1.6k</div><div class="meal-label">🍽️ DINNER</div>
+          <div class="meal-num" id="statDinner">—</div><div class="meal-label">🍽️ DINNER</div>
         </div>
         <div class="meal-card" onclick="openMealsModal()" style="border-color:rgba(239,68,68,0.3)">
-          <div class="meal-num" id="statNetCompany" style="color:var(--green)">73.0k</div><div class="meal-label">🏦 NET</div>
+          <div class="meal-num" id="statNetCompany" style="color:var(--green)">—</div><div class="meal-label">🏦 NET</div>
         </div>
       </div>
       <div class="date-bar">
-        <button class="date-chip" id="todayChip" onclick="setToday()" style="background: var(--accent); opacity: 0.6;">🟢 Today</button>
+        <button class="date-chip" id="todayChip" onclick="setToday()" style="background: var(--green); opacity: 1;">🟢 Today</button>
         <div class="date-input-wrap" style="cursor:pointer" onclick="openDatePicker()" id="datePickerBtn">
           <span style="color:var(--text3);font-size:13px;">📅</span>
-          <span id="dateFilterDisplay" style="flex:1;font-size:13px;font-weight:600">Fri, 15 May 2026</span>
+          <span id="dateFilterDisplay" style="flex:1;font-size:13px;font-weight:600">Today — Thu 4 Jun</span>
           <span style="color:var(--text3);font-size:12px;">▼</span>
-          <input type="hidden" id="dateFilter" value="2026-05-15">
+          <input type="hidden" id="dateFilter" value="2026-06-04">
         </div>
       </div>
       <!-- 6AM RULE NOTICE -->
       <div id="shiftRuleBanner" style="display:none;margin:0 16px 6px;padding:7px 12px;background:rgba(20,184,166,0.1);border:1px solid rgba(20,184,166,0.3);border-radius:8px;font-size:11px;color:var(--teal);font-weight:600;display:flex;align-items:center;gap:6px">
-        🕕 Working day: <span id="shiftRuleText">Tue 19 May 06:00 → Wed 20 May 05:59  (Djibouti time)</span>
+        🕕 Working day: <span id="shiftRuleText">Thu 4 Jun 06:00 → Fri 5 Jun 05:59  (Djibouti time)</span>
       </div>
       <!-- SUSPEND BANNER -->
       <div id="suspendBanner">
@@ -1477,24 +1477,28 @@
       <div class="worker-bar" id="workerFilterBar">
     <button class="worker-chip active" id="wchip_all" onclick="setWorkerFilter('all',this)">
       <div class="wdot" style="background:var(--accent)"></div>
-      👥 All <span class="wcount" id="wcount_all">37</span>
+      👥 All <span class="wcount" id="wcount_all">0</span>
     </button>
     
       <button class="worker-chip" id="wchip_Ahmed" onclick="setWorkerFilter('Ahmed',this)" style="border-color:#3b82f644">
         <div class="wdot" style="background:#3b82f6"></div>
-        Ahmed <span class="wcount" id="wcount_Ahmed">14</span>
+        Ahmed <span class="wcount" id="wcount_Ahmed">0</span>
       </button>
     
       <button class="worker-chip" id="wchip_Oli" onclick="setWorkerFilter('Oli',this)" style="border-color:#f59e0b44">
         <div class="wdot" style="background:#f59e0b"></div>
-        Oli <span class="wcount" id="wcount_Oli">11</span>
+        Oli <span class="wcount" id="wcount_Oli">0</span>
       </button>
     
       <button class="worker-chip" id="wchip_Ilyas" onclick="setWorkerFilter('Ilyas',this)" style="border-color:#6b728044">
         <div class="wdot" style="background:#6b7280"></div>
-        Ilyas <span class="wcount" id="wcount_Ilyas">11</span>
+        Ilyas <span class="wcount" id="wcount_Ilyas">0</span>
       </button>
     
+    <button class="worker-chip" id="wchip_nosealer" onclick="setWorkerFilter('nosealer',this)" style="border-color: rgba(245, 158, 11, 0.25);">
+      <div class="wdot" style="background:var(--orange)"></div>
+      No Sealer <span class="wcount" id="wcount_nosealer" style="color:var(--orange)">0</span>
+    </button>
   </div>
       <!-- PLATE SEARCH -->
       <div class="plate-search-wrap">
@@ -1502,9 +1506,9 @@
         <button class="plate-search-clear" id="plateSearchClear" onclick="clearPlateSearch()" style="display: none;">✕</button>
       </div>
       <div class="section-header">
-        <span class="section-title" id="trucksSectionTitle">HISTORY — Fri, 15 May 2026</span>
+        <span class="section-title" id="trucksSectionTitle">TODAY'S TRUCKS</span>
         <div style="display:flex;gap:8px;align-items:center">
-          <button class="new-btn" style="color: var(--green); font-size: 11px; display: none;" id="exportDateBtn" onclick="exportExcel()">📊 Export 2026-05-15</button>
+          <button class="new-btn" style="color: var(--green); font-size: 11px;" id="exportDateBtn" onclick="exportExcel()">📊 Export 2026-06-04</button>
           <button class="new-btn" style="color:var(--teal)" onclick="openShareReport()">📤 Share</button>
           <button class="select-mode-btn" id="selectModeBtn" onclick="toggleSelectMode()">☑️ Select</button>
           <button class="new-btn" onclick="openAddTruck()">+ New</button>
@@ -1514,1343 +1518,7 @@
         <div class="assign-title">⏳ WAITING FOR SEALER</div>
         <div id="unassignedList"></div>
       </div>
-      <div class="trucks-list" id="trucksList">
-    <div style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:10px;font-size:12px;color:var(--orange);display:flex;align-items:center;gap:8px">
-      📅 <span>Viewing history — 2026-05-15. Read-only, no changes allowed.</span>
-    </div>
-  
-      <div class="truck-card unpaid" id="tcard-oiLEFh407q1lZvyhaxTB">
-        <div class="truck-top">
-          <div style="display:flex;align-items:center;gap:8px">
-            
-            <span class="truck-number">#1</span>
-            <div class="truck-plate">A38272</div>
-          </div>
-          <span class="status-badge unpaid">❌ Unpaid</span>
-        </div>
-        <div class="truck-meta">
-          <span>📅 15 May 2026</span><span style="color:var(--teal);font-weight:700"> · 🕐 08:21</span>
-           · Added by: Ilyas
-        </div>
-        
-        
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
-            <div style="font-size:12px;font-weight:700;color:#6b7280">Ilyas</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
-            <div style="font-size:12px;font-weight:700;color:var(--orange)">—</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
-            <div style="font-size:12px;font-weight:700;color:var(--teal)">—</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
-            <div style="font-size:12px;font-weight:700;color:var(--accent)">—</div>
-          </div>
-        </div>
-        
-      </div>
-    
-      <div class="truck-card unpaid" id="tcard-wTOjOJ4kQumjeINR4g4r">
-        <div class="truck-top">
-          <div style="display:flex;align-items:center;gap:8px">
-            
-            <span class="truck-number">#2</span>
-            <div class="truck-plate">A24179</div>
-          </div>
-          <span class="status-badge unpaid">❌ Unpaid</span>
-        </div>
-        <div class="truck-meta">
-          <span>📅 15 May 2026</span><span style="color:var(--teal);font-weight:700"> · 🕐 09:46</span>
-           · Added by: Cashier 1
-        </div>
-        
-        
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
-            <div style="font-size:12px;font-weight:700;color:#6b7280">—</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
-            <div style="font-size:12px;font-weight:700;color:var(--orange)">—</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
-            <div style="font-size:12px;font-weight:700;color:var(--teal)">—</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
-            <div style="font-size:12px;font-weight:700;color:var(--accent)">—</div>
-          </div>
-        </div>
-        
-      </div>
-    
-      <div class="truck-card unpaid" id="tcard-FDLDNjdeSoDMcLCFr4Ri">
-        <div class="truck-top">
-          <div style="display:flex;align-items:center;gap:8px">
-            
-            <span class="truck-number">#3</span>
-            <div class="truck-plate">91166</div>
-          </div>
-          <span class="status-badge unpaid">❌ Unpaid</span>
-        </div>
-        <div class="truck-meta">
-          <span>📅 15 May 2026</span><span style="color:var(--teal);font-weight:700"> · 🕐 14:12</span>
-           · Added by: Ahmed
-        </div>
-        
-        
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
-            <div style="font-size:12px;font-weight:700;color:#3b82f6">Ahmed</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
-            <div style="font-size:12px;font-weight:700;color:var(--orange)">—</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
-            <div style="font-size:12px;font-weight:700;color:var(--teal)">—</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
-            <div style="font-size:12px;font-weight:700;color:var(--accent)">—</div>
-          </div>
-        </div>
-        
-      </div>
-    
-      <div class="truck-card paid" id="tcard-ei9LTw5nZHrgI2kqMylb">
-        <div class="truck-top">
-          <div style="display:flex;align-items:center;gap:8px">
-            
-            <span class="truck-number">#4</span>
-            <div class="truck-plate">774D91</div>
-          </div>
-          <span class="status-badge paid">✅ Paid</span>
-        </div>
-        <div class="truck-meta">
-          <span>📅 15 May 2026</span><span style="color:var(--teal);font-weight:700"> · 🕐 14:13</span>
-           · Added by: Ahmed
-        </div>
-        <div class="truck-meta" style="font-size:11px;color:var(--orange);font-weight:600">✏️ Modified: 15 May, 23:34 — by Cashier 1</div>
-        
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
-            <div style="font-size:12px;font-weight:700;color:#3b82f6">Ahmed</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
-            <div style="font-size:12px;font-weight:700;color:var(--orange)">5,500 ETB</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
-            <div style="font-size:12px;font-weight:700;color:var(--teal)">1,300 ETB</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
-            <div style="font-size:12px;font-weight:700;color:var(--accent)">4,200 ETB</div>
-          </div>
-        </div>
-        
-      </div>
-    
-      <div class="truck-card paid" id="tcard-S6T5mAcJN557YKhovgTq">
-        <div class="truck-top">
-          <div style="display:flex;align-items:center;gap:8px">
-            
-            <span class="truck-number">#5</span>
-            <div class="truck-plate">786D91</div>
-          </div>
-          <span class="status-badge paid">✅ Paid</span>
-        </div>
-        <div class="truck-meta">
-          <span>📅 15 May 2026</span><span style="color:var(--teal);font-weight:700"> · 🕐 14:14</span>
-           · Added by: Ahmed
-        </div>
-        <div class="truck-meta" style="font-size:11px;color:var(--orange);font-weight:600">✏️ Modified: 15 May, 23:34 — by Cashier 1</div>
-        
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
-            <div style="font-size:12px;font-weight:700;color:#3b82f6">Ahmed</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
-            <div style="font-size:12px;font-weight:700;color:var(--orange)">5,500 ETB</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
-            <div style="font-size:12px;font-weight:700;color:var(--teal)">1,300 ETB</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
-            <div style="font-size:12px;font-weight:700;color:var(--accent)">4,200 ETB</div>
-          </div>
-        </div>
-        
-      </div>
-    
-      <div class="truck-card paid" id="tcard-ZZniWRQN4KHFUepyncqX">
-        <div class="truck-top">
-          <div style="display:flex;align-items:center;gap:8px">
-            
-            <span class="truck-number">#6</span>
-            <div class="truck-plate">73783</div>
-          </div>
-          <span class="status-badge paid">✅ Paid</span>
-        </div>
-        <div class="truck-meta">
-          <span>📅 15 May 2026</span><span style="color:var(--teal);font-weight:700"> · 🕐 16:04</span>
-           · Added by: Ahmed
-        </div>
-        <div class="truck-meta" style="font-size:11px;color:var(--orange);font-weight:600">✏️ Modified: 15 May, 23:31 — by Cashier 1</div>
-        
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
-            <div style="font-size:12px;font-weight:700;color:#3b82f6">Ahmed</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
-            <div style="font-size:12px;font-weight:700;color:var(--orange)">5,500 ETB</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
-            <div style="font-size:12px;font-weight:700;color:var(--teal)">1,300 ETB</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
-            <div style="font-size:12px;font-weight:700;color:var(--accent)">4,200 ETB</div>
-          </div>
-        </div>
-        
-      </div>
-    
-      <div class="truck-card unpaid" id="tcard-bl6PIDeo38aHeJbqaoXl">
-        <div class="truck-top">
-          <div style="display:flex;align-items:center;gap:8px">
-            
-            <span class="truck-number">#7</span>
-            <div class="truck-plate">784D91</div>
-          </div>
-          <span class="status-badge unpaid">❌ Unpaid</span>
-        </div>
-        <div class="truck-meta">
-          <span>📅 15 May 2026</span><span style="color:var(--teal);font-weight:700"> · 🕐 16:16</span>
-           · Added by: Oli
-        </div>
-        
-        
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
-            <div style="font-size:12px;font-weight:700;color:#f59e0b">Oli</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
-            <div style="font-size:12px;font-weight:700;color:var(--orange)">—</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
-            <div style="font-size:12px;font-weight:700;color:var(--teal)">—</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
-            <div style="font-size:12px;font-weight:700;color:var(--accent)">—</div>
-          </div>
-        </div>
-        
-      </div>
-    
-      <div class="truck-card paid" id="tcard-rM3V03X1oGotQo07NmyW">
-        <div class="truck-top">
-          <div style="display:flex;align-items:center;gap:8px">
-            
-            <span class="truck-number">#8</span>
-            <div class="truck-plate">778D91</div>
-          </div>
-          <span class="status-badge paid">✅ Paid</span>
-        </div>
-        <div class="truck-meta">
-          <span>📅 15 May 2026</span><span style="color:var(--teal);font-weight:700"> · 🕐 16:16</span>
-           · Added by: Oli
-        </div>
-        <div class="truck-meta" style="font-size:11px;color:var(--orange);font-weight:600">✏️ Modified: 15 May, 23:32 — by Cashier 1</div>
-        
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
-            <div style="font-size:12px;font-weight:700;color:#f59e0b">Oli</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
-            <div style="font-size:12px;font-weight:700;color:var(--orange)">5,500 ETB</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
-            <div style="font-size:12px;font-weight:700;color:var(--teal)">1,300 ETB</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
-            <div style="font-size:12px;font-weight:700;color:var(--accent)">4,200 ETB</div>
-          </div>
-        </div>
-        
-      </div>
-    
-      <div class="truck-card unpaid" id="tcard-ks55rzPpkviMmBXby85O">
-        <div class="truck-top">
-          <div style="display:flex;align-items:center;gap:8px">
-            
-            <span class="truck-number">#9</span>
-            <div class="truck-plate">71306</div>
-          </div>
-          <span class="status-badge unpaid">❌ Unpaid</span>
-        </div>
-        <div class="truck-meta">
-          <span>📅 15 May 2026</span><span style="color:var(--teal);font-weight:700"> · 🕐 16:17</span>
-           · Added by: Oli
-        </div>
-        
-        
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
-            <div style="font-size:12px;font-weight:700;color:#f59e0b">Oli</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
-            <div style="font-size:12px;font-weight:700;color:var(--orange)">—</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
-            <div style="font-size:12px;font-weight:700;color:var(--teal)">—</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
-            <div style="font-size:12px;font-weight:700;color:var(--accent)">—</div>
-          </div>
-        </div>
-        
-      </div>
-    
-      <div class="truck-card paid" id="tcard-qMfGL9CJTvhaONyCVEQT">
-        <div class="truck-top">
-          <div style="display:flex;align-items:center;gap:8px">
-            
-            <span class="truck-number">#10</span>
-            <div class="truck-plate">A11461</div>
-          </div>
-          <span class="status-badge paid">✅ Paid</span>
-        </div>
-        <div class="truck-meta">
-          <span>📅 15 May 2026</span><span style="color:var(--teal);font-weight:700"> · 🕐 16:17</span>
-           · Added by: Oli
-        </div>
-        <div class="truck-meta" style="font-size:11px;color:var(--orange);font-weight:600">✏️ Modified: 15 May, 23:32 — by Cashier 1</div>
-        
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
-            <div style="font-size:12px;font-weight:700;color:#f59e0b">Oli</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
-            <div style="font-size:12px;font-weight:700;color:var(--orange)">5,500 ETB</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
-            <div style="font-size:12px;font-weight:700;color:var(--teal)">1,300 ETB</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
-            <div style="font-size:12px;font-weight:700;color:var(--accent)">4,200 ETB</div>
-          </div>
-        </div>
-        
-      </div>
-    
-      <div class="truck-card unpaid" id="tcard-rYSERohrt8NmTz5kRitF">
-        <div class="truck-top">
-          <div style="display:flex;align-items:center;gap:8px">
-            
-            <span class="truck-number">#11</span>
-            <div class="truck-plate">76010</div>
-          </div>
-          <span class="status-badge unpaid">❌ Unpaid</span>
-        </div>
-        <div class="truck-meta">
-          <span>📅 15 May 2026</span><span style="color:var(--teal);font-weight:700"> · 🕐 16:17</span>
-           · Added by: Oli
-        </div>
-        
-        
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
-            <div style="font-size:12px;font-weight:700;color:#f59e0b">Oli</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
-            <div style="font-size:12px;font-weight:700;color:var(--orange)">—</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
-            <div style="font-size:12px;font-weight:700;color:var(--teal)">—</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
-            <div style="font-size:12px;font-weight:700;color:var(--accent)">—</div>
-          </div>
-        </div>
-        
-      </div>
-    
-      <div class="truck-card unpaid" id="tcard-97zwE6MFo5bjI1mqSTYJ">
-        <div class="truck-top">
-          <div style="display:flex;align-items:center;gap:8px">
-            
-            <span class="truck-number">#12</span>
-            <div class="truck-plate">779D91</div>
-          </div>
-          <span class="status-badge unpaid">❌ Unpaid</span>
-        </div>
-        <div class="truck-meta">
-          <span>📅 15 May 2026</span><span style="color:var(--teal);font-weight:700"> · 🕐 16:59</span>
-           · Added by: Ilyas
-        </div>
-        
-        
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
-            <div style="font-size:12px;font-weight:700;color:#6b7280">Ilyas</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
-            <div style="font-size:12px;font-weight:700;color:var(--orange)">—</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
-            <div style="font-size:12px;font-weight:700;color:var(--teal)">—</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
-            <div style="font-size:12px;font-weight:700;color:var(--accent)">—</div>
-          </div>
-        </div>
-        
-      </div>
-    
-      <div class="truck-card paid" id="tcard-ZDp0DthJ52zEEtPT6qdz">
-        <div class="truck-top">
-          <div style="display:flex;align-items:center;gap:8px">
-            
-            <span class="truck-number">#13</span>
-            <div class="truck-plate">A32584</div>
-          </div>
-          <span class="status-badge paid">✅ Paid</span>
-        </div>
-        <div class="truck-meta">
-          <span>📅 15 May 2026</span><span style="color:var(--teal);font-weight:700"> · 🕐 17:00</span>
-           · Added by: Ilyas
-        </div>
-        <div class="truck-meta" style="font-size:11px;color:var(--orange);font-weight:600">✏️ Modified: 15 May, 23:30 — by Cashier 1</div>
-        
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
-            <div style="font-size:12px;font-weight:700;color:#6b7280">Ilyas</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
-            <div style="font-size:12px;font-weight:700;color:var(--orange)">5,500 ETB</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
-            <div style="font-size:12px;font-weight:700;color:var(--teal)">1,300 ETB</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
-            <div style="font-size:12px;font-weight:700;color:var(--accent)">4,200 ETB</div>
-          </div>
-        </div>
-        
-      </div>
-    
-      <div class="truck-card paid" id="tcard-uf6pnoIqFk4C5Sk46TPB">
-        <div class="truck-top">
-          <div style="display:flex;align-items:center;gap:8px">
-            
-            <span class="truck-number">#14</span>
-            <div class="truck-plate">A32850</div>
-          </div>
-          <span class="status-badge paid">✅ Paid</span>
-        </div>
-        <div class="truck-meta">
-          <span>📅 15 May 2026</span><span style="color:var(--teal);font-weight:700"> · 🕐 17:00</span>
-           · Added by: Ilyas
-        </div>
-        <div class="truck-meta" style="font-size:11px;color:var(--orange);font-weight:600">✏️ Modified: 15 May, 23:32 — by Cashier 1</div>
-        
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
-            <div style="font-size:12px;font-weight:700;color:#6b7280">Ilyas</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
-            <div style="font-size:12px;font-weight:700;color:var(--orange)">5,500 ETB</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
-            <div style="font-size:12px;font-weight:700;color:var(--teal)">1,300 ETB</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
-            <div style="font-size:12px;font-weight:700;color:var(--accent)">4,200 ETB</div>
-          </div>
-        </div>
-        
-      </div>
-    
-      <div class="truck-card paid" id="tcard-qkMNpotL3qd3f0oOWsdn">
-        <div class="truck-top">
-          <div style="display:flex;align-items:center;gap:8px">
-            
-            <span class="truck-number">#15</span>
-            <div class="truck-plate">A30783</div>
-          </div>
-          <span class="status-badge paid">✅ Paid</span>
-        </div>
-        <div class="truck-meta">
-          <span>📅 15 May 2026</span><span style="color:var(--teal);font-weight:700"> · 🕐 17:01</span>
-           · Added by: Ilyas
-        </div>
-        <div class="truck-meta" style="font-size:11px;color:var(--orange);font-weight:600">✏️ Modified: 15 May, 23:30 — by Cashier 1</div>
-        
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
-            <div style="font-size:12px;font-weight:700;color:#6b7280">Ilyas</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
-            <div style="font-size:12px;font-weight:700;color:var(--orange)">5,500 ETB</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
-            <div style="font-size:12px;font-weight:700;color:var(--teal)">1,300 ETB</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
-            <div style="font-size:12px;font-weight:700;color:var(--accent)">4,200 ETB</div>
-          </div>
-        </div>
-        
-      </div>
-    
-      <div class="truck-card paid" id="tcard-VzzOy93LvtYIJUvQECGc">
-        <div class="truck-top">
-          <div style="display:flex;align-items:center;gap:8px">
-            
-            <span class="truck-number">#16</span>
-            <div class="truck-plate">A31399</div>
-          </div>
-          <span class="status-badge paid">✅ Paid</span>
-        </div>
-        <div class="truck-meta">
-          <span>📅 15 May 2026</span><span style="color:var(--teal);font-weight:700"> · 🕐 17:34</span>
-           · Added by: Ilyas
-        </div>
-        <div class="truck-meta" style="font-size:11px;color:var(--orange);font-weight:600">✏️ Modified: 15 May, 23:30 — by Cashier 1</div>
-        
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
-            <div style="font-size:12px;font-weight:700;color:#6b7280">Ilyas</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
-            <div style="font-size:12px;font-weight:700;color:var(--orange)">5,500 ETB</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
-            <div style="font-size:12px;font-weight:700;color:var(--teal)">1,300 ETB</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
-            <div style="font-size:12px;font-weight:700;color:var(--accent)">4,200 ETB</div>
-          </div>
-        </div>
-        
-      </div>
-    
-      <div class="truck-card paid" id="tcard-e2Y9HRsB1cJKrQ8kSagA">
-        <div class="truck-top">
-          <div style="display:flex;align-items:center;gap:8px">
-            
-            <span class="truck-number">#17</span>
-            <div class="truck-plate">A33144</div>
-          </div>
-          <span class="status-badge paid">✅ Paid</span>
-        </div>
-        <div class="truck-meta">
-          <span>📅 15 May 2026</span><span style="color:var(--teal);font-weight:700"> · 🕐 17:38</span>
-           · Added by: Ahmed
-        </div>
-        <div class="truck-meta" style="font-size:11px;color:var(--orange);font-weight:600">✏️ Modified: 15 May, 23:29 — by Cashier 1</div>
-        
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
-            <div style="font-size:12px;font-weight:700;color:#3b82f6">Ahmed</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
-            <div style="font-size:12px;font-weight:700;color:var(--orange)">5,500 ETB</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
-            <div style="font-size:12px;font-weight:700;color:var(--teal)">1,300 ETB</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
-            <div style="font-size:12px;font-weight:700;color:var(--accent)">4,200 ETB</div>
-          </div>
-        </div>
-        
-      </div>
-    
-      <div class="truck-card unpaid" id="tcard-nzJ2T0b5Y4zYXUFAcUdS">
-        <div class="truck-top">
-          <div style="display:flex;align-items:center;gap:8px">
-            
-            <span class="truck-number">#18</span>
-            <div class="truck-plate">782D91</div>
-          </div>
-          <span class="status-badge unpaid">❌ Unpaid</span>
-        </div>
-        <div class="truck-meta">
-          <span>📅 15 May 2026</span><span style="color:var(--teal);font-weight:700"> · 🕐 18:23</span>
-           · Added by: Ilyas
-        </div>
-        
-        
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
-            <div style="font-size:12px;font-weight:700;color:#6b7280">Ilyas</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
-            <div style="font-size:12px;font-weight:700;color:var(--orange)">—</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
-            <div style="font-size:12px;font-weight:700;color:var(--teal)">—</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
-            <div style="font-size:12px;font-weight:700;color:var(--accent)">—</div>
-          </div>
-        </div>
-        
-      </div>
-    
-      <div class="truck-card paid" id="tcard-SDzGvwJ6FSTNmiro3Kct">
-        <div class="truck-top">
-          <div style="display:flex;align-items:center;gap:8px">
-            
-            <span class="truck-number">#19</span>
-            <div class="truck-plate">A45517</div>
-          </div>
-          <span class="status-badge paid">✅ Paid</span>
-        </div>
-        <div class="truck-meta">
-          <span>📅 15 May 2026</span><span style="color:var(--teal);font-weight:700"> · 🕐 18:23</span>
-           · Added by: Ilyas
-        </div>
-        <div class="truck-meta" style="font-size:11px;color:var(--orange);font-weight:600">✏️ Modified: 15 May, 23:28 — by Cashier 1</div>
-        
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
-            <div style="font-size:12px;font-weight:700;color:#6b7280">Ilyas</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
-            <div style="font-size:12px;font-weight:700;color:var(--orange)">5,500 ETB</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
-            <div style="font-size:12px;font-weight:700;color:var(--teal)">1,300 ETB</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
-            <div style="font-size:12px;font-weight:700;color:var(--accent)">4,200 ETB</div>
-          </div>
-        </div>
-        
-      </div>
-    
-      <div class="truck-card paid" id="tcard-enjjOwTj1QYkgZcggXhV">
-        <div class="truck-top">
-          <div style="display:flex;align-items:center;gap:8px">
-            
-            <span class="truck-number">#20</span>
-            <div class="truck-plate">776D91</div>
-          </div>
-          <span class="status-badge paid">✅ Paid</span>
-        </div>
-        <div class="truck-meta">
-          <span>📅 15 May 2026</span><span style="color:var(--teal);font-weight:700"> · 🕐 18:28</span>
-           · Added by: Ahmed
-        </div>
-        <div class="truck-meta" style="font-size:11px;color:var(--orange);font-weight:600">✏️ Modified: 15 May, 23:34 — by Cashier 1</div>
-        
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
-            <div style="font-size:12px;font-weight:700;color:#3b82f6">Ahmed</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
-            <div style="font-size:12px;font-weight:700;color:var(--orange)">5,500 ETB</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
-            <div style="font-size:12px;font-weight:700;color:var(--teal)">1,300 ETB</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
-            <div style="font-size:12px;font-weight:700;color:var(--accent)">4,200 ETB</div>
-          </div>
-        </div>
-        
-      </div>
-    
-      <div class="truck-card unpaid" id="tcard-NrIQKncoXxT3PER6UeHi">
-        <div class="truck-top">
-          <div style="display:flex;align-items:center;gap:8px">
-            
-            <span class="truck-number">#21</span>
-            <div class="truck-plate">42407</div>
-          </div>
-          <span class="status-badge unpaid">❌ Unpaid</span>
-        </div>
-        <div class="truck-meta">
-          <span>📅 15 May 2026</span><span style="color:var(--teal);font-weight:700"> · 🕐 18:49</span>
-           · Added by: Ilyas
-        </div>
-        
-        
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
-            <div style="font-size:12px;font-weight:700;color:#6b7280">Ilyas</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
-            <div style="font-size:12px;font-weight:700;color:var(--orange)">—</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
-            <div style="font-size:12px;font-weight:700;color:var(--teal)">—</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
-            <div style="font-size:12px;font-weight:700;color:var(--accent)">—</div>
-          </div>
-        </div>
-        
-      </div>
-    
-      <div class="truck-card unpaid" id="tcard-50z9vqQbPxK7lKtmTJCu">
-        <div class="truck-top">
-          <div style="display:flex;align-items:center;gap:8px">
-            
-            <span class="truck-number">#22</span>
-            <div class="truck-plate">63453</div>
-          </div>
-          <span class="status-badge unpaid">❌ Unpaid</span>
-        </div>
-        <div class="truck-meta">
-          <span>📅 15 May 2026</span><span style="color:var(--teal);font-weight:700"> · 🕐 19:03</span>
-           · Added by: Oli
-        </div>
-        
-        
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
-            <div style="font-size:12px;font-weight:700;color:#f59e0b">Oli</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
-            <div style="font-size:12px;font-weight:700;color:var(--orange)">—</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
-            <div style="font-size:12px;font-weight:700;color:var(--teal)">—</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
-            <div style="font-size:12px;font-weight:700;color:var(--accent)">—</div>
-          </div>
-        </div>
-        
-      </div>
-    
-      <div class="truck-card paid" id="tcard-iWwHMQLg9WkwPha4Q8P9">
-        <div class="truck-top">
-          <div style="display:flex;align-items:center;gap:8px">
-            
-            <span class="truck-number">#23</span>
-            <div class="truck-plate">A30791</div>
-          </div>
-          <span class="status-badge paid">✅ Paid</span>
-        </div>
-        <div class="truck-meta">
-          <span>📅 15 May 2026</span><span style="color:var(--teal);font-weight:700"> · 🕐 19:03</span>
-           · Added by: Oli
-        </div>
-        <div class="truck-meta" style="font-size:11px;color:var(--orange);font-weight:600">✏️ Modified: 15 May, 23:29 — by Cashier 1</div>
-        
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
-            <div style="font-size:12px;font-weight:700;color:#f59e0b">Oli</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
-            <div style="font-size:12px;font-weight:700;color:var(--orange)">5,500 ETB</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
-            <div style="font-size:12px;font-weight:700;color:var(--teal)">1,300 ETB</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
-            <div style="font-size:12px;font-weight:700;color:var(--accent)">4,200 ETB</div>
-          </div>
-        </div>
-        
-      </div>
-    
-      <div class="truck-card unpaid" id="tcard-5lnXJpXAfYkVRLuVRzQw">
-        <div class="truck-top">
-          <div style="display:flex;align-items:center;gap:8px">
-            
-            <span class="truck-number">#24</span>
-            <div class="truck-plate">68525</div>
-          </div>
-          <span class="status-badge unpaid">❌ Unpaid</span>
-        </div>
-        <div class="truck-meta">
-          <span>📅 15 May 2026</span><span style="color:var(--teal);font-weight:700"> · 🕐 19:03</span>
-           · Added by: Oli
-        </div>
-        
-        
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
-            <div style="font-size:12px;font-weight:700;color:#f59e0b">Oli</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
-            <div style="font-size:12px;font-weight:700;color:var(--orange)">—</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
-            <div style="font-size:12px;font-weight:700;color:var(--teal)">—</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
-            <div style="font-size:12px;font-weight:700;color:var(--accent)">—</div>
-          </div>
-        </div>
-        
-      </div>
-    
-      <div class="truck-card unpaid" id="tcard-xtcs2iNGCLCAyLNx1jHY">
-        <div class="truck-top">
-          <div style="display:flex;align-items:center;gap:8px">
-            
-            <span class="truck-number">#25</span>
-            <div class="truck-plate">68423</div>
-          </div>
-          <span class="status-badge unpaid">❌ Unpaid</span>
-        </div>
-        <div class="truck-meta">
-          <span>📅 15 May 2026</span><span style="color:var(--teal);font-weight:700"> · 🕐 19:07</span>
-           · Added by: Ahmed
-        </div>
-        
-        
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
-            <div style="font-size:12px;font-weight:700;color:#3b82f6">Ahmed</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
-            <div style="font-size:12px;font-weight:700;color:var(--orange)">—</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
-            <div style="font-size:12px;font-weight:700;color:var(--teal)">—</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
-            <div style="font-size:12px;font-weight:700;color:var(--accent)">—</div>
-          </div>
-        </div>
-        
-      </div>
-    
-      <div class="truck-card paid" id="tcard-8VoOc2SCZN3aOPCI2oHj">
-        <div class="truck-top">
-          <div style="display:flex;align-items:center;gap:8px">
-            
-            <span class="truck-number">#26</span>
-            <div class="truck-plate">A45516</div>
-          </div>
-          <span class="status-badge paid">✅ Paid</span>
-        </div>
-        <div class="truck-meta">
-          <span>📅 15 May 2026</span><span style="color:var(--teal);font-weight:700"> · 🕐 19:18</span>
-           · Added by: Ahmed
-        </div>
-        <div class="truck-meta" style="font-size:11px;color:var(--orange);font-weight:600">✏️ Modified: 15 May, 23:27 — by Cashier 1</div>
-        
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
-            <div style="font-size:12px;font-weight:700;color:#3b82f6">Ahmed</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
-            <div style="font-size:12px;font-weight:700;color:var(--orange)">5,500 ETB</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
-            <div style="font-size:12px;font-weight:700;color:var(--teal)">1,300 ETB</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
-            <div style="font-size:12px;font-weight:700;color:var(--accent)">4,200 ETB</div>
-          </div>
-        </div>
-        
-      </div>
-    
-      <div class="truck-card paid" id="tcard-XpVTotHkftiLGm7VBw7k">
-        <div class="truck-top">
-          <div style="display:flex;align-items:center;gap:8px">
-            
-            <span class="truck-number">#27</span>
-            <div class="truck-plate">60878</div>
-          </div>
-          <span class="status-badge paid">✅ Paid</span>
-        </div>
-        <div class="truck-meta">
-          <span>📅 15 May 2026</span><span style="color:var(--teal);font-weight:700"> · 🕐 19:48</span>
-           · Added by: Ahmed
-        </div>
-        <div class="truck-meta" style="font-size:11px;color:var(--orange);font-weight:600">✏️ Modified: 15 May, 23:23 — by Cashier 1</div>
-        
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
-            <div style="font-size:12px;font-weight:700;color:#3b82f6">Ahmed</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
-            <div style="font-size:12px;font-weight:700;color:var(--orange)">5,500 ETB</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
-            <div style="font-size:12px;font-weight:700;color:var(--teal)">1,300 ETB</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
-            <div style="font-size:12px;font-weight:700;color:var(--accent)">4,200 ETB</div>
-          </div>
-        </div>
-        
-      </div>
-    
-      <div class="truck-card unpaid" id="tcard-Giojq5B9sb8VG8T96QFC">
-        <div class="truck-top">
-          <div style="display:flex;align-items:center;gap:8px">
-            
-            <span class="truck-number">#28</span>
-            <div class="truck-plate">A20280</div>
-          </div>
-          <span class="status-badge unpaid">❌ Unpaid</span>
-        </div>
-        <div class="truck-meta">
-          <span>📅 15 May 2026</span><span style="color:var(--teal);font-weight:700"> · 🕐 20:10</span>
-           · Added by: Oli
-        </div>
-        
-        
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
-            <div style="font-size:12px;font-weight:700;color:#f59e0b">Oli</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
-            <div style="font-size:12px;font-weight:700;color:var(--orange)">—</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
-            <div style="font-size:12px;font-weight:700;color:var(--teal)">—</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
-            <div style="font-size:12px;font-weight:700;color:var(--accent)">—</div>
-          </div>
-        </div>
-        
-      </div>
-    
-      <div class="truck-card unpaid" id="tcard-PcEgpNVld1iMi1DhDZfM">
-        <div class="truck-top">
-          <div style="display:flex;align-items:center;gap:8px">
-            
-            <span class="truck-number">#29</span>
-            <div class="truck-plate">A20281</div>
-          </div>
-          <span class="status-badge unpaid">❌ Unpaid</span>
-        </div>
-        <div class="truck-meta">
-          <span>📅 15 May 2026</span><span style="color:var(--teal);font-weight:700"> · 🕐 20:10</span>
-           · Added by: Oli
-        </div>
-        
-        
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
-            <div style="font-size:12px;font-weight:700;color:#f59e0b">Oli</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
-            <div style="font-size:12px;font-weight:700;color:var(--orange)">—</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
-            <div style="font-size:12px;font-weight:700;color:var(--teal)">—</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
-            <div style="font-size:12px;font-weight:700;color:var(--accent)">—</div>
-          </div>
-        </div>
-        
-      </div>
-    
-      <div class="truck-card unpaid" id="tcard-FUlUBDOzMPJ9McRL0nbB">
-        <div class="truck-top">
-          <div style="display:flex;align-items:center;gap:8px">
-            
-            <span class="truck-number">#30</span>
-            <div class="truck-plate">10433</div>
-          </div>
-          <span class="status-badge unpaid">❌ Unpaid</span>
-        </div>
-        <div class="truck-meta">
-          <span>📅 15 May 2026</span><span style="color:var(--teal);font-weight:700"> · 🕐 20:10</span>
-           · Added by: Oli
-        </div>
-        
-        
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
-            <div style="font-size:12px;font-weight:700;color:#f59e0b">Oli</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
-            <div style="font-size:12px;font-weight:700;color:var(--orange)">—</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
-            <div style="font-size:12px;font-weight:700;color:var(--teal)">—</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
-            <div style="font-size:12px;font-weight:700;color:var(--accent)">—</div>
-          </div>
-        </div>
-        
-      </div>
-    
-      <div class="truck-card unpaid" id="tcard-MwanGRZvIWrFYwfA25fv">
-        <div class="truck-top">
-          <div style="display:flex;align-items:center;gap:8px">
-            
-            <span class="truck-number">#31</span>
-            <div class="truck-plate">42648</div>
-          </div>
-          <span class="status-badge unpaid">❌ Unpaid</span>
-        </div>
-        <div class="truck-meta">
-          <span>📅 15 May 2026</span><span style="color:var(--teal);font-weight:700"> · 🕐 20:21</span>
-           · Added by: Ilyas
-        </div>
-        
-        
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
-            <div style="font-size:12px;font-weight:700;color:#6b7280">Ilyas</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
-            <div style="font-size:12px;font-weight:700;color:var(--orange)">—</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
-            <div style="font-size:12px;font-weight:700;color:var(--teal)">—</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
-            <div style="font-size:12px;font-weight:700;color:var(--accent)">—</div>
-          </div>
-        </div>
-        
-      </div>
-    
-      <div class="truck-card paid" id="tcard-0l1KbqdJuQ2RmC0SzkRF">
-        <div class="truck-top">
-          <div style="display:flex;align-items:center;gap:8px">
-            
-            <span class="truck-number">#32</span>
-            <div class="truck-plate">A35026</div>
-          </div>
-          <span class="status-badge paid">✅ Paid</span>
-        </div>
-        <div class="truck-meta">
-          <span>📅 15 May 2026</span><span style="color:var(--teal);font-weight:700"> · 🕐 21:23</span>
-           · Added by: Ilyas
-        </div>
-        <div class="truck-meta" style="font-size:11px;color:var(--orange);font-weight:600">✏️ Modified: 15 May, 23:19 — by Cashier 1</div>
-        
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
-            <div style="font-size:12px;font-weight:700;color:#6b7280">Ilyas</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
-            <div style="font-size:12px;font-weight:700;color:var(--orange)">5,500 ETB</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
-            <div style="font-size:12px;font-weight:700;color:var(--teal)">1,300 ETB</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
-            <div style="font-size:12px;font-weight:700;color:var(--accent)">4,200 ETB</div>
-          </div>
-        </div>
-        
-      </div>
-    
-      <div class="truck-card paid" id="tcard-F8vVxqS5uMbA9kvDATkG">
-        <div class="truck-top">
-          <div style="display:flex;align-items:center;gap:8px">
-            
-            <span class="truck-number">#33</span>
-            <div class="truck-plate">A11267</div>
-          </div>
-          <span class="status-badge paid">✅ Paid</span>
-        </div>
-        <div class="truck-meta">
-          <span>📅 15 May 2026</span><span style="color:var(--teal);font-weight:700"> · 🕐 21:25</span>
-           · Added by: Ahmed
-        </div>
-        <div class="truck-meta" style="font-size:11px;color:var(--orange);font-weight:600">✏️ Modified: 15 May, 23:21 — by Cashier 1</div>
-        
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
-            <div style="font-size:12px;font-weight:700;color:#3b82f6">Ahmed</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
-            <div style="font-size:12px;font-weight:700;color:var(--orange)">5,500 ETB</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
-            <div style="font-size:12px;font-weight:700;color:var(--teal)">1,300 ETB</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
-            <div style="font-size:12px;font-weight:700;color:var(--accent)">4,200 ETB</div>
-          </div>
-        </div>
-        
-      </div>
-    
-      <div class="truck-card unpaid" id="tcard-kK4ZOf7lC3gwJ6sH7F1u">
-        <div class="truck-top">
-          <div style="display:flex;align-items:center;gap:8px">
-            
-            <span class="truck-number">#34</span>
-            <div class="truck-plate">46441</div>
-          </div>
-          <span class="status-badge unpaid">❌ Unpaid</span>
-        </div>
-        <div class="truck-meta">
-          <span>📅 15 May 2026</span><span style="color:var(--teal);font-weight:700"> · 🕐 22:18</span>
-           · Added by: Ahmed
-        </div>
-        
-        
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
-            <div style="font-size:12px;font-weight:700;color:#3b82f6">Ahmed</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
-            <div style="font-size:12px;font-weight:700;color:var(--orange)">—</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
-            <div style="font-size:12px;font-weight:700;color:var(--teal)">—</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
-            <div style="font-size:12px;font-weight:700;color:var(--accent)">—</div>
-          </div>
-        </div>
-        
-      </div>
-    
-      <div class="truck-card unpaid" id="tcard-MwKaM6pz9G5eUXf85taj">
-        <div class="truck-top">
-          <div style="display:flex;align-items:center;gap:8px">
-            
-            <span class="truck-number">#35</span>
-            <div class="truck-plate">A43546</div>
-          </div>
-          <span class="status-badge unpaid">❌ Unpaid</span>
-        </div>
-        <div class="truck-meta">
-          <span>📅 15 May 2026</span><span style="color:var(--teal);font-weight:700"> · 🕐 23:09</span>
-           · Added by: Ahmed
-        </div>
-        
-        
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
-            <div style="font-size:12px;font-weight:700;color:#3b82f6">Ahmed</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
-            <div style="font-size:12px;font-weight:700;color:var(--orange)">—</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
-            <div style="font-size:12px;font-weight:700;color:var(--teal)">—</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
-            <div style="font-size:12px;font-weight:700;color:var(--accent)">—</div>
-          </div>
-        </div>
-        
-      </div>
-    
-      <div class="truck-card unpaid" id="tcard-zep5G5E3qMqOSca7UwQw">
-        <div class="truck-top">
-          <div style="display:flex;align-items:center;gap:8px">
-            
-            <span class="truck-number">#36</span>
-            <div class="truck-plate">84853</div>
-          </div>
-          <span class="status-badge unpaid">❌ Unpaid</span>
-        </div>
-        <div class="truck-meta">
-          <span>📅 15 May 2026</span><span style="color:var(--teal);font-weight:700"> · 🕐 23:09</span>
-           · Added by: Ahmed
-        </div>
-        
-        
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
-            <div style="font-size:12px;font-weight:700;color:#3b82f6">Ahmed</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
-            <div style="font-size:12px;font-weight:700;color:var(--orange)">—</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
-            <div style="font-size:12px;font-weight:700;color:var(--teal)">—</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
-            <div style="font-size:12px;font-weight:700;color:var(--accent)">—</div>
-          </div>
-        </div>
-        
-      </div>
-    
-      <div class="truck-card unpaid" id="tcard-W9AHpmJDejumjriBWRY1">
-        <div class="truck-top">
-          <div style="display:flex;align-items:center;gap:8px">
-            
-            <span class="truck-number">#37</span>
-            <div class="truck-plate">36967</div>
-          </div>
-          <span class="status-badge unpaid">❌ Unpaid</span>
-        </div>
-        <div class="truck-meta">
-          <span>📅 15 May 2026</span><span style="color:var(--teal);font-weight:700"> · 🕐 23:11</span>
-           · Added by: Ahmed
-        </div>
-        
-        
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
-            <div style="font-size:12px;font-weight:700;color:#3b82f6">Ahmed</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
-            <div style="font-size:12px;font-weight:700;color:var(--orange)">—</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
-            <div style="font-size:12px;font-weight:700;color:var(--teal)">—</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
-            <div style="font-size:12px;font-weight:700;color:var(--accent)">—</div>
-          </div>
-        </div>
-        
-      </div>
-    </div>
+      <div class="trucks-list" id="trucksList"><div class="empty-state"><div class="icon">🚛</div><p>Aucun camion trouvé</p></div></div>
     </div>
 
     <!-- Truck List Tab (all trucks in global order) -->
@@ -2866,7 +1534,7 @@
 
     <!-- Workers Tab -->
     <div id="tabWorkers" style="display: none;">
-      <div class="workers-list" id="workersList"><div style="padding:8px 16px 4px;font-size:11px;font-weight:700;color:var(--text3);letter-spacing:0.08em">📅 FRI, 15 MAY 2026</div>
+      <div class="workers-list" id="workersList"><div style="padding:8px 16px 4px;font-size:11px;font-weight:700;color:var(--text3);letter-spacing:0.08em">📅 TODAY</div>
       <div class="worker-card" id="wcard_Ahmed">
         <div class="worker-card-header" onclick="toggleWorker('Ahmed')">
           <div class="worker-avatar" style="background:#3b82f622;color:#3b82f6;border:2px solid #3b82f644">
@@ -2875,22 +1543,23 @@
           <div class="worker-info">
             <div class="worker-name">Ahmed</div>
             <div class="worker-stats-row">
-              <div class="worker-stat">Trucks: <span>14</span></div>
-              <div class="worker-stat">Earned: <span style="color:var(--green)">10,400</span></div>
-              <div class="worker-stat">Net: <span style="color:var(--green)">10,400</span></div>
+              <div class="worker-stat">Trucks: <span>0</span></div>
+              <div class="worker-stat">Earned: <span style="color:var(--green)">0</span></div>
+              <div class="worker-stat">Net: <span style="color:var(--green)">0</span></div>
             </div>
           </div>
           <div class="expand-icon">▼</div>
         </div>
+        
         <div class="worker-details">
-          <div class="detail-row"><span class="detail-label">📅 Date</span><span class="detail-val">Fri, 15 May 2026</span></div>
-          <div class="detail-row"><span class="detail-label">Trucks worked</span><span class="detail-val">14</span></div>
-          <div class="detail-row"><span class="detail-label">Paid trucks</span><span class="detail-val green">8</span></div>
+          <div class="detail-row"><span class="detail-label">📅 Date</span><span class="detail-val">Today</span></div>
+          <div class="detail-row"><span class="detail-label">Trucks worked</span><span class="detail-val">0</span></div>
+          <div class="detail-row"><span class="detail-label">Paid trucks</span><span class="detail-val green">0</span></div>
           <div class="detail-row"><span class="detail-label">Partial trucks</span><span class="detail-val orange">0</span></div>
-          <div class="detail-row"><span class="detail-label">Unpaid trucks</span><span class="detail-val red">6</span></div>
-          <div class="detail-row"><span class="detail-label">Earned today</span><span class="detail-val green">10,400 ETB</span></div>
+          <div class="detail-row"><span class="detail-label">Unpaid trucks</span><span class="detail-val red">0</span></div>
+          <div class="detail-row"><span class="detail-label">Earned today</span><span class="detail-val green">0 ETB</span></div>
           <div class="detail-row"><span class="detail-label">Total advances</span><span class="detail-val red">-0 ETB</span></div>
-          <div class="detail-row"><span class="detail-label">Net balance</span><span class="detail-val" style="color:var(--green)">10,400 ETB</span></div>
+          <div class="detail-row"><span class="detail-label">Net balance</span><span class="detail-val" style="color:var(--green)">0 ETB</span></div>
           
             <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
               <button class="manage-btn" onclick="viewWorkerList('Ahmed')">📋 List</button>
@@ -2902,7 +1571,7 @@
         </div>
       </div>
     
-      <div class="worker-card expanded" id="wcard_Oli">
+      <div class="worker-card" id="wcard_Oli">
         <div class="worker-card-header" onclick="toggleWorker('Oli')">
           <div class="worker-avatar" style="background:#f59e0b22;color:#f59e0b;border:2px solid #f59e0b44">
             OL
@@ -2910,22 +1579,23 @@
           <div class="worker-info">
             <div class="worker-name">Oli</div>
             <div class="worker-stats-row">
-              <div class="worker-stat">Trucks: <span>11</span></div>
-              <div class="worker-stat">Earned: <span style="color:var(--green)">3,900</span></div>
-              <div class="worker-stat">Net: <span style="color:var(--green)">3,900</span></div>
+              <div class="worker-stat">Trucks: <span>0</span></div>
+              <div class="worker-stat">Earned: <span style="color:var(--green)">0</span></div>
+              <div class="worker-stat">Net: <span style="color:var(--green)">0</span></div>
             </div>
           </div>
           <div class="expand-icon">▼</div>
         </div>
+        
         <div class="worker-details">
-          <div class="detail-row"><span class="detail-label">📅 Date</span><span class="detail-val">Fri, 15 May 2026</span></div>
-          <div class="detail-row"><span class="detail-label">Trucks worked</span><span class="detail-val">11</span></div>
-          <div class="detail-row"><span class="detail-label">Paid trucks</span><span class="detail-val green">3</span></div>
+          <div class="detail-row"><span class="detail-label">📅 Date</span><span class="detail-val">Today</span></div>
+          <div class="detail-row"><span class="detail-label">Trucks worked</span><span class="detail-val">0</span></div>
+          <div class="detail-row"><span class="detail-label">Paid trucks</span><span class="detail-val green">0</span></div>
           <div class="detail-row"><span class="detail-label">Partial trucks</span><span class="detail-val orange">0</span></div>
-          <div class="detail-row"><span class="detail-label">Unpaid trucks</span><span class="detail-val red">8</span></div>
-          <div class="detail-row"><span class="detail-label">Earned today</span><span class="detail-val green">3,900 ETB</span></div>
+          <div class="detail-row"><span class="detail-label">Unpaid trucks</span><span class="detail-val red">0</span></div>
+          <div class="detail-row"><span class="detail-label">Earned today</span><span class="detail-val green">0 ETB</span></div>
           <div class="detail-row"><span class="detail-label">Total advances</span><span class="detail-val red">-0 ETB</span></div>
-          <div class="detail-row"><span class="detail-label">Net balance</span><span class="detail-val" style="color:var(--green)">3,900 ETB</span></div>
+          <div class="detail-row"><span class="detail-label">Net balance</span><span class="detail-val" style="color:var(--green)">0 ETB</span></div>
           
             <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
               <button class="manage-btn" onclick="viewWorkerList('Oli')">📋 List</button>
@@ -2945,22 +1615,23 @@
           <div class="worker-info">
             <div class="worker-name">Ilyas</div>
             <div class="worker-stats-row">
-              <div class="worker-stat">Trucks: <span>11</span></div>
-              <div class="worker-stat">Earned: <span style="color:var(--green)">7,800</span></div>
-              <div class="worker-stat">Net: <span style="color:var(--green)">3,500</span></div>
+              <div class="worker-stat">Trucks: <span>0</span></div>
+              <div class="worker-stat">Earned: <span style="color:var(--green)">0</span></div>
+              <div class="worker-stat">Net: <span style="color:var(--green)">0</span></div>
             </div>
           </div>
           <div class="expand-icon">▼</div>
         </div>
+        
         <div class="worker-details">
-          <div class="detail-row"><span class="detail-label">📅 Date</span><span class="detail-val">Fri, 15 May 2026</span></div>
-          <div class="detail-row"><span class="detail-label">Trucks worked</span><span class="detail-val">11</span></div>
-          <div class="detail-row"><span class="detail-label">Paid trucks</span><span class="detail-val green">6</span></div>
+          <div class="detail-row"><span class="detail-label">📅 Date</span><span class="detail-val">Today</span></div>
+          <div class="detail-row"><span class="detail-label">Trucks worked</span><span class="detail-val">0</span></div>
+          <div class="detail-row"><span class="detail-label">Paid trucks</span><span class="detail-val green">0</span></div>
           <div class="detail-row"><span class="detail-label">Partial trucks</span><span class="detail-val orange">0</span></div>
-          <div class="detail-row"><span class="detail-label">Unpaid trucks</span><span class="detail-val red">5</span></div>
-          <div class="detail-row"><span class="detail-label">Earned today</span><span class="detail-val green">7,800 ETB</span></div>
-          <div class="detail-row"><span class="detail-label">Total advances</span><span class="detail-val red">-4,300 ETB</span></div>
-          <div class="detail-row"><span class="detail-label">Net balance</span><span class="detail-val" style="color:var(--green)">3,500 ETB</span></div>
+          <div class="detail-row"><span class="detail-label">Unpaid trucks</span><span class="detail-val red">0</span></div>
+          <div class="detail-row"><span class="detail-label">Earned today</span><span class="detail-val green">0 ETB</span></div>
+          <div class="detail-row"><span class="detail-label">Total advances</span><span class="detail-val red">-0 ETB</span></div>
+          <div class="detail-row"><span class="detail-label">Net balance</span><span class="detail-val" style="color:var(--green)">0 ETB</span></div>
           
             <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
               <button class="manage-btn" onclick="viewWorkerList('Ilyas')">📋 List</button>
@@ -2980,101 +1651,124 @@
         <span class="section-title">ALL CREDIT RECORDS</span>
         <button class="new-btn" onclick="openAddAdvance()">+ Add</button>
       </div>
-      <div class="advances-list" id="advancesList"><div style="padding:6px 0 10px;font-size:11px;font-weight:700;color:var(--text3);letter-spacing:0.08em;display:flex;justify-content:space-between;"><span>📅 FRI, 15 MAY 2026</span><span style="color:var(--red);font-family:monospace">-4,300 ETB</span></div><div class="advance-card"><div class="advance-icon">💸</div><div class="advance-info"><div class="advance-worker">Ilyas</div><div class="advance-meta">📅 2026-05-15</div></div><div class="advance-amount">-1,300</div><button class="advance-delete adv-del-btn" data-aid="1JhyKJ4RFy172dq1Q9C8">🗑️</button></div><div class="advance-card"><div class="advance-icon">💸</div><div class="advance-info"><div class="advance-worker">Ilyas</div><div class="advance-meta">📅 2026-05-15</div></div><div class="advance-amount">-3,000</div><button class="advance-delete adv-del-btn" data-aid="afIsDkjfrCmU8M6RhkyL">🗑️</button></div></div>
+      <div class="advances-list" id="advancesList"><div style="padding:6px 0 10px;font-size:11px;font-weight:700;color:var(--text3);letter-spacing:0.08em;display:flex;justify-content:space-between;"><span>📅 TODAY</span></div><div class="empty-state"><div class="icon">💸</div><p>No advances on this date</p></div></div>
     </div>
 
     <!-- Reports Tab -->
     <div id="tabReports" style="display:none;">
       <div class="reports-content" id="reportsContent">
-    <div style="padding:12px 0 4px">
-      <div style="font-size:11px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:8px">📅 SHOWING: 2026-05-15  </div>
-      <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none">
+    <div style="padding:10px 0 4px">
+      <div style="font-size:11px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:6px">📅 Thu, 4 Jun 2026</div>
+      <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none">
     <button class="filter-chip active" onclick="setReportFilter('all',this)" style="font-size:11px;padding:4px 10px">
       All
     </button>
-  
     <button class="filter-chip" onclick="setReportFilter('paid',this)" style="font-size:11px;padding:4px 10px">
       ✅ Paid
     </button>
-  
     <button class="filter-chip" onclick="setReportFilter('partial',this)" style="font-size:11px;padding:4px 10px">
       ⚡ Partial
     </button>
-  
     <button class="filter-chip" onclick="setReportFilter('unpaid',this)" style="font-size:11px;padding:4px 10px">
       ❌ Unpaid
-    </button>
-  </div>
-      <div style="display:flex;gap:6px;overflow-x:auto;padding:6px 0;scrollbar-width:none">
+    </button></div>
+      <div style="display:flex;gap:6px;overflow-x:auto;padding:4px 0 2px;scrollbar-width:none">
     <button class="filter-chip active" onclick="setReportWorkerFilter('all',this)" style="font-size:11px;padding:4px 10px">
       👥 All
     </button>
-  
     <button class="filter-chip" onclick="setReportWorkerFilter('Ahmed',this)" style="font-size:11px;padding:4px 10px">
       Ahmed
     </button>
-  
     <button class="filter-chip" onclick="setReportWorkerFilter('Oli',this)" style="font-size:11px;padding:4px 10px">
       Oli
     </button>
-  
     <button class="filter-chip" onclick="setReportWorkerFilter('Ilyas',this)" style="font-size:11px;padding:4px 10px">
       Ilyas
+    </button></div>
+    </div>
+
+    <!-- Display toggles -->
+    <div style="margin-bottom:8px">
+      <div style="font-size:10px;color:var(--text3);font-weight:700;letter-spacing:0.06em;margin-bottom:4px">👁 SHOW / HIDE</div>
+      <div class="report-toggles">
+    <div class="report-toggle-chip on" onclick="toggleReportSection('summary',this)">
+      <div class="dot"></div>📊 Summary
+    </div>
+    <div class="report-toggle-chip on" onclick="toggleReportSection('perSealer',this)">
+      <div class="dot"></div>👷 Per Sealer
+    </div>
+    <div class="report-toggle-chip on" onclick="toggleReportSection('advances',this)">
+      <div class="dot"></div>💸 Advances
+    </div>
+    <div class="report-toggle-chip on" onclick="toggleReportSection('meals',this)">
+      <div class="dot"></div>🍽️ Meals
+    </div>
+    <div class="report-toggle-chip on" onclick="toggleReportSection('unpaidWarning',this)">
+      <div class="dot"></div>⚠️ Unpaid
+    </div></div>
+    </div>
+
+    <!-- Share as image button -->
+    <button class="report-share-btn" onclick="shareReportAsImage()" style="margin-bottom:12px">
+      📸 Share Report as Image
     </button>
-  </div>
-    </div>
-    <div class="report-card">
+
+    
+    <div class="report-card" id="reportSectionSummary">
       <div class="report-title">📊 SUMMARY</div>
-      <div class="report-row"><span class="report-label">🚛 Total Trucks</span><span class="report-val">37</span></div>
-      <div class="report-row"><span class="report-label">✅ Paid</span><span class="report-val" style="color:var(--green)">18</span></div>
+      <div class="report-row"><span class="report-label">🚛 Total Trucks</span><span class="report-val">0</span></div>
+      <div class="report-row"><span class="report-label">✅ Paid</span><span class="report-val" style="color:var(--green)">0</span></div>
       <div class="report-row"><span class="report-label">⚡ Partial</span><span class="report-val" style="color:var(--orange)">0</span></div>
-      <div class="report-row"><span class="report-label">❌ Unpaid</span><span class="report-val" style="color:var(--red)">19</span></div>
-      <div class="report-row"><span class="report-label">💰 Total Client Revenue</span><span class="report-val" style="color:var(--teal)">99,000 ETB</span></div>
-      <div class="report-row"><span class="report-label">👷 Total Sealer Pay</span><span class="report-val">23,400 ETB</span></div>
-      <div class="report-row"><span class="report-label">🏢 Company Earnings</span><span class="report-val" style="color:var(--green)">75,600 ETB</span></div>
-      <div class="report-row"><span class="report-label">💸 Total Advances</span><span class="report-val" style="color:var(--red)">-4,300 ETB</span></div>
-      <div class="report-row"><span class="report-label">🥗 Lunch</span><span class="report-val" style="color:var(--red)">-1,000 ETB</span></div>
-      <div class="report-row"><span class="report-label">🍽️ Dinner</span><span class="report-val" style="color:var(--red)">-1,600 ETB</span></div>
-      <div class="report-row" style="border-top:2px solid var(--border);margin-top:4px;padding-top:8px"><span class="report-label" style="font-weight:700;color:var(--text)">🏦 Net Company (after meals)</span><span class="report-val" style="color:var(--green);font-size:16px">73,000 ETB</span></div>
-      <div style="margin-top:10px"><button onclick="openMealsModal('2026-05-15')" style="width:100%;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.3);color:var(--accent);border-radius:var(--radius-sm);padding:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">🍽️ Set Lunch / Dinner Amounts</button></div>
+      <div class="report-row"><span class="report-label">❌ Unpaid</span><span class="report-val" style="color:var(--red)">0</span></div>
+      <div class="report-row"><span class="report-label">💰 Paid Revenue</span><span class="report-val" style="color:var(--teal)">0 ETB</span></div>
+      <div class="report-row"><span class="report-label">👷 Total Sealer Pay</span><span class="report-val">0 ETB</span></div>
+      <div class="report-row"><span class="report-label">🏢 Company Earnings</span><span class="report-val" style="color:var(--green)">0 ETB</span></div>
+      <div class="report-row"><span class="report-label">💸 Total Advances</span><span class="report-val" style="color:var(--red)">-0 ETB</span></div>
       
-      <div class="report-row" style="background:rgba(239,68,68,0.1);border-radius:var(--radius-sm);padding:10px;margin-top:6px;border:1px solid rgba(239,68,68,0.3)">
-        <span class="report-label" style="color:var(--red);font-weight:700">⚠️ Missing Money (Unpaid)</span>
-        <span class="report-val" style="color:var(--red)">-104,500 ETB</span>
+        <div class="report-row"><span class="report-label">🥗 Lunch</span><span class="report-val" style="color:var(--red)">—</span></div>
+        <div class="report-row"><span class="report-label">🍽️ Dinner</span><span class="report-val" style="color:var(--red)">—</span></div>
+        
+        <div style="margin-top:10px"><button onclick="openMealsModal('2026-06-04')" style="width:100%;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.3);color:var(--accent);border-radius:var(--radius-sm);padding:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">🍽️ Set Lunch / Dinner Amounts</button></div>
+      
+
+      <!-- COMBINED TOTAL -->
+      <div class="report-combined" style="flex-direction:column;gap:8px;align-items:stretch">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-size:10px;font-weight:800;color:var(--accent);letter-spacing:0.05em;margin-bottom:2px">💡 COMBINED TOTAL</div>
+            <div style="font-size:10px;color:var(--text3)">if all 0 trucks paid</div>
+          </div>
+          <div style="font-size:17px;font-weight:800;color:var(--accent)">0 ETB</div>
+        </div>
+        <div style="border-top:1px solid rgba(99,102,241,0.2);padding-top:6px;display:flex;justify-content:space-between">
+          <span style="font-size:11px;color:var(--text2)">👷 Sealer pay (all paid)</span>
+          <span style="font-size:11px;font-weight:700;color:var(--teal)">0 ETB</span>
+        </div>
+        <div style="display:flex;justify-content:space-between">
+          <span style="font-size:11px;color:var(--text2)">🏢 Net company (all paid)</span>
+          <span style="font-size:12px;font-weight:800;color:var(--green)">0 ETB</span>
+        </div>
+        
       </div>
+
+      
     </div>
-    <div class="report-card">
+
+    
+    <div class="report-card" id="reportSectionSealers">
       <div class="report-title">👷 PER SEALER</div>
       
           <div class="report-row">
-            <span class="report-label">
-              <span style="width:8px;height:8px;border-radius:50%;background:#3b82f6;display:inline-block;margin-right:4px"></span>
-              Ahmed <span style="color:var(--text3);font-size:11px">(14 trucks)</span>
-            </span>
-            <div style="text-align:right">
-              <div class="report-val" style="color:var(--green)">10,400 ETB</div>
-              <div style="font-size:10px;color:var(--red);font-weight:600">⚠️ -33,000 unpaid</div>
-            </div>
+            <span class="report-label"><span style="width:8px;height:8px;border-radius:50%;background:#3b82f6;display:inline-block;margin-right:4px"></span>Ahmed</span>
+            <span class="report-val" style="color:var(--text3)">—</span>
           </div>
           <div class="report-row">
-            <span class="report-label">
-              <span style="width:8px;height:8px;border-radius:50%;background:#f59e0b;display:inline-block;margin-right:4px"></span>
-              Oli <span style="color:var(--text3);font-size:11px">(11 trucks)</span>
-            </span>
-            <div style="text-align:right">
-              <div class="report-val" style="color:var(--green)">3,900 ETB</div>
-              <div style="font-size:10px;color:var(--red);font-weight:600">⚠️ -44,000 unpaid</div>
-            </div>
+            <span class="report-label"><span style="width:8px;height:8px;border-radius:50%;background:#f59e0b;display:inline-block;margin-right:4px"></span>Oli</span>
+            <span class="report-val" style="color:var(--text3)">—</span>
           </div>
           <div class="report-row">
-            <span class="report-label">
-              <span style="width:8px;height:8px;border-radius:50%;background:#6b7280;display:inline-block;margin-right:4px"></span>
-              Ilyas <span style="color:var(--text3);font-size:11px">(11 trucks)</span>
-            </span>
-            <div style="text-align:right">
-              <div class="report-val" style="color:var(--green)">3,500 ETB</div>
-              <div style="font-size:10px;color:var(--red);font-weight:600">⚠️ -27,500 unpaid</div>
-            </div>
+            <span class="report-label"><span style="width:8px;height:8px;border-radius:50%;background:#6b7280;display:inline-block;margin-right:4px"></span>Ilyas</span>
+            <span class="report-val" style="color:var(--text3)">—</span>
           </div>
     </div>
   </div>
@@ -3299,22 +1993,6 @@
     </div>
 
     <div>
-      <div class="manage-section-title">💳 PAYMENT EDITING</div>
-      <div class="manage-card">
-        <div class="manage-item" onclick="togglePastPaymentEdit()">
-          <div class="manage-item-left">
-            <div class="manage-item-icon" id="pastPayIcon">🔒</div>
-            <div>
-              <div class="manage-item-name" id="pastPayLabel">Past Date Payment Status</div>
-              <div class="manage-item-sub" id="pastPaySub">Changing payment status on past dates is currently locked</div>
-            </div>
-          </div>
-          <div id="pastPayBadge" style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;flex-shrink:0"></div>
-        </div>
-      </div>
-    </div>
-
-    <div>
       <div class="manage-section-title">☁️ CLOUD SYNC</div>
       <div class="manage-card">
         <div class="manage-item">
@@ -3453,7 +2131,7 @@
       <div class="nav-label">Avances</div>
     </button>
   
-    <button class="nav-btn" id="nav_reports" onclick="switchTab('reports')">
+    <button class="nav-btn" id="nav_reports" onclick="switchTab('reports')" style="color: var(--orange);">
       <div class="nav-icon">📊</div>
       <div class="nav-label">Rapports</div>
     </button>
@@ -3468,6 +2146,16 @@
       <div class="nav-label">Agash</div>
     </button>
   
+    <button class="nav-btn" id="nav_notifs" onclick="switchTab('notifs')">
+      <div class="nav-icon">🔔</div>
+      <div class="nav-label">Alerts</div>
+    </button>
+  
+    <button class="nav-btn" id="nav_settlement" onclick="switchTab('settlement')">
+      <div class="nav-icon">📋</div>
+      <div class="nav-label">Settlement</div>
+    </button>
+  
     <button class="nav-btn active" id="nav_manage" onclick="switchTab('manage')">
       <div class="nav-icon">⚙️</div>
       <div class="nav-label">Gérer</div>
@@ -3475,7 +2163,12 @@
   
     <button class="nav-btn" id="nav_recycle" onclick="switchTab('recycle')">
       <div class="nav-icon">🗑️</div>
-      <div class="nav-label">Bin (23)</div>
+      <div class="nav-label">Bin (33)</div>
+    </button>
+  
+    <button class="nav-btn" id="nav_logout" onclick="switchTab('logout')">
+      <div class="nav-icon">🚪</div>
+      <div class="nav-label">Déconnexion</div>
     </button>
   </div>
 </div>
@@ -3762,7 +2455,8 @@
   // All onclick-called functions get safe stubs here
   ['switchTab','goPin','pinKey','pinDel','goLogin','setToday','openDatePicker',
    'selectDate','setFilter','setWorkerFilter','openAddTruck','saveTruck',
-   'checkDuplicate','selectRadio','deleteTruck','openStatus','saveStatus',
+   'checkDuplicate','selectRadio','deleteTruck','openStatus','saveStatus','quickMarkPaid',
+   'openAddTruckWithPlate',
    'openAssign','doAssign','openEditTruck','openEditPlate','saveEditPlate',
    'submitClaim','approveClaim','rejectClaim','openAddAdvance','saveAdvance',
    'deleteAdvance','toggleWorker','openMealsModal','saveMeals','setReportFilter',
@@ -3844,7 +2538,6 @@ try {
 window.addEventListener('online', () => {
   setOnline();
   showToast('☁️ Back online — syncing...');
-  // Re-enable Firestore network so data flows immediately
   if (typeof db !== 'undefined') { try { enableNetwork(db); } catch(e){} }
 });
 window.addEventListener('offline', () => {
@@ -4162,7 +2855,12 @@ function initFirebase() {
     if (displayEl2 && document.getElementById('dateFilter').value === wd2) {
       displayEl2.textContent = 'Today — ' + wd2Obj.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
     }
-  }, () => { setOffline(); });
+  }, (err) => {
+    // Only show offline if the browser itself reports no internet.
+    // Firestore fires this callback for temporary server hiccups too — don't
+    // flip the UI to red just because of a momentary cloud issue.
+    if (!navigator.onLine) { setOffline(); }
+  });
 
   window._unsubAdvances = onSnapshot(collection(db,'advances'), snap => {
     advances = {};
@@ -4891,9 +3589,9 @@ function renderTrucks() {
   const headerAddBtn = document.getElementById('headerAddBtn');
   const newBtn = document.querySelector('.new-btn');
   const perms2 = getUserPerms(id);
-  const canAdd = role==='admin' || role==='head' || (role==='cashier' && perms2.addTrucks) || (role==='worker' && perms2.canAddOwnTrucks);
-  if (headerAddBtn) headerAddBtn.style.display = (canAdd && isToday) ? '' : 'none';
-  if (newBtn) newBtn.style.display = (canAdd && isToday) ? '' : 'none';
+  const canAddBtn = role==='admin' || role==='head' || (role==='cashier' && perms2.addTrucks) || (role==='worker' && perms2.canAddOwnTrucks);
+  if (headerAddBtn) headerAddBtn.style.display = (canAddBtn && isToday) ? '' : 'none';
+  if (newBtn) newBtn.style.display = (canAddBtn && isToday) ? '' : 'none';
 
   const container = document.getElementById('trucksList');
   if (!container) return;
@@ -4909,7 +3607,17 @@ function renderTrucks() {
   if (suspendBanner) suspendBanner.classList.toggle('active', addingSuspended && role!=='admin');
 
   if (pendingTrucks.length === 0 && assignedTrucks.length === 0) {
-    container.innerHTML = `<div class="empty-state"><div class="icon">${isToday?'🚛':'📅'}</div><p>${isToday?t('noTrucks'):'No trucks on this date'}</p></div>`;
+    const canAddHere = isToday && (role==='admin' || role==='head' || (role==='cashier' && getUserPerms(id).addTrucks) || (role==='worker' && getUserPerms(id).canAddOwnTrucks));
+    if (filterPlate && canAddHere) {
+      container.innerHTML = '<div class="empty-state">'
+        + '<div style="font-size:48px;margin-bottom:12px">🔍</div>'
+        + '<p style="color:var(--text2);margin-bottom:6px">No truck found for</p>'
+        + '<div style="font-family:\'JetBrains Mono\',monospace;font-size:22px;font-weight:700;color:var(--text);margin-bottom:20px;letter-spacing:0.05em">' + filterPlate + '</div>'
+        + '<button onclick="openAddTruckWithPlate(\'' + filterPlate + '\')" style="background:var(--accent);color:#fff;border:none;border-radius:var(--radius);padding:12px 28px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:8px;box-shadow:0 4px 16px rgba(59,130,246,0.4)">➕ Register this truck</button>'
+        + '</div>';
+    } else {
+      container.innerHTML = '<div class="empty-state"><div class="icon">' + (isToday ? '🚛' : '📅') + '</div><p>' + (isToday ? t('noTrucks') : 'No trucks on this date') + '</p></div>';
+    }
     return;
   }
 
@@ -4980,7 +3688,13 @@ function renderTrucks() {
     const modStr = truck.modifiedAt ? new Date(truck.modifiedAt).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}) : null;
 
     let actions = '';
-    if (canEditStatus) actions += `<button class="truck-action-btn primary" onclick="openStatus('${truck._id}')">🟡 Status</button>`;
+    if (canEditStatus) {
+      if (truck.status === 'paid') {
+        actions += `<button class="truck-action-btn primary" onclick="openStatus('${truck._id}')">💳 Status</button>`;
+      } else {
+        actions += `<button class="truck-action-btn" style="background:rgba(34,197,94,0.15);color:var(--green);border-color:rgba(34,197,94,0.35);font-weight:700" onclick="quickMarkPaid('${truck._id}')">✅ Mark Paid</button>`;
+      }
+    }
     if (canEdit) actions += `<button class="truck-action-btn" onclick="openEditTruck('${truck._id}')">✏️ Edit</button>`;
     // Workers can only edit plate on their own trucks
     if (isToday && role==='worker' && truck.worker===id) actions += `<button class="truck-action-btn" onclick="openEditPlate('${truck._id}')">✏️ Plate</button>`;
@@ -5164,6 +3878,16 @@ window.openAddTruck = function() {
   buildStatusRadio('statusRadio', 'paid');
   openModal('modalTruck');
 }
+
+window.openAddTruckWithPlate = function(plate) {
+  openAddTruck();
+  const plateInput = document.getElementById('truckPlate');
+  if (plateInput) {
+    plateInput.value = plate;
+    // Trigger duplicate check
+    if (typeof checkDuplicate === 'function') checkDuplicate(plateInput);
+  }
+}
 function buildStatusRadio(containerId, selected) {
   const opts = [
     {val:'unpaid', label:'❌ '+t('unpaid'), sub:'0 ETB to sealer'},
@@ -5296,6 +4020,20 @@ window.saveStatus = function() {
   });
   showToast('✅ Status updated');
   closeModal('modalStatus');
+}
+
+// ── QUICK MARK PAID ──
+window.quickMarkPaid = function(id) {
+  const truck = trucks[id];
+  if (!truck) return;
+  // If already paid, open full status modal instead
+  if (truck.status === 'paid') { openStatus(id); return; }
+  updateDoc(doc(db,'trucks',id), {
+    status: 'paid',
+    modifiedAt: Date.now(),
+    modifiedBy: currentUser.name || currentUser.id
+  });
+  showToast('✅ Marked as Paid');
 }
 
 // ── ASSIGN ──
@@ -6851,7 +5589,7 @@ function updateSuspendUI() {
   if (banner) banner.classList.toggle('active', addingSuspended && currentUser?.role !== 'admin');
   // Update add buttons
   const role = currentUser?.role;
-  const canAdd = role==='admin' || !addingSuspended;
+  const canAddSuspend = role==='admin' || !addingSuspended;
   const headerBtn = document.getElementById('headerAddBtn');
   if (headerBtn && role !== 'admin') {
     headerBtn.style.opacity = addingSuspended ? '0.4' : '1';
@@ -7866,13 +6604,11 @@ function updateSettlementReportBadge() {
   const pendingCashiers = ['cashier1','cashier2'].filter(function(c) {
     return !Object.values(settlements).some(function(s) { return s.date === todayKey && s.cashier === c && s.locked; });
   });
-  // Only badge if we have cashiers active
-  if (hasSettlement && pendingCashiers.length === 0) {
+  // Green if at least one cashier submitted; orange only if none have submitted yet
+  if (hasSettlement) {
     navReports.style.color = 'var(--green)';
-  } else if (pendingCashiers.length > 0) {
-    navReports.style.color = 'var(--orange)';
   } else {
-    navReports.style.color = '';
+    navReports.style.color = 'var(--orange)';
   }
 }
 
@@ -8014,6 +6750,29 @@ function renderSettlementForm() {
     ? [currentUser.id]
     : ['cashier1', 'cashier2'];
 
+  // For admin/head: show a submission status summary banner
+  if (role === 'admin' || role === 'head') {
+    const c1done = !!Object.values(settlements).find(function(s) { return s.date === date && s.cashier === 'cashier1' && s.locked; });
+    const c2done = !!Object.values(settlements).find(function(s) { return s.date === date && s.cashier === 'cashier2' && s.locked; });
+    const bothDone = c1done && c2done;
+    const noneDone = !c1done && !c2done;
+    const statusBg = bothDone ? 'rgba(34,197,94,0.08)' : noneDone ? 'rgba(239,68,68,0.07)' : 'rgba(245,158,11,0.08)';
+    const statusBorder = bothDone ? 'rgba(34,197,94,0.25)' : noneDone ? 'rgba(239,68,68,0.2)' : 'rgba(245,158,11,0.25)';
+    html += '<div style="background:' + statusBg + ';border:1px solid ' + statusBorder + ';border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;gap:10px">'
+      + '<div style="flex:1">'
+      + '<div style="font-size:10px;font-weight:800;color:var(--text3);letter-spacing:0.06em;margin-bottom:6px">SETTLEMENT STATUS</div>'
+      + '<div style="display:flex;gap:10px">'
+      + '<div style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:' + (c1done ? 'var(--green)' : 'var(--text3)') + '">'
+      + (c1done ? '✅' : '⏳') + ' Cashier 1</div>'
+      + '<div style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:' + (c2done ? 'var(--green)' : 'var(--text3)') + '">'
+      + (c2done ? '✅' : '⏳') + ' Cashier 2</div>'
+      + '</div>'
+      + '</div>'
+      + '</div>';
+  }
+
+  var anyRendered = false;
+
   cashierIds.forEach(function(cashierId) {
     const cashierName = cashierId === 'cashier1' ? 'Cashier 1' : 'Cashier 2';
     // Strict match — must have the correct cashier field
@@ -8023,27 +6782,29 @@ function renderSettlementForm() {
 
     if (existing && existing.locked) {
       html += renderLockedSettlement(existing, cashierName, cashierId, date, role, expectedCompany);
+      anyRendered = true;
     } else if (role === 'cashier') {
       // Cashier only sees their own form
       html += renderSettlementFormCard(cashierId, cashierName, date, dayTrucks, unpaidCount, expectedCompany, existing || null);
+      anyRendered = true;
     } else if (role === 'admin' || role === 'head') {
       if (existing && !existing.locked) {
         // Unlocked draft — show form so admin can assist
         html += renderSettlementFormCard(cashierId, cashierName, date, dayTrucks, unpaidCount, expectedCompany, existing);
-      } else if (!existing) {
-        // Nothing submitted yet — show a simple "not yet submitted" card
-        html += '<div class="stl-card" style="margin-bottom:14px;border-color:var(--border);opacity:0.6">'
-          + '<div style="display:flex;align-items:center;justify-content:space-between">'
-          + '<div style="font-size:13px;font-weight:700;color:var(--text2)">💼 ' + cashierName + '</div>'
-          + '<span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;background:var(--bg4);color:var(--text3)">⏳ NOT SUBMITTED</span>'
-          + '</div>'
-          + '<div style="font-size:12px;color:var(--text3);margin-top:10px;text-align:center;padding:12px 0">'
-          + cashierName + ' has not submitted a settlement for this date yet.'
-          + '</div>'
-          + '</div>';
+        anyRendered = true;
       }
+      // If !existing → skip silently (cashier hasn't submitted yet, no placeholder shown)
     }
   });
+
+  // If admin/head and nobody has submitted anything for this date, show a clear message
+  if ((role === 'admin' || role === 'head') && !anyRendered) {
+    html += '<div style="text-align:center;padding:32px 16px;color:var(--text3)">'
+      + '<div style="font-size:36px;margin-bottom:12px">📋</div>'
+      + '<div style="font-size:14px;font-weight:600;color:var(--text2);margin-bottom:6px">No settlements submitted yet</div>'
+      + '<div style="font-size:12px">Settlements will appear here once Cashier 1 or Cashier 2 submits one.</div>'
+      + '</div>';
+  }
 
   container.innerHTML = html;
 
@@ -8052,6 +6813,8 @@ function renderSettlementForm() {
     const existing = cashierSettlements[cid];
     if (!existing || !existing.locked) {
       buildUnpaidListUI(cid, date, dayTrucks, existing);
+      // Populate summary block immediately after DOM is ready
+      setTimeout(function() { stlRecomputeTable(cid); }, 0);
     }
   });
 }
@@ -8062,7 +6825,6 @@ function renderSettlementFormCard(cashierId, cashierName, date, dayTrucks, unpai
 
   var savedNotes       = existing ? (existing.notes          || '') : '';
   var savedAgashSubmit = existing ? (existing.agashSubmitted || '') : '';
-  var savedShiboGiven  = existing ? (existing.shiboGiven     || '') : '';
 
   // Auto-fill truck counts from Agash incoming data
   var agashTrucks   = Object.values(kabIncoming).filter(function(t){ return t.date === date; });
@@ -8077,13 +6839,52 @@ function renderSettlementFormCard(cashierId, cashierName, date, dayTrucks, unpai
   var t2Unpaid = dayTrucks.filter(function(t){ return t.status === 'unpaid'; }).length;
   var t2Paid   = t2Total - t2Unpaid;
 
-  function agashRow(label, color, cnt, cntId, amtId) {
-    var amt = cnt * PRICE;
-    return '<div style="display:grid;grid-template-columns:1fr 52px 88px;padding:9px 10px;border-bottom:1px solid var(--border);align-items:center">'
+  // COL layout: TYPE | ETB trucks [input] | ETB total (auto) | DJF trucks [input] | DJF total (auto)
+  var COLS = '1fr 46px 70px 46px 66px';
+  var inp  = 'style="width:100%;text-align:center;font-family:\'JetBrains Mono\',monospace;font-size:13px;font-weight:700;padding:4px 2px"';
+
+  function agashRow(label, color, cntEtb, cntDjf, idEtbCnt, idDjfCnt, idEtbAmt, idDjfAmt, readonly) {
+    var inputStyle = 'style="width:100%;text-align:center;font-family:\'JetBrains Mono\',monospace;font-size:13px;font-weight:700;padding:4px 2px"';
+    var roStyle    = 'style="width:100%;text-align:center;font-family:\'JetBrains Mono\',monospace;font-size:13px;font-weight:700;padding:4px 2px;opacity:0.5;cursor:not-allowed;background:var(--bg4)"';
+    var roAttr     = readonly ? ' readonly tabindex="-1"' : '';
+    var onChange   = readonly ? '' : ' oninput="stlRecomputeTable(\''+cashierId+'\')"';
+    return '<div style="display:grid;grid-template-columns:'+COLS+';padding:8px 10px;border-bottom:1px solid var(--border);align-items:center;gap:3px">'
       + '<div style="font-size:12px;font-weight:700;color:'+color+'">'+label+'</div>'
-      + '<input class="stl-tbl-input" type="number" id="'+cntId+'" value="'+cnt+'" min="0" placeholder="0" oninput="stlRecomputeTable(\''+cashierId+'\')">'
-      + '<div style="font-size:12px;font-weight:700;color:var(--green);text-align:right;font-family:\'JetBrains Mono\',monospace;padding-right:4px" id="'+amtId+'">'+amt.toLocaleString()+'</div>'
+      + '<input class="stl-tbl-input" type="number" id="'+idEtbCnt+'" value="'+cntEtb+'" min="0" placeholder="0" '+(readonly?roStyle:inputStyle)+roAttr+onChange+'>'
+      + '<div style="font-size:12px;font-weight:700;color:var(--green);text-align:right;font-family:\'JetBrains Mono\',monospace" id="'+idEtbAmt+'">'+(cntEtb*PRICE).toLocaleString()+'</div>'
+      + '<input class="stl-tbl-input" type="number" id="'+idDjfCnt+'" value="'+cntDjf+'" min="0" placeholder="0" '+(readonly?roStyle:'style="'+inputStyle.slice(7,-1)+';border-color:rgba(20,184,166,0.4);color:var(--teal)"')+roAttr+onChange+'>'
+      + '<div style="font-size:12px;font-weight:700;color:var(--teal);text-align:right;font-family:\'JetBrains Mono\',monospace;padding-right:2px" id="'+idDjfAmt+'">'+(cntDjf*1000).toLocaleString()+'</div>'
       + '</div>';
+  }
+
+  // Load saved split counts if existing, else Shirac defaults from Table 2 (app trucks), not kabIncoming
+  var cntShiracETB = (existing && existing.cntShiracETB != null) ? existing.cntShiracETB : t2Total;
+  var cntShiracDJF = (existing && existing.cntShiracDJF != null) ? existing.cntShiracDJF : 0;
+  var cntBilaETB   = (existing && existing.cntBilaETB   != null) ? existing.cntBilaETB   : cntBilaShirac;
+  var cntBilaDJF   = (existing && existing.cntBilaDJF   != null) ? existing.cntBilaDJF   : 0;
+  var cntMetalETB  = (existing && existing.cntMetalETB  != null) ? existing.cntMetalETB  : cntMetal;
+  var cntMetalDJF  = (existing && existing.cntMetalDJF  != null) ? existing.cntMetalDJF  : 0;
+
+  // Shibo suggestion: Shirac total × 1,300 — computed AFTER cntShiracETB/DJF are known
+  var shiboSuggested   = (cntShiracETB + cntShiracDJF) * PRICE;
+  var shiboManual      = existing && existing.shiboGiven != null && existing.shiboGiven !== shiboSuggested;
+  var savedShiboGiven  = existing ? (existing.shiboGiven != null ? existing.shiboGiven : shiboSuggested) : shiboSuggested;
+
+  // Footer totals
+  var footETB = (cntShiracETB + cntBilaETB + cntMetalETB) * PRICE;
+  var footDJF = (cntShiracDJF + cntBilaDJF + cntMetalDJF) * 1000;
+
+  // Summary block: Shirac row, Metal row, TOTAL row — all × 5500/5000
+  var smShiracETB = (cntShiracETB + cntShiracDJF) * 5500;
+  var smShiracDJF = (cntShiracETB + cntShiracDJF) * 5000;
+  var smMetalETB  = (cntMetalETB  + cntMetalDJF)  * 5500;
+  var smMetalDJF  = (cntMetalETB  + cntMetalDJF)  * 5000;
+  var smTotETB    = smShiracETB + smMetalETB;
+  var smTotDJF    = smShiracDJF + smMetalDJF;
+
+  // Sub-header label cols for ETB/DJF groups
+  function subHdr(txt, col) {
+    return '<div style="font-size:9px;font-weight:800;color:'+col+';text-align:center;letter-spacing:.05em">'+txt+'</div>';
   }
 
   return '<div class="stl-card pending" style="margin-bottom:14px" id="' + formId + '">'
@@ -8097,20 +6898,36 @@ function renderSettlementFormCard(cashierId, cashierName, date, dayTrucks, unpai
     // ══ TABLE 1 — AGASH REPORT ══
     + '<div class="sec-title">📋 Table 1 — Agash Report · 1,300 ETB / truck</div>'
     + '<div class="tbl-wrap">'
-    + '<div class="tbl-head">'
-    + '<div class="tbl-th">TYPE</div>'
-    + '<div class="tbl-th c">TRUCKS</div>'
-    + '<div class="tbl-th" style="text-align:right;padding-right:4px">TOTAL (ETB)</div>'
+
+    // Double header row: TYPE | ←ETB→ | ←DJF→
+    + '<div style="display:grid;grid-template-columns:'+COLS+';background:var(--bg4);padding:5px 10px 3px;border-bottom:1px solid var(--border);gap:3px;align-items:end">'
+    + '<div></div>'
+    + '<div style="grid-column:2/4;text-align:center;font-size:9px;font-weight:800;color:var(--green);border-bottom:2px solid rgba(34,197,94,0.4);padding-bottom:2px;letter-spacing:.05em">ETB × 1,300</div>'
+    + '<div style="grid-column:4/6;text-align:center;font-size:9px;font-weight:800;color:var(--teal);border-bottom:2px solid rgba(20,184,166,0.4);padding-bottom:2px;letter-spacing:.05em">DJF × 1,000</div>'
     + '</div>'
-    + agashRow('🚛 Shirac',      '#10b981', cntShirac,     'stlCntShirac_'+cashierId, 'stlAmtShirac_'+cashierId)
-    + agashRow('🚚 Bila Shirac', '#3b82f6', cntBilaShirac, 'stlCntBila_'+cashierId,   'stlAmtBila_'+cashierId)
-    + agashRow('🏗️ Metal',      '#ef4444', cntMetal,      'stlCntMetal_'+cashierId,  'stlAmtMetal_'+cashierId)
-    + '<div class="tbl-foot">'
-    + '<div class="tbl-foot-lbl">TOTAL</div>'
-    + '<div class="tbl-foot-cnt" id="stlTotalCnt_'+cashierId+'">'+totalTrucks+'</div>'
-    + '<div class="tbl-foot-etb" id="stlTotalAmt_'+cashierId+'">'+totalAmount.toLocaleString()+'</div>'
+    + '<div style="display:grid;grid-template-columns:'+COLS+';background:var(--bg4);padding:3px 10px 6px;border-bottom:1px solid var(--border);gap:3px">'
+    + '<div style="font-size:9px;font-weight:800;color:var(--text3);letter-spacing:.07em">TYPE</div>'
+    + subHdr('TRUCKS', 'var(--green)') + subHdr('TOTAL', 'var(--green)')
+    + subHdr('TRUCKS', 'var(--teal)')  + subHdr('TOTAL', 'var(--teal)')
+    + '</div>'
+
+    + agashRow('🚛 Shirac',      '#10b981', cntShiracETB, cntShiracDJF, 'stlEtbCntS_'+cashierId, 'stlDjfCntS_'+cashierId, 'stlEtbAmtS_'+cashierId, 'stlDjfAmtS_'+cashierId, true)
+    + '<div style="font-size:9px;color:var(--teal);padding:2px 10px 6px;margin-top:-4px;border-bottom:1px solid var(--border)">🔗 Count from Table 2 app trucks · ETB/DJF split driven by FD input below</div>'
+    + agashRow('🚚 Bila Shirac', '#3b82f6', cntBilaETB,   cntBilaDJF,   'stlEtbCntB_'+cashierId, 'stlDjfCntB_'+cashierId, 'stlEtbAmtB_'+cashierId, 'stlDjfAmtB_'+cashierId, false)
+    + agashRow('🏗️ Metal',      '#ef4444', cntMetalETB,  cntMetalDJF,  'stlEtbCntM_'+cashierId, 'stlDjfCntM_'+cashierId, 'stlEtbAmtM_'+cashierId, 'stlDjfAmtM_'+cashierId, false)
+
+    // Footer: TOTAL ETB | TOTAL DJF
+    + '<div style="display:grid;grid-template-columns:'+COLS+';padding:8px 10px;background:rgba(59,130,246,.07);border-top:2px solid var(--border);align-items:center;gap:3px">'
+    + '<div style="font-size:11px;font-weight:800">TOTAL</div>'
+    + '<div></div>'
+    + '<div style="font-size:13px;font-weight:800;color:var(--green);text-align:right;font-family:\'JetBrains Mono\',monospace" id="stlTotalAmt_'+cashierId+'">'+footETB.toLocaleString()+'</div>'
+    + '<div></div>'
+    + '<div style="font-size:13px;font-weight:800;color:var(--teal);text-align:right;font-family:\'JetBrains Mono\',monospace;padding-right:2px" id="stlTotalDJF_'+cashierId+'">'+footDJF.toLocaleString()+'</div>'
     + '</div>'
     + '</div>'
+
+    // ── Summary block (rebuilt live by stlRecomputeTable) ──
+    + '<div id="stlSummaryBlock_'+cashierId+'" style="margin-top:8px;margin-bottom:4px"></div>'
 
     // Submitted by Agash supervisor + Shibo workers
     + '<div class="two-col">'
@@ -8120,8 +6937,13 @@ function renderSettlementFormCard(cashierId, cashierName, date, dayTrucks, unpai
     + '<div class="stl-discrepancy" id="stlAgashDisc_'+cashierId+'"></div>'
     + '</div>'
     + '<div>'
-    + '<div class="stl-label">👷 Given to Shibo Workers</div>'
-    + '<input class="stl-input" type="number" id="stlShiboGiven_'+cashierId+'" placeholder="0" value="'+savedShiboGiven+'" min="0">'
+    + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">'
+    + '<div class="stl-label" style="margin-bottom:0">👷 Given to Shibo Workers</div>'
+    + '<button type="button" id="stlShiboUnlock_'+cashierId+'" onclick="stlShiboUnlock(\''+cashierId+'\')" style="display:'+(shiboManual?'inline-flex':'none')+';align-items:center;gap:3px;font-size:9px;font-weight:700;color:var(--orange);background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.35);border-radius:20px;padding:2px 7px;cursor:pointer;font-family:inherit">🔒 locked · reset</button>'
+    + '</div>'
+    + '<div style="font-size:9px;color:var(--text3);margin-bottom:4px" id="stlShiboHint_'+cashierId+'">💡 Suggested: '+(cntShiracETB+cntShiracDJF)+' Shirac × 1,300 = '+shiboSuggested.toLocaleString()+' ETB</div>'
+    + '<input class="stl-input" type="number" id="stlShiboGiven_'+cashierId+'" placeholder="0" value="'+savedShiboGiven+'" min="0"'
+    + ' data-auto="'+(shiboManual?'0':'1')+'" oninput="stlShiboOnInput(\''+cashierId+'\')">'
     + '</div>'
     + '</div>'
 
@@ -8129,10 +6951,42 @@ function renderSettlementFormCard(cashierId, cashierName, date, dayTrucks, unpai
     + '<div class="sec-title">🚛 Table 2 — Trucks &amp; Unpaid Collection</div>'
 
     // Total / Paid / Unpaid stats from app
-    + '<div class="stats-row">'
+    + '<div class="stats-row" id="stlT2UnpaidCount_'+cashierId+'" data-unpaid="'+t2Unpaid+'">'
     + '<div class="stl-stat"><div class="stl-stat-num" style="color:var(--accent)">'+t2Total+'</div><div class="stl-stat-lbl">TOTAL</div></div>'
     + '<div class="stl-stat"><div class="stl-stat-num" style="color:var(--green)">'+t2Paid+'</div><div class="stl-stat-lbl">PAID</div></div>'
     + '<div class="stl-stat"><div class="stl-stat-num" style="color:var(--red)">'+t2Unpaid+'</div><div class="stl-stat-lbl">UNPAID</div></div>'
+    + '</div>'
+
+    // ── SHIRAC RATE SECTION (form) — with FD input ──
+    + '<div style="font-size:10px;font-weight:800;color:var(--text3);letter-spacing:0.06em;margin-bottom:6px;padding-top:4px">🚛 SHIRAC COUNT — RATES (×5,500 ETB / ×5,000 FD)</div>'
+    + '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;margin-bottom:6px">'
+    + '<div style="display:grid;grid-template-columns:1fr 44px 76px 68px;background:var(--bg4);padding:6px 10px;border-bottom:1px solid var(--border)">'
+    + '<div style="font-size:9px;font-weight:800;color:var(--text3)">TYPE</div>'
+    + '<div style="font-size:9px;font-weight:800;color:var(--text3);text-align:center">TOTAL</div>'
+    + '<div style="font-size:9px;font-weight:800;color:var(--orange);text-align:right">ETB</div>'
+    + '<div style="font-size:9px;font-weight:800;color:var(--teal);text-align:right;padding-right:2px">FD</div>'
+    + '</div>'
+    // Shirac row — ETB trucks auto, FD trucks from input
+    + '<div style="display:grid;grid-template-columns:1fr 44px 76px 68px;padding:9px 10px;align-items:center" id="stlT2ShiracRow_'+cashierId+'" data-t2total="'+t2Total+'">'
+    + '<div style="font-size:12px;font-weight:700;color:#10b981">🚛 Shirac</div>'
+    + '<div style="font-size:13px;font-weight:800;color:var(--accent);text-align:center;font-family:\'JetBrains Mono\',monospace">'+t2Total+'</div>'
+    + '<div style="font-size:11px;font-weight:800;color:var(--orange);text-align:right;font-family:\'JetBrains Mono\',monospace" id="stlT2EtbAmt_'+cashierId+'">'+(t2Total*5500).toLocaleString()+'</div>'
+    + '<div style="font-size:11px;font-weight:800;color:var(--teal);text-align:right;font-family:\'JetBrains Mono\',monospace;padding-right:2px" id="stlT2FdAmt_'+cashierId+'">0</div>'
+    + '</div>'
+    // ETB trucks / FD trucks breakdown sub-row
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:0 10px 8px;border-top:1px solid var(--border);padding-top:6px">'
+    + '<div style="font-size:9px;color:var(--text3)" id="stlT2EtbTrucks_'+cashierId+'">'+t2Total+' trucks × ETB</div>'
+    + '<div style="font-size:9px;color:var(--teal);text-align:right" id="stlT2FdTrucks_'+cashierId+'">0 trucks × FD</div>'
+    + '</div>'
+    + '</div>'
+    // FD amount input
+    + '<div style="background:rgba(20,184,166,0.06);border:1px solid rgba(20,184,166,0.3);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:12px">'
+    + '<div style="font-size:9px;font-weight:800;color:var(--teal);letter-spacing:0.06em;margin-bottom:6px">💱 FD AMOUNT COLLECTED (Djibouti Franc)</div>'
+    + '<div style="display:flex;align-items:center;gap:8px">'
+    + '<input class="stl-input" type="number" id="stlT2FdInput_'+cashierId+'" placeholder="e.g. 10000" value="'+(existing&&existing.t2ShiracFD?existing.t2ShiracFD:'')+'" min="0" style="margin-bottom:0;flex:1" oninput="stlT2FdChanged(\''+cashierId+'\')">'
+    + '<div style="font-size:11px;font-weight:700;color:var(--teal);white-space:nowrap">FD</div>'
+    + '</div>'
+    + '<div style="font-size:9px;color:var(--text3);margin-top:5px" id="stlT2FdHint_'+cashierId+'">Every 5,000 FD = 1 truck in DJF. Rest = ETB.</div>'
     + '</div>'
 
     // Unpaid list
@@ -8142,17 +6996,17 @@ function renderSettlementFormCard(cashierId, cashierName, date, dayTrucks, unpai
     + '</div>'
     + '<div id="stlUnpaidList_'+cashierId+'" style="margin-bottom:14px"></div>'
 
-    // Auto-calculated: IF ALL PAID + MISSING
-    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">'
+    // IF ALL PAID (client) + MISSING — auto ETB/FD split based on FD input
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px" id="stlSummaryCards_'+cashierId+'">'
     + '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 10px;text-align:center">'
     + '<div style="font-size:9px;font-weight:800;color:var(--text3);letter-spacing:0.07em;margin-bottom:5px">💡 IF ALL PAID</div>'
-    + '<div style="font-size:17px;font-weight:800;font-family:\'JetBrains Mono\',monospace;color:var(--accent)">'+(t2Total*5500).toLocaleString()+'</div>'
-    + '<div style="font-size:9px;color:var(--text3);margin-top:3px">'+t2Total+' × 5,500 ETB</div>'
+    + '<div id="stlIfAllMain_'+cashierId+'" style="font-size:15px;font-weight:800;font-family:\'JetBrains Mono\',monospace;color:var(--accent)">'+(t2Total*5500).toLocaleString()+' ETB</div>'
+    + '<div id="stlIfAllSub_'+cashierId+'" style="font-size:9px;color:var(--text3);margin-top:2px">'+t2Total+' × 5,500 ETB</div>'
     + '</div>'
     + '<div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);border-radius:var(--radius-sm);padding:12px 10px;text-align:center">'
     + '<div style="font-size:9px;font-weight:800;color:var(--red);letter-spacing:0.07em;margin-bottom:5px">❌ MISSING</div>'
-    + '<div style="font-size:17px;font-weight:800;font-family:\'JetBrains Mono\',monospace;color:var(--red)">'+(t2Unpaid*5500).toLocaleString()+'</div>'
-    + '<div style="font-size:9px;color:var(--text3);margin-top:3px">'+t2Unpaid+' unpaid × 5,500</div>'
+    + '<div id="stlMissingMain_'+cashierId+'" style="font-size:15px;font-weight:800;font-family:\'JetBrains Mono\',monospace;color:var(--red)">'+(t2Unpaid*5500).toLocaleString()+' ETB</div>'
+    + '<div id="stlMissingSub_'+cashierId+'" style="font-size:9px;color:var(--text3);margin-top:2px">'+t2Unpaid+' unpaid × 5,500</div>'
     + '</div>'
     + '</div>'
 
@@ -8180,53 +7034,121 @@ function renderSettlementFormCard(cashierId, cashierName, date, dayTrucks, unpai
 
 
 function renderLockedSettlement(s, cashierName, cashierId, date, role, expectedCompany) {
-  var PRICE  = 1300;
-  var CLIENT = 5500;
+  var PRICE    = 1300;   // ETB per truck (sealer/Agash rate)
+  var PRICE_FD = 1000;   // FD per truck
+  var CLIENT   = 5500;   // ETB client rate per truck
+  var CLIENT_FD= 5000;   // FD client rate per truck
   var submittedTime = s.submittedAt
     ? new Date(s.submittedAt).toLocaleString('en-GB', {day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})
     : '—';
   var canUnlock = role === 'admin';
 
-  // ── TABLE 1 — counts only, paid = count ──
-  var b  = s.cntShirac     || 0;
-  var nb = s.cntBilaShirac || 0;
-  var m  = s.cntMetal      || 0;
-  var t1Total  = b + nb + m;
-  var t1Amount = t1Total * PRICE;
-  var agashDiff = (s.agashSubmitted || 0) - t1Amount;
+  // ── TABLE 1 — ETB/DJF split counts ──
+  var eS = s.cntShiracETB != null ? s.cntShiracETB : (s.cntShirac || 0);
+  var dS = s.cntShiracDJF != null ? s.cntShiracDJF : 0;
+  var eB = s.cntBilaETB   != null ? s.cntBilaETB   : (s.cntBilaShirac || 0);
+  var dB = s.cntBilaDJF   != null ? s.cntBilaDJF   : 0;
+  var eM = s.cntMetalETB  != null ? s.cntMetalETB  : (s.cntMetal || 0);
+  var dM = s.cntMetalDJF  != null ? s.cntMetalDJF  : 0;
+
+  var b  = eS + dS;
+  var nb = eB + dB;
+  var m  = eM + dM;
+  var t1Total    = b + nb + m;
+  var t1Amount   = eS*PRICE + eB*PRICE + eM*PRICE;
+  var t1AmountFD = dS*PRICE_FD + dB*PRICE_FD + dM*PRICE_FD;
+  var agashDiff  = (s.agashSubmitted || 0) - t1Amount;
 
   var rows = [
-    { label:'🚛 Shirac',     color:'#10b981', cnt:b  },
-    { label:'🚚 Bila Shirac',color:'#3b82f6', cnt:nb },
-    { label:'🏗️ Metal',     color:'#ef4444', cnt:m  }
+    { label:'🚛 Shirac',     color:'#10b981', eC:eS, dC:dS },
+    { label:'🚚 Bila Shirac',color:'#3b82f6', eC:eB, dC:dB },
+    { label:'🏗️ Metal',     color:'#ef4444', eC:eM, dC:dM }
   ];
 
+  var COLS = '1fr 46px 70px 46px 66px';
+
+  function lockedRow(label, color, eC, dC) {
+    return '<div style="display:grid;grid-template-columns:'+COLS+';padding:8px 10px;border-bottom:1px solid var(--border);align-items:center;gap:3px">'
+      + '<div style="font-size:12px;font-weight:700;color:'+color+'">'+label+'</div>'
+      + '<div style="font-size:13px;font-weight:700;color:var(--green);text-align:center;font-family:\'JetBrains Mono\',monospace">'+eC+'</div>'
+      + '<div style="font-size:12px;font-weight:700;color:var(--green);text-align:right;font-family:\'JetBrains Mono\',monospace">'+(eC*PRICE).toLocaleString()+'</div>'
+      + '<div style="font-size:13px;font-weight:700;color:var(--teal);text-align:center;font-family:\'JetBrains Mono\',monospace">'+dC+'</div>'
+      + '<div style="font-size:12px;font-weight:700;color:var(--teal);text-align:right;font-family:\'JetBrains Mono\',monospace;padding-right:2px">'+(dC*PRICE_FD).toLocaleString()+'</div>'
+      + '</div>';
+  }
+
+  // Summary block values
+  var hasETB = (eS+eB+eM) > 0;
+  var hasDJF = (dS+dB+dM) > 0;
+  var shiracETB = eS*5500, shiracDJF = dS*5000;
+  var metalETB  = eM*PRICE, metalDJF  = dM*PRICE_FD;
+  var totSmETB  = shiracETB + metalETB;
+  var totSmDJF  = shiracDJF + metalDJF;
+  var smCols = (hasETB && hasDJF) ? '1fr 96px 84px' : '1fr 110px';
+  function smVal(val, color, pr) {
+    return '<div style="font-size:12px;font-weight:800;color:'+color+';text-align:right;font-family:\'JetBrains Mono\',monospace'+(pr?';padding-right:2px':'')+'">'+(val).toLocaleString()+'</div>';
+  }
+
   var table1HTML =
-    '<div style="font-size:10px;font-weight:800;color:var(--text3);letter-spacing:0.08em;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--border)">📋 TABLE 1 — AGASH REPORT</div>'
+    '<div style="font-size:10px;font-weight:800;color:var(--text3);letter-spacing:0.08em;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--border)">📋 TABLE 1 — AGASH REPORT · 1,300 ETB / truck</div>'
     + '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;margin-bottom:10px">'
-    // thead: TYPE | TRUCKS | TOTAL ETB (no paid column)
-    + '<div style="display:grid;grid-template-columns:1fr 52px 88px;background:var(--bg4);padding:7px 10px;border-bottom:1px solid var(--border)">'
-    + '<div style="font-size:9px;font-weight:800;color:var(--text3)">TYPE</div>'
-    + '<div style="font-size:9px;font-weight:800;color:var(--text3);text-align:center">TRUCKS</div>'
-    + '<div style="font-size:9px;font-weight:800;color:var(--green);text-align:right;padding-right:4px">TOTAL (ETB)</div>'
+    // Group header: ETB × 1,300 | DJF × 1,000
+    + '<div style="display:grid;grid-template-columns:'+COLS+';background:var(--bg4);padding:5px 10px 3px;border-bottom:1px solid var(--border);gap:3px;align-items:end">'
+    + '<div></div>'
+    + '<div style="grid-column:2/4;text-align:center;font-size:9px;font-weight:800;color:var(--green);border-bottom:2px solid rgba(34,197,94,0.4);padding-bottom:2px;letter-spacing:.05em">ETB × 1,300</div>'
+    + '<div style="grid-column:4/6;text-align:center;font-size:9px;font-weight:800;color:var(--teal);border-bottom:2px solid rgba(20,184,166,0.4);padding-bottom:2px;letter-spacing:.05em">DJF × 1,000</div>'
     + '</div>'
-    + rows.map(function(row, i) {
-        return '<div style="display:grid;grid-template-columns:1fr 52px 88px;padding:8px 10px;'
-          + (i < rows.length-1 ? 'border-bottom:1px solid var(--border);' : '')
-          + 'align-items:center">'
-          + '<div style="font-size:12px;font-weight:700;color:'+row.color+'">'+row.label+'</div>'
-          + '<div style="font-size:12px;font-weight:700;color:var(--text2);text-align:center">'+row.cnt+'</div>'
-          + '<div style="font-size:12px;font-weight:700;color:var(--green);text-align:right;font-family:\'JetBrains Mono\',monospace;padding-right:4px">'+(row.cnt*PRICE).toLocaleString()+'</div>'
-          + '</div>';
-      }).join('')
-    // footer
-    + '<div style="display:grid;grid-template-columns:1fr 52px 88px;padding:8px 10px;background:rgba(59,130,246,0.07);border-top:2px solid var(--border);align-items:center">'
+    // Sub-header: TYPE | TRUCKS | TOTAL | TRUCKS | TOTAL
+    + '<div style="display:grid;grid-template-columns:'+COLS+';background:var(--bg4);padding:3px 10px 6px;border-bottom:1px solid var(--border);gap:3px">'
+    + '<div style="font-size:9px;font-weight:800;color:var(--text3);letter-spacing:.07em">TYPE</div>'
+    + '<div style="font-size:9px;font-weight:800;color:var(--green);text-align:center">TRUCKS</div>'
+    + '<div style="font-size:9px;font-weight:800;color:var(--green);text-align:center">TOTAL</div>'
+    + '<div style="font-size:9px;font-weight:800;color:var(--teal);text-align:center">TRUCKS</div>'
+    + '<div style="font-size:9px;font-weight:800;color:var(--teal);text-align:center">TOTAL</div>'
+    + '</div>'
+    + lockedRow('🚛 Shirac',      '#10b981', eS, dS)
+    + lockedRow('🚚 Bila Shirac', '#3b82f6', eB, dB)
+    + lockedRow('🏗️ Metal',      '#ef4444', eM, dM)
+    // Footer totals
+    + '<div style="display:grid;grid-template-columns:'+COLS+';padding:8px 10px;background:rgba(59,130,246,.07);border-top:2px solid var(--border);align-items:center;gap:3px">'
     + '<div style="font-size:11px;font-weight:800">TOTAL</div>'
-    + '<div style="font-size:13px;font-weight:800;color:var(--accent);text-align:center;font-family:\'JetBrains Mono\',monospace">'+t1Total+'</div>'
-    + '<div style="font-size:12px;font-weight:800;color:var(--green);text-align:right;font-family:\'JetBrains Mono\',monospace;padding-right:4px">'+t1Amount.toLocaleString()+'</div>'
+    + '<div></div>'
+    + '<div style="font-size:13px;font-weight:800;color:var(--green);text-align:right;font-family:\'JetBrains Mono\',monospace">'+t1Amount.toLocaleString()+'</div>'
+    + '<div></div>'
+    + '<div style="font-size:13px;font-weight:800;color:var(--teal);text-align:right;font-family:\'JetBrains Mono\',monospace;padding-right:2px">'+t1AmountFD.toLocaleString()+'</div>'
     + '</div>'
     + '</div>'
-    // Submitted by H. of Agash + Shibo
+
+    // ── Summary block (TYPE | ×ETB | ×DJF) ──
+    + '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;margin-bottom:10px">'
+    + '<div style="display:grid;grid-template-columns:'+smCols+';background:var(--bg4);padding:5px 10px;border-bottom:1px solid var(--border)">'
+    + '<div style="font-size:9px;font-weight:800;color:var(--text3)">TYPE</div>'
+    + (hasETB ? '<div style="font-size:9px;font-weight:800;color:var(--orange);text-align:right">× ETB</div>' : '')
+    + (hasDJF ? '<div style="font-size:9px;font-weight:800;color:var(--teal);text-align:right;padding-right:2px">× DJF</div>' : '')
+    + '</div>'
+    // Shirac row
+    + '<div style="display:grid;grid-template-columns:'+smCols+';padding:8px 10px;border-bottom:1px solid var(--border);align-items:center">'
+    + '<div><div style="font-size:12px;font-weight:700;color:#10b981">🚛 Shirac</div>'
+    + '<div style="font-size:9px;color:var(--text3);margin-top:1px">'+(hasETB?'×5,500 ETB':'')+(hasETB&&hasDJF?' · ':'')+(hasDJF?'×5,000 DJF':'')+'</div></div>'
+    + (hasETB ? smVal(shiracETB,'var(--orange)',!hasDJF) : '')
+    + (hasDJF ? smVal(shiracDJF,'var(--teal)',true) : '')
+    + '</div>'
+    // Metal row
+    + '<div style="display:grid;grid-template-columns:'+smCols+';padding:8px 10px;border-bottom:2px solid var(--border);align-items:center">'
+    + '<div><div style="font-size:12px;font-weight:700;color:#ef4444">🏗️ Metal</div>'
+    + '<div style="font-size:9px;color:var(--text3);margin-top:1px">'+(hasETB?'×1,300 ETB':'')+(hasETB&&hasDJF?' · ':'')+(hasDJF?'×1,000 DJF':'')+'</div></div>'
+    + (hasETB ? smVal(metalETB,'var(--orange)',!hasDJF) : '')
+    + (hasDJF ? smVal(metalDJF,'var(--teal)',true) : '')
+    + '</div>'
+    // TOTAL row
+    + '<div style="display:grid;grid-template-columns:'+smCols+';padding:8px 10px;background:rgba(59,130,246,.07);align-items:center">'
+    + '<div style="font-size:11px;font-weight:800">TOTAL</div>'
+    + (hasETB ? '<div style="font-size:13px;font-weight:800;color:var(--orange);text-align:right;font-family:\'JetBrains Mono\',monospace'+(hasDJF?'':';padding-right:2px')+'">'+totSmETB.toLocaleString()+'</div>' : '')
+    + (hasDJF ? '<div style="font-size:13px;font-weight:800;color:var(--teal);text-align:right;font-family:\'JetBrains Mono\',monospace;padding-right:2px">'+totSmDJF.toLocaleString()+'</div>' : '')
+    + '</div>'
+    + '</div>'
+
+    // Submitted by Agash + Shibo
     + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">'
     + '<div class="stl-stat"><div class="stl-stat-num" style="color:var(--green);font-size:16px">'+(s.agashSubmitted||0).toLocaleString()+'</div><div class="stl-stat-lbl">SUBMITTED BY H. OF AGASH</div></div>'
     + '<div class="stl-stat"><div class="stl-stat-num" style="color:var(--purple);font-size:16px">'+(s.shiboGiven||0).toLocaleString()+'</div><div class="stl-stat-lbl">GIVEN TO SHIBO WORKERS</div></div>'
@@ -8270,6 +7192,23 @@ function renderLockedSettlement(s, cashierName, cashierId, date, role, expectedC
         }).join('');
   }
 
+  // Dual-currency computed values for Table 2
+  var t2ShiracDJFTrucks = s.t2ShiracDJFTrucks || 0;
+  var t2ShiracETBTrucks = s.t2ShiracETBTrucks != null ? s.t2ShiracETBTrucks : (t2Total - t2ShiracDJFTrucks);
+  var t2ShiracFDAmount  = s.t2ShiracFD || 0;
+  var t2ShiracETBAmount = t2ShiracETBTrucks * 5500;
+  // FD trucks paid in DJF, rest in ETB — no double-counting
+  var paidFDTrucks  = Math.min(t2ShiracDJFTrucks, t2Paid);
+  var paidETBTrucks = t2Paid - paidFDTrucks;
+  var t2PaidETB     = paidETBTrucks * CLIENT;
+  var t2PaidFD      = paidFDTrucks  * CLIENT_FD;
+  var unpaidFDTrucks  = Math.max(0, t2ShiracDJFTrucks - t2Paid);
+  var unpaidETBTrucks = t2Unpaid - unpaidFDTrucks;
+  var t2UnpaidETB     = unpaidETBTrucks * CLIENT;
+  var t2UnpaidFD      = unpaidFDTrucks  * CLIENT_FD;
+  var t2IfAllETB      = t2ShiracETBTrucks * CLIENT;
+  var t2IfAllFD       = t2ShiracDJFTrucks * CLIENT_FD;
+
   var table2HTML =
     '<div style="font-size:10px;font-weight:800;color:var(--text3);letter-spacing:0.08em;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--border)">🚛 TABLE 2 — TRUCKS & UNPAID COLLECTION</div>'
     // Total / Paid / Unpaid stats
@@ -8278,37 +7217,107 @@ function renderLockedSettlement(s, cashierName, cashierId, date, role, expectedC
     + '<div class="stl-stat"><div class="stl-stat-num" style="color:var(--green)">'+t2Paid+'</div><div class="stl-stat-lbl">PAID</div></div>'
     + '<div class="stl-stat"><div class="stl-stat-num" style="color:var(--red)">'+t2Unpaid+'</div><div class="stl-stat-lbl">UNPAID</div></div>'
     + '</div>'
-    // Unpaid trucks list
-    + unpaidHTML
-    // Amounts (from Table 2 data only)
-    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">'
-    + '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;text-align:center">'
-    + '<div style="font-size:9px;font-weight:800;color:var(--text3);letter-spacing:0.07em;margin-bottom:4px">📊 IF ALL PAID</div>'
-    + '<div style="font-size:15px;font-weight:800;font-family:\'JetBrains Mono\',monospace;color:var(--text2)">'+t2IfAll.toLocaleString()+'</div>'
+
+    // ── SHIRAC RATE SECTION — ETB/FD split ──
+    + '<div style="font-size:10px;font-weight:800;color:var(--text3);letter-spacing:0.06em;margin-bottom:6px;padding:4px 0 4px;border-top:1px solid var(--border)">🚛 SHIRAC COUNT — RATES (×5,500 ETB / ×5,000 FD)</div>'
+    + '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;margin-bottom:12px">'
+    + '<div style="display:grid;grid-template-columns:1fr 44px 76px 68px;background:var(--bg4);padding:6px 10px;border-bottom:1px solid var(--border)">'
+    + '<div style="font-size:9px;font-weight:800;color:var(--text3)">TYPE</div>'
+    + '<div style="font-size:9px;font-weight:800;color:var(--text3);text-align:center">TOTAL</div>'
+    + '<div style="font-size:9px;font-weight:800;color:var(--orange);text-align:right">ETB</div>'
+    + '<div style="font-size:9px;font-weight:800;color:var(--teal);text-align:right;padding-right:2px">FD</div>'
     + '</div>'
-    + '<div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);border-radius:var(--radius-sm);padding:10px 12px;text-align:center">'
-    + '<div style="font-size:9px;font-weight:800;color:var(--red);letter-spacing:0.07em;margin-bottom:4px">❌ MISSING</div>'
-    + '<div style="font-size:15px;font-weight:800;font-family:\'JetBrains Mono\',monospace;color:var(--red)">'+t2Missing.toLocaleString()+'</div>'
+    + '<div style="display:grid;grid-template-columns:1fr 44px 76px 68px;padding:9px 10px;align-items:center">'
+    + '<div style="font-size:12px;font-weight:700;color:#10b981">🚛 Shirac</div>'
+    + '<div style="font-size:13px;font-weight:800;color:var(--accent);text-align:center;font-family:\'JetBrains Mono\',monospace">'+t2Total+'</div>'
+    + '<div style="font-size:11px;font-weight:800;color:var(--orange);text-align:right;font-family:\'JetBrains Mono\',monospace">'+t2ShiracETBAmount.toLocaleString()+'</div>'
+    + '<div style="font-size:11px;font-weight:800;color:var(--teal);text-align:right;font-family:\'JetBrains Mono\',monospace;padding-right:2px">'+t2ShiracFDAmount.toLocaleString()+'</div>'
     + '</div>'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;padding:4px 10px 6px;border-top:1px solid var(--border)">'
+    + '<div style="font-size:9px;color:var(--orange)">'+t2ShiracETBTrucks+' trucks × 5,500 ETB</div>'
+    + '<div style="font-size:9px;color:var(--teal);text-align:right">'+t2ShiracDJFTrucks+' trucks × 5,000 FD</div>'
     + '</div>'
-    + '<div style="background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.25);border-radius:var(--radius-sm);padding:10px 12px;text-align:center;margin-bottom:10px">'
-    + '<div style="font-size:9px;font-weight:800;color:var(--green);letter-spacing:0.07em;margin-bottom:4px">✅ COLLECTED</div>'
-    + '<div style="font-size:15px;font-weight:800;font-family:\'JetBrains Mono\',monospace;color:var(--green)">'+t2Coll.toLocaleString()+'</div>'
     + '</div>'
 
-    // IF ALL PAID  |  SUBMITTED TO COMPANY
-    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;margin-bottom:12px">'
-    + '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 10px;text-align:center">'
-    + '<div style="font-size:9px;font-weight:800;color:var(--text3);letter-spacing:0.07em;margin-bottom:6px">💡 IF ALL PAID</div>'
-    + '<div style="font-size:17px;font-weight:800;font-family:\'JetBrains Mono\',monospace;color:var(--accent)">'+t2IfAll.toLocaleString()+'</div>'
-    + '<div style="font-size:9px;color:var(--text3);margin-top:3px">'+t2Total+' × 5,500 ETB</div>'
-    + '</div>'
-    + '<div style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.3);border-radius:var(--radius-sm);padding:12px 10px;text-align:center">'
-    + '<div style="font-size:9px;font-weight:800;color:var(--accent);letter-spacing:0.07em;margin-bottom:6px">🏦 SUBMITTED TO CO.</div>'
-    + '<div style="font-size:17px;font-weight:800;font-family:\'JetBrains Mono\',monospace;color:var(--accent)">'+(s.cashSubmitted||0).toLocaleString()+'</div>'
-    + '<div style="font-size:9px;color:var(--text3);margin-top:3px">ETB</div>'
-    + '</div>'
-    + '</div>'
+    // Unpaid trucks list
+    + unpaidHTML
+
+    // ── PAID COLLECTION — correct ETB/FD split (no double-counting) ──
+    + (function() {
+        var hasFD = t2ShiracDJFTrucks > 0;
+        var cols  = hasFD ? '1fr 44px 76px 68px' : '1fr 44px 1fr';
+
+        function amtCell(etb, fd, color, pr) {
+          if (hasFD) {
+            var etbStr = etb > 0 ? '<div style="font-size:11px;font-weight:700;color:'+color+';text-align:right;font-family:\'JetBrains Mono\',monospace">'+(etb).toLocaleString()+'</div>' : '<div></div>';
+            var fdStr  = fd  > 0 ? '<div style="font-size:11px;font-weight:700;color:var(--teal);text-align:right;font-family:\'JetBrains Mono\',monospace'+(pr?';padding-right:2px':'')+'">'+(fd).toLocaleString()+'</div>' : '<div></div>';
+            return etbStr + fdStr;
+          } else {
+            return '<div style="font-size:11px;font-weight:700;color:'+color+';text-align:right;font-family:\'JetBrains Mono\',monospace;padding-right:2px">'+(etb).toLocaleString()+'</div>';
+          }
+        }
+
+        var paidLabel   = hasFD && paidFDTrucks > 0 && paidETBTrucks > 0
+          ? paidETBTrucks+' ETB + '+paidFDTrucks+' FD trucks'
+          : hasFD && paidFDTrucks > 0 ? paidFDTrucks+' FD trucks' : '';
+        var unpaidLabel = hasFD && unpaidFDTrucks > 0
+          ? unpaidETBTrucks+' ETB + '+unpaidFDTrucks+' FD trucks'
+          : '';
+
+        return '<div style="font-size:10px;font-weight:800;color:var(--text3);letter-spacing:0.06em;margin-bottom:6px;padding-top:4px">💰 PAID COLLECTION</div>'
+        + '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;margin-bottom:10px">'
+        // Header
+        + '<div style="display:grid;grid-template-columns:'+cols+';background:var(--bg4);padding:6px 10px;border-bottom:1px solid var(--border)">'
+        + '<div style="font-size:9px;font-weight:800;color:var(--text3)">STATUS</div>'
+        + '<div style="font-size:9px;font-weight:800;color:var(--text3);text-align:center">COUNT</div>'
+        + '<div style="font-size:9px;font-weight:800;color:var(--green);text-align:right">ETB</div>'
+        + (hasFD ? '<div style="font-size:9px;font-weight:800;color:var(--teal);text-align:right;padding-right:2px">FD</div>' : '')
+        + '</div>'
+        // Paid row
+        + '<div style="display:grid;grid-template-columns:'+cols+';padding:8px 10px;border-bottom:1px solid var(--border);align-items:center">'
+        + '<div><div style="font-size:12px;font-weight:700;color:var(--green)">✅ Paid</div>'
+        + (paidLabel ? '<div style="font-size:9px;color:var(--text3);margin-top:1px">'+paidLabel+'</div>' : '')
+        + '</div>'
+        + '<div style="font-size:12px;font-weight:700;color:var(--green);text-align:center;font-family:\'JetBrains Mono\',monospace">'+t2Paid+'</div>'
+        + amtCell(t2PaidETB, t2PaidFD, 'var(--green)', true)
+        + '</div>'
+        // Unpaid row
+        + '<div style="display:grid;grid-template-columns:'+cols+';padding:8px 10px;border-bottom:1px solid var(--border);align-items:center">'
+        + '<div><div style="font-size:12px;font-weight:700;color:var(--red)">❌ Unpaid</div>'
+        + (unpaidLabel ? '<div style="font-size:9px;color:var(--text3);margin-top:1px">'+unpaidLabel+'</div>' : '')
+        + '</div>'
+        + '<div style="font-size:12px;font-weight:700;color:var(--red);text-align:center;font-family:\'JetBrains Mono\',monospace">'+t2Unpaid+'</div>'
+        + amtCell(t2UnpaidETB, t2UnpaidFD, 'var(--red)', true)
+        + '</div>'
+        // IF ALL PAID row
+        + '<div style="display:grid;grid-template-columns:'+cols+';padding:8px 10px;background:rgba(59,130,246,0.07);border-top:1px solid var(--border);align-items:center">'
+        + '<div><div style="font-size:11px;font-weight:800">IF ALL PAID</div>'
+        + (hasFD ? '<div style="font-size:9px;color:var(--text3);margin-top:1px">'+t2ShiracETBTrucks+' ETB + '+t2ShiracDJFTrucks+' FD trucks</div>' : '')
+        + '</div>'
+        + '<div style="font-size:13px;font-weight:800;color:var(--accent);text-align:center;font-family:\'JetBrains Mono\',monospace">'+t2Total+'</div>'
+        + amtCell(t2IfAllETB, t2IfAllFD, 'var(--accent)', true)
+        + '</div>'
+        + '</div>'
+
+        // SUBMITTED TO COMPANY
+        + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">'
+        + '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 10px;text-align:center">'
+        + '<div style="font-size:9px;font-weight:800;color:var(--text3);letter-spacing:0.07em;margin-bottom:6px">💡 IF ALL PAID</div>'
+        + (hasFD
+            ? '<div style="font-size:13px;font-weight:800;font-family:\'JetBrains Mono\',monospace;color:var(--accent)">'+t2IfAllETB.toLocaleString()+' <span style="font-size:10px">ETB</span></div>'
+            + '<div style="font-size:11px;font-weight:800;font-family:\'JetBrains Mono\',monospace;color:var(--teal);margin-top:2px">'+t2IfAllFD.toLocaleString()+' <span style="font-size:10px">FD</span></div>'
+            + '<div style="font-size:9px;color:var(--text3);margin-top:3px">'+t2ShiracETBTrucks+' × 5,500 ETB · '+t2ShiracDJFTrucks+' × 5,000 FD</div>'
+            : '<div style="font-size:15px;font-weight:800;font-family:\'JetBrains Mono\',monospace;color:var(--accent)">'+t2IfAllETB.toLocaleString()+'</div>'
+            + '<div style="font-size:9px;color:var(--text3);margin-top:3px">'+t2Total+' × 5,500 ETB</div>'
+          )
+        + '</div>'
+        + '<div style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.3);border-radius:var(--radius-sm);padding:12px 10px;text-align:center">'
+        + '<div style="font-size:9px;font-weight:800;color:var(--accent);letter-spacing:0.07em;margin-bottom:6px">🏦 SUBMITTED TO CO.</div>'
+        + '<div style="font-size:17px;font-weight:800;font-family:\'JetBrains Mono\',monospace;color:var(--accent)">'+(s.cashSubmitted||0).toLocaleString()+'</div>'
+        + '<div style="font-size:9px;color:var(--text3);margin-top:3px">ETB</div>'
+        + '</div>'
+        + '</div>';
+      })()
 
     // Reporter name
     + '<div style="text-align:center;padding:10px 0 4px;border-top:1px solid var(--border)">'
@@ -8466,35 +7475,175 @@ window.stlAddManualUnpaid = function(cashierId) {
 
 window.stlRecomputeTable = function(cashierId) {
   var PRICE = 1300;
-  var cntS = parseInt(document.getElementById('stlCntShirac_' + cashierId)?.value) || 0;
-  var cntB = parseInt(document.getElementById('stlCntBila_'   + cashierId)?.value) || 0;
-  var cntM = parseInt(document.getElementById('stlCntMetal_'  + cashierId)?.value) || 0;
 
-  // Amount cells (paid = count, no unpaid concept in Table 1)
-  var amtS = document.getElementById('stlAmtShirac_' + cashierId);
-  var amtB = document.getElementById('stlAmtBila_'   + cashierId);
-  var amtM = document.getElementById('stlAmtMetal_'  + cashierId);
-  if (amtS) amtS.textContent = (cntS * PRICE).toLocaleString();
-  if (amtB) amtB.textContent = (cntB * PRICE).toLocaleString();
-  if (amtM) amtM.textContent = (cntM * PRICE).toLocaleString();
+  // Read ETB truck counts
+  var eS = parseInt(document.getElementById('stlEtbCntS_' + cashierId)?.value) || 0;
+  var eB = parseInt(document.getElementById('stlEtbCntB_' + cashierId)?.value) || 0;
+  var eM = parseInt(document.getElementById('stlEtbCntM_' + cashierId)?.value) || 0;
+  // Read DJF truck counts
+  var dS = parseInt(document.getElementById('stlDjfCntS_' + cashierId)?.value) || 0;
+  var dB = parseInt(document.getElementById('stlDjfCntB_' + cashierId)?.value) || 0;
+  var dM = parseInt(document.getElementById('stlDjfCntM_' + cashierId)?.value) || 0;
 
-  // Footer totals
-  var total = cntS + cntB + cntM;
-  var cntEl = document.getElementById('stlTotalCnt_' + cashierId);
-  var amtEl = document.getElementById('stlTotalAmt_' + cashierId);
-  if (cntEl) cntEl.textContent = total;
-  if (amtEl) amtEl.textContent = (total * PRICE).toLocaleString();
+  // Update ETB amount cells (×1,300)
+  var aES = document.getElementById('stlEtbAmtS_' + cashierId);
+  var aEB = document.getElementById('stlEtbAmtB_' + cashierId);
+  var aEM = document.getElementById('stlEtbAmtM_' + cashierId);
+  if (aES) aES.textContent = (eS * PRICE).toLocaleString();
+  if (aEB) aEB.textContent = (eB * PRICE).toLocaleString();
+  if (aEM) aEM.textContent = (eM * PRICE).toLocaleString();
+
+  // Update DJF amount cells (×1,000)
+  var aDS = document.getElementById('stlDjfAmtS_' + cashierId);
+  var aDB = document.getElementById('stlDjfAmtB_' + cashierId);
+  var aDM = document.getElementById('stlDjfAmtM_' + cashierId);
+  if (aDS) aDS.textContent = (dS * 1000).toLocaleString();
+  if (aDB) aDB.textContent = (dB * 1000).toLocaleString();
+  if (aDM) aDM.textContent = (dM * 1000).toLocaleString();
+
+  // Footer totals (Table 1)
+  var totETB = (eS + eB + eM) * PRICE;
+  var totDJF = (dS + dB + dM) * 1000;
+  var tE = document.getElementById('stlTotalAmt_' + cashierId);
+  var tD = document.getElementById('stlTotalDJF_' + cashierId);
+  if (tE) tE.textContent = totETB.toLocaleString();
+  if (tD) tD.textContent = totDJF.toLocaleString();
+
+  // ── Summary block ──
+  // Shirac → comes from Table 2 (app trucks + FD input split) — NOT from Table 1 Shirac row
+  // Metal  → comes from Table 1 Metal ETB/DJF inputs
+  var t2TotalEl  = document.getElementById('stlT2ShiracRow_' + cashierId);
+  var t2Total    = t2TotalEl ? (parseInt(t2TotalEl.dataset.t2total) || 0) : 0;
+  var fdInput    = document.getElementById('stlT2FdInput_' + cashierId);
+  var fdAmount   = fdInput ? (parseFloat(fdInput.value) || 0) : 0;
+  var fdTrucks   = Math.min(Math.floor(fdAmount / 5000), t2Total);
+  var etbTrucks  = t2Total - fdTrucks;
+
+  var shiracETB  = etbTrucks * 5500;
+  var shiracDJF  = fdTrucks  * 5000;
+  var metalETB   = eM * PRICE;   // × 1,300 from Table 1
+  var metalDJF   = dM * 1000;    // × 1,000 from Table 1
+
+  var hasShiracETB = etbTrucks > 0;
+  var hasShiracDJF = fdTrucks  > 0;
+  var hasMetalETB  = eM > 0;
+  var hasMetalDJF  = dM > 0;
+  var hasETB = hasShiracETB || hasMetalETB;
+  var hasDJF = hasShiracDJF || hasMetalDJF;
+
+  var totSmETB = shiracETB + metalETB;
+  var totSmDJF = shiracDJF + metalDJF;
+
+  // Build column layout and headers dynamically
+  var cols, hdrETB, hdrDJF;
+  if (hasETB && hasDJF) {
+    cols   = '1fr 96px 84px';
+    hdrETB = '<div style="font-size:9px;font-weight:800;color:var(--orange);text-align:right">× ETB</div>';
+    hdrDJF = '<div style="font-size:9px;font-weight:800;color:var(--teal);text-align:right;padding-right:2px">× DJF</div>';
+  } else if (hasETB) {
+    cols   = '1fr 110px';
+    hdrETB = '<div style="font-size:9px;font-weight:800;color:var(--orange);text-align:right">× ETB</div>';
+    hdrDJF = '';
+  } else {
+    cols   = '1fr 110px';
+    hdrETB = '';
+    hdrDJF = '<div style="font-size:9px;font-weight:800;color:var(--teal);text-align:right;padding-right:2px">× DJF</div>';
+  }
+
+  function smVal(val, color, isRight) {
+    return '<div style="font-size:12px;font-weight:800;color:'+color+';text-align:right;font-family:\'JetBrains Mono\',monospace'+(isRight?';padding-right:2px':'')+'">'
+      + val.toLocaleString() + '</div>';
+  }
+  function smRow(label, color, etbVal, djfVal, isLast) {
+    var border = isLast ? 'border-bottom:2px solid var(--border);' : 'border-bottom:1px solid var(--border);';
+    var etbCell = hasETB ? smVal(etbVal, 'var(--orange)', !hasDJF) : '';
+    var djfCell = hasDJF ? smVal(djfVal, 'var(--teal)',   true)     : '';
+    return '<div style="display:grid;grid-template-columns:'+cols+';padding:8px 10px;'+border+'align-items:center">'
+      + '<div style="font-size:12px;font-weight:700;color:'+color+'">'+label+'</div>'
+      + etbCell + djfCell + '</div>';
+  }
+
+  var smHTML =
+    '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden">'
+    // header
+    + '<div style="display:grid;grid-template-columns:'+cols+';background:var(--bg4);padding:5px 10px;border-bottom:1px solid var(--border)">'
+    + '<div style="font-size:9px;font-weight:800;color:var(--text3)">TYPE</div>'
+    + hdrETB + hdrDJF
+    + '</div>'
+    // Shirac row — from Table 2 split
+    + '<div style="display:grid;grid-template-columns:'+cols+';padding:8px 10px;border-bottom:1px solid var(--border);align-items:center">'
+    + '<div><div style="font-size:12px;font-weight:700;color:#10b981">🚛 Shirac</div>'
+    + '<div style="font-size:9px;color:var(--text3);margin-top:1px">'
+    + (hasShiracETB ? '×5,500 ETB' : '') + (hasShiracETB && hasShiracDJF ? ' · ' : '') + (hasShiracDJF ? '×5,000 DJF' : '')
+    + '</div></div>'
+    + (hasETB ? smVal(shiracETB, 'var(--orange)', !hasDJF) : '<div></div>')
+    + (hasDJF ? smVal(shiracDJF, 'var(--teal)',   true)    : '')
+    + '</div>'
+    // Metal row — from Table 1
+    + '<div style="display:grid;grid-template-columns:'+cols+';padding:8px 10px;border-bottom:2px solid var(--border);align-items:center">'
+    + '<div><div style="font-size:12px;font-weight:700;color:#ef4444">🏗️ Metal</div>'
+    + '<div style="font-size:9px;color:var(--text3);margin-top:1px">'
+    + (hasMetalETB ? '×1,300 ETB' : '') + (hasMetalETB && hasMetalDJF ? ' · ' : '') + (hasMetalDJF ? '×1,000 DJF' : '')
+    + '</div></div>'
+    + (hasETB ? smVal(metalETB, 'var(--orange)', !hasDJF) : '<div></div>')
+    + (hasDJF ? smVal(metalDJF, 'var(--teal)',   true)    : '')
+    + '</div>'
+    // TOTAL row
+    + '<div style="display:grid;grid-template-columns:'+cols+';padding:8px 10px;background:rgba(59,130,246,.07);align-items:center">'
+    + '<div style="font-size:11px;font-weight:800">TOTAL</div>'
+    + (hasETB ? '<div style="font-size:13px;font-weight:800;color:var(--orange);text-align:right;font-family:\'JetBrains Mono\',monospace'+(hasDJF?'':';padding-right:2px')+'">' + totSmETB.toLocaleString() + '</div>' : '')
+    + (hasDJF ? '<div style="font-size:13px;font-weight:800;color:var(--teal);text-align:right;font-family:\'JetBrains Mono\',monospace;padding-right:2px">' + totSmDJF.toLocaleString() + '</div>' : '')
+    + '</div>'
+    + '</div>';
+
+  var smBlock = document.getElementById('stlSummaryBlock_' + cashierId);
+  if (smBlock) smBlock.innerHTML = smHTML;
+
+  // Auto-suggest Shibo amount = Bila Shirac total × 1,300 (only if not manually overridden)
+  var bilaTotal    = eS + dS;
+  var shiboSuggest = bilaTotal * PRICE;
+  var shiboInput   = document.getElementById('stlShiboGiven_' + cashierId);
+  var shiboHint    = document.getElementById('stlShiboHint_'  + cashierId);
+  if (shiboHint) shiboHint.textContent = '💡 Suggested: ' + bilaTotal + ' Shirac × 1,300 = ' + shiboSuggest.toLocaleString() + ' ETB';
+  if (shiboInput && shiboInput.dataset.auto === '1') shiboInput.value = shiboSuggest;
 
   // Re-check agash discrepancy
   stlCheckAgashDisc(cashierId);
 };
 
+// ── Shibo Workers field helpers ──
+window.stlShiboOnInput = function(cashierId) {
+  var inp = document.getElementById('stlShiboGiven_' + cashierId);
+  var unlockBtn = document.getElementById('stlShiboUnlock_' + cashierId);
+  if (!inp) return;
+  // Any manual keystroke locks it
+  inp.dataset.auto = '0';
+  if (unlockBtn) unlockBtn.style.display = 'inline-flex';
+};
+
+window.stlShiboUnlock = function(cashierId) {
+  var PRICE = 1300;
+  var eS = parseInt(document.getElementById('stlEtbCntS_' + cashierId)?.value) || 0;
+  var dS = parseInt(document.getElementById('stlDjfCntS_' + cashierId)?.value) || 0;
+  var bilaTotal    = eS + dS;
+  var shiboSuggest = bilaTotal * PRICE;
+  var inp       = document.getElementById('stlShiboGiven_'  + cashierId);
+  var hint      = document.getElementById('stlShiboHint_'   + cashierId);
+  var unlockBtn = document.getElementById('stlShiboUnlock_' + cashierId);
+  if (inp)       { inp.dataset.auto = '1'; inp.value = shiboSuggest; }
+  if (hint)      hint.textContent = '💡 Suggested: ' + bilaTotal + ' Shirac × 1,300 = ' + shiboSuggest.toLocaleString() + ' ETB';
+  if (unlockBtn) unlockBtn.style.display = 'none';
+};
+
 window.stlCheckAgashDisc = function(cashierId) {
   var PRICE = 1300;
-  var cntS  = parseInt(document.getElementById('stlCntShirac_' + cashierId)?.value) || 0;
-  var cntB  = parseInt(document.getElementById('stlCntBila_'   + cashierId)?.value) || 0;
-  var cntM  = parseInt(document.getElementById('stlCntMetal_'  + cashierId)?.value) || 0;
-  var totalCollected = (cntS + cntB + cntM) * PRICE;
+  var eS = parseInt(document.getElementById('stlEtbCntS_' + cashierId)?.value) || 0;
+  var eB = parseInt(document.getElementById('stlEtbCntB_' + cashierId)?.value) || 0;
+  var eM = parseInt(document.getElementById('stlEtbCntM_' + cashierId)?.value) || 0;
+  var dS = parseInt(document.getElementById('stlDjfCntS_' + cashierId)?.value) || 0;
+  var dB = parseInt(document.getElementById('stlDjfCntB_' + cashierId)?.value) || 0;
+  var dM = parseInt(document.getElementById('stlDjfCntM_' + cashierId)?.value) || 0;
+  var totalCollected = (eS + eB + eM) * PRICE + (dS + dB + dM) * 1000;
 
   var submitEl = document.getElementById('stlAgashSubmit_' + cashierId);
   var discEl   = document.getElementById('stlAgashDisc_'   + cashierId);
@@ -8515,6 +7664,83 @@ window.stlCheckAgashDisc = function(cashierId) {
   }
 };
 
+// ── Table 2 FD input handler ──
+// When cashier types FD amount, split Shirac trucks into ETB/FD and update Table 1 summary
+window.stlT2FdChanged = function(cashierId) {
+  var t2TotalEl = document.getElementById('stlT2ShiracRow_' + cashierId);
+  var t2Total   = t2TotalEl ? (parseInt(t2TotalEl.dataset.t2total) || 0) : 0;
+  var fdAmount  = parseFloat(document.getElementById('stlT2FdInput_' + cashierId)?.value) || 0;
+  var fdTrucks  = Math.floor(fdAmount / 5000);
+  // Cap at total trucks
+  if (fdTrucks > t2Total) fdTrucks = t2Total;
+  var etbTrucks = t2Total - fdTrucks;
+  var fdActual  = fdTrucks * 5000;  // actual FD = whole trucks only
+  var etbAmt    = etbTrucks * 5500;
+  var fdAmt     = fdActual;
+
+  // Update Table 2 Shirac row display
+  var etbAmtEl   = document.getElementById('stlT2EtbAmt_'    + cashierId);
+  var fdAmtEl    = document.getElementById('stlT2FdAmt_'     + cashierId);
+  var etbTrEl    = document.getElementById('stlT2EtbTrucks_' + cashierId);
+  var fdTrEl     = document.getElementById('stlT2FdTrucks_'  + cashierId);
+  var hintEl     = document.getElementById('stlT2FdHint_'    + cashierId);
+  if (etbAmtEl) etbAmtEl.textContent = etbAmt.toLocaleString();
+  if (fdAmtEl)  fdAmtEl.textContent  = fdAmt.toLocaleString();
+  if (etbTrEl)  etbTrEl.textContent  = etbTrucks + ' trucks × ETB';
+  if (fdTrEl)   fdTrEl.textContent   = fdTrucks  + ' trucks × FD';
+  if (hintEl)   hintEl.textContent   = fdTrucks + ' truck(s) in DJF · ' + etbTrucks + ' truck(s) in ETB';
+
+  // ── Live-update IF ALL PAID and MISSING cards with mixed ETB/FD ──
+  // Read unpaid count from the stats row data attribute (set below) or fallback to DOM
+  var unpaidEl  = document.getElementById('stlT2UnpaidCount_' + cashierId);
+  var t2Unpaid  = unpaidEl ? (parseInt(unpaidEl.dataset.unpaid) || 0) : 0;
+  var t2Paid    = t2Total - t2Unpaid;
+
+  // Split unpaid proportionally: FD trucks that are unpaid vs ETB unpaid
+  // Simple rule: FD trucks are assumed paid first (since cashier accepted FD),
+  // so unpaid trucks are all ETB unless fdTrucks > t2Paid
+  var unpaidFD  = Math.max(0, fdTrucks - t2Paid);
+  var unpaidETB = t2Unpaid - unpaidFD;
+
+  var ifAllMainEl  = document.getElementById('stlIfAllMain_'  + cashierId);
+  var ifAllSubEl   = document.getElementById('stlIfAllSub_'   + cashierId);
+  var missingMainEl= document.getElementById('stlMissingMain_'+ cashierId);
+  var missingSubEl = document.getElementById('stlMissingSub_' + cashierId);
+
+  if (ifAllMainEl) {
+    if (fdTrucks > 0) {
+      ifAllMainEl.innerHTML = (etbTrucks*5500).toLocaleString() + ' <span style="color:var(--text3);font-size:11px">ETB</span>'
+        + ' + ' + fdActual.toLocaleString() + ' <span style="color:var(--teal);font-size:11px">FD</span>';
+      if (ifAllSubEl) ifAllSubEl.textContent = etbTrucks + ' × 5,500 ETB · ' + fdTrucks + ' × 5,000 FD';
+    } else {
+      ifAllMainEl.innerHTML = (t2Total*5500).toLocaleString() + ' <span style="color:var(--text3);font-size:11px">ETB</span>';
+      if (ifAllSubEl) ifAllSubEl.textContent = t2Total + ' × 5,500 ETB';
+    }
+  }
+
+  if (missingMainEl) {
+    var missingETBVal = unpaidETB * 5500;
+    var missingFDVal  = unpaidFD  * 5000;
+    if (unpaidFD > 0) {
+      missingMainEl.innerHTML = missingETBVal.toLocaleString() + ' <span style="color:var(--text3);font-size:11px">ETB</span>'
+        + ' + ' + missingFDVal.toLocaleString() + ' <span style="color:var(--teal);font-size:11px">FD</span>';
+      if (missingSubEl) missingSubEl.textContent = unpaidETB + ' × 5,500 ETB · ' + unpaidFD + ' × 5,000 FD';
+    } else {
+      missingMainEl.innerHTML = (t2Unpaid*5500).toLocaleString() + ' <span style="color:var(--text3);font-size:11px">ETB</span>';
+      if (missingSubEl) missingSubEl.textContent = t2Unpaid + ' unpaid × 5,500 ETB';
+    }
+  }
+
+  // Always sync Table 1 Shirac ETB/DJF from Table 2 FD input
+  // They share the same tariff so Table 2 is the source of truth for the split
+  var t1DjfInput = document.getElementById('stlDjfCntS_' + cashierId);
+  var t1EtbInput = document.getElementById('stlEtbCntS_' + cashierId);
+  if (t1DjfInput) t1DjfInput.value = fdTrucks;
+  if (t1EtbInput) t1EtbInput.value = etbTrucks;
+  // Trigger Table 1 recompute so summary block and totals update live
+  if (window.stlRecomputeTable) window.stlRecomputeTable(cashierId);
+};
+
 window.submitSettlement = function(cashierId, date, expectedCompany) {
   var PRICE  = 1300;
   var CLIENT = 5500;
@@ -8523,12 +7749,20 @@ window.submitSettlement = function(cashierId, date, expectedCompany) {
   var shiboGiven     = parseFloat(document.getElementById('stlShiboGiven_'   + cashierId)?.value) || 0;
   var notes          = (document.getElementById('stlNotes_' + cashierId)?.value || '').trim();
 
-  // Table 1 — counts only (all paid by default)
-  var cntShirac     = parseInt(document.getElementById('stlCntShirac_' + cashierId)?.value) || 0;
-  var cntBilaShirac = parseInt(document.getElementById('stlCntBila_'   + cashierId)?.value) || 0;
-  var cntMetal      = parseInt(document.getElementById('stlCntMetal_'  + cashierId)?.value) || 0;
+  // Table 1 — split ETB/DJF counts
+  var cntShiracETB  = parseInt(document.getElementById('stlEtbCntS_' + cashierId)?.value) || 0;
+  var cntBilaETB    = parseInt(document.getElementById('stlEtbCntB_' + cashierId)?.value) || 0;
+  var cntMetalETB   = parseInt(document.getElementById('stlEtbCntM_' + cashierId)?.value) || 0;
+  var cntShiracDJF  = parseInt(document.getElementById('stlDjfCntS_' + cashierId)?.value) || 0;
+  var cntBilaDJF    = parseInt(document.getElementById('stlDjfCntB_' + cashierId)?.value) || 0;
+  var cntMetalDJF   = parseInt(document.getElementById('stlDjfCntM_' + cashierId)?.value) || 0;
+  // Totals per type (ETB+DJF)
+  var cntShirac     = cntShiracETB + cntShiracDJF;
+  var cntBilaShirac = cntBilaETB   + cntBilaDJF;
+  var cntMetal      = cntMetalETB  + cntMetalDJF;
   var t1Total       = cntShirac + cntBilaShirac + cntMetal;
-  var t1Amount      = t1Total * PRICE;
+  var t1Amount      = (cntShiracETB + cntBilaETB + cntMetalETB) * PRICE
+                    + (cntShiracDJF + cntBilaDJF + cntMetalDJF) * 1000;
   var t1Diff        = agashSubmitted - t1Amount;
 
   if (!agashSubmitted) { showToast('⚠️ Enter amount submitted by H. of Agash'); return; }
@@ -8538,6 +7772,11 @@ window.submitSettlement = function(cashierId, date, expectedCompany) {
   var t2Total   = dayTrucks.length;
   var t2Unpaid  = dayTrucks.filter(function(t) { return t.status === 'unpaid'; }).length;
   var t2Paid    = t2Total - t2Unpaid;
+
+  // Table 2 FD split
+  var t2ShiracFD       = parseFloat(document.getElementById('stlT2FdInput_' + cashierId)?.value) || 0;
+  var t2ShiracDJFTrucks = Math.min(Math.floor(t2ShiracFD / 5000), t2Total);
+  var t2ShiracETBTrucks = t2Total - t2ShiracDJFTrucks;
 
   // Unpaid collection list (from app + manual additions)
   var listContainer = document.getElementById('stlUnpaidList_' + cashierId);
@@ -8554,11 +7793,15 @@ window.submitSettlement = function(cashierId, date, expectedCompany) {
     locked: true,
     // Table 1
     cntShirac: cntShirac, cntBilaShirac: cntBilaShirac, cntMetal: cntMetal,
+    cntShiracETB: cntShiracETB, cntShiracDJF: cntShiracDJF,
+    cntBilaETB: cntBilaETB,     cntBilaDJF: cntBilaDJF,
+    cntMetalETB: cntMetalETB,   cntMetalDJF: cntMetalDJF,
     t1Total: t1Total, t1Amount: t1Amount,
     agashSubmitted: agashSubmitted, shiboGiven: shiboGiven, t1Discrepancy: t1Diff,
     // Table 2 (app data only)
     t2Total: t2Total, t2Paid: t2Paid, t2Unpaid: t2Unpaid,
     t2IfAllPaid: t2Total * CLIENT, t2Missing: t2Unpaid * CLIENT, t2Collected: t2Paid * CLIENT,
+    t2ShiracFD: t2ShiracFD, t2ShiracDJFTrucks: t2ShiracDJFTrucks, t2ShiracETBTrucks: t2ShiracETBTrucks,
     unpaidTrucks: unpaidTrucks,
     cashSubmitted:  parseFloat(document.getElementById('stlCashSubmitted_' +cashierId)?.value)||0,
     reporterName:   (document.getElementById('stlReporterName_'+cashierId)?.value||'').trim() || (currentUser.name||currentUser.id),
@@ -8792,6 +8035,285 @@ window.stlGenerateShareImage = function(cashierId, date) {
 };
 
 function _renderSettlementCanvas(s, cashierId, date, inclT1, inclT2, unpaidList) {
+  // ── NEW CLEAN REPORT (matches reference design) ──
+  var CLIENT_FARE = 5500;
+  var SEALER_PAY  = 1300;
+  var PARTIAL_FARE = 2800;
+  var PARTIAL_SEALER = 700;
+
+  // Live truck data for this date
+  var dayTrucks = Object.values(trucks).filter(function(t){ return t.date === date; });
+  var paidTrucks    = dayTrucks.filter(function(t){ return t.status==='paid'; });
+  var partialTrucks = dayTrucks.filter(function(t){ return t.status==='partial'; });
+  var unpaidTrucks  = dayTrucks.filter(function(t){ return t.status==='unpaid'; });
+  var pendingTrucks = dayTrucks.filter(function(t){ return t.status==='pending' || !t.worker; });
+  var totalTrucks   = dayTrucks.length;
+
+  var paidCount    = paidTrucks.length + pendingTrucks.length; // pending = paid fare
+  var partialCount = partialTrucks.length;
+  var unpaidCount  = unpaidTrucks.length;
+
+  var paidRevenue     = paidCount * CLIENT_FARE + partialCount * PARTIAL_FARE;
+  var sealerPay       = paidCount * SEALER_PAY + partialCount * PARTIAL_SEALER;
+  var companyEarnings = paidRevenue - sealerPay;
+  var missingRevenue  = unpaidCount * CLIENT_FARE;
+  var combinedTotal   = totalTrucks * CLIENT_FARE;
+  var netCompanyAllPaid = combinedTotal - totalTrucks * SEALER_PAY;
+
+  // Per-sealer stats
+  var sealerMap = {};
+  dayTrucks.forEach(function(t){
+    if (!t.worker) return;
+    if (!sealerMap[t.worker]) sealerMap[t.worker] = {paid:0,partial:0,unpaid:0,earn:0};
+    var sm = sealerMap[t.worker];
+    if (t.status==='paid'||t.status==='pending') { sm.paid++; sm.earn += SEALER_PAY; }
+    else if (t.status==='partial') { sm.partial++; sm.earn += PARTIAL_SEALER; }
+    else { sm.unpaid++; }
+  });
+  var sealerList = Object.keys(sealerMap).map(function(name){ return Object.assign({name:name}, sealerMap[name]); });
+  sealerList.sort(function(a,b){ return b.earn - a.earn; });
+  var noSealerCount = dayTrucks.filter(function(t){ return !t.worker; }).length;
+
+  // Date
+  var dateObj = new Date(date + 'T12:00:00');
+  var dateLabel = dateObj.toLocaleDateString('en-GB', {weekday:'short', day:'numeric', month:'short', year:'numeric'});
+
+  // ── Canvas dimensions ──
+  var W = 720, PAD = 32, DPR = window.devicePixelRatio || 2;
+  var ROW_H = 44;
+
+  // Height calculation
+  var headerH  = 110;
+  var summaryH = 32 + 130 + 16 + ROW_H*3 + 16; // section label + paid/unpaid boxes + gap + 3 rows
+  var combinedH = 32 + 80 + ROW_H*2 + (noSealerCount>0?ROW_H:0) + 16;
+  var sealerH  = sealerList.length > 0 ? (32 + sealerList.length * ROW_H + 8) : 0;
+  var unpaidH  = (unpaidList && unpaidList.length > 0) ? (32 + unpaidList.length * 50 + 8) : 0;
+  var footerH  = 48;
+  var totalH   = headerH + summaryH + 16 + combinedH + 16 + sealerH + (unpaidH>0?16:0) + unpaidH + footerH + PAD;
+
+  var canvas = document.createElement('canvas');
+  canvas.width  = W * DPR;
+  canvas.height = totalH * DPR;
+  canvas.style.width  = W + 'px';
+  canvas.style.height = totalH + 'px';
+  var ctx = canvas.getContext('2d');
+  ctx.scale(DPR, DPR);
+
+  // ── Palette (dark theme matching picture) ──
+  var BG     = '#0f1623';
+  var BG2    = '#161e2e';
+  var BG3    = '#1e2a3f';
+  var BORDER = '#2a3a55';
+  var TEXT   = '#e8edf5';
+  var TEXT2  = '#8a9bb5';
+  var TEXT3  = '#5a6f8a';
+  var GREEN  = '#22c55e';
+  var RED    = '#ef4444';
+  var TEAL   = '#14b8a6';
+  var ACCENT = '#3b82f6';
+  var ORANGE = '#f59e0b';
+
+  // ── Helpers ──
+  function rr(x,y,w,h,r,fill,stroke,lw){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+    ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+    ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+    ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y);
+    ctx.closePath();
+    if(fill){ctx.fillStyle=fill; ctx.fill();}
+    if(stroke){ctx.strokeStyle=stroke; ctx.lineWidth=lw||1; ctx.stroke();}
+  }
+  function t(text,x,y,col,sz,wt,align){
+    ctx.save(); ctx.fillStyle=col; ctx.textBaseline='middle';
+    ctx.font=(wt||'600')+' '+(sz||13)+'px "Space Grotesk",sans-serif';
+    ctx.textAlign=align||'left'; ctx.fillText(text,x,y); ctx.restore();
+  }
+  function m(text,x,y,col,sz,align){
+    ctx.save(); ctx.fillStyle=col; ctx.textBaseline='middle';
+    ctx.font='700 '+(sz||14)+'px "JetBrains Mono",monospace';
+    ctx.textAlign=align||'left'; ctx.fillText(text,x,y); ctx.restore();
+  }
+  function hline(y,col,x0,x1){
+    ctx.save(); ctx.strokeStyle=col||BORDER; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(x0||PAD,y); ctx.lineTo(x1||(W-PAD),y); ctx.stroke(); ctx.restore();
+  }
+  function sectionLabel(x,y,label){
+    t(label, x, y+8, TEXT3, 10, '800');
+    return y + 24;
+  }
+  function rowLine(label,value,y,labelCol,valueCol,emoji){
+    var lbl = (emoji ? emoji+' ' : '') + label;
+    t(lbl, PAD, y+ROW_H/2, labelCol||TEXT2, 13, '600');
+    m(value, W-PAD, y+ROW_H/2, valueCol||TEAL, 14, 'right');
+    hline(y+ROW_H, BORDER+'88');
+  }
+
+  // ── BACKGROUND ──
+  ctx.fillStyle = BG;
+  ctx.fillRect(0, 0, W, totalH);
+
+  // ── HEADER ──
+  var hGrad = ctx.createLinearGradient(0,0,W,headerH);
+  hGrad.addColorStop(0,'#1e3a8a'); hGrad.addColorStop(1,'#2563eb');
+  ctx.fillStyle = hGrad;
+  ctx.fillRect(0, 0, W, headerH);
+
+  // Decorative circles
+  ctx.save(); ctx.globalAlpha=0.07; ctx.fillStyle='#fff';
+  ctx.beginPath(); ctx.arc(W-40, 20, 90, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(W-100, headerH+20, 60, 0, Math.PI*2); ctx.fill();
+  ctx.restore();
+
+  // Logo box
+  rr(PAD, 22, 56, 56, 14, 'rgba(255,255,255,0.18)', 'rgba(255,255,255,0.35)', 1.5);
+  // Truck emoji as text
+  ctx.save(); ctx.font='26px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText('🚛', PAD+28, 50); ctx.restore();
+
+  ctx.save(); ctx.font='800 20px "Space Grotesk",sans-serif';
+  ctx.fillStyle='#fff'; ctx.textAlign='left'; ctx.textBaseline='middle';
+  ctx.fillText('WKABE · Hask Report', PAD+70, 38); ctx.restore();
+
+  ctx.save(); ctx.font='500 13px "Space Grotesk",sans-serif';
+  ctx.fillStyle='rgba(255,255,255,0.7)'; ctx.textAlign='left'; ctx.textBaseline='middle';
+  ctx.fillText(dateLabel, PAD+70, 60); ctx.restore();
+
+  // ── BODY ──
+  var cy = headerH + 20;
+
+  // ── SUMMARY ──
+  cy = sectionLabel(PAD, cy, '📊  SUMMARY');
+
+  // Paid / Unpaid big boxes
+  var bw = (W - PAD*2 - 12) / 2;
+  // Paid box
+  rr(PAD, cy, bw, 120, 12, 'rgba(34,197,94,0.12)', 'rgba(34,197,94,0.3)', 1.5);
+  ctx.save(); ctx.font='800 52px "JetBrains Mono",monospace';
+  ctx.fillStyle=GREEN; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText(String(paidCount), PAD+bw/2, cy+52); ctx.restore();
+  ctx.save(); ctx.font='700 14px "Space Grotesk",sans-serif';
+  ctx.fillStyle=GREEN; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText('✅ Paid', PAD+bw/2, cy+95); ctx.restore();
+
+  // Unpaid box
+  rr(PAD+bw+12, cy, bw, 120, 12, 'rgba(239,68,68,0.12)', 'rgba(239,68,68,0.3)', 1.5);
+  ctx.save(); ctx.font='800 52px "JetBrains Mono",monospace';
+  ctx.fillStyle=RED; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText(String(unpaidCount), PAD+bw+12+bw/2, cy+52); ctx.restore();
+  ctx.save(); ctx.font='700 14px "Space Grotesk",sans-serif';
+  ctx.fillStyle=RED; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText('❌ Unpaid', PAD+bw+12+bw/2, cy+95); ctx.restore();
+
+  cy += 130 + 16;
+
+  // Revenue rows
+  rowLine('Paid Revenue', paidRevenue.toLocaleString() + ' ETB', cy, TEXT2, TEAL, '💰');
+  cy += ROW_H;
+  rowLine('Company Earnings', companyEarnings.toLocaleString() + ' ETB', cy, TEXT2, GREEN, '🏦');
+  cy += ROW_H;
+  // Missing row in red
+  t('⚠️ Missing (Unpaid)', PAD, cy+ROW_H/2, RED, 13, '700');
+  m('-' + missingRevenue.toLocaleString() + ' ETB', W-PAD, cy+ROW_H/2, RED, 14, 'right');
+  hline(cy+ROW_H, BORDER+'88');
+  cy += ROW_H + 16;
+
+  // ── COMBINED TOTAL box ──
+  var ctBoxH = 80 + ROW_H*2 + (noSealerCount>0?ROW_H:0) + 16;
+  rr(PAD, cy, W-PAD*2, ctBoxH, 14, BG3, BORDER, 1);
+
+  // Combined total label + big number
+  t('💡 COMBINED TOTAL', PAD+16, cy+20, ACCENT, 11, '800');
+  t(String(totalTrucks) + ' trucks if all paid', PAD+16, cy+36, TEXT3, 10, '600');
+  m(combinedTotal.toLocaleString() + ' ETB', W-PAD-16, cy+28, '#c7d2fe', 22, 'right');
+
+  var iny = cy + 60;
+  hline(iny, BORDER, PAD+8, W-PAD-8);
+  iny += 10;
+
+  rowLine('Sealer pay (all paid)', sealerPay.toLocaleString() + ' ETB', iny, TEXT2, ACCENT, '👷');
+  iny += ROW_H;
+  rowLine('Net company (all paid)', netCompanyAllPaid.toLocaleString() + ' ETB', iny, TEXT2, GREEN, '🏦');
+  iny += ROW_H;
+
+  if (noSealerCount > 0) {
+    t('⏳ No sealer assigned', PAD+8, iny+ROW_H/2, ORANGE, 13, '700');
+    m(String(noSealerCount) + ' truck' + (noSealerCount>1?'s':''), W-PAD-8, iny+ROW_H/2, ORANGE, 14, 'right');
+    iny += ROW_H;
+  }
+
+  cy += ctBoxH + 16;
+
+  // ── PER SEALER ──
+  if (sealerList.length > 0) {
+    cy = sectionLabel(PAD, cy, '👷  PER SEALER');
+
+    sealerList.forEach(function(sl) {
+      // Name + stats chips
+      t(sl.name, PAD, cy+ROW_H/2, TEXT, 14, '700');
+
+      // Chips: ✅N ⚡N ❌N
+      var cx = PAD + 160;
+      var chips = [
+        {icon:'✅', n:sl.paid,    col:GREEN},
+        {icon:'⚡', n:sl.partial, col:ORANGE},
+        {icon:'❌', n:sl.unpaid,  col:RED}
+      ];
+      chips.forEach(function(ch){
+        ctx.save(); ctx.font='600 12px "Space Grotesk",sans-serif';
+        ctx.fillStyle=TEXT3; ctx.textAlign='left'; ctx.textBaseline='middle';
+        ctx.fillText(ch.icon+ch.n, cx, cy+ROW_H/2); ctx.restore();
+        cx += 46;
+      });
+
+      // Earnings right-aligned
+      m(sl.earn.toLocaleString() + ' ETB', W-PAD, cy+ROW_H/2, TEAL, 14, 'right');
+
+      hline(cy+ROW_H, BORDER+'88');
+      cy += ROW_H;
+    });
+    cy += 8;
+  }
+
+  // ── UNPAID TRUCKS LIST ──
+  if (unpaidList && unpaidList.length > 0) {
+    cy += 8;
+    cy = sectionLabel(PAD, cy, '❌  UNPAID TRUCKS');
+    unpaidList.forEach(function(ut, i){
+      rr(PAD, cy, W-PAD*2, 42, 8, BG3, BORDER+'66', 1);
+      m(ut.plate, PAD+14, cy+21, TEXT, 14, 'left');
+      var dl = ut.payDate ? (ut.payDate==='tomorrow'?'Tomorrow':'After tomorrow') : '';
+      var cl = ut.collector ? (ut.collector==='head_agash'?'Sup. Agash':'Sup. Ops') : '';
+      t((dl+(dl&&cl?' · ':'')+cl) || '—', W-PAD-12, cy+21, TEXT2, 11, '500', 'right');
+      cy += 50;
+    });
+    cy += 8;
+  }
+
+  // ── FOOTER ──
+  cy += 8;
+  hline(cy, BORDER);
+  ctx.save(); ctx.font='500 11px "Space Grotesk",sans-serif';
+  ctx.fillStyle=TEXT3; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText('Generated by WKABE Hask · ' + new Date().toLocaleString('en-GB',{day:'numeric',month:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'}), W/2, cy+20);
+  ctx.restore();
+
+  // ── EXPORT ──
+  canvas.toBlob(function(blob) {
+    if (!blob) { showToast('❌ Failed to generate'); return; }
+    var fname = 'WKABE-Report-' + dateLabel.replace(/,/g,'').replace(/ /g,'-') + '.png';
+    var url = URL.createObjectURL(blob);
+    if (navigator.share && navigator.canShare && navigator.canShare({ files: [new File([blob],fname,{type:'image/png'})] })) {
+      navigator.share({ title: 'WKABE Hask Report', files: [new File([blob],fname,{type:'image/png'})] }).catch(function(){});
+    } else {
+      var a = document.createElement('a'); a.href=url; a.download=fname; a.click();
+      showToast('📸 Report saved');
+    }
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 5000);
+  }, 'image/png');
+}
+// ── OLD CANVAS (kept for reference, unreachable) ──
+function _renderSettlementCanvas_OLD(s, cashierId, date, inclT1, inclT2, unpaidList) {
   var PRICE = 1300;
   var DATE_LBL = { tomorrow:'Demain', aftertomorrow:'Après-demain' };
   var COLL_LBL = { head_agash:'Sup. Agash', head_ops:'Sup. Ops' };
@@ -8814,8 +8336,8 @@ function _renderSettlementCanvas(s, cashierId, date, inclT1, inclT2, unpaidList)
   var headerH = 120;
 
   if (inclT1) {
-    // Table 1: header + 3 rows + footer + 2 input rows + divider
-    sections.push({ type:'table1', h: 26+20+(3*ROW_H)+ROW_H+16+52+10+28+18 });
+    // Table 1: title(26) + group-header(14) + sub-header(16) + 3 rows + footer(36) + 16 + 52 + 10 + 28 + 18
+    sections.push({ type:'table1', h: 26+14+16+(3*ROW_H)+ROW_H+16+52+10+28+18 });
   }
   if (inclT2) {
     sections.push({ type:'table2', h: 26+10+56+14+54+10+44+18 });
@@ -8969,44 +8491,100 @@ function _renderSettlementCanvas(s, cashierId, date, inclT1, inclT2, unpaidList)
 
   // ══ TABLE 1 ══
   if (inclT1) {
+    var PRICE_FD = 1000;
     var t1X=PAD, t1W=W-PAD*2;
-    var t1CardH = 26 + 20 + 3*ROW_H + ROW_H + 12;
+
+    // Read ETB+DJF split counts (saved since the ETB/DJF form was introduced)
+    var eS=s.cntShiracETB||0, dS=s.cntShiracDJF||0;
+    var eB=s.cntBilaETB  ||0, dB=s.cntBilaDJF  ||0;
+    var eM=s.cntMetalETB ||0, dM=s.cntMetalDJF  ||0;
+    // Fallback: if ETB split fields absent, use combined total on ETB side
+    if (eS===0 && dS===0 && s.cntShirac) { eS=s.cntShirac; }
+    if (eB===0 && dB===0 && s.cntBilaShirac) { eB=s.cntBilaShirac; }
+    if (eM===0 && dM===0 && s.cntMetal) { eM=s.cntMetal; }
+
+    var t1Rows=[
+      {label:'🚛 Shirac',     color:'#10b981', eC:eS, dC:dS},
+      {label:'🚚 Bila Shirac',color:'#3b82f6', eC:eB, dC:dB},
+      {label:'🏗️ Métal',    color:'#ef4444', eC:eM, dC:dM}
+    ];
+    var t1TotalCnt = eS+dS+eB+dB+eM+dM;
+    var t1TotalETB = (eS+eB+eM)*PRICE + (dS+dB+dM)*PRICE_FD;
+    var t1TotalFD  = (dS+dB+dM)*PRICE_FD; // kept for display
+
+    // Card height: double-header(36) + 3 rows + footer row + 16 + 52 + 10 + 28 + 18
+    var t1CardH = 36 + 3*ROW_H + ROW_H + 16 + 52 + 10 + 28 + 18;
     lightCard(t1X, cy, t1W, t1CardH, 10);
-    cardTitle(t1X, cy, t1W, 26, '📋 TABLEAU 1 — RAPPORT AGASH · 1 300 ETB / camion');
+    cardTitle(t1X, cy, t1W, 26, '📋 TABLEAU 1 — RAPPORT AGASH · 1 300 ETB / 1 000 FD');
     cy += 26;
 
-    var c0=t1X+12, c1=t1X+t1W*0.55, c2=t1X+t1W-12;
-    ctx.save(); ctx.font='700 9px "Space Grotesk",sans-serif'; ctx.fillStyle='#9ca3af';
-    ctx.textAlign='left'; ctx.textBaseline='middle'; ctx.fillText('TYPE', c0, cy+10);
-    ctx.textAlign='center'; ctx.fillText('CAMIONS', c1, cy+10);
-    ctx.textAlign='right'; ctx.fillText('MONTANT (ETB)', c2, cy+10); ctx.restore();
-    cy += 20;
+    // ── Double header: TYPE | ←ETB×1,300→ | ←DJF×1,000→ ──
+    // Column x positions: TYPE | ETB_CNT | ETB_AMT | DJF_CNT | DJF_AMT
+    var cT=t1X+12;
+    var cEC=t1X+t1W*0.38; // ETB count center
+    var cEA=t1X+t1W*0.56; // ETB amount right-align
+    var cDC=t1X+t1W*0.73; // DJF count center
+    var cDA=t1X+t1W-10;   // DJF amount right-align
 
-    var agashRows=[
-      {label:'🚛 Shirac',     color:'#065f46', dot:'#10b981', cnt:s.cntShirac||0},
-      {label:'🚚 Bila Shirac',color:'#1e40af', dot:'#3b82f6', cnt:s.cntBilaShirac||0},
-      {label:'🏗️ Métal',    color:'#991b1b', dot:'#ef4444', cnt:s.cntMetal||0}
-    ];
-    var t1Total=0, t1Amount=0;
-    agashRows.forEach(function(row,ri) {
+    // Group header row
+    ctx.fillStyle='#f0f6ff'; ctx.fillRect(t1X,cy,t1W,14);
+    ctx.save();
+    ctx.font='700 8px "Space Grotesk",sans-serif';
+    // ETB group label
+    ctx.fillStyle='#16a34a'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('ETB × 1,300', t1X+(cEA-cT)*0.55+cT, cy+7);
+    // DJF group label
+    ctx.fillStyle='#0d9488'; ctx.textAlign='center';
+    ctx.fillText('DJF × 1,000', (cDC+cDA)/2, cy+7);
+    ctx.restore();
+    // Underlines for groups
+    ctx.save(); ctx.strokeStyle='rgba(22,163,74,0.4)'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(cT+60,cy+13); ctx.lineTo(cEA,cy+13); ctx.stroke();
+    ctx.strokeStyle='rgba(13,148,136,0.4)';
+    ctx.beginPath(); ctx.moveTo(cDC-20,cy+13); ctx.lineTo(cDA,cy+13); ctx.stroke();
+    ctx.restore();
+    cy+=14;
+
+    // Sub-header row
+    ctx.fillStyle='#f8faff'; ctx.fillRect(t1X,cy,t1W,16);
+    ctx.save();ctx.strokeStyle='#e8eef8';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(t1X,cy+16);ctx.lineTo(t1X+t1W,cy+16);ctx.stroke();ctx.restore();
+    ctx.save();ctx.font='700 8px "Space Grotesk",sans-serif';ctx.fillStyle='#9ca3af';ctx.textBaseline='middle';
+    ctx.textAlign='left';   ctx.fillText('TYPE',   cT,  cy+8);
+    ctx.textAlign='center'; ctx.fillText('CAMIONS',cEC, cy+8);
+    ctx.fillStyle='#16a34a';ctx.textAlign='right';  ctx.fillText('TOTAL',  cEA, cy+8);
+    ctx.fillStyle='#9ca3af';ctx.textAlign='center'; ctx.fillText('CAMIONS',cDC, cy+8);
+    ctx.fillStyle='#0d9488';ctx.textAlign='right';  ctx.fillText('TOTAL',  cDA, cy+8);
+    ctx.restore();
+    cy+=16;
+
+    // Data rows
+    t1Rows.forEach(function(row,ri){
       var ry=cy+ri*ROW_H;
       if(ri>0){ctx.save();ctx.strokeStyle='#f3f4f6';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(t1X,ry);ctx.lineTo(t1X+t1W,ry);ctx.stroke();ctx.restore();}
-      ctx.save();ctx.fillStyle=row.dot;ctx.beginPath();ctx.arc(c0+4,ry+ROW_H/2,4,0,Math.PI*2);ctx.fill();ctx.restore();
-      ctx.save();ctx.font='600 12px "Space Grotesk",sans-serif';ctx.fillStyle=row.color;ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(row.label,c0+14,ry+ROW_H/2);ctx.restore();
-      ctx.save();ctx.font='700 14px "JetBrains Mono",monospace';ctx.fillStyle='#111827';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(String(row.cnt),c1,ry+ROW_H/2);ctx.restore();
-      var amt=row.cnt*PRICE;
-      ctx.save();ctx.font='600 12px "JetBrains Mono",monospace';ctx.fillStyle='#059669';ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText(amt.toLocaleString(),c2,ry+ROW_H/2);ctx.restore();
-      t1Total+=row.cnt; t1Amount+=amt;
+      ctx.save();ctx.fillStyle=row.color;ctx.beginPath();ctx.arc(cT+4,ry+ROW_H/2,4,0,Math.PI*2);ctx.fill();ctx.restore();
+      ctx.save();ctx.font='600 11px "Space Grotesk",sans-serif';ctx.fillStyle=row.color;ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(row.label,cT+14,ry+ROW_H/2);ctx.restore();
+      // ETB count + amount
+      ctx.save();ctx.font='700 13px "JetBrains Mono",monospace';ctx.fillStyle='#374151';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(String(row.eC),cEC,ry+ROW_H/2);ctx.restore();
+      ctx.save();ctx.font='600 11px "JetBrains Mono",monospace';ctx.fillStyle='#059669';ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText((row.eC*PRICE).toLocaleString(),cEA,ry+ROW_H/2);ctx.restore();
+      // DJF count + amount
+      ctx.save();ctx.font='700 13px "JetBrains Mono",monospace';ctx.fillStyle='#374151';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(String(row.dC),cDC,ry+ROW_H/2);ctx.restore();
+      ctx.save();ctx.font='600 11px "JetBrains Mono",monospace';ctx.fillStyle='#0d9488';ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText((row.dC*PRICE_FD).toLocaleString(),cDA,ry+ROW_H/2);ctx.restore();
     });
     cy+=3*ROW_H;
 
+    // Footer — TOTAL row
     ctx.fillStyle='#eff6ff'; ctx.fillRect(t1X,cy,t1W,ROW_H);
     ctx.save();ctx.strokeStyle='#dbeafe';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(t1X,cy);ctx.lineTo(t1X+t1W,cy);ctx.stroke();ctx.restore();
-    ctx.save();ctx.font='800 12px "Space Grotesk",sans-serif';ctx.fillStyle='#1e3a8a';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText('TOTAL',c0,cy+ROW_H/2);ctx.restore();
-    ctx.save();ctx.font='800 16px "JetBrains Mono",monospace';ctx.fillStyle='#2563eb';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(String(t1Total),c1,cy+ROW_H/2);ctx.restore();
-    ctx.save();ctx.font='700 13px "JetBrains Mono",monospace';ctx.fillStyle='#059669';ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText(t1Amount.toLocaleString()+' ETB',c2,cy+ROW_H/2);ctx.restore();
+    ctx.save();ctx.font='800 11px "Space Grotesk",sans-serif';ctx.fillStyle='#1e3a8a';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText('TOTAL',cT,cy+ROW_H/2);ctx.restore();
+    // ETB total
+    var totETB=(eS+eB+eM)*PRICE;
+    ctx.save();ctx.font='700 12px "JetBrains Mono",monospace';ctx.fillStyle='#059669';ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText(totETB.toLocaleString()+' ETB',cEA,cy+ROW_H/2);ctx.restore();
+    // DJF total
+    var totDJF=(dS+dB+dM)*PRICE_FD;
+    ctx.save();ctx.font='700 12px "JetBrains Mono",monospace';ctx.fillStyle='#0d9488';ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText(totDJF.toLocaleString()+' FD',cDA,cy+ROW_H/2);ctx.restore();
     cy+=ROW_H+16;
 
+    // Submitted by Agash + Shibo cards
     var hw=(t1W-8)/2;
     lightCard(t1X,cy,hw,52,8);
     ctx.save();ctx.font='700 8px "Space Grotesk",sans-serif';ctx.fillStyle='#16a34a';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText('SOUMIS PAR SUP. AGASH',t1X+10,cy+14);ctx.restore();
@@ -9017,7 +8595,8 @@ function _renderSettlementCanvas(s, cashierId, date, inclT1, inclT2, unpaidList)
     ctx.save();ctx.font='700 17px "JetBrains Mono",monospace';ctx.fillStyle='#7e22ce';ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText((s.shiboGiven||0).toLocaleString()+' ETB',t1X+t1W-10,cy+34);ctx.restore();
     cy+=52+10;
 
-    var agashDiff=(s.agashSubmitted||0)-t1Amount;
+    // Discrepancy bar (compares agashSubmitted vs ETB total only)
+    var agashDiff=(s.agashSubmitted||0)-totETB;
     var dBg=agashDiff===0?'#f0fdf4':'#fef2f2', dBd=agashDiff===0?'#bbf7d0':'#fecaca';
     var dTxt=agashDiff===0?'✅ Montant soumis correspond exactement':(agashDiff>0?'⬆️ +':'⬇️ ')+Math.abs(agashDiff).toLocaleString()+' ETB';
     var dCol=agashDiff===0?'#15803d':'#dc2626';
