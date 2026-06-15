@@ -82,6 +82,7 @@
     transition: all 0.2s;
     text-align: center;
     color: var(--text);
+    position: relative;
   }
   .login-btn:active { transform: scale(0.96); background: var(--bg3); }
   .login-btn .avatar {
@@ -168,6 +169,14 @@
   .role-badge.head { background: rgba(245,158,11,0.2); color: var(--orange); border: 1px solid rgba(245,158,11,0.3); }
   .role-badge.cashier { background: rgba(59,130,246,0.2); color: var(--accent); border: 1px solid rgba(59,130,246,0.3); }
   .role-badge.worker { background: rgba(34,197,94,0.2); color: var(--green); border: 1px solid rgba(34,197,94,0.3); }
+  .role-badge.foreman { background: rgba(245,158,11,0.2); color: var(--orange); border: 1px solid rgba(245,158,11,0.3); }
+  .foreman-tile-badge {
+    position: absolute; top: 8px; right: 8px;
+    font-size: 9px; font-weight: 700; letter-spacing: 0.05em;
+    padding: 2px 7px; border-radius: 20px;
+    background: rgba(245,158,11,0.2); color: var(--orange);
+    border: 1px solid rgba(245,158,11,0.35);
+  }
   .add-btn {
     background: var(--accent);
     color: #fff;
@@ -697,6 +706,19 @@
     box-shadow: 0 1px 4px rgba(0,0,0,0.3);
   }
   .toggle.on::after { left: 21px; }
+  .toggle.foreman-on { background: var(--orange); border-color: var(--orange); }
+  .perm-row.foreman-row {
+    background: rgba(245,158,11,0.08);
+    border: 1.5px solid rgba(245,158,11,0.3);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    margin-bottom: 4px;
+  }
+  .perm-section-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+    color: var(--text3); text-transform: uppercase;
+    margin: 14px 0 6px;
+  }
 
   /* ── PWA INSTALL BANNER ── */
   #pwaInstallBanner {
@@ -2762,12 +2784,20 @@ function setPin(user, pin) {
 }
 
 // ── PERMISSIONS (Firestore-backed) ──
+// Default permission set for a sealer/worker, including the Foreman bundle (all off by default)
+const DEFAULT_WORKER_PERMS = {
+  canAddOwnTrucks:true, canEditStatus:false, canEditOwnTruck:true, seeEarnings:true, seeStats:true,
+  seeAllTrucks:false, seeTeam:false,
+  // ── Foreman bundle ──
+  isForeman:false, canDeleteAny:false, canAddForOthers:false,
+  seeReports:false, seeAgash:false, seeSettlement:false, seeClaimsApproval:false
+};
 function getUserPerms(user) {
-  if (_cloudPerms[user]) return _cloudPerms[user];
+  if (_cloudPerms[user]) return Object.assign({}, DEFAULT_WORKER_PERMS, _cloudPerms[user]);
   if (user==='cashier1'||user==='cashier2') return {addTrucks:true,addAdvances:true,editStatus:true,deleteTrucks:false};
   const workerList = getWorkerList();
   if (DEFAULT_WORKERS.includes(user) || workerList.includes(user)) {
-    return {canAddOwnTrucks:true, canEditStatus:false, canEditOwnTruck:true, seeEarnings:true, seeStats:true, seeAllTrucks:false, seeTeam:false};
+    return Object.assign({}, DEFAULT_WORKER_PERMS);
   }
   return {};
 }
@@ -3039,12 +3069,14 @@ function buildLogin() {
   const workerListForLogin = _cloudWorkers !== null ? _cloudWorkers : DEFAULT_WORKERS;
   const workerUsers = workerListForLogin.map(w => ({
     id:w, label:w, role:'Sealer · My seals only',
-    icon: w.substring(0,2).toUpperCase(), color: WORKER_COLORS[w]||'#6b7280'
+    icon: w.substring(0,2).toUpperCase(), color: WORKER_COLORS[w]||'#6b7280',
+    isForeman: !!getUserPerms(w).isForeman
   }));
   const users = [...fixedUsers, ...workerUsers];
 
   grid.innerHTML = users.map((u,i) => `
     <button class="login-btn${i===0?' admin-btn':''}" ${u.disabled?'disabled style="opacity:0.45;cursor:default"':''} onclick="${u.disabled?'':'goPin(\'' + u.id + '\')'}">
+      ${u.isForeman ? '<span class="foreman-tile-badge">🦺 FOREMAN</span>' : ''}
       <div class="avatar" style="background:${u.color}22;color:${u.color};border:2px solid ${u.color}44">
         ${u.icon}
       </div>
@@ -3181,8 +3213,14 @@ function buildApp() {
     role==='cashier' ? t('cashierView') :
     'Hask Services';
   const rb = document.getElementById('roleBadge');
-  rb.textContent = role==='head' ? getHeadName().toUpperCase() : role.toUpperCase();
-  rb.className = 'role-badge ' + (role==='head' ? 'head' : role);
+  const _headerPerms = getUserPerms(id);
+  if (role==='worker' && _headerPerms.isForeman) {
+    rb.textContent = '🦺 FOREMAN';
+    rb.className = 'role-badge foreman';
+  } else {
+    rb.textContent = role==='head' ? getHeadName().toUpperCase() : role.toUpperCase();
+    rb.className = 'role-badge ' + (role==='head' ? 'head' : role);
+  }
 
   // Show/hide add button
   const perms = getUserPerms(id);
@@ -3276,13 +3314,18 @@ function buildNav() {
     tabs.push({id:'settlement', icon:'💼', label:'Settlement'});
     tabs.push({id:'logout', icon:'🚪', label:t('logout')});
   } else {
+    const p = getUserPerms(currentUser.id);
     tabs = [
       {id:'trucks', icon:'🚛', label:t('trucks')},
       {id:'list', icon:'📋', label:'My List'},
       {id:'earnings', icon:'💰', label:t('myEarnings')},
       {id:'claims', icon:'🙋', label:'Claims'},
-      {id:'logout', icon:'🚪', label:t('logout')},
     ];
+    // ── Foreman-granted tabs ──
+    if (p.seeReports) tabs.push({id:'reports', icon:'📊', label:t('reports')});
+    if (p.seeAgash) tabs.push({id:'agash', icon:'📥', label:'Agash'});
+    if (p.seeSettlement) tabs.push({id:'settlement', icon:'📋', label:'Settlement'});
+    tabs.push({id:'logout', icon:'🚪', label:t('logout')});
   }
   nav.innerHTML = tabs.map(t => `
     <button class="nav-btn${t.id==='trucks'?' active':''}" id="nav_${t.id}" onclick="switchTab('${t.id}')">
@@ -3666,8 +3709,8 @@ function renderTrucks() {
 
   const perms = getUserPerms(id);
   const canEditStatus = (isToday || (role==='admin' && pastPaymentEditAllowed))
-    && (role==='admin' || role==='head' || (role==='cashier' && perms.editStatus));
-  const canDelete = isToday && (role==='admin' || role==='head' || (role==='cashier' && perms.deleteTrucks));
+    && (role==='admin' || role==='head' || (role==='cashier' && perms.editStatus) || (role==='worker' && perms.canEditStatus));
+  const canDelete = isToday && (role==='admin' || role==='head' || (role==='cashier' && perms.deleteTrucks) || (role==='worker' && perms.canDeleteAny));
   const canEdit = isToday && (role==='admin' || role==='head' || (role==='cashier' && perms.addTrucks));
 
   // Show select mode button only for admin
@@ -3861,12 +3904,19 @@ window.openAddTruck = function() {
 
   const workers = getWorkerList();
   const sel = document.getElementById('truckWorker');
+  const addPerms = getUserPerms(currentUser.id);
+  const canAddForOthers = currentUser.role === 'worker' && !!addPerms.canAddForOthers;
 
-  if (currentUser.role === 'worker') {
+  if (currentUser.role === 'worker' && !canAddForOthers) {
     // Worker: auto-assigned to self, fields hidden
     sel.innerHTML = `<option value="${currentUser.id}">${currentUser.id}</option>`;
     document.getElementById('workerGroup').style.display = 'none';
     document.getElementById('statusGroup').style.display = 'none';
+  } else if (canAddForOthers) {
+    // Foreman: can add a truck for any sealer
+    sel.innerHTML = workers.map(w => `<option value="${w}"${w===currentUser.id?' selected':''}>${w}</option>`).join('');
+    document.getElementById('workerGroup').style.display = '';
+    document.getElementById('statusGroup').style.display = addPerms.canEditStatus ? '' : 'none';
   } else {
     // Admin/Head/Cashier: show worker dropdown with "No sealer yet" option
     sel.innerHTML = `<option value="">— No sealer yet (Pending) —</option>` +
@@ -3917,10 +3967,12 @@ function getRadioVal(groupId) {
 window.saveTruck = function() {
   const plate = document.getElementById('truckPlate').value.trim().toUpperCase();
   const date = document.getElementById('truckDate').value;
-  const worker = currentUser.role === 'worker'
+  const savePerms = getUserPerms(currentUser.id);
+  const isForemanAdding = currentUser.role === 'worker' && !!savePerms.canAddForOthers;
+  const worker = (currentUser.role === 'worker' && !isForemanAdding)
     ? currentUser.id
     : document.getElementById('truckWorker').value;
-  let status = currentUser.role === 'worker' ? 'unpaid' : getRadioVal('statusRadio');
+  let status = (currentUser.role === 'worker' && !(isForemanAdding && savePerms.canEditStatus)) ? 'unpaid' : getRadioVal('statusRadio');
   if (!worker) status = 'pending';
   const notes = document.getElementById('truckNotes').value.trim();
   if (!plate) { showToast('⚠️ Enter plate number'); return; }
@@ -4161,19 +4213,21 @@ function renderClaimsTab() {
   var role = currentUser.role;
   var uid = currentUser.id;
   var today = getWorkingDate();
-  var canApprove = role==='admin'||role==='cashier'||role==='head';
+  var perms = getUserPerms(uid);
+  var isClaimForeman = role==='worker' && !!perms.seeClaimsApproval;
+  var canApprove = role==='admin'||role==='cashier'||role==='head'||isClaimForeman;
   var all = Object.entries(claims)
     .map(function(e){ return Object.assign({},e[1],{_id:e[0]}); })
     .filter(function(c){ return c.status==='pending' && c.date===today; })
     .sort(function(a,b){ return (a.createdAt||0)-(b.createdAt||0); });
-  // Workers only see their own; others see all
-  var visible = role==='worker'
+  // Workers only see their own; foremen with approval rights and others see all
+  var visible = (role==='worker' && !isClaimForeman)
     ? all.filter(function(c){ return c.worker===uid; })
     : all;
   if (visible.length===0) {
     container.innerHTML = '<div style="padding:16px"><div class="empty-state">'
       +'<div class="icon">🙋</div>'
-      +'<p>'+(role==='worker'?'You have no pending claims':'No pending claims')+'</p>'
+      +'<p>'+((role==='worker' && !isClaimForeman)?'You have no pending claims':'No pending claims')+'</p>'
       +'</div></div>';
     return;
   }
@@ -4313,7 +4367,7 @@ function renderWorkers() {
             ${w.substring(0,2).toUpperCase()}
           </div>
           <div class="worker-info">
-            <div class="worker-name">${w}</div>
+            <div class="worker-name">${w}${getUserPerms(w).isForeman ? ' <span class="role-badge foreman" style="margin-left:6px;vertical-align:middle">🦺 FOREMAN</span>' : ''}</div>
             <div class="worker-stats-row">
               <div class="worker-stat">Trucks: <span>${wTrucks.length}</span></div>
               <div class="worker-stat">Earned: <span style="color:var(--green)">${earned.toLocaleString()}</span></div>
@@ -4741,7 +4795,7 @@ function renderManage() {
             <div class="manage-item-left">
               <div style="width:32px;height:32px;border-radius:50%;background:${WORKER_COLORS[w]||'#6b7280'}22;color:${WORKER_COLORS[w]||'#6b7280'};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">${w.substring(0,2).toUpperCase()}</div>
               <div>
-                <div class="manage-item-name">${w}</div>
+                <div class="manage-item-name">${w}${getUserPerms(w).isForeman ? ' <span class="role-badge foreman" style="margin-left:4px;vertical-align:middle">🦺 FOREMAN</span>' : ''}</div>
                 <div class="manage-item-sub">Worker · PIN: ••••</div>
               </div>
             </div>
@@ -5040,17 +5094,16 @@ window.openWorkerPerms = function(user) {
   document.getElementById('permsModalTitle').textContent = `⚙️ Worker Permissions`;
   document.getElementById('permsContent').innerHTML = `
     <div style="font-size:12px;color:var(--text2);margin-bottom:12px">Worker: ${user}</div>
+
+    <div class="perm-row foreman-row">
+      <div><div class="perm-label">🦺 Promote to Foreman</div><div style="font-size:11px;color:var(--text3)">Grants elevated access (below) without changing their role. Can be given to or removed from any sealer.</div></div>
+      <div class="toggle${p.isForeman?' on foreman-on':''}" id="perm_isForeman" onclick="toggleForeman()"></div>
+    </div>
+
+    <div class="perm-section-label">Basic Permissions</div>
     <div class="perm-row">
       <div><div class="perm-label">➕ Add Trucks</div><div style="font-size:11px;color:var(--text3)">Can record new truck seals using the + Add button</div></div>
       <div class="toggle${p.canAddOwnTrucks?' on':''}" id="perm_canAddOwnTrucks" onclick="togglePerm('canAddOwnTrucks')"></div>
-    </div>
-    <div class="perm-row">
-      <div><div class="perm-label">💳 Edit Payment Status</div><div style="font-size:11px;color:var(--text3)">Can change paid / unpaid / partial on their trucks</div></div>
-      <div class="toggle${p.canEditStatus?' on':''}" id="perm_canEditStatus" onclick="togglePerm('canEditStatus')"></div>
-    </div>
-    <div class="perm-row">
-      <div><div class="perm-label">👥 See All Sealers' Trucks</div><div style="font-size:11px;color:var(--text3)">Can view trucks added by other sealers</div></div>
-      <div class="toggle${p.seeAllTrucks?' on':''}" id="perm_seeAllTrucks" onclick="togglePerm('seeAllTrucks')"></div>
     </div>
     <div class="perm-row">
       <div><div class="perm-label">💰 See Earnings Tab</div><div style="font-size:11px;color:var(--text3)">Can open the Earnings screen</div></div>
@@ -5060,12 +5113,59 @@ window.openWorkerPerms = function(user) {
       <div><div class="perm-label">📊 See Stats Bar</div><div style="font-size:11px;color:var(--text3)">Can see truck counts and ETB summary bar</div></div>
       <div class="toggle${p.seeStats!==false?' on':''}" id="perm_seeStats" onclick="togglePerm('seeStats')"></div>
     </div>
+
+    <div class="perm-section-label">🦺 Foreman Permissions</div>
+    <div class="perm-row">
+      <div><div class="perm-label">👥 See All Sealers' Trucks</div><div style="font-size:11px;color:var(--text3)">Can view trucks added by other sealers</div></div>
+      <div class="toggle${p.seeAllTrucks?' on':''}" id="perm_seeAllTrucks" onclick="togglePerm('seeAllTrucks')"></div>
+    </div>
+    <div class="perm-row">
+      <div><div class="perm-label">💳 Edit Payment Status</div><div style="font-size:11px;color:var(--text3)">Can change paid / unpaid / partial on visible trucks</div></div>
+      <div class="toggle${p.canEditStatus?' on':''}" id="perm_canEditStatus" onclick="togglePerm('canEditStatus')"></div>
+    </div>
+    <div class="perm-row">
+      <div><div class="perm-label">🗑️ Delete Any Truck</div><div style="font-size:11px;color:var(--text3)">Can permanently delete any truck record</div></div>
+      <div class="toggle${p.canDeleteAny?' on':''}" id="perm_canDeleteAny" onclick="togglePerm('canDeleteAny')"></div>
+    </div>
+    <div class="perm-row">
+      <div><div class="perm-label">➕ Add Trucks For Others</div><div style="font-size:11px;color:var(--text3)">Can add a truck and assign it to any sealer</div></div>
+      <div class="toggle${p.canAddForOthers?' on':''}" id="perm_canAddForOthers" onclick="togglePerm('canAddForOthers')"></div>
+    </div>
+    <div class="perm-row">
+      <div><div class="perm-label">📊 Reports Tab</div><div style="font-size:11px;color:var(--text3)">Access to the Reports tab</div></div>
+      <div class="toggle${p.seeReports?' on':''}" id="perm_seeReports" onclick="togglePerm('seeReports')"></div>
+    </div>
     <div class="perm-row">
       <div><div class="perm-label">👥 See Team Section</div><div style="font-size:11px;color:var(--text3)">Can see the Team Trucks breakdown below stats</div></div>
       <div class="toggle${p.seeTeam?' on':''}" id="perm_seeTeam" onclick="togglePerm('seeTeam')"></div>
     </div>
+    <div class="perm-row">
+      <div><div class="perm-label">📥 Agash Tab</div><div style="font-size:11px;color:var(--text3)">Access to the Agash tab</div></div>
+      <div class="toggle${p.seeAgash?' on':''}" id="perm_seeAgash" onclick="togglePerm('seeAgash')"></div>
+    </div>
+    <div class="perm-row">
+      <div><div class="perm-label">📋 Settlement Tab</div><div style="font-size:11px;color:var(--text3)">Access to the Settlement tab</div></div>
+      <div class="toggle${p.seeSettlement?' on':''}" id="perm_seeSettlement" onclick="togglePerm('seeSettlement')"></div>
+    </div>
+    <div class="perm-row">
+      <div><div class="perm-label">🙋 Claim Approval</div><div style="font-size:11px;color:var(--text3)">Can approve/reject other sealers' truck claims</div></div>
+      <div class="toggle${p.seeClaimsApproval?' on':''}" id="perm_seeClaimsApproval" onclick="togglePerm('seeClaimsApproval')"></div>
+    </div>
   `;
   openModal('modalPerms');
+}
+// The 9 permissions bundled under the Foreman master toggle
+const FOREMAN_BUNDLE = ['seeAllTrucks','canEditStatus','canDeleteAny','canAddForOthers','seeReports','seeTeam','seeAgash','seeSettlement','seeClaimsApproval'];
+window.toggleForeman = function() {
+  const el = document.getElementById('perm_isForeman');
+  el.classList.toggle('on');
+  el.classList.toggle('foreman-on');
+  const isOn = el.classList.contains('on');
+  FOREMAN_BUNDLE.forEach(function(k){
+    const t = document.getElementById('perm_'+k);
+    if (!t) return;
+    if (isOn) t.classList.add('on'); else t.classList.remove('on');
+  });
 }
 window.togglePerm = function(perm) {
   const el = document.getElementById('perm_'+perm);
@@ -5082,6 +5182,8 @@ window.savePerms = function() {
   showToast(`✅ Permissions saved for ${permsEditingUser}`);
   closeModal('modalPerms');
   renderManage();
+  buildLogin();
+  if (currentUser && currentUser.id === permsEditingUser) buildApp();
 }
 
 // ── ADD WORKER ──
@@ -5096,7 +5198,7 @@ window.saveNewWorker = function() {
   saveWorkerList(workers);
   setPin(name, pin);
   // Set safe default permissions for new worker
-  setUserPerms(name, {canAddOwnTrucks:true, canEditStatus:false, canEditOwnTruck:true, seeEarnings:true, seeStats:true, seeAllTrucks:false, seeTeam:false});
+  setUserPerms(name, Object.assign({}, DEFAULT_WORKER_PERMS));
   buildWorkerFilterBar();
   renderManage();
   renderWorkers();
@@ -6672,7 +6774,8 @@ window.renderSettlementTab = function() {
   if (!currentUser) return;
   const role = currentUser.role;
   const isCashier = role === 'cashier';
-  if (role !== 'admin' && role !== 'head' && !isCashier) return;
+  const isSettlementForeman = role === 'worker' && !!getUserPerms(currentUser.id).seeSettlement;
+  if (role !== 'admin' && role !== 'head' && !isCashier && !isSettlementForeman) return;
 
   const sub = document.getElementById('settlementSubtitle');
   if (sub) {
@@ -6696,6 +6799,47 @@ window.renderSettlementTab = function() {
   }
 };
 
+// ── Label for a settlement "cashier" slot — handles real cashiers AND foreman workers ──
+function getCashierLabel(cashierId) {
+  if (cashierId === 'cashier1') return 'Cashier 1';
+  if (cashierId === 'cashier2') return 'Cashier 2';
+  return cashierId; // foreman worker — use their own name
+}
+
+// ── Add N days to an ISO date (YYYY-MM-DD), returns ISO date ──
+function addDaysISO(dateStr, days) {
+  var d = new Date(dateStr + 'T12:00:00');
+  d.setUTCDate(d.getUTCDate() + days);
+  return d.toISOString().slice(0, 10);
+}
+
+// ── Format an unpaid truck's settlement/pay date for display.
+//    Supports real ISO dates (new) and legacy 'tomorrow'/'aftertomorrow' enums (old data) ──
+function formatUnpaidPayDate(payDate) {
+  if (!payDate) return '—';
+  if (/^\d{4}-\d{2}-\d{2}$/.test(payDate)) {
+    var d = new Date(payDate + 'T12:00:00');
+    return d.toLocaleDateString('en-GB', {day:'numeric', month:'short'});
+  }
+  var LEGACY = { tomorrow:'Tomorrow', aftertomorrow:'Day After' };
+  return LEGACY[payDate] || payDate;
+}
+
+// ── Sanitize a settlement amount input as the user types ──
+// Strips anything that isn't a digit or decimal point (e.g. "4,200" → "4200"),
+// so pasted/typed thousands-separators never silently empty the field.
+window.stlSanitizeAmount = function(el) {
+  var v = String(el.value || '').replace(/[^0-9.]/g, '');
+  var parts = v.split('.');
+  if (parts.length > 2) v = parts[0] + '.' + parts.slice(1).join('');
+  if (v !== el.value) el.value = v;
+};
+
+// ── Parse a settlement amount value defensively (handles stray commas/spaces) ──
+function parseAmount(val) {
+  return parseFloat(String(val == null ? '' : val).replace(/[^0-9.]/g, '')) || 0;
+}
+
 function renderSettlementForm() {
   const container = document.getElementById('settlementContent');
   if (!container) return;
@@ -6712,11 +6856,8 @@ function renderSettlementForm() {
   // Expected company earnings: paid×4200 + partial×2100
   const expectedCompany = (paidCount * (CLIENT_PRICE - WORKER_PAY.paid)) + (partialCount * (2800 - WORKER_PAY.partial));
 
-  // Check for existing settlements for this date (one per cashier)
-  const cashierSettlements = {
-    cashier1: Object.values(settlements).find(function(s) { return s.date === date && s.cashier === 'cashier1'; }),
-    cashier2: Object.values(settlements).find(function(s) { return s.date === date && s.cashier === 'cashier2'; })
-  };
+  // Check for existing settlements for this date (one per cashier/foreman slot)
+  const existingByCashier = {};
 
   const dateObj = new Date(date + 'T12:00:00');
   const dateLabel = date === getWorkingDate()
@@ -6745,27 +6886,48 @@ function renderSettlementForm() {
     + '<div style="font-size:20px;font-weight:800;font-family:\'JetBrains Mono\',monospace;color:var(--accent)">' + expectedCompany.toLocaleString() + '<span style="font-size:11px;font-weight:600;margin-left:3px">ETB</span></div>'
     + '</div>';
 
-  // Show settlement card for each cashier (cashiers only see their own, never the other)
+  // Show settlement card for each cashier (cashiers only see their own, never the other);
+  // a Foreman gets their own slot keyed by their worker id
+  const isForeman = role === 'worker' && !!getUserPerms(currentUser.id).seeSettlement;
   const cashierIds = (role === 'cashier')
     ? [currentUser.id]
-    : ['cashier1', 'cashier2'];
+    : isForeman
+      ? [currentUser.id]
+      : (function(){
+          const base = ['cashier1', 'cashier2'];
+          // Include any Foreman-submitted settlements for this date so admin/head can review & unlock them too
+          const foremanIds = Object.values(settlements)
+            .filter(function(s) { return s.date === date && s.cashier && base.indexOf(s.cashier) === -1; })
+            .map(function(s) { return s.cashier; });
+          return base.concat(foremanIds.filter(function(id) { return base.indexOf(id) === -1; }));
+        })();
 
   // For admin/head: show a submission status summary banner
   if (role === 'admin' || role === 'head') {
     const c1done = !!Object.values(settlements).find(function(s) { return s.date === date && s.cashier === 'cashier1' && s.locked; });
     const c2done = !!Object.values(settlements).find(function(s) { return s.date === date && s.cashier === 'cashier2' && s.locked; });
-    const bothDone = c1done && c2done;
-    const noneDone = !c1done && !c2done;
+    const foremanDoneIds = cashierIds.filter(function(id) { return id !== 'cashier1' && id !== 'cashier2'; });
+    const foremanLocked = foremanDoneIds.map(function(fid) {
+      return !!Object.values(settlements).find(function(s) { return s.date === date && s.cashier === fid && s.locked; });
+    });
+    const bothDone = c1done && c2done && foremanLocked.every(Boolean);
+    const noneDone = !c1done && !c2done && !foremanLocked.some(Boolean);
     const statusBg = bothDone ? 'rgba(34,197,94,0.08)' : noneDone ? 'rgba(239,68,68,0.07)' : 'rgba(245,158,11,0.08)';
     const statusBorder = bothDone ? 'rgba(34,197,94,0.25)' : noneDone ? 'rgba(239,68,68,0.2)' : 'rgba(245,158,11,0.25)';
+    var statusChips = '<div style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:' + (c1done ? 'var(--green)' : 'var(--text3)') + '">'
+      + (c1done ? '✅' : '⏳') + ' Cashier 1</div>'
+      + '<div style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:' + (c2done ? 'var(--green)' : 'var(--text3)') + '">'
+      + (c2done ? '✅' : '⏳') + ' Cashier 2</div>';
+    foremanDoneIds.forEach(function(fid) {
+      const fdone = !!Object.values(settlements).find(function(s) { return s.date === date && s.cashier === fid && s.locked; });
+      statusChips += '<div style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:' + (fdone ? 'var(--green)' : 'var(--text3)') + '">'
+        + (fdone ? '✅' : '⏳') + ' 🦺 ' + fid + '</div>';
+    });
     html += '<div style="background:' + statusBg + ';border:1px solid ' + statusBorder + ';border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;gap:10px">'
       + '<div style="flex:1">'
       + '<div style="font-size:10px;font-weight:800;color:var(--text3);letter-spacing:0.06em;margin-bottom:6px">SETTLEMENT STATUS</div>'
-      + '<div style="display:flex;gap:10px">'
-      + '<div style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:' + (c1done ? 'var(--green)' : 'var(--text3)') + '">'
-      + (c1done ? '✅' : '⏳') + ' Cashier 1</div>'
-      + '<div style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:' + (c2done ? 'var(--green)' : 'var(--text3)') + '">'
-      + (c2done ? '✅' : '⏳') + ' Cashier 2</div>'
+      + '<div style="display:flex;gap:10px;flex-wrap:wrap">'
+      + statusChips
       + '</div>'
       + '</div>'
       + '</div>';
@@ -6774,17 +6936,18 @@ function renderSettlementForm() {
   var anyRendered = false;
 
   cashierIds.forEach(function(cashierId) {
-    const cashierName = cashierId === 'cashier1' ? 'Cashier 1' : 'Cashier 2';
+    const cashierName = getCashierLabel(cashierId);
     // Strict match — must have the correct cashier field
     const existing = Object.values(settlements).find(function(s) {
       return s.date === date && s.cashier === cashierId;
     });
+    existingByCashier[cashierId] = existing;
 
     if (existing && existing.locked) {
       html += renderLockedSettlement(existing, cashierName, cashierId, date, role, expectedCompany);
       anyRendered = true;
-    } else if (role === 'cashier') {
-      // Cashier only sees their own form
+    } else if (role === 'cashier' || isForeman) {
+      // Cashier / Foreman only sees their own form
       html += renderSettlementFormCard(cashierId, cashierName, date, dayTrucks, unpaidCount, expectedCompany, existing || null);
       anyRendered = true;
     } else if (role === 'admin' || role === 'head') {
@@ -6808,9 +6971,9 @@ function renderSettlementForm() {
 
   container.innerHTML = html;
 
-  // Build unpaid list only for cashiers who haven't locked yet
+  // Build unpaid list only for cashiers/foremen who haven't locked yet
   cashierIds.forEach(function(cid) {
-    const existing = cashierSettlements[cid];
+    const existing = existingByCashier[cid];
     if (!existing || !existing.locked) {
       buildUnpaidListUI(cid, date, dayTrucks, existing);
       // Populate summary block immediately after DOM is ready
@@ -6932,8 +7095,8 @@ function renderSettlementFormCard(cashierId, cashierName, date, dayTrucks, unpai
     // Submitted by Agash supervisor + Shibo workers
     + '<div class="two-col">'
     + '<div>'
-    + '<div class="stl-label">💰 Submitted by H. of Agash</div>'
-    + '<input class="stl-input" type="number" id="stlAgashSubmit_'+cashierId+'" placeholder="0" value="'+savedAgashSubmit+'" oninput="stlCheckAgashDisc(\''+cashierId+'\')" min="0">'
+    + '<div class="stl-label">💰 Submitted by Agash Supervisor</div>'
+    + '<input class="stl-input" type="text" inputmode="decimal" id="stlAgashSubmit_'+cashierId+'" placeholder="0" value="'+savedAgashSubmit+'" oninput="stlSanitizeAmount(this); stlCheckAgashDisc(\''+cashierId+'\')">'
     + '<div class="stl-discrepancy" id="stlAgashDisc_'+cashierId+'"></div>'
     + '</div>'
     + '<div>'
@@ -6942,8 +7105,8 @@ function renderSettlementFormCard(cashierId, cashierName, date, dayTrucks, unpai
     + '<button type="button" id="stlShiboUnlock_'+cashierId+'" onclick="stlShiboUnlock(\''+cashierId+'\')" style="display:'+(shiboManual?'inline-flex':'none')+';align-items:center;gap:3px;font-size:9px;font-weight:700;color:var(--orange);background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.35);border-radius:20px;padding:2px 7px;cursor:pointer;font-family:inherit">🔒 locked · reset</button>'
     + '</div>'
     + '<div style="font-size:9px;color:var(--text3);margin-bottom:4px" id="stlShiboHint_'+cashierId+'">💡 Suggested: '+(cntShiracETB+cntShiracDJF)+' Shirac × 1,300 = '+shiboSuggested.toLocaleString()+' ETB</div>'
-    + '<input class="stl-input" type="number" id="stlShiboGiven_'+cashierId+'" placeholder="0" value="'+savedShiboGiven+'" min="0"'
-    + ' data-auto="'+(shiboManual?'0':'1')+'" oninput="stlShiboOnInput(\''+cashierId+'\')">'
+    + '<input class="stl-input" type="text" inputmode="decimal" id="stlShiboGiven_'+cashierId+'" placeholder="0" value="'+savedShiboGiven+'"'
+    + ' data-auto="'+(shiboManual?'0':'1')+'" oninput="stlSanitizeAmount(this); stlShiboOnInput(\''+cashierId+'\')">'
     + '</div>'
     + '</div>'
 
@@ -6983,7 +7146,7 @@ function renderSettlementFormCard(cashierId, cashierName, date, dayTrucks, unpai
     + '<div style="background:rgba(20,184,166,0.06);border:1px solid rgba(20,184,166,0.3);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:12px">'
     + '<div style="font-size:9px;font-weight:800;color:var(--teal);letter-spacing:0.06em;margin-bottom:6px">💱 FD AMOUNT COLLECTED (Djibouti Franc)</div>'
     + '<div style="display:flex;align-items:center;gap:8px">'
-    + '<input class="stl-input" type="number" id="stlT2FdInput_'+cashierId+'" placeholder="e.g. 10000" value="'+(existing&&existing.t2ShiracFD?existing.t2ShiracFD:'')+'" min="0" style="margin-bottom:0;flex:1" oninput="stlT2FdChanged(\''+cashierId+'\')">'
+    + '<input class="stl-input" type="text" inputmode="decimal" id="stlT2FdInput_'+cashierId+'" placeholder="e.g. 10000" value="'+(existing&&existing.t2ShiracFD?existing.t2ShiracFD:'')+'" style="margin-bottom:0;flex:1" oninput="stlSanitizeAmount(this); stlT2FdChanged(\''+cashierId+'\')">'
     + '<div style="font-size:11px;font-weight:700;color:var(--teal);white-space:nowrap">FD</div>'
     + '</div>'
     + '<div style="font-size:9px;color:var(--text3);margin-top:5px" id="stlT2FdHint_'+cashierId+'">Every 5,000 FD = 1 truck in DJF. Rest = ETB.</div>'
@@ -7013,7 +7176,7 @@ function renderSettlementFormCard(cashierId, cashierName, date, dayTrucks, unpai
     // Submitted to company — inside Table 2
     + '<div style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.3);border-radius:var(--radius-sm);padding:12px;margin-bottom:12px">'
     + '<div class="stl-label" style="color:var(--accent);margin-bottom:8px">🏦 SUBMITTED TO COMPANY (ETB)</div>'
-    + '<input class="stl-input" type="number" id="stlCashSubmitted_'+cashierId+'" placeholder="Enter amount..." value="'+(existing&&existing.cashSubmitted?existing.cashSubmitted:'')+'" min="0">'
+    + '<input class="stl-input" type="text" inputmode="decimal" id="stlCashSubmitted_'+cashierId+'" placeholder="Enter amount..." value="'+(existing&&existing.cashSubmitted?existing.cashSubmitted:'')+'" oninput="stlSanitizeAmount(this)">'
     + '</div>'
 
     // Reporter name
@@ -7150,7 +7313,7 @@ function renderLockedSettlement(s, cashierName, cashierId, date, role, expectedC
 
     // Submitted by Agash + Shibo
     + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">'
-    + '<div class="stl-stat"><div class="stl-stat-num" style="color:var(--green);font-size:16px">'+(s.agashSubmitted||0).toLocaleString()+'</div><div class="stl-stat-lbl">SUBMITTED BY H. OF AGASH</div></div>'
+    + '<div class="stl-stat"><div class="stl-stat-num" style="color:var(--green);font-size:16px">'+(s.agashSubmitted||0).toLocaleString()+'</div><div class="stl-stat-lbl">SUBMITTED BY AGASH SUPERVISOR</div></div>'
     + '<div class="stl-stat"><div class="stl-stat-num" style="color:var(--purple);font-size:16px">'+(s.shiboGiven||0).toLocaleString()+'</div><div class="stl-stat-lbl">GIVEN TO SHIBO WORKERS</div></div>'
     + '</div>'
     + '<div class="stl-discrepancy '+(agashDiff===0?'ok':'warn')+'" style="margin-bottom:14px">'
@@ -7169,8 +7332,7 @@ function renderLockedSettlement(s, cashierName, cashierId, date, role, expectedC
 
   var TYPE_COLOR = { shirac:'#10b981', bilashirac:'#3b82f6', metal:'#ef4444' };
   var TYPE_LABEL = { shirac:'🚛 Shirac', bilashirac:'🚚 Bila Shirac', metal:'🏗️ Metal' };
-  var DATE_LABEL = { tomorrow:'Tomorrow', aftertomorrow:'Day After' };
-  var COLL_LABEL = { head_agash:'Supervisor of Agash', head_ops:'Field Supervisor' };
+  var COLL_LABEL = { head_agash:'Agash Supervisor', head_ops:'Field Supervisor' };
 
   var unpaidHTML = '';
   if (s.unpaidTrucks && s.unpaidTrucks.length > 0) {
@@ -7185,7 +7347,7 @@ function renderLockedSettlement(s, cashierName, cashierId, date, role, expectedC
             + (tl ? '<span style="font-size:9px;padding:2px 7px;border-radius:10px;background:'+col+'22;color:'+col+'">'+tl+'</span>' : '')
             + '</div>'
             + '<div style="text-align:right">'
-            + '<div style="font-size:11px;font-weight:700;color:var(--accent)">'+(DATE_LABEL[ut.payDate]||ut.payDate||'—')+'</div>'
+            + '<div style="font-size:11px;font-weight:700;color:var(--accent)">'+formatUnpaidPayDate(ut.payDate)+'</div>'
             + '<div style="font-size:10px;color:var(--text3)">'+(COLL_LABEL[ut.collector]||ut.collector||'—')+'</div>'
             + '</div>'
             + '</div>';
@@ -7347,11 +7509,14 @@ function renderLockedSettlement(s, cashierName, cashierId, date, role, expectedC
 function buildUnpaidListUI(cashierId, date, dayTrucks, existing) {
   var container = document.getElementById('stlUnpaidList_' + cashierId);
   if (!container) return;
+  container.dataset.date = date; // settlement date — used to compute quick-set dates
+
+  var defaultPayDate = addDaysISO(date, 1); // tomorrow, relative to the settlement's date
 
   var systemUnpaid = dayTrucks
     .filter(function(t) { return t.status === 'unpaid'; })
     .map(function(t) {
-      return { plate: t.plate, truckType: t.type || '', source: 'system', payDate: 'tomorrow', collector: 'head_agash' };
+      return { plate: t.plate, truckType: t.type || '', source: 'system', payDate: defaultPayDate, collector: 'head_agash' };
     });
 
   var list;
@@ -7360,6 +7525,14 @@ function buildUnpaidListUI(cashierId, date, dayTrucks, existing) {
   } else {
     list = systemUnpaid;
   }
+
+  // Normalize legacy 'tomorrow'/'aftertomorrow' enums to real ISO dates
+  list = list.map(function(ut) {
+    if (ut.payDate === 'tomorrow') ut.payDate = addDaysISO(date, 1);
+    else if (ut.payDate === 'aftertomorrow') ut.payDate = addDaysISO(date, 2);
+    else if (!ut.payDate) ut.payDate = defaultPayDate;
+    return ut;
+  });
 
   container.dataset.list = JSON.stringify(list);
   renderUnpaidListUI(cashierId);
@@ -7378,30 +7551,31 @@ function renderUnpaidListUI(cashierId) {
 
   var TYPE_COLOR = { shirac:'#10b981', bilashirac:'#3b82f6', metal:'#ef4444' };
   var TYPE_LABEL = { shirac:'🚛 Shirac', bilashirac:'🚚 Bila Shirac', metal:'🏗️ Metal' };
+  var baseDate = container.dataset.date || getWorkingDate();
 
   container.innerHTML = list.map(function(ut, idx) {
     var color    = TYPE_COLOR[ut.truckType] || '#6b7280';
     var typeLabel= TYPE_LABEL[ut.truckType] || '';
     var isManual = ut.source === 'manual';
-    var payDate  = ut.payDate   || 'tomorrow';
+    var payDate  = ut.payDate || addDaysISO(baseDate, 1);
     var collector= ut.collector || 'head_agash';
 
-    // Payment date pills
-    var datePills = ['tomorrow','aftertomorrow'].map(function(v) {
-      var active = payDate === v;
-      var lbl = v === 'tomorrow' ? 'Tomorrow' : 'Day After';
-      return '<button onclick="stlSetUnpaidField(\''+cashierId+'\','+idx+',\'payDate\',\''+v+'\')" style="'
-        + 'flex:1;padding:6px 4px;border-radius:7px;cursor:pointer;font-size:11px;font-weight:700;border:1.5px solid;'
-        + 'border-color:' + (active?'var(--accent)':'var(--border)') + ';'
-        + 'background:' + (active?'rgba(59,130,246,0.18)':'var(--bg4)') + ';'
-        + 'color:' + (active?'var(--accent)':'var(--text3)') + ';'
-        + 'font-family:inherit;transition:all 0.15s">' + lbl + '</button>';
-    }).join('');
+    // Settlement date — any date picker, plus quick "Tomorrow" / "+2 days" buttons
+    var datePicker = '<input type="date" value="'+payDate+'" '
+      + 'onchange="stlSetUnpaidField(\''+cashierId+'\','+idx+',\'payDate\',this.value)" style="'
+      + 'flex:1;padding:6px 8px;border-radius:7px;cursor:pointer;font-size:11px;font-weight:700;'
+      + 'border:1.5px solid var(--border);background:var(--bg4);color:var(--text);font-family:inherit">'
+      + '<button onclick="stlSetUnpaidField(\''+cashierId+'\','+idx+',\'payDate\',\''+addDaysISO(baseDate,1)+'\')" title="Tomorrow" style="'
+      + 'padding:6px 8px;border-radius:7px;cursor:pointer;font-size:11px;font-weight:700;border:1.5px solid var(--border);'
+      + 'background:var(--bg4);color:var(--text3);font-family:inherit">+1d</button>'
+      + '<button onclick="stlSetUnpaidField(\''+cashierId+'\','+idx+',\'payDate\',\''+addDaysISO(baseDate,2)+'\')" title="Day after tomorrow" style="'
+      + 'padding:6px 8px;border-radius:7px;cursor:pointer;font-size:11px;font-weight:700;border:1.5px solid var(--border);'
+      + 'background:var(--bg4);color:var(--text3);font-family:inherit">+2d</button>';
 
     // Collector pills
     var collectorPills = [
-      { v:'head_agash', l:'H. of Agash' },
-      { v:'head_ops',   l:'H. of Ops'   }
+      { v:'head_agash', l:'Agash Supervisor' },
+      { v:'head_ops',   l:'Field Supervisor' }
     ].map(function(o) {
       var active = collector === o.v;
       return '<button onclick="stlSetUnpaidField(\''+cashierId+'\','+idx+',\'collector\',\''+o.v+'\')" style="'
@@ -7425,16 +7599,16 @@ function renderUnpaidListUI(cashierId) {
       + '<button onclick="stlRemoveUnpaid(\''+cashierId+'\','+idx+')" style="background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.25);border-radius:6px;padding:3px 9px;font-size:11px;cursor:pointer;font-weight:700">✕</button>'
       + '</div>'
 
-      // Row 2: payment date + collector pills
-      + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'
-      + '<div>'
-      + '<div style="font-size:9px;font-weight:700;color:var(--text3);letter-spacing:0.06em;margin-bottom:4px">📅 PAYMENT DATE</div>'
-      + '<div style="display:flex;gap:5px">' + datePills + '</div>'
+      // Row 2: settlement date
+      + '<div style="margin-bottom:8px">'
+      + '<div style="font-size:9px;font-weight:700;color:var(--text3);letter-spacing:0.06em;margin-bottom:4px">📅 SETTLEMENT DATE</div>'
+      + '<div style="display:flex;gap:5px">' + datePicker + '</div>'
       + '</div>'
+
+      // Row 3: collector pills
       + '<div>'
       + '<div style="font-size:9px;font-weight:700;color:var(--text3);letter-spacing:0.06em;margin-bottom:4px">👤 WILL COLLECT</div>'
       + '<div style="display:flex;gap:5px">' + collectorPills + '</div>'
-      + '</div>'
       + '</div>'
 
       + '</div>';
@@ -7468,7 +7642,8 @@ window.stlAddManualUnpaid = function(cashierId) {
   if (!container) return;
   var list = [];
   try { list = JSON.parse(container.dataset.list || '[]'); } catch(e) {}
-  list.push({ plate: plate.trim().toUpperCase(), truckType: '', source: 'manual', payDate: 'tomorrow', collector: 'head_agash' });
+  var baseDate = container.dataset.date || getWorkingDate();
+  list.push({ plate: plate.trim().toUpperCase(), truckType: '', source: 'manual', payDate: addDaysISO(baseDate, 1), collector: 'head_agash' });
   container.dataset.list = JSON.stringify(list);
   renderUnpaidListUI(cashierId);
 };
@@ -7515,7 +7690,7 @@ window.stlRecomputeTable = function(cashierId) {
   var t2TotalEl  = document.getElementById('stlT2ShiracRow_' + cashierId);
   var t2Total    = t2TotalEl ? (parseInt(t2TotalEl.dataset.t2total) || 0) : 0;
   var fdInput    = document.getElementById('stlT2FdInput_' + cashierId);
-  var fdAmount   = fdInput ? (parseFloat(fdInput.value) || 0) : 0;
+  var fdAmount   = fdInput ? parseAmount(fdInput.value) : 0;
   var fdTrucks   = Math.min(Math.floor(fdAmount / 5000), t2Total);
   var etbTrucks  = t2Total - fdTrucks;
 
@@ -7648,7 +7823,7 @@ window.stlCheckAgashDisc = function(cashierId) {
   var submitEl = document.getElementById('stlAgashSubmit_' + cashierId);
   var discEl   = document.getElementById('stlAgashDisc_'   + cashierId);
   if (!submitEl || !discEl) return;
-  var submitted = parseFloat(submitEl.value) || 0;
+  var submitted = parseAmount(submitEl.value);
   if (!submitted) { discEl.style.display = 'none'; return; }
   var diff = submitted - totalCollected;
   discEl.style.display = 'flex';
@@ -7669,7 +7844,7 @@ window.stlCheckAgashDisc = function(cashierId) {
 window.stlT2FdChanged = function(cashierId) {
   var t2TotalEl = document.getElementById('stlT2ShiracRow_' + cashierId);
   var t2Total   = t2TotalEl ? (parseInt(t2TotalEl.dataset.t2total) || 0) : 0;
-  var fdAmount  = parseFloat(document.getElementById('stlT2FdInput_' + cashierId)?.value) || 0;
+  var fdAmount  = parseAmount(document.getElementById('stlT2FdInput_' + cashierId)?.value);
   var fdTrucks  = Math.floor(fdAmount / 5000);
   // Cap at total trucks
   if (fdTrucks > t2Total) fdTrucks = t2Total;
@@ -7745,8 +7920,8 @@ window.submitSettlement = function(cashierId, date, expectedCompany) {
   var PRICE  = 1300;
   var CLIENT = 5500;
 
-  var agashSubmitted = parseFloat(document.getElementById('stlAgashSubmit_'  + cashierId)?.value) || 0;
-  var shiboGiven     = parseFloat(document.getElementById('stlShiboGiven_'   + cashierId)?.value) || 0;
+  var agashSubmitted = parseAmount(document.getElementById('stlAgashSubmit_'  + cashierId)?.value);
+  var shiboGiven     = parseAmount(document.getElementById('stlShiboGiven_'   + cashierId)?.value);
   var notes          = (document.getElementById('stlNotes_' + cashierId)?.value || '').trim();
 
   // Table 1 — split ETB/DJF counts
@@ -7765,7 +7940,7 @@ window.submitSettlement = function(cashierId, date, expectedCompany) {
                     + (cntShiracDJF + cntBilaDJF + cntMetalDJF) * 1000;
   var t1Diff        = agashSubmitted - t1Amount;
 
-  if (!agashSubmitted) { showToast('⚠️ Enter amount submitted by H. of Agash'); return; }
+  if (!agashSubmitted) { showToast('⚠️ Enter amount submitted by Agash Supervisor'); return; }
 
   // Table 2 — ONLY from app trucks (independent)
   var dayTrucks = Object.values(trucks).filter(function(t) { return t.date === date; });
@@ -7774,7 +7949,7 @@ window.submitSettlement = function(cashierId, date, expectedCompany) {
   var t2Paid    = t2Total - t2Unpaid;
 
   // Table 2 FD split
-  var t2ShiracFD       = parseFloat(document.getElementById('stlT2FdInput_' + cashierId)?.value) || 0;
+  var t2ShiracFD       = parseAmount(document.getElementById('stlT2FdInput_' + cashierId)?.value);
   var t2ShiracDJFTrucks = Math.min(Math.floor(t2ShiracFD / 5000), t2Total);
   var t2ShiracETBTrucks = t2Total - t2ShiracDJFTrucks;
 
@@ -7785,7 +7960,7 @@ window.submitSettlement = function(cashierId, date, expectedCompany) {
     try { unpaidTrucks = JSON.parse(listContainer.dataset.list || '[]'); } catch(e) {}
   }
 
-  var cashierName = cashierId === 'cashier1' ? 'Cashier 1' : 'Cashier 2';
+  var cashierName = getCashierLabel(cashierId);
 
   var settlementData = {
     date: date, cashier: cashierId, cashierName: cashierName,
@@ -7803,7 +7978,7 @@ window.submitSettlement = function(cashierId, date, expectedCompany) {
     t2IfAllPaid: t2Total * CLIENT, t2Missing: t2Unpaid * CLIENT, t2Collected: t2Paid * CLIENT,
     t2ShiracFD: t2ShiracFD, t2ShiracDJFTrucks: t2ShiracDJFTrucks, t2ShiracETBTrucks: t2ShiracETBTrucks,
     unpaidTrucks: unpaidTrucks,
-    cashSubmitted:  parseFloat(document.getElementById('stlCashSubmitted_' +cashierId)?.value)||0,
+    cashSubmitted:  parseAmount(document.getElementById('stlCashSubmitted_' +cashierId)?.value),
     reporterName:   (document.getElementById('stlReporterName_'+cashierId)?.value||'').trim() || (currentUser.name||currentUser.id),
     notes: notes, unlockedBy: null, unlockedAt: null
   };
@@ -7818,7 +7993,7 @@ window.submitSettlement = function(cashierId, date, expectedCompany) {
 };
 
 window.unlockSettlement = function(cashierId, date) {
-  if (!confirm('Unlock settlement for ' + (cashierId==='cashier1'?'Cashier 1':'Cashier 2') + ' on ' + date + '? This allows resubmission.')) return;
+  if (!confirm('Unlock settlement for ' + getCashierLabel(cashierId) + ' on ' + date + '? This allows resubmission.')) return;
   const docId = date + '_' + cashierId;
   updateDoc(doc(db, 'settlements', docId), {
     locked: false,
@@ -7891,12 +8066,11 @@ window.stlShareReport = function(cashierId, date) {
   var unpaidList = s.unpaidTrucks || [];
   var unpaidCheckboxes = '';
   if (unpaidList.length > 0) {
-    var DATE_LBL = { tomorrow:'Demain', aftertomorrow:'Après-demain' };
-    var COLL_LBL = { head_agash:'Sup. Agash', head_ops:'Sup. Ops' };
+    var COLL_LBL = { head_agash:'Sup. Agash', head_ops:'Sup. Terrain' };
     unpaidCheckboxes = '<div id="shareUnpaidList" style="margin-top:10px;padding:10px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm)">'
       + '<div style="font-size:10px;font-weight:800;color:var(--text3);letter-spacing:0.06em;margin-bottom:8px">CHOISIR LES CAMIONS NON PAYÉS</div>'
       + unpaidList.map(function(ut, i) {
-          var dl = DATE_LBL[ut.payDate] || ut.payDate || '—';
+          var dl = formatUnpaidPayDate(ut.payDate);
           var cl = COLL_LBL[ut.collector] || ut.collector || '—';
           return '<label style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);cursor:pointer">'
             + '<input type="checkbox" checked data-idx="'+i+'" style="width:18px;height:18px;accent-color:var(--accent);cursor:pointer">'
@@ -8282,8 +8456,8 @@ function _renderSettlementCanvas(s, cashierId, date, inclT1, inclT2, unpaidList)
     unpaidList.forEach(function(ut, i){
       rr(PAD, cy, W-PAD*2, 42, 8, BG3, BORDER+'66', 1);
       m(ut.plate, PAD+14, cy+21, TEXT, 14, 'left');
-      var dl = ut.payDate ? (ut.payDate==='tomorrow'?'Tomorrow':'After tomorrow') : '';
-      var cl = ut.collector ? (ut.collector==='head_agash'?'Sup. Agash':'Sup. Ops') : '';
+      var dl = ut.payDate ? formatUnpaidPayDate(ut.payDate) : '';
+      var cl = ut.collector ? (ut.collector==='head_agash'?'Sup. Agash':'Sup. Terrain') : '';
       t((dl+(dl&&cl?' · ':'')+cl) || '—', W-PAD-12, cy+21, TEXT2, 11, '500', 'right');
       cy += 50;
     });
@@ -8322,7 +8496,7 @@ function _renderSettlementCanvas_OLD(s, cashierId, date, inclT1, inclT2, unpaidL
 
   var dateObj = new Date(date + 'T12:00:00');
   var dateLabel = dateObj.toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
-  var cashierName = s.cashierName || (cashierId === 'cashier1' ? 'Caissier 1' : 'Caissier 2');
+  var cashierName = s.cashierName || getCashierLabel(cashierId);
 
   // ── Measure canvas height ──
   var W = 720;
@@ -8744,6 +8918,14 @@ window._moduleReady = true;
     // not hardcoded defaults. Without this, changed PINs are ignored at login.
     onSnapshot(doc(db, 'settings', 'pins'), function(snap) {
       _cloudPins = snap.exists() ? snap.data() : {};
+    });
+  } catch(e) {}
+
+  try {
+    // Permissions — so the 🦺 Foreman badge appears on the login screen too
+    onSnapshot(doc(db, 'settings', 'perms'), function(snap) {
+      _cloudPerms = snap.exists() ? snap.data() : {};
+      if (!currentUser) buildLogin();
     });
   } catch(e) {}
 })();
