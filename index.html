@@ -3369,7 +3369,7 @@ window.switchTab = function(tab) {
   if (tab==='claims') { renderClaimsTab(); updateClaimsBadge(); }
   if (tab==='advances') renderAdvances();
   if (tab==='list') renderTruckList();
-  if (tab==='agash') renderAgashIncoming();
+  if (tab==='agash') { agashSealFilter = 'all'; renderAgashIncoming(); }
   if (tab==='notifs') renderNotifsTab();
   if (tab==='settlement') renderSettlementTab();
 }
@@ -3747,6 +3747,11 @@ function renderTrucks() {
     const plateHighlight = filterPlate && truck.plate.toUpperCase().includes(filterPlate)
       ? truck.plate.replace(new RegExp('('+filterPlate+')', 'gi'), '<mark style="background:rgba(59,130,246,0.3);color:var(--accent);border-radius:3px;padding:0 2px">$1</mark>')
       : truck.plate;
+    // ── Cross-check: find matching Agash entry by plate + date ──
+    const agashMatch = Object.values(kabIncoming).find(function(a) {
+      return a.plate && a.plate.toUpperCase() === (truck.plate||'').toUpperCase() && a.date === truck.date;
+    });
+    const agashPost = agashMatch ? (agashMatch.postLabel || '') : '';
     return `
       <div class="truck-card ${statusClass}${selectedTrucks.has(truck._id)?' selected':''}" id="tcard-${truck._id}">
         <div class="truck-top">
@@ -3767,6 +3772,7 @@ function renderTrucks() {
           <div style="text-align:center">
             <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
             <div style="font-size:12px;font-weight:700;color:${workerColor}">${truck.worker||'—'}</div>
+            ${agashPost ? `<div style="font-size:9px;font-weight:700;color:var(--teal);margin-top:3px;letter-spacing:0.03em">🏗️ ${agashPost}</div>` : ''}
           </div>
           <div style="text-align:center">
             <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
@@ -6182,13 +6188,26 @@ function updateAgashIncomingBadge() {
   if (lbl) lbl.textContent = count > 0 ? 'Agash (' + count + ')' : 'Agash';
 }
 
+// ── Agash sealed filter state ──
+var agashSealFilter = 'all'; // 'all' | 'sealed' | 'unsealed'
+window.setAgashSealFilter = function(val) {
+  agashSealFilter = val;
+  renderAgashIncoming();
+};
+
 function renderAgashIncoming() {
   var container = document.getElementById('agashIncomingList');
   var subEl = document.getElementById('agashIncomingSub');
   if (!container) return;
 
-  var TYPE_LABELS = { shirac:'🚛 Shirac', bilashirac:'🚚 Bila Shirac', metal:'🏗️ Metal' };
-  var TYPE_COLORS = { shirac:'#10b981', bilashirac:'#3b82f6', metal:'#ef4444' };
+  var TYPE_LABELS  = { shirac:'🚛 Shirac', bilashirac:'🚚 Bila Shirac', metal:'🏗️ Metal' };
+  var TYPE_COLORS  = { shirac:'#10b981', bilashirac:'#3b82f6', metal:'#ef4444' };
+  var STAT_INFO    = {
+    started:  { label:'▶ Started',   color:'#3b82f6' },
+    half:     { label:'⚡ Half',      color:'#f0a500' },
+    finished: { label:'✅ Finished',  color:'#22c55e' },
+    bashal:   { label:'🔮 Bashal',    color:'#e879f9' }
+  };
 
   var selectedDate = document.getElementById('dateFilter') ? document.getElementById('dateFilter').value : getWorkingDate();
   if (!selectedDate) selectedDate = getWorkingDate();
@@ -6209,32 +6228,73 @@ function renderAgashIncoming() {
 
   var filtered = all.filter(function(t){ return t.date === selectedDate; });
 
-  if (subEl) subEl.textContent = filtered.length + ' truck' + (filtered.length!==1?'s':'') + ' · ' + dateLabel;
-
-  // ── Build summary grid ──
-  var POSTS = ['Post 1','Post 2','Post 3','Post 4','Post 5','Post 6','Post 7'];
-  var grid = {};
-  POSTS.forEach(function(p){ grid[p] = {shirac:0, metal:0, bilashirac:0}; });
-
+  // ── Mark each Agash truck as sealed if it exists in the app's trucks collection ──
   filtered.forEach(function(t) {
-    var pl = (t.postLabel||'').trim().toLowerCase().replace(/\s+/g,'');
-    var matched = null;
-    for (var pi=0; pi<POSTS.length; pi++) {
-      if (POSTS[pi].toLowerCase().replace(/\s+/g,'') === pl) { matched = POSTS[pi]; break; }
-    }
-    if (!matched) {
-      for (var pi=0; pi<POSTS.length; pi++) {
-        if (pl.indexOf(POSTS[pi].toLowerCase().replace(/\s+/g,'')) !== -1) { matched = POSTS[pi]; break; }
-      }
-    }
-    if (matched && (t.type==='shirac'||t.type==='metal'||t.type==='bilashirac')) {
-      grid[matched][t.type]++;
-    }
+    t.sealed = Object.values(trucks).some(function(ap) {
+      return ap.plate && ap.plate.toUpperCase() === t.plate.toUpperCase() && ap.date === t.date;
+    });
   });
 
-  var totS=0, totM=0, totB=0;
-  POSTS.forEach(function(p){ totS+=grid[p].shirac; totM+=grid[p].metal; totB+=grid[p].bilashirac; });
-  var grandTotal = totS+totM+totB;
+  var sealedCount   = filtered.filter(function(t){ return t.sealed; }).length;
+  var unsealedCount = filtered.filter(function(t){ return !t.sealed; }).length;
+
+  if (subEl) subEl.textContent = filtered.length + ' truck' + (filtered.length!==1?'s':'') + ' · ' + dateLabel;
+
+  // ── Sealed filter chips ──
+  var chipAll      = agashSealFilter==='all'      ? 'background:var(--accent);border-color:var(--accent);color:#fff'      : 'background:var(--card);border-color:var(--border);color:var(--text2)';
+  var chipSealed   = agashSealFilter==='sealed'   ? 'background:#22c55e;border-color:#22c55e;color:#fff'                  : 'background:var(--card);border-color:var(--border);color:var(--text2)';
+  var chipUnsealed = agashSealFilter==='unsealed' ? 'background:#ef4444;border-color:#ef4444;color:#fff'                  : 'background:var(--card);border-color:var(--border);color:var(--text2)';
+  var chipStyle    = 'border:1.5px solid;border-radius:20px;padding:5px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;';
+  var filterChips  =
+    '<div style="display:flex;gap:8px;padding:0 0 12px;flex-wrap:wrap">'
+    + '<button style="'+chipStyle+chipAll+'" onclick="setAgashSealFilter(\'all\')">All ('+filtered.length+')</button>'
+    + '<button style="'+chipStyle+chipSealed+'" onclick="setAgashSealFilter(\'sealed\')">🔐 Sealed ('+sealedCount+')</button>'
+    + '<button style="'+chipStyle+chipUnsealed+'" onclick="setAgashSealFilter(\'unsealed\')">⭕ Unsealed ('+unsealedCount+')</button>'
+    + '</div>';
+
+  // ── Apply seal filter to what goes into the table and card list ──
+  var display = agashSealFilter === 'sealed'   ? filtered.filter(function(t){ return t.sealed; })
+              : agashSealFilter === 'unsealed' ? filtered.filter(function(t){ return !t.sealed; })
+              : filtered;
+
+  // ── Build post → status grid ──
+  var ALL_POSTS = ['Post 1','Post 2','Post 3','Post 4','Post 5','Post 6','Post 7'];
+  var grid = {};
+
+  display.forEach(function(t) {
+    var pl = (t.postLabel||'').trim().toLowerCase().replace(/\s+/g,'');
+    var matched = null;
+    for (var pi=0; pi<ALL_POSTS.length; pi++) {
+      if (ALL_POSTS[pi].toLowerCase().replace(/\s+/g,'') === pl) { matched = ALL_POSTS[pi]; break; }
+    }
+    if (!matched) {
+      for (var pi=0; pi<ALL_POSTS.length; pi++) {
+        if (pl.indexOf(ALL_POSTS[pi].toLowerCase().replace(/\s+/g,'')) !== -1) { matched = ALL_POSTS[pi]; break; }
+      }
+    }
+    var postKey = matched || (t.postLabel||'Other').trim();
+    if (!grid[postKey]) grid[postKey] = { started:0, half:0, finished:0, bashal:0, sealed:0, unsealed:0 };
+    var s = t.status || 'started';
+    if (grid[postKey][s] !== undefined) grid[postKey][s]++;
+    else grid[postKey].started++;
+    if (t.sealed) grid[postKey].sealed++; else grid[postKey].unsealed++;
+  });
+
+  var activePosts = ALL_POSTS.filter(function(p){ return grid[p]; });
+  Object.keys(grid).forEach(function(p){
+    if (activePosts.indexOf(p) === -1) activePosts.push(p);
+  });
+
+  var totStarted=0, totHalf=0, totFinished=0, totBashal=0, totSealed=0, totUnsealed=0;
+  activePosts.forEach(function(p){
+    totStarted  += grid[p].started;
+    totHalf     += grid[p].half;
+    totFinished += grid[p].finished;
+    totBashal   += grid[p].bashal;
+    totSealed   += grid[p].sealed;
+    totUnsealed += grid[p].unsealed;
+  });
+  var grandTotal = totStarted + totHalf + totFinished + totBashal;
 
   function cell(val, color) {
     var c = val ? color : 'var(--text3)';
@@ -6242,42 +6302,55 @@ function renderAgashIncoming() {
     return '<div style="font-size:13px;font-weight:700;color:'+c+';text-align:center;font-family:\'JetBrains Mono\',monospace">'+v+'</div>';
   }
 
-  var tableHTML =
-    '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:16px">'
-    // thead
-    + '<div style="display:grid;grid-template-columns:1fr 52px 52px 80px 52px;background:var(--bg4);padding:8px 10px;border-bottom:1px solid var(--border);align-items:center">'
-    + '<div style="font-size:9px;font-weight:800;color:var(--text3);letter-spacing:.07em">PAR POST</div>'
-    + '<div style="font-size:9px;font-weight:800;color:#10b981;letter-spacing:.07em;text-align:center">SHIRAC</div>'
-    + '<div style="font-size:9px;font-weight:800;color:#ef4444;letter-spacing:.07em;text-align:center">METAL</div>'
-    + '<div style="font-size:9px;font-weight:800;color:#3b82f6;letter-spacing:.07em;text-align:center">BILA SHIRAC</div>'
-    + '<div style="font-size:9px;font-weight:800;color:var(--text3);letter-spacing:.07em;text-align:center">TOTAL</div>'
-    + '</div>'
-    // rows
-    + POSTS.map(function(p, i) {
-        var r = grid[p];
-        var rowTotal = r.shirac + r.metal + r.bilashirac;
-        var bg = i%2===0 ? 'transparent' : 'rgba(255,255,255,0.02)';
-        return '<div style="display:grid;grid-template-columns:1fr 52px 52px 80px 52px;padding:8px 10px;border-bottom:1px solid var(--border);background:'+bg+';align-items:center">'
-          + '<div style="font-size:12px;font-weight:700;color:var(--text)">'+p+'</div>'
-          + cell(r.shirac,   '#10b981')
-          + cell(r.metal,    '#ef4444')
-          + cell(r.bilashirac,'#3b82f6')
-          + cell(rowTotal,   'var(--text)')
-          + '</div>';
-      }).join('')
-    // footer
-    + '<div style="display:grid;grid-template-columns:1fr 52px 52px 80px 52px;padding:9px 10px;background:rgba(59,130,246,0.07);border-top:2px solid var(--border);align-items:center">'
-    + '<div style="font-size:11px;font-weight:800;color:var(--text)">TOTAL</div>'
-    + '<div style="font-size:14px;font-weight:800;color:#10b981;text-align:center;font-family:\'JetBrains Mono\',monospace">'+(totS||'0')+'</div>'
-    + '<div style="font-size:14px;font-weight:800;color:#ef4444;text-align:center;font-family:\'JetBrains Mono\',monospace">'+(totM||'0')+'</div>'
-    + '<div style="font-size:14px;font-weight:800;color:#3b82f6;text-align:center;font-family:\'JetBrains Mono\',monospace">'+(totB||'0')+'</div>'
-    + '<div style="font-size:14px;font-weight:800;color:var(--accent);text-align:center;font-family:\'JetBrains Mono\',monospace">'+grandTotal+'</div>'
-    + '</div>'
-    + '</div>';
+  var tableHTML = '';
+  if (activePosts.length === 0) {
+    tableHTML = '';
+  } else {
+    // Grid now has 8 columns: POST | START | HALF | DONE | BASHAL | TOT | ✅ | ❌
+    var cols = '1fr 40px 40px 54px 52px 40px 36px 36px';
+    tableHTML =
+      '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:16px">'
+      + '<div style="display:grid;grid-template-columns:'+cols+';background:var(--bg4);padding:8px 10px;border-bottom:1px solid var(--border);align-items:center">'
+      + '<div style="font-size:9px;font-weight:800;color:var(--text3);letter-spacing:.07em">POST</div>'
+      + '<div style="font-size:9px;font-weight:800;color:#3b82f6;letter-spacing:.07em;text-align:center">START</div>'
+      + '<div style="font-size:9px;font-weight:800;color:#f0a500;letter-spacing:.07em;text-align:center">HALF</div>'
+      + '<div style="font-size:9px;font-weight:800;color:#22c55e;letter-spacing:.07em;text-align:center">DONE</div>'
+      + '<div style="font-size:9px;font-weight:800;color:#e879f9;letter-spacing:.07em;text-align:center">BASHAL</div>'
+      + '<div style="font-size:9px;font-weight:800;color:var(--text3);letter-spacing:.07em;text-align:center">TOT</div>'
+      + '<div style="font-size:9px;font-weight:800;color:#22c55e;letter-spacing:.07em;text-align:center">✅</div>'
+      + '<div style="font-size:9px;font-weight:800;color:#ef4444;letter-spacing:.07em;text-align:center">❌</div>'
+      + '</div>'
+      + activePosts.map(function(p, i) {
+          var r = grid[p];
+          var rowTotal = r.started + r.half + r.finished + r.bashal;
+          var bg = i%2===0 ? 'transparent' : 'rgba(255,255,255,0.02)';
+          return '<div style="display:grid;grid-template-columns:'+cols+';padding:8px 10px;border-bottom:1px solid var(--border);background:'+bg+';align-items:center">'
+            + '<div style="font-size:12px;font-weight:700;color:var(--text)">'+p+'</div>'
+            + cell(r.started,  '#3b82f6')
+            + cell(r.half,     '#f0a500')
+            + cell(r.finished, '#22c55e')
+            + cell(r.bashal,   '#e879f9')
+            + cell(rowTotal,   'var(--text)')
+            + cell(r.sealed,   '#22c55e')
+            + cell(r.unsealed, '#ef4444')
+            + '</div>';
+        }).join('')
+      + '<div style="display:grid;grid-template-columns:'+cols+';padding:9px 10px;background:rgba(59,130,246,0.07);border-top:2px solid var(--border);align-items:center">'
+      + '<div style="font-size:11px;font-weight:800;color:var(--text)">TOTAL</div>'
+      + '<div style="font-size:14px;font-weight:800;color:#3b82f6;text-align:center;font-family:\'JetBrains Mono\',monospace">'+(totStarted||'0')+'</div>'
+      + '<div style="font-size:14px;font-weight:800;color:#f0a500;text-align:center;font-family:\'JetBrains Mono\',monospace">'+(totHalf||'0')+'</div>'
+      + '<div style="font-size:14px;font-weight:800;color:#22c55e;text-align:center;font-family:\'JetBrains Mono\',monospace">'+(totFinished||'0')+'</div>'
+      + '<div style="font-size:14px;font-weight:800;color:#e879f9;text-align:center;font-family:\'JetBrains Mono\',monospace">'+(totBashal||'0')+'</div>'
+      + '<div style="font-size:14px;font-weight:800;color:var(--accent);text-align:center;font-family:\'JetBrains Mono\',monospace">'+grandTotal+'</div>'
+      + '<div style="font-size:14px;font-weight:800;color:#22c55e;text-align:center;font-family:\'JetBrains Mono\',monospace">'+totSealed+'</div>'
+      + '<div style="font-size:14px;font-weight:800;color:#ef4444;text-align:center;font-family:\'JetBrains Mono\',monospace">'+totUnsealed+'</div>'
+      + '</div>'
+      + '</div>';
+  }
 
   if (filtered.length === 0) {
-    container.innerHTML = tableHTML
-      + '<div style="text-align:center;padding:40px 0;color:var(--text3)">'
+    container.innerHTML =
+      '<div style="text-align:center;padding:40px 0;color:var(--text3)">'
       + '<div style="font-size:40px;margin-bottom:10px">📥</div>'
       + '<div style="font-size:14px;font-weight:600">No Agash trucks on ' + dateLabel + '</div>'
       + '<div style="font-size:12px;margin-top:6px;opacity:0.6">Change date or wait for trucks to be added</div>'
@@ -6285,26 +6358,47 @@ function renderAgashIncoming() {
     return;
   }
 
-  var truckList = filtered.map(function(t) {
-    var isBashal = t.status === 'bashal';
-    var tc = isBashal ? '#e879f9' : (TYPE_COLORS[t.type] || '#6b7280');
-    var tl = isBashal ? '🔮 Bashal' : (TYPE_LABELS[t.type] || t.type || '—');
+  var truckList = display.map(function(t) {
+    var tc   = TYPE_COLORS[t.type] || '#6b7280';
+    var tl   = TYPE_LABELS[t.type] || t.type || '—';
+    var si   = STAT_INFO[t.status] || STAT_INFO['started'];
     var timeStr = t.ts ? new Date(t.ts).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}) : '—';
-    return '<div style="background:var(--bg3);border:1px solid var(--border);border-left:3px solid '+tc+';border-radius:8px;padding:12px;margin-bottom:8px">'
-      + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">'
+    var sealBadge = t.sealed
+      ? '<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:rgba(34,197,94,0.15);color:#22c55e;border:1px solid rgba(34,197,94,0.35)">🔐 Sealed</span>'
+      : '<span style="font-size:11px;font-weight:800;padding:3px 10px;border-radius:10px;background:rgba(239,68,68,0.22);color:#ef4444;border:1.5px solid rgba(239,68,68,0.6)">⭕ Unsealed</span>';
+    var cardBg     = t.sealed ? 'var(--bg3)' : 'rgba(239,68,68,0.06)';
+    var cardBorder = t.sealed ? 'var(--border)' : 'rgba(239,68,68,0.4)';
+    var leftBorder = t.sealed ? si.color : '#ef4444';
+    return '<div style="background:'+cardBg+';border:1.5px solid '+cardBorder+';border-left:4px solid '+leftBorder+';border-radius:8px;padding:12px;margin-bottom:8px">'
+      // Row 1: plate + seal badge + status badge
+      + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px">'
       + '<div style="font-size:18px;font-weight:800;font-family:monospace;letter-spacing:0.05em">'+t.plate+'</div>'
-      + '<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;background:'+tc+'22;color:'+tc+';border:1px solid '+tc+'44">'+tl+'</span>'
+      + '<div style="display:flex;align-items:center;gap:6px">'
+      + sealBadge
+      + '<span style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:12px;background:'+si.color+'22;color:'+si.color+';border:1px solid '+si.color+'44">'+si.label+'</span>'
       + '</div>'
-      + '<div style="display:flex;justify-content:space-between;align-items:center">'
-      + '<span style="font-size:12px;font-weight:700;color:'+tc+'">🏗️ '+t.postLabel+'</span>'
+      + '</div>'
+      // Row 2: post + type badge + time
+      + '<div style="display:flex;align-items:center;justify-content:space-between;gap:6px">'
+      + '<span style="font-size:12px;font-weight:700;color:var(--text2)">🏗️ '+t.postLabel+'</span>'
+      + '<div style="display:flex;align-items:center;gap:6px">'
+      + '<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;background:'+tc+'18;color:'+tc+';border:1px solid '+tc+'33">'+tl+'</span>'
       + '<span style="font-size:11px;color:var(--text3)">🕐 '+timeStr+'</span>'
-      + '</div></div>';
+      + '</div>'
+      + '</div>'
+      + '</div>';
   }).join('');
 
+  var listLabel = display.length + ' truck' + (display.length!==1?'s':'');
+  if (agashSealFilter !== 'all') listLabel += agashSealFilter==='sealed' ? ' — 🔐 Sealed' : ' — ⭕ Unsealed';
+
   container.innerHTML =
-    tableHTML
-    + '<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin:8px 0 10px;padding-bottom:5px;border-bottom:1px solid var(--border)">📅 ' + dateLabel + ' — ' + filtered.length + ' truck' + (filtered.length!==1?'s':'') + '</div>'
-    + truckList;
+    filterChips
+    + tableHTML
+    + '<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin:8px 0 10px;padding-bottom:5px;border-bottom:1px solid var(--border)">📅 ' + dateLabel + ' — ' + listLabel + '</div>'
+    + (display.length === 0
+        ? '<div style="text-align:center;padding:20px 0;color:var(--text3);font-size:13px">' + (agashSealFilter==='sealed' ? 'No sealed trucks yet' : 'No unsealed trucks') + '</div>'
+        : truckList);
 }
 
 window.exportAgashExcel = function() {
@@ -6319,12 +6413,14 @@ window.exportAgashExcel = function() {
 
   if (all.length === 0) { showToast('⚠️ No Agash trucks on this date'); return; }
 
-  const headers = ['No.','Plate','Date','Time','Type','Post','Added By'];
+  const STAT_LABELS = { started:'Started', half:'Half', finished:'Finished', bashal:'BASHAL' };
+  const headers = ['No.','Plate','Date','Time','Type','Status','Post','Added By'];
   const rows = [headers];
   all.forEach((t,i) => {
-    const tl = t.status==='bashal'?'Bashal':(TYPE_LABELS[t.type]||t.type||'—');
+    const tl = TYPE_LABELS[t.type]||t.type||'—';
+    const sl = STAT_LABELS[t.status]||t.status||'—';
     const timeStr = t.ts ? new Date(t.ts).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}) : '—';
-    rows.push([i+1, t.plate, t.date, timeStr, tl, t.postLabel, t.addedBy]);
+    rows.push([i+1, t.plate, t.date, timeStr, tl, sl, t.postLabel, t.addedBy]);
   });
   const csv = rows.map(r => r.map(c => '"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
   const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
