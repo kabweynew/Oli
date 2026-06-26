@@ -1338,6 +1338,7 @@
   <div class="login-sub">Hask Services — Djibouti</div>
   <div class="login-grid" id="loginGrid">
     <button class="login-btn admin-btn" onclick="goPin('admin')">
+      
       <div class="avatar" style="background:#a855f722;color:#a855f7;border:2px solid #a855f744">
         👑
       </div>
@@ -1346,6 +1347,7 @@
     </button>
   
     <button class="login-btn" onclick="goPin('head')">
+      
       <div class="avatar" style="background:#f59e0b22;color:#f59e0b;border:2px solid #f59e0b44">
         🏢
       </div>
@@ -1354,6 +1356,7 @@
     </button>
   
     <button class="login-btn" onclick="goPin('cashier1')">
+      
       <div class="avatar" style="background:#3b82f622;color:#3b82f6;border:2px solid #3b82f644">
         💼
       </div>
@@ -1362,6 +1365,7 @@
     </button>
   
     <button class="login-btn" onclick="goPin('cashier2')">
+      
       <div class="avatar" style="background:#14b8a622;color:#14b8a6;border:2px solid #14b8a644">
         💼
       </div>
@@ -1370,6 +1374,7 @@
     </button>
   
     <button class="login-btn" onclick="goPin('Ahmed')">
+      
       <div class="avatar" style="background:#3b82f622;color:#3b82f6;border:2px solid #3b82f644">
         AH
       </div>
@@ -1378,6 +1383,7 @@
     </button>
   
     <button class="login-btn" onclick="goPin('Oli')">
+      <span class="foreman-tile-badge">🦺 FOREMAN</span>
       <div class="avatar" style="background:#f59e0b22;color:#f59e0b;border:2px solid #f59e0b44">
         OL
       </div>
@@ -1386,6 +1392,7 @@
     </button>
   
     <button class="login-btn" onclick="goPin('Ilyas')">
+      
       <div class="avatar" style="background:#6b728022;color:#6b7280;border:2px solid #6b728044">
         IL
       </div>
@@ -1397,9 +1404,9 @@
 
 <!-- PIN SCREEN -->
 <div id="pinScreen" class="screen">
-  <div class="pin-avatar" id="pinAvatar" style="background: rgba(168, 85, 247, 0.133); color: rgb(168, 85, 247); border: 2px solid rgba(168, 85, 247, 0.267);">👑</div>
-  <div class="pin-name" id="pinName">Admin</div>
-  <div class="pin-role" id="pinRole">Full Access</div>
+  <div class="pin-avatar" id="pinAvatar" style="background: rgba(245, 158, 11, 0.133); color: rgb(245, 158, 11); border: 2px solid rgba(245, 158, 11, 0.267);">🏢</div>
+  <div class="pin-name" id="pinName">CEO</div>
+  <div class="pin-role" id="pinRole">CEO</div>
   <div class="pin-dots">
     <div class="pin-dot filled" id="d0"></div>
     <div class="pin-dot filled" id="d1"></div>
@@ -1431,13 +1438,13 @@
       <div class="header-logo">HSK</div>
       <div>
         <div class="header-title" id="headerTitle">Tous les Camions</div>
-        <div class="header-sub" id="headerSub">Admin — Vue complète</div>
+        <div class="header-sub" id="headerSub">Rey/Haji</div>
       </div>
     </div>
     <div class="header-right">
-      <div class="online-badge"><div id="syncDot" class=""></div><span id="syncLabel">☁️ Live 10:13</span></div>
-      <span class="role-badge admin" id="roleBadge">ADMIN</span>
-      <button class="add-btn" id="headerAddBtn" onclick="openAddTruck()" style="">+ Add</button>
+      <div class="online-badge"><div id="syncDot" class=""></div><span id="syncLabel">☁️ Live 17:06</span></div>
+      <span class="role-badge head" id="roleBadge">REY/HAJI</span>
+      <button class="add-btn" id="headerAddBtn" onclick="openAddTruck()" style="opacity: 1;">+ Add</button>
     </div>
   </div>
 
@@ -1455,11 +1462,11 @@
     <!-- Trucks Tab -->
     <div id="tabTrucks" style="display: none;">
       <div class="stats-bar">
-        <div class="stat-card"><div class="stat-num blue" id="statTotal">0</div><div class="stat-label">TRUCKS</div></div>
-        <div class="stat-card"><div class="stat-num green" id="statPaid">0</div><div class="stat-label">PAID</div></div>
+        <div class="stat-card"><div class="stat-num blue" id="statTotal">2</div><div class="stat-label">TRUCKS</div></div>
+        <div class="stat-card"><div class="stat-num green" id="statPaid">1</div><div class="stat-label">PAID</div></div>
         <div class="stat-card"><div class="stat-num orange" id="statPartial">0</div><div class="stat-label">PARTIAL</div></div>
-        <div class="stat-card"><div class="stat-num red" id="statUnpaid">0</div><div class="stat-label">UNPAID</div></div>
-        <div class="stat-card"><div class="stat-num teal" id="statETB">0</div><div class="stat-label">ETB</div></div>
+        <div class="stat-card"><div class="stat-num red" id="statUnpaid">1</div><div class="stat-label">UNPAID</div></div>
+        <div class="stat-card"><div class="stat-num teal" id="statETB">5.5k</div><div class="stat-label">ETB</div></div>
       </div>
       <div class="meals-bar" id="mealsBar">
         <div class="meal-card" onclick="openMealsModal()">
@@ -1469,21 +1476,21 @@
           <div class="meal-num" id="statDinner">—</div><div class="meal-label">🍽️ DINNER</div>
         </div>
         <div class="meal-card" onclick="openMealsModal()" style="border-color:rgba(239,68,68,0.3)">
-          <div class="meal-num" id="statNetCompany" style="color:var(--green)">—</div><div class="meal-label">🏦 NET</div>
+          <div class="meal-num" id="statNetCompany" style="color:var(--green)">4.2k</div><div class="meal-label">🏦 NET</div>
         </div>
       </div>
       <div class="date-bar">
         <button class="date-chip" id="todayChip" onclick="setToday()" style="background: var(--green); opacity: 1;">🟢 Today</button>
         <div class="date-input-wrap" style="cursor:pointer" onclick="openDatePicker()" id="datePickerBtn">
           <span style="color:var(--text3);font-size:13px;">📅</span>
-          <span id="dateFilterDisplay" style="flex:1;font-size:13px;font-weight:600">Today — Thu 4 Jun</span>
+          <span id="dateFilterDisplay" style="flex:1;font-size:13px;font-weight:600">Today — Thu 25 Jun</span>
           <span style="color:var(--text3);font-size:12px;">▼</span>
-          <input type="hidden" id="dateFilter" value="2026-06-04">
+          <input type="hidden" id="dateFilter" value="2026-06-25">
         </div>
       </div>
       <!-- 6AM RULE NOTICE -->
       <div id="shiftRuleBanner" style="display:none;margin:0 16px 6px;padding:7px 12px;background:rgba(20,184,166,0.1);border:1px solid rgba(20,184,166,0.3);border-radius:8px;font-size:11px;color:var(--teal);font-weight:600;display:flex;align-items:center;gap:6px">
-        🕕 Working day: <span id="shiftRuleText">Thu 4 Jun 06:00 → Fri 5 Jun 05:59  (Djibouti time)</span>
+        🕕 Working day: <span id="shiftRuleText">Thu 25 Jun 06:00 → Fri 26 Jun 05:59  (Djibouti time)</span>
       </div>
       <!-- SUSPEND BANNER -->
       <div id="suspendBanner">
@@ -1499,12 +1506,12 @@
       <div class="worker-bar" id="workerFilterBar">
     <button class="worker-chip active" id="wchip_all" onclick="setWorkerFilter('all',this)">
       <div class="wdot" style="background:var(--accent)"></div>
-      👥 All <span class="wcount" id="wcount_all">0</span>
+      👥 All <span class="wcount" id="wcount_all">2</span>
     </button>
     
       <button class="worker-chip" id="wchip_Ahmed" onclick="setWorkerFilter('Ahmed',this)" style="border-color:#3b82f644">
         <div class="wdot" style="background:#3b82f6"></div>
-        Ahmed <span class="wcount" id="wcount_Ahmed">0</span>
+        Ahmed <span class="wcount" id="wcount_Ahmed">2</span>
       </button>
     
       <button class="worker-chip" id="wchip_Oli" onclick="setWorkerFilter('Oli',this)" style="border-color:#f59e0b44">
@@ -1530,9 +1537,9 @@
       <div class="section-header">
         <span class="section-title" id="trucksSectionTitle">TODAY'S TRUCKS</span>
         <div style="display:flex;gap:8px;align-items:center">
-          <button class="new-btn" style="color: var(--green); font-size: 11px;" id="exportDateBtn" onclick="exportExcel()">📊 Export 2026-06-04</button>
+          <button class="new-btn" style="color: var(--green); font-size: 11px;" id="exportDateBtn" onclick="exportExcel()">📊 Export 2026-06-25</button>
           <button class="new-btn" style="color:var(--teal)" onclick="openShareReport()">📤 Share</button>
-          <button class="select-mode-btn" id="selectModeBtn" onclick="toggleSelectMode()">☑️ Select</button>
+          <button class="select-mode-btn" id="selectModeBtn" onclick="toggleSelectMode()" style="display: none;">☑️ Select</button>
           <button class="new-btn" onclick="openAddTruck()">+ New</button>
         </div>
       </div>
@@ -1540,7 +1547,81 @@
         <div class="assign-title">⏳ WAITING FOR SEALER</div>
         <div id="unassignedList"></div>
       </div>
-      <div class="trucks-list" id="trucksList"><div class="empty-state"><div class="icon">🚛</div><p>Aucun camion trouvé</p></div></div>
+      <div class="trucks-list" id="trucksList">
+      <div class="truck-card unpaid" id="tcard-emIYHpeBbLTWHF8cs7D7">
+        <div class="truck-top">
+          <div style="display:flex;align-items:center;gap:8px">
+            
+            <span class="truck-number">#1</span>
+            <div class="truck-plate">22</div>
+          </div>
+          <span class="status-badge unpaid">❌ Unpaid</span>
+        </div>
+        <div class="truck-meta">
+          <span>📅 25 Jun 2026</span><span style="color:var(--teal);font-weight:700"> · 🕐 09:35</span>
+           · Added by: Ahmed
+        </div>
+        
+        
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
+          <div style="text-align:center">
+            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
+            <div style="font-size:12px;font-weight:700;color:#3b82f6">Ahmed</div>
+            
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
+            <div style="font-size:12px;font-weight:700;color:var(--orange)">—</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
+            <div style="font-size:12px;font-weight:700;color:var(--teal)">—</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
+            <div style="font-size:12px;font-weight:700;color:var(--accent)">—</div>
+          </div>
+        </div>
+        <div class="truck-actions"><button class="truck-action-btn" style="background:rgba(34,197,94,0.15);color:var(--green);border-color:rgba(34,197,94,0.35);font-weight:700" onclick="quickMarkPaid('emIYHpeBbLTWHF8cs7D7')">✅ Mark Paid</button><button class="truck-action-btn" onclick="openEditTruck('emIYHpeBbLTWHF8cs7D7')">✏️ Edit</button><button class="truck-action-btn danger" onclick="deleteTruck('emIYHpeBbLTWHF8cs7D7')">🗑️ Delete</button></div>
+      </div>
+    
+      <div class="truck-card paid" id="tcard-xuJOpLYBV9wOTrghvxsv">
+        <div class="truck-top">
+          <div style="display:flex;align-items:center;gap:8px">
+            
+            <span class="truck-number">#2</span>
+            <div class="truck-plate">33</div>
+          </div>
+          <span class="status-badge paid">✅ Paid</span>
+        </div>
+        <div class="truck-meta">
+          <span>📅 25 Jun 2026</span><span style="color:var(--teal);font-weight:700"> · 🕐 09:50</span>
+           · Added by: Admin
+        </div>
+        
+        
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
+          <div style="text-align:center">
+            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
+            <div style="font-size:12px;font-weight:700;color:#3b82f6">Ahmed</div>
+            
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
+            <div style="font-size:12px;font-weight:700;color:var(--orange)">5,500 ETB</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
+            <div style="font-size:12px;font-weight:700;color:var(--teal)">1,300 ETB</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
+            <div style="font-size:12px;font-weight:700;color:var(--accent)">4,200 ETB</div>
+          </div>
+        </div>
+        <div class="truck-actions"><button class="truck-action-btn primary" onclick="openStatus('xuJOpLYBV9wOTrghvxsv')">💳 Status</button><button class="truck-action-btn" onclick="openEditTruck('xuJOpLYBV9wOTrghvxsv')">✏️ Edit</button><button class="truck-action-btn danger" onclick="deleteTruck('xuJOpLYBV9wOTrghvxsv')">🗑️ Delete</button></div>
+      </div>
+    </div>
     </div>
 
     <!-- Truck List Tab (all trucks in global order) -->
@@ -1565,30 +1646,41 @@
           <div class="worker-info">
             <div class="worker-name">Ahmed</div>
             <div class="worker-stats-row">
-              <div class="worker-stat">Trucks: <span>0</span></div>
-              <div class="worker-stat">Earned: <span style="color:var(--green)">0</span></div>
-              <div class="worker-stat">Net: <span style="color:var(--green)">0</span></div>
+              <div class="worker-stat">Trucks: <span>2</span></div>
+              <div class="worker-stat">Earned: <span style="color:var(--green)">1,300</span></div>
+              <div class="worker-stat">Net: <span style="color:var(--green)">1,300</span></div>
             </div>
           </div>
           <div class="expand-icon">▼</div>
         </div>
         
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:0 0 2px 0;padding:10px 12px 8px;background:rgba(0,0,0,0.18);border-top:1px solid var(--border)">
+          <div style="text-align:center">
+            <div style="font-size:9px;font-weight:700;color:var(--text3);letter-spacing:0.06em;margin-bottom:3px">TOTAL OWED</div>
+            <div style="font-size:14px;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--text2)">2,600</div>
+            <div style="font-size:9px;color:var(--text3)">ETB</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:9px;font-weight:700;color:var(--text3);letter-spacing:0.06em;margin-bottom:3px">✅ PAID</div>
+            <div style="font-size:14px;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--green)">1,300</div>
+            <div style="font-size:9px;color:var(--text3)">ETB</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:9px;font-weight:700;color:var(--text3);letter-spacing:0.06em;margin-bottom:3px">❌ MISSING</div>
+            <div style="font-size:14px;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--red)">1,300</div>
+            <div style="font-size:9px;color:var(--text3)">ETB</div>
+          </div>
+        </div>
+        
         <div class="worker-details">
           <div class="detail-row"><span class="detail-label">📅 Date</span><span class="detail-val">Today</span></div>
-          <div class="detail-row"><span class="detail-label">Trucks worked</span><span class="detail-val">0</span></div>
-          <div class="detail-row"><span class="detail-label">Paid trucks</span><span class="detail-val green">0</span></div>
+          <div class="detail-row"><span class="detail-label">Trucks worked</span><span class="detail-val">2</span></div>
+          <div class="detail-row"><span class="detail-label">Paid trucks</span><span class="detail-val green">1</span></div>
           <div class="detail-row"><span class="detail-label">Partial trucks</span><span class="detail-val orange">0</span></div>
-          <div class="detail-row"><span class="detail-label">Unpaid trucks</span><span class="detail-val red">0</span></div>
-          <div class="detail-row"><span class="detail-label">Earned today</span><span class="detail-val green">0 ETB</span></div>
+          <div class="detail-row"><span class="detail-label">Unpaid trucks</span><span class="detail-val red">1</span></div>
+          <div class="detail-row"><span class="detail-label">Earned today</span><span class="detail-val green">1,300 ETB</span></div>
           <div class="detail-row"><span class="detail-label">Total advances</span><span class="detail-val red">-0 ETB</span></div>
-          <div class="detail-row"><span class="detail-label">Net balance</span><span class="detail-val" style="color:var(--green)">0 ETB</span></div>
-          
-            <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
-              <button class="manage-btn" onclick="viewWorkerList('Ahmed')">📋 List</button>
-              <button class="manage-btn" onclick="openPinChange('Ahmed')">🔐 PIN</button>
-              <button class="manage-btn" onclick="openWorkerPerms('Ahmed')">⚙️ Perms</button>
-              <button class="manage-btn danger" onclick="removeWorker('Ahmed')">🗑️ Remove</button>
-            </div>
+          <div class="detail-row"><span class="detail-label">Net balance</span><span class="detail-val" style="color:var(--green)">1,300 ETB</span></div>
           
         </div>
       </div>
@@ -1599,7 +1691,7 @@
             OL
           </div>
           <div class="worker-info">
-            <div class="worker-name">Oli</div>
+            <div class="worker-name">Oli <span class="role-badge foreman" style="margin-left:6px;vertical-align:middle">🦺 FOREMAN</span></div>
             <div class="worker-stats-row">
               <div class="worker-stat">Trucks: <span>0</span></div>
               <div class="worker-stat">Earned: <span style="color:var(--green)">0</span></div>
@@ -1618,13 +1710,6 @@
           <div class="detail-row"><span class="detail-label">Earned today</span><span class="detail-val green">0 ETB</span></div>
           <div class="detail-row"><span class="detail-label">Total advances</span><span class="detail-val red">-0 ETB</span></div>
           <div class="detail-row"><span class="detail-label">Net balance</span><span class="detail-val" style="color:var(--green)">0 ETB</span></div>
-          
-            <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
-              <button class="manage-btn" onclick="viewWorkerList('Oli')">📋 List</button>
-              <button class="manage-btn" onclick="openPinChange('Oli')">🔐 PIN</button>
-              <button class="manage-btn" onclick="openWorkerPerms('Oli')">⚙️ Perms</button>
-              <button class="manage-btn danger" onclick="removeWorker('Oli')">🗑️ Remove</button>
-            </div>
           
         </div>
       </div>
@@ -1655,13 +1740,6 @@
           <div class="detail-row"><span class="detail-label">Total advances</span><span class="detail-val red">-0 ETB</span></div>
           <div class="detail-row"><span class="detail-label">Net balance</span><span class="detail-val" style="color:var(--green)">0 ETB</span></div>
           
-            <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
-              <button class="manage-btn" onclick="viewWorkerList('Ilyas')">📋 List</button>
-              <button class="manage-btn" onclick="openPinChange('Ilyas')">🔐 PIN</button>
-              <button class="manage-btn" onclick="openWorkerPerms('Ilyas')">⚙️ Perms</button>
-              <button class="manage-btn danger" onclick="removeWorker('Ilyas')">🗑️ Remove</button>
-            </div>
-          
         </div>
       </div>
     </div>
@@ -1680,7 +1758,7 @@
     <div id="tabReports" style="display:none;">
       <div class="reports-content" id="reportsContent">
     <div style="padding:10px 0 4px">
-      <div style="font-size:11px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:6px">📅 Thu, 4 Jun 2026</div>
+      <div style="font-size:11px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:6px">📅 Thu, 25 Jun 2026</div>
       <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none">
     <button class="filter-chip active" onclick="setReportFilter('all',this)" style="font-size:11px;padding:4px 10px">
       All
@@ -1738,19 +1816,19 @@
     
     <div class="report-card" id="reportSectionSummary">
       <div class="report-title">📊 SUMMARY</div>
-      <div class="report-row"><span class="report-label">🚛 Total Trucks</span><span class="report-val">0</span></div>
-      <div class="report-row"><span class="report-label">✅ Paid</span><span class="report-val" style="color:var(--green)">0</span></div>
+      <div class="report-row"><span class="report-label">🚛 Total Trucks</span><span class="report-val">2</span></div>
+      <div class="report-row"><span class="report-label">✅ Paid</span><span class="report-val" style="color:var(--green)">1</span></div>
       <div class="report-row"><span class="report-label">⚡ Partial</span><span class="report-val" style="color:var(--orange)">0</span></div>
-      <div class="report-row"><span class="report-label">❌ Unpaid</span><span class="report-val" style="color:var(--red)">0</span></div>
-      <div class="report-row"><span class="report-label">💰 Paid Revenue</span><span class="report-val" style="color:var(--teal)">0 ETB</span></div>
-      <div class="report-row"><span class="report-label">👷 Total Sealer Pay</span><span class="report-val">0 ETB</span></div>
-      <div class="report-row"><span class="report-label">🏢 Company Earnings</span><span class="report-val" style="color:var(--green)">0 ETB</span></div>
+      <div class="report-row"><span class="report-label">❌ Unpaid</span><span class="report-val" style="color:var(--red)">1</span></div>
+      <div class="report-row"><span class="report-label">💰 Paid Revenue</span><span class="report-val" style="color:var(--teal)">5,500 ETB</span></div>
+      <div class="report-row"><span class="report-label">👷 Total Sealer Pay</span><span class="report-val">1,300 ETB</span></div>
+      <div class="report-row"><span class="report-label">🏢 Company Earnings</span><span class="report-val" style="color:var(--green)">4,200 ETB</span></div>
       <div class="report-row"><span class="report-label">💸 Total Advances</span><span class="report-val" style="color:var(--red)">-0 ETB</span></div>
       
         <div class="report-row"><span class="report-label">🥗 Lunch</span><span class="report-val" style="color:var(--red)">—</span></div>
         <div class="report-row"><span class="report-label">🍽️ Dinner</span><span class="report-val" style="color:var(--red)">—</span></div>
         
-        <div style="margin-top:10px"><button onclick="openMealsModal('2026-06-04')" style="width:100%;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.3);color:var(--accent);border-radius:var(--radius-sm);padding:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">🍽️ Set Lunch / Dinner Amounts</button></div>
+        <div style="margin-top:10px"><button onclick="openMealsModal('2026-06-25')" style="width:100%;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.3);color:var(--accent);border-radius:var(--radius-sm);padding:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">🍽️ Set Lunch / Dinner Amounts</button></div>
       
 
       <!-- COMBINED TOTAL -->
@@ -1758,22 +1836,26 @@
         <div style="display:flex;justify-content:space-between;align-items:center">
           <div>
             <div style="font-size:10px;font-weight:800;color:var(--accent);letter-spacing:0.05em;margin-bottom:2px">💡 COMBINED TOTAL</div>
-            <div style="font-size:10px;color:var(--text3)">if all 0 trucks paid</div>
+            <div style="font-size:10px;color:var(--text3)">if all 2 trucks paid</div>
           </div>
-          <div style="font-size:17px;font-weight:800;color:var(--accent)">0 ETB</div>
+          <div style="font-size:17px;font-weight:800;color:var(--accent)">11,000 ETB</div>
         </div>
         <div style="border-top:1px solid rgba(99,102,241,0.2);padding-top:6px;display:flex;justify-content:space-between">
           <span style="font-size:11px;color:var(--text2)">👷 Sealer pay (all paid)</span>
-          <span style="font-size:11px;font-weight:700;color:var(--teal)">0 ETB</span>
+          <span style="font-size:11px;font-weight:700;color:var(--teal)">2,600 ETB</span>
         </div>
         <div style="display:flex;justify-content:space-between">
           <span style="font-size:11px;color:var(--text2)">🏢 Net company (all paid)</span>
-          <span style="font-size:12px;font-weight:800;color:var(--green)">0 ETB</span>
+          <span style="font-size:12px;font-weight:800;color:var(--green)">8,400 ETB</span>
         </div>
         
       </div>
 
       
+      <div class="report-row" style="background:rgba(239,68,68,0.1);border-radius:var(--radius-sm);padding:10px;margin-top:6px;border:1px solid rgba(239,68,68,0.3)">
+        <span class="report-label" style="color:var(--red);font-weight:700">⚠️ Missing (Unpaid)</span>
+        <span class="report-val" style="color:var(--red)">-5,500 ETB</span>
+      </div>
     </div>
 
     
@@ -1781,8 +1863,14 @@
       <div class="report-title">👷 PER SEALER</div>
       
           <div class="report-row">
-            <span class="report-label"><span style="width:8px;height:8px;border-radius:50%;background:#3b82f6;display:inline-block;margin-right:4px"></span>Ahmed</span>
-            <span class="report-val" style="color:var(--text3)">—</span>
+            <span class="report-label">
+              <span style="width:8px;height:8px;border-radius:50%;background:#3b82f6;display:inline-block;margin-right:4px"></span>
+              Ahmed <span style="color:var(--text3);font-size:11px">(2)</span>
+            </span>
+            <div style="text-align:right">
+              <div class="report-val" style="color:var(--green)">1,300 ETB</div>
+              <div style="font-size:10px;color:var(--text3)">✅1 ⚡0 ❌1</div>
+            </div>
           </div>
           <div class="report-row">
             <span class="report-label"><span style="width:8px;height:8px;border-radius:50%;background:#f59e0b;display:inline-block;margin-right:4px"></span>Oli</span>
@@ -1822,7 +1910,7 @@
             <div class="manage-item-left">
               <div style="width:32px;height:32px;border-radius:50%;background:#f59e0b22;color:#f59e0b;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">OL</div>
               <div>
-                <div class="manage-item-name">Oli</div>
+                <div class="manage-item-name">Oli <span class="role-badge foreman" style="margin-left:4px;vertical-align:middle">🦺 FOREMAN</span></div>
                 <div class="manage-item-sub">Worker · PIN: ••••</div>
               </div>
             </div>
@@ -2165,7 +2253,7 @@
   
     <button class="nav-btn" id="nav_agash" onclick="switchTab('agash')">
       <div class="nav-icon">📥</div>
-      <div class="nav-label">Agash</div>
+      <div class="nav-label">Agash (3)</div>
     </button>
   
     <button class="nav-btn" id="nav_notifs" onclick="switchTab('notifs')">
@@ -2178,19 +2266,14 @@
       <div class="nav-label">Settlement</div>
     </button>
   
+    <button class="nav-btn" id="nav_recycle" onclick="switchTab('recycle')">
+      <div class="nav-icon">🗑️</div>
+      <div class="nav-label">Bin (35)</div>
+    </button>
+  
     <button class="nav-btn active" id="nav_manage" onclick="switchTab('manage')">
       <div class="nav-icon">⚙️</div>
       <div class="nav-label">Gérer</div>
-    </button>
-  
-    <button class="nav-btn" id="nav_recycle" onclick="switchTab('recycle')">
-      <div class="nav-icon">🗑️</div>
-      <div class="nav-label">Bin (33)</div>
-    </button>
-  
-    <button class="nav-btn" id="nav_logout" onclick="switchTab('logout')">
-      <div class="nav-icon">🚪</div>
-      <div class="nav-label">Déconnexion</div>
     </button>
   </div>
 </div>
@@ -2672,8 +2755,11 @@ const WORKER_COLORS = {
   Ahmed: '#3b82f6', Radwan: '#22c55e', Oli: '#f59e0b',
   Ali: '#ef4444', Omar: '#a855f7'
 };
-const CLIENT_PRICE = 5500;
-const WORKER_PAY = { paid: 1300, partial: 700, unpaid: 0 };
+// ── TARIFFS — live from Firestore settings/tariffs ──
+window.tariffs = { clientETB:5500, clientFD:5000, sealerPaid:1300, sealerPartial:700, partialFare:2800, agashETB:1300, agashFD:1000 };
+// Compatibility shims (used widely across the app — always read from window.tariffs)
+Object.defineProperty(window, 'CLIENT_PRICE', { get: function(){ return window.tariffs.clientETB; }, configurable:true });
+Object.defineProperty(window, 'WORKER_PAY',   { get: function(){ return { paid: window.tariffs.sealerPaid, partial: window.tariffs.sealerPartial, unpaid: 0 }; }, configurable:true });
 
 // ── TRANSLATIONS ──
 const T = {
@@ -2820,21 +2906,44 @@ function saveWorkerList(w) {
 
 // ── FIREBASE LISTENERS ──
 function initFirebase() {
-  ['_unsubTrucks','_unsubAdvances','_unsubDeleted','_unsubSuspend','_unsubPins','_unsubPerms','_unsubWorkers','_unsubHead','_unsubClaims','_unsubSettlements'].forEach(function(k) {
+  ['_unsubTrucks','_unsubAdvances','_unsubDeleted','_unsubSuspend','_unsubPins','_unsubPerms','_unsubWorkers','_unsubHead','_unsubClaims','_unsubSettlements','_unsubTariffs','_unsubDeductions','_unsubKabIncoming','_unsubNotifs','_unsubPastPay'].forEach(function(k) {
     try { if (window[k]) { window[k](); window[k] = null; } } catch(e) {}
   });
 
   setSyncing();
 
+  // ── READINESS TRACKER ──
+  // Go Live only after all critical listeners have fired their first snapshot.
+  // No timers — the app shows Live exactly when data is actually loaded.
+  var CRITICAL = ['trucks','tariffs','settings','advances'];
+  var _ready = {};
+  function markReady(key) {
+    _ready[key] = true;
+    if (CRITICAL.every(function(k){ return _ready[k]; })) {
+      setOnline();
+      // Render everything once all critical data is in
+      renderTrucks();
+      renderWorkers();
+      renderReports();
+      if (currentTab === 'list') renderTruckList();
+      updateDupChip();
+      var wd2 = getWorkingDate();
+      var wd2Obj = new Date(wd2 + 'T12:00:00');
+      var displayEl2 = document.getElementById('dateFilterDisplay');
+      if (displayEl2 && document.getElementById('dateFilter').value === wd2) {
+        displayEl2.textContent = 'Today — ' + wd2Obj.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+      }
+    }
+  }
+
+  // ── TRUCKS (critical) ──
   window._unsubTrucks = onSnapshot(collection(db,'trucks'), snap => {
     trucks = {};
     snap.forEach(d => { trucks[d.id] = d.data(); });
 
     // ── DUPLICATE DETECTION (notify only — never auto-delete) ──
-    // Detect duplicate plate+date pairs and write a notification for admin.
-    // Do NOT silently delete trucks. Admin must review from the Bin tab.
     if (currentUser && (currentUser.role === 'admin' || currentUser.role === 'head')) {
-      var seen = {}; // "plate|date" → first id seen
+      var seen = {};
       var dupPairs = [];
       Object.entries(trucks).forEach(function(e) {
         var id = e[0]; var t = e[1];
@@ -2847,57 +2956,145 @@ function initFirebase() {
           seen[key] = id;
         }
       });
-      // Write notifications for new duplicates found
       if (dupPairs.length > 0) {
         dupPairs.forEach(function(dp) {
           var notifKey = 'dup_' + dp.plate + '_' + dp.date;
-          // Only write if not already notified (avoid repeated writes)
           getDoc(doc(db, 'notifications', notifKey)).then(function(snap) {
             if (!snap.exists()) {
               setDoc(doc(db, 'notifications', notifKey), {
-                type: 'duplicate',
-                plate: dp.plate,
-                date: dp.date,
-                id1: dp.id1,
-                id2: dp.id2,
-                detectedAt: Date.now(),
-                read: false
+                type: 'duplicate', plate: dp.plate, date: dp.date,
+                id1: dp.id1, id2: dp.id2, detectedAt: Date.now(), read: false
               });
             }
           }).catch(function(){});
         });
-        // Show in-app alert for admin if on trucks tab
-        if (currentTab === 'trucks' || currentTab === 'list') {
-          showDupAlert(dupPairs);
-        }
+        if (currentTab === 'trucks' || currentTab === 'list') showDupAlert(dupPairs);
       }
     }
 
-    renderTrucks();
-    renderWorkers();
-    renderReports();
-    if (currentTab === 'list') renderTruckList();
-    setOnline();
-    updateDupChip();
-    const wd2 = getWorkingDate();
-    const wd2Obj = new Date(wd2 + 'T12:00:00');
-    const displayEl2 = document.getElementById('dateFilterDisplay');
-    if (displayEl2 && document.getElementById('dateFilter').value === wd2) {
-      displayEl2.textContent = 'Today — ' + wd2Obj.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+    markReady('trucks');
+    // Also re-render on subsequent live updates (after first load)
+    if (_ready['tariffs'] && _ready['settings'] && _ready['advances']) {
+      renderTrucks();
+      renderWorkers();
+      renderReports();
+      if (currentTab === 'list') renderTruckList();
+      updateDupChip();
     }
   }, (err) => {
-    // Only show offline if the browser itself reports no internet.
-    // Firestore fires this callback for temporary server hiccups too — don't
-    // flip the UI to red just because of a momentary cloud issue.
-    if (!navigator.onLine) { setOffline(); }
+    if (!navigator.onLine) { setOffline(); } else { setOnline(); }
   });
 
+  // ── ADVANCES (critical) ──
   window._unsubAdvances = onSnapshot(collection(db,'advances'), snap => {
     advances = {};
     snap.forEach(d => { advances[d.id] = d.data(); });
-    renderAdvances();
-    renderWorkers();
-  }, () => {});
+    markReady('advances');
+    if (_ready['trucks'] && _ready['tariffs'] && _ready['settings']) {
+      renderAdvances();
+      renderWorkers();
+    }
+  }, () => { markReady('advances'); });
+
+  // ── TARIFFS (critical) ──
+  window._unsubTariffs = onSnapshot(doc(db,'settings','tariffs'), snap => {
+    if (snap.exists()) {
+      const d = snap.data();
+      window.tariffs.clientETB     = d.clientETB     || 5500;
+      window.tariffs.clientFD      = d.clientFD      || 5000;
+      window.tariffs.sealerPaid    = d.sealerPaid    || 1300;
+      window.tariffs.sealerPartial = d.sealerPartial || 700;
+      window.tariffs.partialFare   = d.partialFare   || 2800;
+      window.tariffs.agashETB      = d.agashETB      || 1300;
+      window.tariffs.agashFD       = d.agashFD       || 1000;
+    }
+    markReady('tariffs');
+    if (!currentUser) return;
+    if (_ready['trucks'] && _ready['settings'] && _ready['advances']) {
+      if (currentTab === 'reports')    renderReports();
+      if (currentTab === 'trucks')     renderTrucks();
+      if (currentTab === 'manage')     renderManage();
+      if (currentTab === 'settlement') renderSettlement && renderSettlement();
+    }
+  }, () => { markReady('tariffs'); });
+
+  // ── SETTINGS bundle (pins + perms + workers + headName + suspend + pastPay + meals)
+  // All count together as one "settings" critical key ──
+  var _settingsReady = {};
+  var SETTINGS_KEYS = ['pins','perms','workers','headName','suspend','pastPay','meals'];
+  function markSettingReady(k) {
+    _settingsReady[k] = true;
+    if (SETTINGS_KEYS.every(function(s){ return _settingsReady[s]; })) {
+      markReady('settings');
+    }
+  }
+
+  window._unsubPins = onSnapshot(doc(db,'settings','pins'), snap => {
+    _cloudPins = snap.exists() ? snap.data() : {};
+    markSettingReady('pins');
+  }, () => { markSettingReady('pins'); });
+
+  window._unsubPerms = onSnapshot(doc(db,'settings','perms'), snap => {
+    _cloudPerms = snap.exists() ? snap.data() : {};
+    markSettingReady('perms');
+    if (currentTab === 'manage') renderManage();
+  }, () => { markSettingReady('perms'); });
+
+  window._unsubWorkers = onSnapshot(doc(db,'settings','workers'), snap => {
+    _cloudWorkers = snap.exists() ? (snap.data().list || []) : [];
+    markSettingReady('workers');
+    buildLogin();
+    if (currentTab === 'trucks') renderTrucks();
+    if (currentTab === 'workers') renderWorkers();
+    if (currentTab === 'manage') renderManage();
+    var modalOpen = document.getElementById('modalTruck') && document.getElementById('modalTruck').classList.contains('active');
+    if (modalOpen && currentUser && currentUser.role !== 'worker') {
+      var sel = document.getElementById('truckWorker');
+      var curVal = sel ? sel.value : '';
+      if (sel) {
+        sel.innerHTML = '<option value="">— No sealer yet (Pending) —</option>' +
+          _cloudWorkers.map(function(w){ return '<option value="'+w+'">'+w+'</option>'; }).join('');
+        sel.value = curVal;
+      }
+    }
+  }, () => { markSettingReady('workers'); });
+
+  window._unsubHead = onSnapshot(doc(db,'settings','headName'), snap => {
+    const prev = _cloudHeadName;
+    _cloudHeadName = snap.exists() ? (snap.data().name || null) : null;
+    markSettingReady('headName');
+    if (_cloudHeadName !== prev) {
+      buildLogin();
+      if (currentUser && currentUser.role === 'head') {
+        currentUser.name = getHeadName();
+        document.getElementById('headerSub').textContent = getHeadName();
+        document.getElementById('roleBadge').textContent = getHeadName().toUpperCase();
+      }
+      if (currentTab === 'manage') renderManage();
+    }
+  }, () => { markSettingReady('headName'); });
+
+  window._unsubSuspend = onSnapshot(doc(db,'settings','addingSuspended'), snap => {
+    addingSuspended = snap.exists() ? snap.data().value === true : false;
+    markSettingReady('suspend');
+    if (currentUser) updateSuspendUI();
+  }, () => { markSettingReady('suspend'); });
+
+  window._unsubPastPay = onSnapshot(doc(db,'settings','pastPaymentEdit'), snap => {
+    pastPaymentEditAllowed = snap.exists() ? snap.data().value === true : false;
+    markSettingReady('pastPay');
+    if (currentUser) updatePastPayUI();
+  }, () => { markSettingReady('pastPay'); });
+
+  window._unsubDeductions = onSnapshot(doc(db,'settings','meals'), snap => {
+    dailyDeductions = snap.exists() ? (snap.data().byDate || {}) : {};
+    markSettingReady('meals');
+    if (!currentUser) return;
+    if (currentTab === 'reports') renderReports();
+    if (currentTab === 'trucks') renderTrucks();
+  }, () => { markSettingReady('meals'); });
+
+  // ── NON-CRITICAL listeners (don't block Live status) ──
 
   window._unsubDeleted = onSnapshot(collection(db,'deleted'), snap => {
     deletedTrucks = {};
@@ -2911,48 +3108,6 @@ function initFirebase() {
     if (currentTab === 'recycle') renderRecycleList();
   }, () => {});
 
-  window._unsubSuspend = onSnapshot(doc(db,'settings','addingSuspended'), snap => {
-    addingSuspended = snap.exists() ? snap.data().value === true : false;
-    if (currentUser) updateSuspendUI();
-  }, () => {});
-
-  window._unsubPastPay = onSnapshot(doc(db,'settings','pastPaymentEdit'), snap => {
-    pastPaymentEditAllowed = snap.exists() ? snap.data().value === true : false;
-    if (currentUser) updatePastPayUI();
-  }, () => {});
-
-  // ── Cloud PINs ──
-  window._unsubPins = onSnapshot(doc(db,'settings','pins'), snap => {
-    _cloudPins = snap.exists() ? snap.data() : {};
-  }, () => {});
-
-  // ── Cloud Permissions ──
-  window._unsubPerms = onSnapshot(doc(db,'settings','perms'), snap => {
-    _cloudPerms = snap.exists() ? snap.data() : {};
-    if (currentTab === 'manage') renderManage();
-  }, () => {});
-
-  // ── Cloud Worker List ──
-  window._unsubWorkers = onSnapshot(doc(db,'settings','workers'), snap => {
-    _cloudWorkers = snap.exists() ? (snap.data().list || []) : [];
-    buildLogin();
-    if (currentTab === 'trucks') renderTrucks();
-    if (currentTab === 'workers') renderWorkers();
-    if (currentTab === 'manage') renderManage();
-    // Refresh sealer dropdown if Add/Edit Truck modal is open
-    var modalOpen = document.getElementById('modalTruck') && document.getElementById('modalTruck').classList.contains('active');
-    if (modalOpen && currentUser && currentUser.role !== 'worker') {
-      var sel = document.getElementById('truckWorker');
-      var curVal = sel ? sel.value : '';
-      if (sel) {
-        sel.innerHTML = '<option value="">— No sealer yet (Pending) —</option>' +
-          _cloudWorkers.map(function(w){ return '<option value="'+w+'">'+w+'</option>'; }).join('');
-        sel.value = curVal;
-      }
-    }
-  }, () => {});
-
-  // ── Claims ──
   window._unsubClaims = onSnapshot(collection(db,'claims'), snap => {
     claims = {};
     snap.forEach(function(d) { claims[d.id] = d.data(); });
@@ -2960,30 +3115,6 @@ function initFirebase() {
     if (currentTab === 'claims') renderClaimsTab();
   }, function() {});
 
-  // ── Cloud Head Name ──
-  window._unsubHead = onSnapshot(doc(db,'settings','headName'), snap => {
-    const prev = _cloudHeadName;
-    _cloudHeadName = snap.exists() ? (snap.data().name || null) : null;
-    // Only rebuild if name actually changed
-    if (_cloudHeadName !== prev) {
-      buildLogin();
-      if (currentUser && currentUser.role === 'head') {
-        currentUser.name = getHeadName();
-        document.getElementById('headerSub').textContent = getHeadName();
-        document.getElementById('roleBadge').textContent = getHeadName().toUpperCase();
-      }
-      if (currentTab === 'manage') renderManage();
-    }
-  }, () => {});
-
-  // ── Daily Deductions (Lunch & Dinner) — stored in settings/meals ──
-  window._unsubDeductions = onSnapshot(doc(db,'settings','meals'), snap => {
-    dailyDeductions = snap.exists() ? (snap.data().byDate || {}) : {};
-    if (!currentUser) return;
-    if (currentTab === 'reports') renderReports();
-    if (currentTab === 'trucks') renderTrucks();
-  }, function() {});
-  // ── Agash Trucks — listen to kab_trucks (what Agash actually writes) ──
   window._unsubKabIncoming = onSnapshot(collection(db,'kab_trucks'), snap => {
     kabIncoming = {};
     snap.forEach(d => {
@@ -3002,9 +3133,12 @@ function initFirebase() {
     updateAgashIncomingBadge();
     if (currentTab === 'agash') renderAgashIncoming();
     if (currentTab === 'reports') renderReports();
-  }, () => {});
+    if (currentTab === 'trucks') renderTrucks();
+  }, (err) => {
+    console.warn('kab_trucks listener failed:', err.code || err.message);
+    kabIncoming = {};
+  });
 
-  // ── Settlements ──
   window._unsubSettlements = onSnapshot(collection(db,'settlements'), snap => {
     settlements = {};
     snap.forEach(d => { settlements[d.id] = d.data(); });
@@ -3012,7 +3146,6 @@ function initFirebase() {
     if (currentTab === 'settlement') renderSettlementTab();
   }, function() {});
 
-  // ── Admin Notifications (dedup alerts etc.) ──
   if (currentUser && (currentUser.role === 'admin' || currentUser.role === 'head')) {
     window._unsubNotifs = onSnapshot(collection(db, 'notifications'), function(snap) {
       var items = [];
@@ -3162,7 +3295,7 @@ function checkPin() {
 }
 
 window.goLogin = function() {
-  ['_unsubTrucks','_unsubAdvances','_unsubDeleted','_unsubSuspend','_unsubPins','_unsubPerms','_unsubWorkers','_unsubHead','_unsubClaims','_unsubSettlements'].forEach(function(k){
+  ['_unsubTrucks','_unsubAdvances','_unsubDeleted','_unsubSuspend','_unsubPins','_unsubPerms','_unsubWorkers','_unsubHead','_unsubClaims','_unsubSettlements','_unsubTariffs','_unsubDeductions','_unsubKabIncoming','_unsubNotifs','_unsubPastPay'].forEach(function(k){
     try { if (window[k]) { window[k](); window[k]=null; } } catch(e) {}
   });
   trucks = {}; advances = {}; deletedTrucks = {}; claims = {}; settlements = {};
@@ -3578,7 +3711,7 @@ function renderTrucks() {
   document.getElementById('statPaid').textContent = statsBase.filter(t=>t.status==='paid'||t.status==='pending').length;
   document.getElementById('statPartial').textContent = statsBase.filter(t=>t.status==='partial').length;
   document.getElementById('statUnpaid').textContent = statsBase.filter(t=>t.status==='unpaid').length;
-  const earn = statsBase.reduce((s,t)=>s+(t.status==='paid'||t.status==='pending'?CLIENT_PRICE:t.status==='partial'?2800:0),0);
+  const earn = statsBase.reduce((s,t)=>s+(t.status==='paid'||t.status==='pending'?CLIENT_PRICE:t.status==='partial'?window.tariffs.partialFare:0),0);
   document.getElementById('statETB').textContent = earn>=1000 ? (earn/1000).toFixed(1)+'k' : earn;
 
   // ── Meals bar (Lunch / Dinner / Net) ──
@@ -3724,7 +3857,7 @@ function renderTrucks() {
     const statusLabel = truck.status==='paid'?'✅ Paid':truck.status==='partial'?'⚡ Partial':'❌ Unpaid';
     const workerColor = WORKER_COLORS[truck.worker]||'#6b7280';
     const workerEarn = WORKER_PAY[truck.status]||0;
-    const totalFare = truck.status==='paid'?CLIENT_PRICE:truck.status==='partial'?2800:0;
+    const totalFare = truck.status==='paid'?CLIENT_PRICE:truck.status==='partial'?window.tariffs.partialFare:0;
     const company = totalFare - workerEarn;
     const dateStr = truck.timestamp ? new Date(truck.timestamp).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : truck.date;
     const timeStr = truck.timestamp ? new Date(truck.timestamp).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}) : null;
@@ -4469,12 +4602,12 @@ function renderReports() {
   const unpaidCount  = filtered.filter(t => t.status==='unpaid').length;
   const totalTrucks  = paidCount + partialCount + unpaidCount;
 
-  const totalClient  = filtered.reduce((s,t) => s+(t.status==='paid'||t.status==='pending'?CLIENT_PRICE:t.status==='partial'?2800:0), 0);
+  const totalClient  = filtered.reduce((s,t) => s+(t.status==='paid'||t.status==='pending'?CLIENT_PRICE:t.status==='partial'?window.tariffs.partialFare:0), 0);
   const totalWorker  = filtered.reduce((s,t) => s+(t.status==='pending'?WORKER_PAY.paid:(WORKER_PAY[t.status]||0)), 0);
   const totalCompany = totalClient - totalWorker;
   const totalAdv     = allAdvances.reduce((s,a) => s+(a.amount||0), 0);
   const unpaidAmount = unpaidCount * CLIENT_PRICE;
-  const partialAmount= partialCount * 2800;
+  const partialAmount= partialCount * window.tariffs.partialFare;
 
   // Combined total = paid revenue + what unpaid trucks WOULD be worth
   const combinedTotal = totalClient + unpaidAmount + partialAmount;
@@ -4786,6 +4919,16 @@ window.setReportWorkerFilter = function(w, el) {
   renderReports();
 }
 
+// ── TARIFF SAVE ──
+window.saveTariff = function(key, rawVal) {
+  const val = parseFloat(rawVal);
+  if (isNaN(val) || val < 0) { showToast('❌ Invalid value'); return; }
+  window.tariffs[key] = val;
+  setDoc(doc(db, 'settings', 'tariffs'), window.tariffs)
+    .then(function(){ showToast('✅ Tariff saved'); })
+    .catch(function(){ showToast('❌ Save failed'); });
+};
+
 // ── MANAGE ──
 function renderManage() {
   const container = document.getElementById('manageContent');
@@ -4941,6 +5084,35 @@ function renderManage() {
           </div>
           <div>›</div>
         </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="manage-section-title">💰 TARIFFS</div>
+      <div class="manage-card" style="padding:14px 16px">
+        <div style="font-size:11px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:12px">Changes save live — all devices update instantly</div>
+        ${(()=>{
+          const T = window.tariffs;
+          const row = (key, label, val, sub) =>
+            '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)">'
+            + '<div>'
+            + '<div style="font-size:13px;font-weight:600;color:var(--text)">'+label+'</div>'
+            + '<div style="font-size:11px;color:var(--text3);margin-top:2px">'+sub+'</div>'
+            + '</div>'
+            + '<input id="tariff_'+key+'" type="number" value="'+val+'"'
+            + ' style="width:82px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:14px;font-weight:700;color:var(--text);text-align:right;font-family:JetBrains Mono,monospace"'
+            + ' onchange="saveTariff(\''+key+'\',this.value)">'
+            + '</div>';
+          return [
+            row('clientETB',     '🚛 Client Rate — ETB',        T.clientETB,      'What client pays per truck (ETB)'),
+            row('clientFD',      '🚛 Client Rate — FD',         T.clientFD,       'What client pays per truck (DJF)'),
+            row('partialFare',   '⚡ Partial Fare — ETB',       T.partialFare,    'Client pays for partial payment'),
+            row('sealerPaid',    '👷 Sealer Gets — Paid',       T.sealerPaid,     'Sealer commission per paid truck'),
+            row('sealerPartial', '👷 Sealer Gets — Partial',    T.sealerPartial,  'Sealer commission per partial truck'),
+            row('agashETB',      '🏗️ Agash Rate — ETB',        T.agashETB,       'Agash rate per truck (ETB)'),
+            row('agashFD',       '🏗️ Agash Rate — FD',         T.agashFD,        'Agash rate per truck (FD)'),
+          ].join('');
+        })()}
       </div>
     </div>
 
@@ -5759,7 +5931,7 @@ window.openShareReport = function() {
   const paid = allForDate.filter(function(tk){ return tk.status==='paid'; }).length + pendingCount;
   const partial = allForDate.filter(function(tk){ return tk.status==='partial'; }).length;
   const unpaid = allForDate.filter(function(tk){ return tk.status==='unpaid'; }).length;
-  const revenue = allForDate.reduce(function(s,tk){ return s+(tk.status==='paid'||tk.status==='pending'?CLIENT_PRICE:tk.status==='partial'?2800:0); },0);
+  const revenue = allForDate.reduce(function(s,tk){ return s+(tk.status==='paid'||tk.status==='pending'?CLIENT_PRICE:tk.status==='partial'?window.tariffs.partialFare:0); },0);
   const totalSealerPay = allForDate.reduce(function(s,tk){
     // pending = paid by client but no sealer yet — count 1,300 ETB as future sealer payment
     if (tk.status==='pending') return s + WORKER_PAY.paid;
@@ -6139,7 +6311,7 @@ window.exportExcel = function() {
 
   filtered.forEach(function(tk, i) {
     var workerEarn = WORKER_PAY[tk.status]||0;
-    var totalFare = (tk.status==='paid'||tk.status==='pending') ? CLIENT_PRICE : tk.status==='partial' ? 2800 : 0;
+    var totalFare = (tk.status==='paid'||tk.status==='pending') ? CLIENT_PRICE : tk.status==='partial' ? window.tariffs.partialFare : 0;
     var statusDisplay = (tk.status==='paid'||tk.status==='pending') ? 'Paid' : tk.status==='partial' ? 'Partial' : 'Unpaid';
     rows.push([
       i+1,
@@ -6160,7 +6332,7 @@ window.exportExcel = function() {
 
   // Summary row
   rows.push([]);
-  var totalRev = filtered.reduce(function(s,tk){ return s+((tk.status==='paid'||tk.status==='pending')?CLIENT_PRICE:tk.status==='partial'?2800:0); }, 0);
+  var totalRev = filtered.reduce(function(s,tk){ return s+((tk.status==='paid'||tk.status==='pending')?CLIENT_PRICE:tk.status==='partial'?window.tariffs.partialFare:0); }, 0);
   var totalPay = filtered.reduce(function(s,tk){ return s+(WORKER_PAY[tk.status]||0); }, 0);
   rows.push(['TOTAL', '', '', '', '', filtered.length+' trucks', totalRev, totalPay, totalRev-totalPay, '', '', '', '']);
 
@@ -6257,7 +6429,7 @@ function renderAgashIncoming() {
               : agashSealFilter === 'unsealed' ? filtered.filter(function(t){ return !t.sealed; })
               : filtered;
 
-  // ── Build post → status grid ──
+  // ── Build post → load type grid ──
   var ALL_POSTS = ['Post 1','Post 2','Post 3','Post 4','Post 5','Post 6','Post 7'];
   var grid = {};
 
@@ -6273,10 +6445,12 @@ function renderAgashIncoming() {
       }
     }
     var postKey = matched || (t.postLabel||'Other').trim();
-    if (!grid[postKey]) grid[postKey] = { started:0, half:0, finished:0, bashal:0, sealed:0, unsealed:0 };
-    var s = t.status || 'started';
-    if (grid[postKey][s] !== undefined) grid[postKey][s]++;
-    else grid[postKey].started++;
+    if (!grid[postKey]) grid[postKey] = { shirac:0, bilashirac:0, metal:0, bashal:0, sealed:0, unsealed:0 };
+    var ty = (t.type||'').toLowerCase().replace(/[\s-]/g,'');
+    if      (ty === 'bilashirac') grid[postKey].bilashirac++;
+    else if (ty === 'metal')      grid[postKey].metal++;
+    else if (ty === 'bashal')     grid[postKey].bashal++;
+    else                          grid[postKey].shirac++;
     if (t.sealed) grid[postKey].sealed++; else grid[postKey].unsealed++;
   });
 
@@ -6285,16 +6459,16 @@ function renderAgashIncoming() {
     if (activePosts.indexOf(p) === -1) activePosts.push(p);
   });
 
-  var totStarted=0, totHalf=0, totFinished=0, totBashal=0, totSealed=0, totUnsealed=0;
+  var totShirac=0, totBila=0, totMetal=0, totBashal=0, totSealed=0, totUnsealed=0;
   activePosts.forEach(function(p){
-    totStarted  += grid[p].started;
-    totHalf     += grid[p].half;
-    totFinished += grid[p].finished;
-    totBashal   += grid[p].bashal;
-    totSealed   += grid[p].sealed;
-    totUnsealed += grid[p].unsealed;
+    totShirac  += grid[p].shirac;
+    totBila    += grid[p].bilashirac;
+    totMetal   += grid[p].metal;
+    totBashal  += grid[p].bashal;
+    totSealed  += grid[p].sealed;
+    totUnsealed+= grid[p].unsealed;
   });
-  var grandTotal = totStarted + totHalf + totFinished + totBashal;
+  var grandTotal = totShirac + totBila + totMetal + totBashal;
 
   function cell(val, color) {
     var c = val ? color : 'var(--text3)';
@@ -6306,40 +6480,40 @@ function renderAgashIncoming() {
   if (activePosts.length === 0) {
     tableHTML = '';
   } else {
-    // Grid now has 8 columns: POST | START | HALF | DONE | BASHAL | TOT | ✅ | ❌
-    var cols = '1fr 40px 40px 54px 52px 40px 36px 36px';
+    // Grid: POST | SHIRAC | BILA | METAL | +BASHAL | TOT | ✅ | ❌
+    var cols = '1fr 46px 46px 46px 54px 40px 34px 34px';
     tableHTML =
       '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:16px">'
       + '<div style="display:grid;grid-template-columns:'+cols+';background:var(--bg4);padding:8px 10px;border-bottom:1px solid var(--border);align-items:center">'
       + '<div style="font-size:9px;font-weight:800;color:var(--text3);letter-spacing:.07em">POST</div>'
-      + '<div style="font-size:9px;font-weight:800;color:#3b82f6;letter-spacing:.07em;text-align:center">START</div>'
-      + '<div style="font-size:9px;font-weight:800;color:#f0a500;letter-spacing:.07em;text-align:center">HALF</div>'
-      + '<div style="font-size:9px;font-weight:800;color:#22c55e;letter-spacing:.07em;text-align:center">DONE</div>'
-      + '<div style="font-size:9px;font-weight:800;color:#e879f9;letter-spacing:.07em;text-align:center">BASHAL</div>'
+      + '<div style="font-size:9px;font-weight:800;color:#10b981;letter-spacing:.07em;text-align:center">SHIRAC</div>'
+      + '<div style="font-size:9px;font-weight:800;color:#3b82f6;letter-spacing:.07em;text-align:center">BILA</div>'
+      + '<div style="font-size:9px;font-weight:800;color:#f97316;letter-spacing:.07em;text-align:center">METAL</div>'
+      + '<div style="font-size:9px;font-weight:800;color:#e879f9;letter-spacing:.07em;text-align:center">+BASHAL</div>'
       + '<div style="font-size:9px;font-weight:800;color:var(--text3);letter-spacing:.07em;text-align:center">TOT</div>'
       + '<div style="font-size:9px;font-weight:800;color:#22c55e;letter-spacing:.07em;text-align:center">✅</div>'
       + '<div style="font-size:9px;font-weight:800;color:#ef4444;letter-spacing:.07em;text-align:center">❌</div>'
       + '</div>'
       + activePosts.map(function(p, i) {
           var r = grid[p];
-          var rowTotal = r.started + r.half + r.finished + r.bashal;
+          var rowTotal = r.shirac + r.bilashirac + r.metal + r.bashal;
           var bg = i%2===0 ? 'transparent' : 'rgba(255,255,255,0.02)';
           return '<div style="display:grid;grid-template-columns:'+cols+';padding:8px 10px;border-bottom:1px solid var(--border);background:'+bg+';align-items:center">'
             + '<div style="font-size:12px;font-weight:700;color:var(--text)">'+p+'</div>'
-            + cell(r.started,  '#3b82f6')
-            + cell(r.half,     '#f0a500')
-            + cell(r.finished, '#22c55e')
-            + cell(r.bashal,   '#e879f9')
-            + cell(rowTotal,   'var(--text)')
-            + cell(r.sealed,   '#22c55e')
-            + cell(r.unsealed, '#ef4444')
+            + cell(r.shirac,     '#10b981')
+            + cell(r.bilashirac, '#3b82f6')
+            + cell(r.metal,      '#f97316')
+            + cell(r.bashal,     '#e879f9')
+            + cell(rowTotal,     'var(--text)')
+            + cell(r.sealed,     '#22c55e')
+            + cell(r.unsealed,   '#ef4444')
             + '</div>';
         }).join('')
       + '<div style="display:grid;grid-template-columns:'+cols+';padding:9px 10px;background:rgba(59,130,246,0.07);border-top:2px solid var(--border);align-items:center">'
       + '<div style="font-size:11px;font-weight:800;color:var(--text)">TOTAL</div>'
-      + '<div style="font-size:14px;font-weight:800;color:#3b82f6;text-align:center;font-family:\'JetBrains Mono\',monospace">'+(totStarted||'0')+'</div>'
-      + '<div style="font-size:14px;font-weight:800;color:#f0a500;text-align:center;font-family:\'JetBrains Mono\',monospace">'+(totHalf||'0')+'</div>'
-      + '<div style="font-size:14px;font-weight:800;color:#22c55e;text-align:center;font-family:\'JetBrains Mono\',monospace">'+(totFinished||'0')+'</div>'
+      + '<div style="font-size:14px;font-weight:800;color:#10b981;text-align:center;font-family:\'JetBrains Mono\',monospace">'+(totShirac||'0')+'</div>'
+      + '<div style="font-size:14px;font-weight:800;color:#3b82f6;text-align:center;font-family:\'JetBrains Mono\',monospace">'+(totBila||'0')+'</div>'
+      + '<div style="font-size:14px;font-weight:800;color:#f97316;text-align:center;font-family:\'JetBrains Mono\',monospace">'+(totMetal||'0')+'</div>'
       + '<div style="font-size:14px;font-weight:800;color:#e879f9;text-align:center;font-family:\'JetBrains Mono\',monospace">'+(totBashal||'0')+'</div>'
       + '<div style="font-size:14px;font-weight:800;color:var(--accent);text-align:center;font-family:\'JetBrains Mono\',monospace">'+grandTotal+'</div>'
       + '<div style="font-size:14px;font-weight:800;color:#22c55e;text-align:center;font-family:\'JetBrains Mono\',monospace">'+totSealed+'</div>'
@@ -6950,7 +7124,7 @@ function renderSettlementForm() {
   const totalTrucks = dayTrucks.length;
 
   // Expected company earnings: paid×4200 + partial×2100
-  const expectedCompany = (paidCount * (CLIENT_PRICE - WORKER_PAY.paid)) + (partialCount * (2800 - WORKER_PAY.partial));
+  const expectedCompany = (paidCount * (CLIENT_PRICE - WORKER_PAY.paid)) + (partialCount * (window.tariffs.partialFare - WORKER_PAY.partial));
 
   // Check for existing settlements for this date (one per cashier/foreman slot)
   const existingByCashier = {};
@@ -7079,7 +7253,7 @@ function renderSettlementForm() {
 }
 
 function renderSettlementFormCard(cashierId, cashierName, date, dayTrucks, unpaidCount, expectedCompany, existing) {
-  var PRICE  = 1300;
+  var PRICE  = window.tariffs.agashETB;
   var formId = 'stlForm_' + cashierId;
 
   var savedNotes       = existing ? (existing.notes          || '') : '';
@@ -7134,10 +7308,10 @@ function renderSettlementFormCard(cashierId, cashierName, date, dayTrucks, unpai
   var footDJF = (cntShiracDJF + cntBilaDJF + cntMetalDJF) * 1000;
 
   // Summary block: Shirac row, Metal row, TOTAL row — all × 5500/5000
-  var smShiracETB = (cntShiracETB + cntShiracDJF) * 5500;
-  var smShiracDJF = (cntShiracETB + cntShiracDJF) * 5000;
-  var smMetalETB  = (cntMetalETB  + cntMetalDJF)  * 5500;
-  var smMetalDJF  = (cntMetalETB  + cntMetalDJF)  * 5000;
+  var smShiracETB = (cntShiracETB + cntShiracDJF) * window.tariffs.clientETB;
+  var smShiracDJF = (cntShiracETB + cntShiracDJF) * window.tariffs.clientFD;
+  var smMetalETB  = (cntMetalETB  + cntMetalDJF)  * window.tariffs.clientETB;
+  var smMetalDJF  = (cntMetalETB  + cntMetalDJF)  * window.tariffs.clientFD;
   var smTotETB    = smShiracETB + smMetalETB;
   var smTotDJF    = smShiracDJF + smMetalDJF;
 
@@ -7293,10 +7467,10 @@ function renderSettlementFormCard(cashierId, cashierName, date, dayTrucks, unpai
 
 
 function renderLockedSettlement(s, cashierName, cashierId, date, role, expectedCompany) {
-  var PRICE    = 1300;   // ETB per truck (sealer/Agash rate)
-  var PRICE_FD = 1000;   // FD per truck
-  var CLIENT   = 5500;   // ETB client rate per truck
-  var CLIENT_FD= 5000;   // FD client rate per truck
+  var PRICE    = window.tariffs.agashETB;   // ETB per truck (sealer/Agash rate)
+  var PRICE_FD = window.tariffs.agashFD;    // FD per truck
+  var CLIENT   = window.tariffs.clientETB;  // ETB client rate per truck
+  var CLIENT_FD= window.tariffs.clientFD;   // FD client rate per truck
   var submittedTime = s.submittedAt
     ? new Date(s.submittedAt).toLocaleString('en-GB', {day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})
     : '—';
@@ -7339,7 +7513,7 @@ function renderLockedSettlement(s, cashierName, cashierId, date, role, expectedC
   // Summary block values
   var hasETB = (eS+eB+eM) > 0;
   var hasDJF = (dS+dB+dM) > 0;
-  var shiracETB = eS*5500, shiracDJF = dS*5000;
+  var shiracETB = eS*window.tariffs.clientETB, shiracDJF = dS*window.tariffs.clientFD;
   var metalETB  = eM*PRICE, metalDJF  = dM*PRICE_FD;
   var totSmETB  = shiracETB + metalETB;
   var totSmDJF  = shiracDJF + metalDJF;
@@ -7454,18 +7628,18 @@ function renderLockedSettlement(s, cashierName, cashierId, date, role, expectedC
   var t2ShiracDJFTrucks = s.t2ShiracDJFTrucks || 0;
   var t2ShiracETBTrucks = s.t2ShiracETBTrucks != null ? s.t2ShiracETBTrucks : (t2Total - t2ShiracDJFTrucks);
   var t2ShiracFDAmount  = s.t2ShiracFD || 0;
-  var t2ShiracETBAmount = t2ShiracETBTrucks * 5500;
+  var t2ShiracETBAmount = t2ShiracETBTrucks * window.tariffs.clientETB;
   // FD trucks paid in DJF, rest in ETB — no double-counting
   var paidFDTrucks  = Math.min(t2ShiracDJFTrucks, t2Paid);
   var paidETBTrucks = t2Paid - paidFDTrucks;
-  var t2PaidETB     = paidETBTrucks * CLIENT;
-  var t2PaidFD      = paidFDTrucks  * CLIENT_FD;
+  var t2PaidETB     = paidETBTrucks * window.tariffs.clientETB;
+  var t2PaidFD      = paidFDTrucks  * window.tariffs.clientFD;
   var unpaidFDTrucks  = Math.max(0, t2ShiracDJFTrucks - t2Paid);
   var unpaidETBTrucks = t2Unpaid - unpaidFDTrucks;
-  var t2UnpaidETB     = unpaidETBTrucks * CLIENT;
-  var t2UnpaidFD      = unpaidFDTrucks  * CLIENT_FD;
-  var t2IfAllETB      = t2ShiracETBTrucks * CLIENT;
-  var t2IfAllFD       = t2ShiracDJFTrucks * CLIENT_FD;
+  var t2UnpaidETB     = unpaidETBTrucks * window.tariffs.clientETB;
+  var t2UnpaidFD      = unpaidFDTrucks  * window.tariffs.clientFD;
+  var t2IfAllETB      = t2ShiracETBTrucks * window.tariffs.clientETB;
+  var t2IfAllFD       = t2ShiracDJFTrucks * window.tariffs.clientFD;
 
   var table2HTML =
     '<div style="font-size:10px;font-weight:800;color:var(--text3);letter-spacing:0.08em;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--border)">🚛 TABLE 2 — TRUCKS & UNPAID COLLECTION</div>'
@@ -7745,7 +7919,7 @@ window.stlAddManualUnpaid = function(cashierId) {
 };
 
 window.stlRecomputeTable = function(cashierId) {
-  var PRICE = 1300;
+  var PRICE = window.tariffs.agashETB;
 
   // Read ETB truck counts
   var eS = parseInt(document.getElementById('stlEtbCntS_' + cashierId)?.value) || 0;
@@ -7787,11 +7961,11 @@ window.stlRecomputeTable = function(cashierId) {
   var t2Total    = t2TotalEl ? (parseInt(t2TotalEl.dataset.t2total) || 0) : 0;
   var fdInput    = document.getElementById('stlT2FdInput_' + cashierId);
   var fdAmount   = fdInput ? parseAmount(fdInput.value) : 0;
-  var fdTrucks   = Math.min(Math.floor(fdAmount / 5000), t2Total);
+  var fdTrucks   = Math.min(Math.floor(fdAmount / window.tariffs.clientFD), t2Total);
   var etbTrucks  = t2Total - fdTrucks;
 
-  var shiracETB  = etbTrucks * 5500;
-  var shiracDJF  = fdTrucks  * 5000;
+  var shiracETB  = etbTrucks * window.tariffs.clientETB;
+  var shiracDJF  = fdTrucks  * window.tariffs.clientFD;
   var metalETB   = eM * PRICE;   // × 1,300 from Table 1
   var metalDJF   = dM * 1000;    // × 1,000 from Table 1
 
@@ -7893,7 +8067,7 @@ window.stlShiboOnInput = function(cashierId) {
 };
 
 window.stlShiboUnlock = function(cashierId) {
-  var PRICE = 1300;
+  var PRICE = window.tariffs.agashETB;
   var eS = parseInt(document.getElementById('stlEtbCntS_' + cashierId)?.value) || 0;
   var dS = parseInt(document.getElementById('stlDjfCntS_' + cashierId)?.value) || 0;
   var bilaTotal    = eS + dS;
@@ -7907,14 +8081,14 @@ window.stlShiboUnlock = function(cashierId) {
 };
 
 window.stlCheckAgashDisc = function(cashierId) {
-  var PRICE = 1300;
+  var PRICE = window.tariffs.agashETB;
   var eS = parseInt(document.getElementById('stlEtbCntS_' + cashierId)?.value) || 0;
   var eB = parseInt(document.getElementById('stlEtbCntB_' + cashierId)?.value) || 0;
   var eM = parseInt(document.getElementById('stlEtbCntM_' + cashierId)?.value) || 0;
   var dS = parseInt(document.getElementById('stlDjfCntS_' + cashierId)?.value) || 0;
   var dB = parseInt(document.getElementById('stlDjfCntB_' + cashierId)?.value) || 0;
   var dM = parseInt(document.getElementById('stlDjfCntM_' + cashierId)?.value) || 0;
-  var totalCollected = (eS + eB + eM) * PRICE + (dS + dB + dM) * 1000;
+  var totalCollected = (eS + eB + eM) * PRICE + (dS + dB + dM) * window.tariffs.agashFD;
 
   var submitEl = document.getElementById('stlAgashSubmit_' + cashierId);
   var discEl   = document.getElementById('stlAgashDisc_'   + cashierId);
@@ -7941,12 +8115,12 @@ window.stlT2FdChanged = function(cashierId) {
   var t2TotalEl = document.getElementById('stlT2ShiracRow_' + cashierId);
   var t2Total   = t2TotalEl ? (parseInt(t2TotalEl.dataset.t2total) || 0) : 0;
   var fdAmount  = parseAmount(document.getElementById('stlT2FdInput_' + cashierId)?.value);
-  var fdTrucks  = Math.floor(fdAmount / 5000);
+  var fdTrucks  = Math.floor(fdAmount / window.tariffs.clientFD);
   // Cap at total trucks
   if (fdTrucks > t2Total) fdTrucks = t2Total;
   var etbTrucks = t2Total - fdTrucks;
-  var fdActual  = fdTrucks * 5000;  // actual FD = whole trucks only
-  var etbAmt    = etbTrucks * 5500;
+  var fdActual  = fdTrucks * window.tariffs.clientFD;
+  var etbAmt    = etbTrucks * window.tariffs.clientETB;
   var fdAmt     = fdActual;
 
   // Update Table 2 Shirac row display
@@ -7990,8 +8164,8 @@ window.stlT2FdChanged = function(cashierId) {
   }
 
   if (missingMainEl) {
-    var missingETBVal = unpaidETB * 5500;
-    var missingFDVal  = unpaidFD  * 5000;
+    var missingETBVal = unpaidETB * window.tariffs.clientETB;
+    var missingFDVal  = unpaidFD  * window.tariffs.clientFD;
     if (unpaidFD > 0) {
       missingMainEl.innerHTML = missingETBVal.toLocaleString() + ' <span style="color:var(--text3);font-size:11px">ETB</span>'
         + ' + ' + missingFDVal.toLocaleString() + ' <span style="color:var(--teal);font-size:11px">FD</span>';
@@ -8013,8 +8187,8 @@ window.stlT2FdChanged = function(cashierId) {
 };
 
 window.submitSettlement = function(cashierId, date, expectedCompany) {
-  var PRICE  = 1300;
-  var CLIENT = 5500;
+  var PRICE  = window.tariffs.agashETB;
+  var CLIENT = window.tariffs.clientETB;
 
   var agashSubmitted = parseAmount(document.getElementById('stlAgashSubmit_'  + cashierId)?.value);
   var shiboGiven     = parseAmount(document.getElementById('stlShiboGiven_'   + cashierId)?.value);
@@ -8046,7 +8220,7 @@ window.submitSettlement = function(cashierId, date, expectedCompany) {
 
   // Table 2 FD split
   var t2ShiracFD       = parseAmount(document.getElementById('stlT2FdInput_' + cashierId)?.value);
-  var t2ShiracDJFTrucks = Math.min(Math.floor(t2ShiracFD / 5000), t2Total);
+  var t2ShiracDJFTrucks = Math.min(Math.floor(t2ShiracFD / window.tariffs.clientFD), t2Total);
   var t2ShiracETBTrucks = t2Total - t2ShiracDJFTrucks;
 
   // Unpaid collection list (from app + manual additions)
@@ -8071,7 +8245,7 @@ window.submitSettlement = function(cashierId, date, expectedCompany) {
     agashSubmitted: agashSubmitted, shiboGiven: shiboGiven, t1Discrepancy: t1Diff,
     // Table 2 (app data only)
     t2Total: t2Total, t2Paid: t2Paid, t2Unpaid: t2Unpaid,
-    t2IfAllPaid: t2Total * CLIENT, t2Missing: t2Unpaid * CLIENT, t2Collected: t2Paid * CLIENT,
+    t2IfAllPaid: t2Total * window.tariffs.clientETB, t2Missing: t2Unpaid * window.tariffs.clientETB, t2Collected: t2Paid * window.tariffs.clientETB,
     t2ShiracFD: t2ShiracFD, t2ShiracDJFTrucks: t2ShiracDJFTrucks, t2ShiracETBTrucks: t2ShiracETBTrucks,
     unpaidTrucks: unpaidTrucks,
     cashSubmitted:  parseAmount(document.getElementById('stlCashSubmitted_' +cashierId)?.value),
@@ -8306,10 +8480,10 @@ window.stlGenerateShareImage = function(cashierId, date) {
 
 function _renderSettlementCanvas(s, cashierId, date, inclT1, inclT2, unpaidList) {
   // ── NEW CLEAN REPORT (matches reference design) ──
-  var CLIENT_FARE = 5500;
-  var SEALER_PAY  = 1300;
-  var PARTIAL_FARE = 2800;
-  var PARTIAL_SEALER = 700;
+  var CLIENT_FARE = window.tariffs.clientETB;
+  var SEALER_PAY  = window.tariffs.sealerPaid;
+  var PARTIAL_FARE = window.tariffs.partialFare;
+  var PARTIAL_SEALER = window.tariffs.sealerPartial;
 
   // Live truck data for this date
   var dayTrucks = Object.values(trucks).filter(function(t){ return t.date === date; });
@@ -8584,7 +8758,7 @@ function _renderSettlementCanvas(s, cashierId, date, inclT1, inclT2, unpaidList)
 }
 // ── OLD CANVAS (kept for reference, unreachable) ──
 function _renderSettlementCanvas_OLD(s, cashierId, date, inclT1, inclT2, unpaidList) {
-  var PRICE = 1300;
+  var PRICE = window.tariffs.agashETB;
   var DATE_LBL = { tomorrow:'Demain', aftertomorrow:'Après-demain' };
   var COLL_LBL = { head_agash:'Sup. Agash', head_ops:'Sup. Ops' };
   var TYPE_LBL = { shirac:'Shirac', bilashirac:'Bila Shirac', metal:'Métal' };
@@ -8761,7 +8935,7 @@ function _renderSettlementCanvas_OLD(s, cashierId, date, inclT1, inclT2, unpaidL
 
   // ══ TABLE 1 ══
   if (inclT1) {
-    var PRICE_FD = 1000;
+    var PRICE_FD = window.tariffs.agashFD;
     var t1X=PAD, t1W=W-PAD*2;
 
     // Read ETB+DJF split counts (saved since the ETB/DJF form was introduced)
@@ -8879,7 +9053,7 @@ function _renderSettlementCanvas_OLD(s, cashierId, date, inclT1, inclT2, unpaidL
   if (inclT2) {
     var t2X=PAD, t2W=W-PAD*2;
     var t2n=s.t2Total||0, t2p=s.t2Paid||0, t2u=s.t2Unpaid||0;
-    var ifAll=s.t2IfAllPaid||t2n*5500, miss=s.t2Missing||t2u*5500, coll=s.t2Collected||t2p*5500;
+    var ifAll=s.t2IfAllPaid||t2n*window.tariffs.clientETB, miss=s.t2Missing||t2u*window.tariffs.clientETB, coll=s.t2Collected||t2p*window.tariffs.clientETB;
 
     lightCard(t2X, cy, t2W, 26+10+64+14+62+12+52+18, 10);
     cardTitle(t2X, cy, t2W, 26, '🚛 TABLEAU 2 — RÉSUMÉ DES CAMIONS');
