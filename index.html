@@ -5714,11 +5714,13 @@ document.querySelectorAll('.modal-overlay').forEach(o=>{
   o.addEventListener('click', e=>{ if(e.target===o) o.classList.remove('active'); });
 });
 
-// ── PLATE SCANNER (camera + on-device OCR) ──
+// ── PLATE SCANNER (camera + on-device OCR, fast persistent worker) ──
 var scanStream = null;
 var scanTargetInput = null;
 var lastScanText = '';
 var tesseractLoadPromise = null;
+var ocrWorker = null;
+var ocrWorkerPromise = null;
 
 function loadTesseractLib() {
   if (window.Tesseract) return Promise.resolve();
@@ -5733,6 +5735,38 @@ function loadTesseractLib() {
   return tesseractLoadPromise;
 }
 
+// A worker takes a couple of seconds to spin up (download engine + language data)
+// the FIRST time. We create it once and keep it alive so every scan after that
+// only pays for the actual recognition, which is near-instant.
+function ensureOcrWorker() {
+  if (ocrWorker) return Promise.resolve(ocrWorker);
+  if (ocrWorkerPromise) return ocrWorkerPromise;
+  ocrWorkerPromise = loadTesseractLib().then(function() {
+    return Tesseract.createWorker('eng');
+  }).then(function(w) {
+    var psm = (window.Tesseract && Tesseract.PSM && Tesseract.PSM.SINGLE_LINE) || '7';
+    return w.setParameters({
+      tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
+      tessedit_pageseg_mode: psm // treat crop as one line of text — faster & more accurate for plates
+    }).then(function() {
+      ocrWorker = w;
+      return w;
+    });
+  }).catch(function(err) {
+    ocrWorkerPromise = null;
+    throw err;
+  });
+  return ocrWorkerPromise;
+}
+
+// Warm the OCR engine up in the background once the app is idle, so the very
+// first scan doesn't have to wait for the engine to download and initialize.
+if ('requestIdleCallback' in window) {
+  requestIdleCallback(function() { ensureOcrWorker().catch(function() {}); }, { timeout: 8000 });
+} else {
+  setTimeout(function() { ensureOcrWorker().catch(function() {}); }, 4000);
+}
+
 window.openScanPlate = async function(targetId) {
   scanTargetInput = targetId;
   lastScanText = '';
@@ -5745,7 +5779,7 @@ window.openScanPlate = async function(targetId) {
   btn.disabled = false; btn.textContent = '📸 Capture';
   openModal('modalScanPlate');
 
-  loadTesseractLib().catch(function() {}); // warm up in background
+  ensureOcrWorker().catch(function() {}); // in case the idle warm-up hasn't run yet
 
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
     status.textContent = '⚠️ Camera not supported on this device/browser';
@@ -5781,10 +5815,11 @@ window.captureAndScan = async function() {
 
   var btn = document.getElementById('scanCaptureBtn');
   btn.disabled = true; btn.textContent = '⏳ Reading...';
-  status.textContent = 'Reading plate...';
+  status.textContent = ocrWorker ? 'Reading plate...' : 'Warming up OCR engine (first scan only)...';
 
   try {
-    await loadTesseractLib();
+    var worker = await ensureOcrWorker();
+    status.textContent = 'Reading plate...';
 
     // Crop to the guide box area (matches the on-screen overlay) at full video resolution
     var vw = video.videoWidth, vh = video.videoHeight;
@@ -5794,13 +5829,20 @@ window.captureAndScan = async function() {
     var cropX = (vw - cropW) / 2;
     var cropY = (vh - cropH) / 2;
 
+    // Downscale before OCR — a smaller image recognizes much faster with
+    // negligible accuracy loss for short plate text on an already-warm engine.
+    var targetW = 480;
+    var scale = Math.min(1, targetW / cropW);
+    var outW = Math.max(1, Math.round(cropW * scale));
+    var outH = Math.max(1, Math.round(cropH * scale));
+
     var canvas = document.getElementById('scanCanvas');
-    canvas.width = cropW; canvas.height = cropH;
+    canvas.width = outW; canvas.height = outH;
     var ctx = canvas.getContext('2d');
-    ctx.drawImage(video, cropX, cropY, cropW, cropH, 0, 0, cropW, cropH);
+    ctx.drawImage(video, cropX, cropY, cropW, cropH, 0, 0, outW, outH);
 
     // Grayscale + contrast boost to help OCR accuracy
-    var imgData = ctx.getImageData(0, 0, cropW, cropH);
+    var imgData = ctx.getImageData(0, 0, outW, outH);
     var d = imgData.data;
     for (var i = 0; i < d.length; i += 4) {
       var gray = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
@@ -5809,9 +5851,7 @@ window.captureAndScan = async function() {
     }
     ctx.putImageData(imgData, 0, 0);
 
-    var result = await Tesseract.recognize(canvas, 'eng', {
-      tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-    });
+    var result = await worker.recognize(canvas);
     var text = ((result && result.data && result.data.text) || '').replace(/[^A-Za-z0-9]/g, '').toUpperCase();
 
     if (!text) {
