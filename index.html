@@ -1404,9 +1404,9 @@
 
 <!-- PIN SCREEN -->
 <div id="pinScreen" class="screen">
-  <div class="pin-avatar" id="pinAvatar" style="background: rgba(245, 158, 11, 0.133); color: rgb(245, 158, 11); border: 2px solid rgba(245, 158, 11, 0.267);">🏢</div>
-  <div class="pin-name" id="pinName">CEO</div>
-  <div class="pin-role" id="pinRole">CEO</div>
+  <div class="pin-avatar" id="pinAvatar" style="background: rgba(168, 85, 247, 0.133); color: rgb(168, 85, 247); border: 2px solid rgba(168, 85, 247, 0.267);">👑</div>
+  <div class="pin-name" id="pinName">Admin</div>
+  <div class="pin-role" id="pinRole">Full Access</div>
   <div class="pin-dots">
     <div class="pin-dot filled" id="d0"></div>
     <div class="pin-dot filled" id="d1"></div>
@@ -1437,13 +1437,13 @@
     <div class="header-left">
       <div class="header-logo">HSK</div>
       <div>
-        <div class="header-title" id="headerTitle">Tous les Camions</div>
-        <div class="header-sub" id="headerSub">Rey/Haji</div>
+        <div class="header-title" id="headerTitle">All Trucks</div>
+        <div class="header-sub" id="headerSub">Admin — Full View</div>
       </div>
     </div>
     <div class="header-right">
-      <div class="online-badge"><div id="syncDot" class=""></div><span id="syncLabel">☁️ Live 17:06</span></div>
-      <span class="role-badge head" id="roleBadge">REY/HAJI</span>
+      <div class="online-badge"><div id="syncDot" class=""></div><span id="syncLabel">☁️ Live 06:50</span></div>
+      <span class="role-badge admin" id="roleBadge">ADMIN</span>
       <button class="add-btn" id="headerAddBtn" onclick="openAddTruck()" style="opacity: 1;">+ Add</button>
     </div>
   </div>
@@ -1462,11 +1462,11 @@
     <!-- Trucks Tab -->
     <div id="tabTrucks" style="display: none;">
       <div class="stats-bar">
-        <div class="stat-card"><div class="stat-num blue" id="statTotal">2</div><div class="stat-label">TRUCKS</div></div>
-        <div class="stat-card"><div class="stat-num green" id="statPaid">1</div><div class="stat-label">PAID</div></div>
+        <div class="stat-card"><div class="stat-num blue" id="statTotal">0</div><div class="stat-label">TRUCKS</div></div>
+        <div class="stat-card"><div class="stat-num green" id="statPaid">0</div><div class="stat-label">PAID</div></div>
         <div class="stat-card"><div class="stat-num orange" id="statPartial">0</div><div class="stat-label">PARTIAL</div></div>
-        <div class="stat-card"><div class="stat-num red" id="statUnpaid">1</div><div class="stat-label">UNPAID</div></div>
-        <div class="stat-card"><div class="stat-num teal" id="statETB">5.5k</div><div class="stat-label">ETB</div></div>
+        <div class="stat-card"><div class="stat-num red" id="statUnpaid">0</div><div class="stat-label">UNPAID</div></div>
+        <div class="stat-card"><div class="stat-num teal" id="statETB">0</div><div class="stat-label">ETB</div></div>
       </div>
       <div class="meals-bar" id="mealsBar">
         <div class="meal-card" onclick="openMealsModal()">
@@ -1476,21 +1476,21 @@
           <div class="meal-num" id="statDinner">—</div><div class="meal-label">🍽️ DINNER</div>
         </div>
         <div class="meal-card" onclick="openMealsModal()" style="border-color:rgba(239,68,68,0.3)">
-          <div class="meal-num" id="statNetCompany" style="color:var(--green)">4.2k</div><div class="meal-label">🏦 NET</div>
+          <div class="meal-num" id="statNetCompany" style="color:var(--green)">—</div><div class="meal-label">🏦 NET</div>
         </div>
       </div>
       <div class="date-bar">
         <button class="date-chip" id="todayChip" onclick="setToday()" style="background: var(--green); opacity: 1;">🟢 Today</button>
         <div class="date-input-wrap" style="cursor:pointer" onclick="openDatePicker()" id="datePickerBtn">
           <span style="color:var(--text3);font-size:13px;">📅</span>
-          <span id="dateFilterDisplay" style="flex:1;font-size:13px;font-weight:600">Today — Thu 25 Jun</span>
+          <span id="dateFilterDisplay" style="flex:1;font-size:13px;font-weight:600">Today — Thu 2 Jul</span>
           <span style="color:var(--text3);font-size:12px;">▼</span>
-          <input type="hidden" id="dateFilter" value="2026-06-25">
+          <input type="hidden" id="dateFilter" value="2026-07-02">
         </div>
       </div>
       <!-- 6AM RULE NOTICE -->
       <div id="shiftRuleBanner" style="display:none;margin:0 16px 6px;padding:7px 12px;background:rgba(20,184,166,0.1);border:1px solid rgba(20,184,166,0.3);border-radius:8px;font-size:11px;color:var(--teal);font-weight:600;display:flex;align-items:center;gap:6px">
-        🕕 Working day: <span id="shiftRuleText">Thu 25 Jun 06:00 → Fri 26 Jun 05:59  (Djibouti time)</span>
+        🕕 Working day: <span id="shiftRuleText">Thu 2 Jul 06:00 → Fri 3 Jul 05:59  (Djibouti time)</span>
       </div>
       <!-- SUSPEND BANNER -->
       <div id="suspendBanner">
@@ -1506,12 +1506,12 @@
       <div class="worker-bar" id="workerFilterBar">
     <button class="worker-chip active" id="wchip_all" onclick="setWorkerFilter('all',this)">
       <div class="wdot" style="background:var(--accent)"></div>
-      👥 All <span class="wcount" id="wcount_all">2</span>
+      👥 All <span class="wcount" id="wcount_all">0</span>
     </button>
     
       <button class="worker-chip" id="wchip_Ahmed" onclick="setWorkerFilter('Ahmed',this)" style="border-color:#3b82f644">
         <div class="wdot" style="background:#3b82f6"></div>
-        Ahmed <span class="wcount" id="wcount_Ahmed">2</span>
+        Ahmed <span class="wcount" id="wcount_Ahmed">0</span>
       </button>
     
       <button class="worker-chip" id="wchip_Oli" onclick="setWorkerFilter('Oli',this)" style="border-color:#f59e0b44">
@@ -1533,11 +1533,12 @@
       <div class="plate-search-wrap">
         <input class="plate-search-input" id="plateSearch" placeholder="🔍 Search plate number..." oninput="onPlateSearch(this)" autocomplete="off">
         <button class="plate-search-clear" id="plateSearchClear" onclick="clearPlateSearch()" style="display: none;">✕</button>
+        <button type="button" onclick="openScanPlate('plateSearch')" title="Scan plate with camera" style="flex-shrink:0;width:40px;height:40px;background:var(--card);border:1px solid var(--border);border-radius:50%;color:var(--accent);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;">📷</button>
       </div>
       <div class="section-header">
         <span class="section-title" id="trucksSectionTitle">TODAY'S TRUCKS</span>
         <div style="display:flex;gap:8px;align-items:center">
-          <button class="new-btn" style="color: var(--green); font-size: 11px;" id="exportDateBtn" onclick="exportExcel()">📊 Export 2026-06-25</button>
+          <button class="new-btn" style="color: var(--green); font-size: 11px;" id="exportDateBtn" onclick="exportExcel()">📊 Export 2026-07-02</button>
           <button class="new-btn" style="color:var(--teal)" onclick="openShareReport()">📤 Share</button>
           <button class="select-mode-btn" id="selectModeBtn" onclick="toggleSelectMode()" style="display: none;">☑️ Select</button>
           <button class="new-btn" onclick="openAddTruck()">+ New</button>
@@ -1547,81 +1548,7 @@
         <div class="assign-title">⏳ WAITING FOR SEALER</div>
         <div id="unassignedList"></div>
       </div>
-      <div class="trucks-list" id="trucksList">
-      <div class="truck-card unpaid" id="tcard-emIYHpeBbLTWHF8cs7D7">
-        <div class="truck-top">
-          <div style="display:flex;align-items:center;gap:8px">
-            
-            <span class="truck-number">#1</span>
-            <div class="truck-plate">22</div>
-          </div>
-          <span class="status-badge unpaid">❌ Unpaid</span>
-        </div>
-        <div class="truck-meta">
-          <span>📅 25 Jun 2026</span><span style="color:var(--teal);font-weight:700"> · 🕐 09:35</span>
-           · Added by: Ahmed
-        </div>
-        
-        
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
-            <div style="font-size:12px;font-weight:700;color:#3b82f6">Ahmed</div>
-            
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
-            <div style="font-size:12px;font-weight:700;color:var(--orange)">—</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
-            <div style="font-size:12px;font-weight:700;color:var(--teal)">—</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
-            <div style="font-size:12px;font-weight:700;color:var(--accent)">—</div>
-          </div>
-        </div>
-        <div class="truck-actions"><button class="truck-action-btn" style="background:rgba(34,197,94,0.15);color:var(--green);border-color:rgba(34,197,94,0.35);font-weight:700" onclick="quickMarkPaid('emIYHpeBbLTWHF8cs7D7')">✅ Mark Paid</button><button class="truck-action-btn" onclick="openEditTruck('emIYHpeBbLTWHF8cs7D7')">✏️ Edit</button><button class="truck-action-btn danger" onclick="deleteTruck('emIYHpeBbLTWHF8cs7D7')">🗑️ Delete</button></div>
-      </div>
-    
-      <div class="truck-card paid" id="tcard-xuJOpLYBV9wOTrghvxsv">
-        <div class="truck-top">
-          <div style="display:flex;align-items:center;gap:8px">
-            
-            <span class="truck-number">#2</span>
-            <div class="truck-plate">33</div>
-          </div>
-          <span class="status-badge paid">✅ Paid</span>
-        </div>
-        <div class="truck-meta">
-          <span>📅 25 Jun 2026</span><span style="color:var(--teal);font-weight:700"> · 🕐 09:50</span>
-           · Added by: Admin
-        </div>
-        
-        
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER</div>
-            <div style="font-size:12px;font-weight:700;color:#3b82f6">Ahmed</div>
-            
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">TOTAL FARE</div>
-            <div style="font-size:12px;font-weight:700;color:var(--orange)">5,500 ETB</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">SEALER GETS</div>
-            <div style="font-size:12px;font-weight:700;color:var(--teal)">1,300 ETB</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:4px">COMPANY</div>
-            <div style="font-size:12px;font-weight:700;color:var(--accent)">4,200 ETB</div>
-          </div>
-        </div>
-        <div class="truck-actions"><button class="truck-action-btn primary" onclick="openStatus('xuJOpLYBV9wOTrghvxsv')">💳 Status</button><button class="truck-action-btn" onclick="openEditTruck('xuJOpLYBV9wOTrghvxsv')">✏️ Edit</button><button class="truck-action-btn danger" onclick="deleteTruck('xuJOpLYBV9wOTrghvxsv')">🗑️ Delete</button></div>
-      </div>
-    </div>
+      <div class="trucks-list" id="trucksList"><div class="empty-state"><div class="icon">🚛</div><p>No trucks found</p></div></div>
     </div>
 
     <!-- Truck List Tab (all trucks in global order) -->
@@ -1646,41 +1573,30 @@
           <div class="worker-info">
             <div class="worker-name">Ahmed</div>
             <div class="worker-stats-row">
-              <div class="worker-stat">Trucks: <span>2</span></div>
-              <div class="worker-stat">Earned: <span style="color:var(--green)">1,300</span></div>
-              <div class="worker-stat">Net: <span style="color:var(--green)">1,300</span></div>
+              <div class="worker-stat">Trucks: <span>0</span></div>
+              <div class="worker-stat">Earned: <span style="color:var(--green)">0</span></div>
+              <div class="worker-stat">Net: <span style="color:var(--green)">0</span></div>
             </div>
           </div>
           <div class="expand-icon">▼</div>
         </div>
         
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:0 0 2px 0;padding:10px 12px 8px;background:rgba(0,0,0,0.18);border-top:1px solid var(--border)">
-          <div style="text-align:center">
-            <div style="font-size:9px;font-weight:700;color:var(--text3);letter-spacing:0.06em;margin-bottom:3px">TOTAL OWED</div>
-            <div style="font-size:14px;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--text2)">2,600</div>
-            <div style="font-size:9px;color:var(--text3)">ETB</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;font-weight:700;color:var(--text3);letter-spacing:0.06em;margin-bottom:3px">✅ PAID</div>
-            <div style="font-size:14px;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--green)">1,300</div>
-            <div style="font-size:9px;color:var(--text3)">ETB</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:9px;font-weight:700;color:var(--text3);letter-spacing:0.06em;margin-bottom:3px">❌ MISSING</div>
-            <div style="font-size:14px;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--red)">1,300</div>
-            <div style="font-size:9px;color:var(--text3)">ETB</div>
-          </div>
-        </div>
-        
         <div class="worker-details">
           <div class="detail-row"><span class="detail-label">📅 Date</span><span class="detail-val">Today</span></div>
-          <div class="detail-row"><span class="detail-label">Trucks worked</span><span class="detail-val">2</span></div>
-          <div class="detail-row"><span class="detail-label">Paid trucks</span><span class="detail-val green">1</span></div>
+          <div class="detail-row"><span class="detail-label">Trucks worked</span><span class="detail-val">0</span></div>
+          <div class="detail-row"><span class="detail-label">Paid trucks</span><span class="detail-val green">0</span></div>
           <div class="detail-row"><span class="detail-label">Partial trucks</span><span class="detail-val orange">0</span></div>
-          <div class="detail-row"><span class="detail-label">Unpaid trucks</span><span class="detail-val red">1</span></div>
-          <div class="detail-row"><span class="detail-label">Earned today</span><span class="detail-val green">1,300 ETB</span></div>
+          <div class="detail-row"><span class="detail-label">Unpaid trucks</span><span class="detail-val red">0</span></div>
+          <div class="detail-row"><span class="detail-label">Earned today</span><span class="detail-val green">0 ETB</span></div>
           <div class="detail-row"><span class="detail-label">Total advances</span><span class="detail-val red">-0 ETB</span></div>
-          <div class="detail-row"><span class="detail-label">Net balance</span><span class="detail-val" style="color:var(--green)">1,300 ETB</span></div>
+          <div class="detail-row"><span class="detail-label">Net balance</span><span class="detail-val" style="color:var(--green)">0 ETB</span></div>
+          
+            <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+              <button class="manage-btn" onclick="viewWorkerList('Ahmed')">📋 List</button>
+              <button class="manage-btn" onclick="openPinChange('Ahmed')">🔐 PIN</button>
+              <button class="manage-btn" onclick="openWorkerPerms('Ahmed')">⚙️ Perms</button>
+              <button class="manage-btn danger" onclick="removeWorker('Ahmed')">🗑️ Remove</button>
+            </div>
           
         </div>
       </div>
@@ -1711,6 +1627,13 @@
           <div class="detail-row"><span class="detail-label">Total advances</span><span class="detail-val red">-0 ETB</span></div>
           <div class="detail-row"><span class="detail-label">Net balance</span><span class="detail-val" style="color:var(--green)">0 ETB</span></div>
           
+            <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+              <button class="manage-btn" onclick="viewWorkerList('Oli')">📋 List</button>
+              <button class="manage-btn" onclick="openPinChange('Oli')">🔐 PIN</button>
+              <button class="manage-btn" onclick="openWorkerPerms('Oli')">⚙️ Perms</button>
+              <button class="manage-btn danger" onclick="removeWorker('Oli')">🗑️ Remove</button>
+            </div>
+          
         </div>
       </div>
     
@@ -1740,6 +1663,13 @@
           <div class="detail-row"><span class="detail-label">Total advances</span><span class="detail-val red">-0 ETB</span></div>
           <div class="detail-row"><span class="detail-label">Net balance</span><span class="detail-val" style="color:var(--green)">0 ETB</span></div>
           
+            <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+              <button class="manage-btn" onclick="viewWorkerList('Ilyas')">📋 List</button>
+              <button class="manage-btn" onclick="openPinChange('Ilyas')">🔐 PIN</button>
+              <button class="manage-btn" onclick="openWorkerPerms('Ilyas')">⚙️ Perms</button>
+              <button class="manage-btn danger" onclick="removeWorker('Ilyas')">🗑️ Remove</button>
+            </div>
+          
         </div>
       </div>
     </div>
@@ -1758,7 +1688,7 @@
     <div id="tabReports" style="display:none;">
       <div class="reports-content" id="reportsContent">
     <div style="padding:10px 0 4px">
-      <div style="font-size:11px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:6px">📅 Thu, 25 Jun 2026</div>
+      <div style="font-size:11px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:6px">📅 Thu, 2 Jul 2026</div>
       <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none">
     <button class="filter-chip active" onclick="setReportFilter('all',this)" style="font-size:11px;padding:4px 10px">
       All
@@ -1816,19 +1746,19 @@
     
     <div class="report-card" id="reportSectionSummary">
       <div class="report-title">📊 SUMMARY</div>
-      <div class="report-row"><span class="report-label">🚛 Total Trucks</span><span class="report-val">2</span></div>
-      <div class="report-row"><span class="report-label">✅ Paid</span><span class="report-val" style="color:var(--green)">1</span></div>
+      <div class="report-row"><span class="report-label">🚛 Total Trucks</span><span class="report-val">0</span></div>
+      <div class="report-row"><span class="report-label">✅ Paid</span><span class="report-val" style="color:var(--green)">0</span></div>
       <div class="report-row"><span class="report-label">⚡ Partial</span><span class="report-val" style="color:var(--orange)">0</span></div>
-      <div class="report-row"><span class="report-label">❌ Unpaid</span><span class="report-val" style="color:var(--red)">1</span></div>
-      <div class="report-row"><span class="report-label">💰 Paid Revenue</span><span class="report-val" style="color:var(--teal)">5,500 ETB</span></div>
-      <div class="report-row"><span class="report-label">👷 Total Sealer Pay</span><span class="report-val">1,300 ETB</span></div>
-      <div class="report-row"><span class="report-label">🏢 Company Earnings</span><span class="report-val" style="color:var(--green)">4,200 ETB</span></div>
+      <div class="report-row"><span class="report-label">❌ Unpaid</span><span class="report-val" style="color:var(--red)">0</span></div>
+      <div class="report-row"><span class="report-label">💰 Paid Revenue</span><span class="report-val" style="color:var(--teal)">0 ETB</span></div>
+      <div class="report-row"><span class="report-label">👷 Total Sealer Pay</span><span class="report-val">0 ETB</span></div>
+      <div class="report-row"><span class="report-label">🏢 Company Earnings</span><span class="report-val" style="color:var(--green)">0 ETB</span></div>
       <div class="report-row"><span class="report-label">💸 Total Advances</span><span class="report-val" style="color:var(--red)">-0 ETB</span></div>
       
         <div class="report-row"><span class="report-label">🥗 Lunch</span><span class="report-val" style="color:var(--red)">—</span></div>
         <div class="report-row"><span class="report-label">🍽️ Dinner</span><span class="report-val" style="color:var(--red)">—</span></div>
         
-        <div style="margin-top:10px"><button onclick="openMealsModal('2026-06-25')" style="width:100%;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.3);color:var(--accent);border-radius:var(--radius-sm);padding:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">🍽️ Set Lunch / Dinner Amounts</button></div>
+        <div style="margin-top:10px"><button onclick="openMealsModal('2026-07-02')" style="width:100%;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.3);color:var(--accent);border-radius:var(--radius-sm);padding:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">🍽️ Set Lunch / Dinner Amounts</button></div>
       
 
       <!-- COMBINED TOTAL -->
@@ -1836,26 +1766,22 @@
         <div style="display:flex;justify-content:space-between;align-items:center">
           <div>
             <div style="font-size:10px;font-weight:800;color:var(--accent);letter-spacing:0.05em;margin-bottom:2px">💡 COMBINED TOTAL</div>
-            <div style="font-size:10px;color:var(--text3)">if all 2 trucks paid</div>
+            <div style="font-size:10px;color:var(--text3)">if all 0 trucks paid</div>
           </div>
-          <div style="font-size:17px;font-weight:800;color:var(--accent)">11,000 ETB</div>
+          <div style="font-size:17px;font-weight:800;color:var(--accent)">0 ETB</div>
         </div>
         <div style="border-top:1px solid rgba(99,102,241,0.2);padding-top:6px;display:flex;justify-content:space-between">
           <span style="font-size:11px;color:var(--text2)">👷 Sealer pay (all paid)</span>
-          <span style="font-size:11px;font-weight:700;color:var(--teal)">2,600 ETB</span>
+          <span style="font-size:11px;font-weight:700;color:var(--teal)">0 ETB</span>
         </div>
         <div style="display:flex;justify-content:space-between">
           <span style="font-size:11px;color:var(--text2)">🏢 Net company (all paid)</span>
-          <span style="font-size:12px;font-weight:800;color:var(--green)">8,400 ETB</span>
+          <span style="font-size:12px;font-weight:800;color:var(--green)">0 ETB</span>
         </div>
         
       </div>
 
       
-      <div class="report-row" style="background:rgba(239,68,68,0.1);border-radius:var(--radius-sm);padding:10px;margin-top:6px;border:1px solid rgba(239,68,68,0.3)">
-        <span class="report-label" style="color:var(--red);font-weight:700">⚠️ Missing (Unpaid)</span>
-        <span class="report-val" style="color:var(--red)">-5,500 ETB</span>
-      </div>
     </div>
 
     
@@ -1863,14 +1789,8 @@
       <div class="report-title">👷 PER SEALER</div>
       
           <div class="report-row">
-            <span class="report-label">
-              <span style="width:8px;height:8px;border-radius:50%;background:#3b82f6;display:inline-block;margin-right:4px"></span>
-              Ahmed <span style="color:var(--text3);font-size:11px">(2)</span>
-            </span>
-            <div style="text-align:right">
-              <div class="report-val" style="color:var(--green)">1,300 ETB</div>
-              <div style="font-size:10px;color:var(--text3)">✅1 ⚡0 ❌1</div>
-            </div>
+            <span class="report-label"><span style="width:8px;height:8px;border-radius:50%;background:#3b82f6;display:inline-block;margin-right:4px"></span>Ahmed</span>
+            <span class="report-val" style="color:var(--text3)">—</span>
           </div>
           <div class="report-row">
             <span class="report-label"><span style="width:8px;height:8px;border-radius:50%;background:#f59e0b;display:inline-block;margin-right:4px"></span>Oli</span>
@@ -2020,8 +1940,8 @@
       <div class="manage-section-title">🌐 LANGUAGE</div>
       <div class="manage-card" style="padding:14px">
         <div style="display:flex;gap:8px">
-          <button class="lang-btn " onclick="setLang('en')">🇬🇧 English</button>
-          <button class="lang-btn active" onclick="setLang('fr')">🇫🇷 Français</button>
+          <button class="lang-btn active" onclick="setLang('en')">🇬🇧 English</button>
+          <button class="lang-btn " onclick="setLang('fr')">🇫🇷 Français</button>
           <button class="lang-btn " onclick="setLang('so')">🇸🇴 Soomaali</button>
         </div>
       </div>
@@ -2079,6 +1999,14 @@
           </div>
           <div>›</div>
         </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="manage-section-title">💰 TARIFFS</div>
+      <div class="manage-card" style="padding:14px 16px">
+        <div style="font-size:11px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:12px">Changes save live — all devices update instantly</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:13px;font-weight:600;color:var(--text)">🚛 Client Rate — ETB</div><div style="font-size:11px;color:var(--text3);margin-top:2px">What client pays per truck (ETB)</div></div><input id="tariff_clientETB" type="number" value="6200" style="width:82px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:14px;font-weight:700;color:var(--text);text-align:right;font-family:JetBrains Mono,monospace" onchange="saveTariff('clientETB',this.value)"></div><div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:13px;font-weight:600;color:var(--text)">🚛 Client Rate — FD</div><div style="font-size:11px;color:var(--text3);margin-top:2px">What client pays per truck (DJF)</div></div><input id="tariff_clientFD" type="number" value="6200" style="width:82px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:14px;font-weight:700;color:var(--text);text-align:right;font-family:JetBrains Mono,monospace" onchange="saveTariff('clientFD',this.value)"></div><div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:13px;font-weight:600;color:var(--text)">⚡ Partial Fare — ETB</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Client pays for partial payment</div></div><input id="tariff_partialFare" type="number" value="3100" style="width:82px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:14px;font-weight:700;color:var(--text);text-align:right;font-family:JetBrains Mono,monospace" onchange="saveTariff('partialFare',this.value)"></div><div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:13px;font-weight:600;color:var(--text)">👷 Sealer Gets — Paid</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Sealer commission per paid truck</div></div><input id="tariff_sealerPaid" type="number" value="1500" style="width:82px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:14px;font-weight:700;color:var(--text);text-align:right;font-family:JetBrains Mono,monospace" onchange="saveTariff('sealerPaid',this.value)"></div><div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:13px;font-weight:600;color:var(--text)">👷 Sealer Gets — Partial</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Sealer commission per partial truck</div></div><input id="tariff_sealerPartial" type="number" value="700" style="width:82px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:14px;font-weight:700;color:var(--text);text-align:right;font-family:JetBrains Mono,monospace" onchange="saveTariff('sealerPartial',this.value)"></div><div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:13px;font-weight:600;color:var(--text)">🏗️ Agash Rate — ETB</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Agash rate per truck (ETB)</div></div><input id="tariff_agashETB" type="number" value="2500" style="width:82px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:14px;font-weight:700;color:var(--text);text-align:right;font-family:JetBrains Mono,monospace" onchange="saveTariff('agashETB',this.value)"></div><div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:13px;font-weight:600;color:var(--text)">🏗️ Agash Rate — FD</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Agash rate per truck (FD)</div></div><input id="tariff_agashFD" type="number" value="2500" style="width:82px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:14px;font-weight:700;color:var(--text);text-align:right;font-family:JetBrains Mono,monospace" onchange="saveTariff('agashFD',this.value)"></div>
       </div>
     </div>
 
@@ -2223,7 +2151,7 @@
   <div class="bottom-nav" id="bottomNav">
     <button class="nav-btn" id="nav_trucks" onclick="switchTab('trucks')">
       <div class="nav-icon">🚛</div>
-      <div class="nav-label">Camions</div>
+      <div class="nav-label">Trucks</div>
     </button>
   
     <button class="nav-btn" id="nav_list" onclick="switchTab('list')">
@@ -2233,17 +2161,17 @@
   
     <button class="nav-btn" id="nav_workers" onclick="switchTab('workers')">
       <div class="nav-icon">👷</div>
-      <div class="nav-label">Scelleurs</div>
+      <div class="nav-label">Sealers</div>
     </button>
   
     <button class="nav-btn" id="nav_advances" onclick="switchTab('advances')">
       <div class="nav-icon">💸</div>
-      <div class="nav-label">Avances</div>
+      <div class="nav-label">Advances</div>
     </button>
   
     <button class="nav-btn" id="nav_reports" onclick="switchTab('reports')" style="color: var(--orange);">
       <div class="nav-icon">📊</div>
-      <div class="nav-label">Rapports</div>
+      <div class="nav-label">Reports</div>
     </button>
   
     <button class="nav-btn" id="nav_claims" onclick="switchTab('claims')">
@@ -2253,7 +2181,7 @@
   
     <button class="nav-btn" id="nav_agash" onclick="switchTab('agash')">
       <div class="nav-icon">📥</div>
-      <div class="nav-label">Agash (3)</div>
+      <div class="nav-label">Agash</div>
     </button>
   
     <button class="nav-btn" id="nav_notifs" onclick="switchTab('notifs')">
@@ -2266,14 +2194,19 @@
       <div class="nav-label">Settlement</div>
     </button>
   
+    <button class="nav-btn active" id="nav_manage" onclick="switchTab('manage')">
+      <div class="nav-icon">⚙️</div>
+      <div class="nav-label">Manage</div>
+    </button>
+  
     <button class="nav-btn" id="nav_recycle" onclick="switchTab('recycle')">
       <div class="nav-icon">🗑️</div>
       <div class="nav-label">Bin (35)</div>
     </button>
   
-    <button class="nav-btn active" id="nav_manage" onclick="switchTab('manage')">
-      <div class="nav-icon">⚙️</div>
-      <div class="nav-label">Gérer</div>
+    <button class="nav-btn" id="nav_logout" onclick="switchTab('logout')">
+      <div class="nav-icon">🚪</div>
+      <div class="nav-label">Logout</div>
     </button>
   </div>
 </div>
@@ -2285,7 +2218,10 @@
     <div class="modal-title" id="truckModalTitle">🚛 Add Truck</div>
     <div class="form-group">
       <label class="form-label">PLATE NUMBER</label>
-      <input class="form-input" id="truckPlate" placeholder="e.g. DJ 1234 AB" autocomplete="off" oninput="checkDuplicate()">
+      <div style="display:flex;gap:8px;">
+        <input class="form-input" id="truckPlate" placeholder="e.g. DJ 1234 AB" autocomplete="off" oninput="checkDuplicate()" style="flex:1;min-width:0;">
+        <button type="button" onclick="openScanPlate('truckPlate')" title="Scan plate with camera" style="flex-shrink:0;width:48px;background:var(--bg3);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--accent);font-size:19px;cursor:pointer;">📷</button>
+      </div>
       <div class="dup-warning" id="dupWarning">⚠️ This plate may already be recorded today!</div>
     </div>
     <div class="form-group">
@@ -2384,11 +2320,38 @@
     <div class="modal-title">✏️ Edit Plate Number</div>
     <div class="form-group">
       <label class="form-label">PLATE NUMBER</label>
-      <input class="form-input" id="editPlateInput" placeholder="e.g. DJ 1234 AB" autocomplete="off" style="text-transform:uppercase">
+      <div style="display:flex;gap:8px;">
+        <input class="form-input" id="editPlateInput" placeholder="e.g. DJ 1234 AB" autocomplete="off" style="text-transform:uppercase;flex:1;min-width:0;">
+        <button type="button" onclick="openScanPlate('editPlateInput')" title="Scan plate with camera" style="flex-shrink:0;width:48px;background:var(--bg3);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--accent);font-size:19px;cursor:pointer;">📷</button>
+      </div>
     </div>
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeModal('modalEditPlate')">Cancel</button>
       <button class="btn-primary" onclick="saveEditPlate()">Save Plate</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalScanPlate" onclick="if(event.target===this)closeScanModal()">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">📷 Scan Plate Number</div>
+    <div style="position:relative;border-radius:var(--radius-sm);overflow:hidden;background:#000;">
+      <video id="scanVideo" autoplay playsinline muted style="width:100%;display:block;max-height:50vh;object-fit:cover;"></video>
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:82%;height:64px;border:2px solid var(--accent);border-radius:8px;box-shadow:0 0 0 2000px rgba(0,0,0,0.45);pointer-events:none;"></div>
+    </div>
+    <canvas id="scanCanvas" style="display:none;"></canvas>
+    <div id="scanStatus" style="text-align:center;color:var(--text2);font-size:13px;margin:12px 0;">Align the plate inside the box, then capture</div>
+    <div id="scanResultWrap" style="display:none;text-align:center;margin-bottom:12px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:var(--text);letter-spacing:0.05em;" id="scanResultText"></div>
+    </div>
+    <div class="modal-actions" id="scanActionsCapture">
+      <button class="btn-secondary" onclick="closeScanModal()">Cancel</button>
+      <button class="btn-primary" id="scanCaptureBtn" onclick="captureAndScan()">📸 Capture</button>
+    </div>
+    <div class="modal-actions" id="scanActionsConfirm" style="display:none;">
+      <button class="btn-secondary" onclick="retryScan()">🔄 Retry</button>
+      <button class="btn-primary" onclick="acceptScanResult()">✅ Use This</button>
     </div>
   </div>
 </div>
@@ -2577,7 +2540,8 @@
    'filterRecycle','setBinDateFilter',
    'renderSettlementTab','switchSettlementView','stlSelectDate',
    'stlRemoveUnpaid','stlAddManualUnpaid','submitSettlement','unlockSettlement',
-   'stlShareReport','stlExportPDF'
+   'stlShareReport','stlExportPDF',
+   'openScanPlate','captureAndScan','closeScanModal','retryScan','acceptScanResult'
   ].forEach(function(fn) {
     if (!window[fn]) {
       window[fn] = function() {
@@ -5749,6 +5713,146 @@ window.closeModal = function(id) { document.getElementById(id).classList.remove(
 document.querySelectorAll('.modal-overlay').forEach(o=>{
   o.addEventListener('click', e=>{ if(e.target===o) o.classList.remove('active'); });
 });
+
+// ── PLATE SCANNER (camera + on-device OCR) ──
+var scanStream = null;
+var scanTargetInput = null;
+var lastScanText = '';
+var tesseractLoadPromise = null;
+
+function loadTesseractLib() {
+  if (window.Tesseract) return Promise.resolve();
+  if (tesseractLoadPromise) return tesseractLoadPromise;
+  tesseractLoadPromise = new Promise(function(resolve, reject) {
+    var s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
+    s.onload = resolve;
+    s.onerror = function() { tesseractLoadPromise = null; reject(new Error('Failed to load OCR library')); };
+    document.head.appendChild(s);
+  });
+  return tesseractLoadPromise;
+}
+
+window.openScanPlate = async function(targetId) {
+  scanTargetInput = targetId;
+  lastScanText = '';
+  document.getElementById('scanResultWrap').style.display = 'none';
+  document.getElementById('scanActionsConfirm').style.display = 'none';
+  document.getElementById('scanActionsCapture').style.display = 'flex';
+  var status = document.getElementById('scanStatus');
+  status.textContent = 'Align the plate inside the box, then capture';
+  var btn = document.getElementById('scanCaptureBtn');
+  btn.disabled = false; btn.textContent = '📸 Capture';
+  openModal('modalScanPlate');
+
+  loadTesseractLib().catch(function() {}); // warm up in background
+
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    status.textContent = '⚠️ Camera not supported on this device/browser';
+    return;
+  }
+  try {
+    scanStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } },
+      audio: false
+    });
+    var video = document.getElementById('scanVideo');
+    video.srcObject = scanStream;
+  } catch (err) {
+    status.textContent = '⚠️ Could not access camera — check permissions';
+    showToast('⚠️ Camera access denied');
+  }
+};
+
+window.closeScanModal = function() {
+  if (scanStream) {
+    scanStream.getTracks().forEach(function(t) { t.stop(); });
+    scanStream = null;
+  }
+  var video = document.getElementById('scanVideo');
+  if (video) video.srcObject = null;
+  closeModal('modalScanPlate');
+};
+
+window.captureAndScan = async function() {
+  var video = document.getElementById('scanVideo');
+  var status = document.getElementById('scanStatus');
+  if (!video || !video.videoWidth) { showToast('⚠️ Camera not ready yet'); return; }
+
+  var btn = document.getElementById('scanCaptureBtn');
+  btn.disabled = true; btn.textContent = '⏳ Reading...';
+  status.textContent = 'Reading plate...';
+
+  try {
+    await loadTesseractLib();
+
+    // Crop to the guide box area (matches the on-screen overlay) at full video resolution
+    var vw = video.videoWidth, vh = video.videoHeight;
+    var boxWFrac = 0.82, boxHpx = 64, dispH = video.clientHeight || vh;
+    var cropW = vw * boxWFrac;
+    var cropH = Math.min(vh, (boxHpx / dispH) * vh * 1.6);
+    var cropX = (vw - cropW) / 2;
+    var cropY = (vh - cropH) / 2;
+
+    var canvas = document.getElementById('scanCanvas');
+    canvas.width = cropW; canvas.height = cropH;
+    var ctx = canvas.getContext('2d');
+    ctx.drawImage(video, cropX, cropY, cropW, cropH, 0, 0, cropW, cropH);
+
+    // Grayscale + contrast boost to help OCR accuracy
+    var imgData = ctx.getImageData(0, 0, cropW, cropH);
+    var d = imgData.data;
+    for (var i = 0; i < d.length; i += 4) {
+      var gray = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
+      var v = gray > 150 ? 255 : (gray < 90 ? 0 : gray);
+      d[i] = d[i + 1] = d[i + 2] = v;
+    }
+    ctx.putImageData(imgData, 0, 0);
+
+    var result = await Tesseract.recognize(canvas, 'eng', {
+      tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+    });
+    var text = ((result && result.data && result.data.text) || '').replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+
+    if (!text) {
+      status.textContent = '❌ No text detected — move closer, hold steady, ensure good light';
+      btn.disabled = false; btn.textContent = '📸 Capture';
+      return;
+    }
+
+    lastScanText = text;
+    document.getElementById('scanResultText').textContent = text;
+    document.getElementById('scanResultWrap').style.display = 'block';
+    document.getElementById('scanActionsCapture').style.display = 'none';
+    document.getElementById('scanActionsConfirm').style.display = 'flex';
+    status.textContent = 'Is this correct?';
+  } catch (err) {
+    status.textContent = '❌ Scan failed — try again';
+    btn.disabled = false; btn.textContent = '📸 Capture';
+  }
+};
+
+window.retryScan = function() {
+  document.getElementById('scanResultWrap').style.display = 'none';
+  document.getElementById('scanActionsConfirm').style.display = 'none';
+  document.getElementById('scanActionsCapture').style.display = 'flex';
+  var btn = document.getElementById('scanCaptureBtn');
+  btn.disabled = false; btn.textContent = '📸 Capture';
+  document.getElementById('scanStatus').textContent = 'Align the plate inside the box, then capture';
+};
+
+window.acceptScanResult = function() {
+  if (scanTargetInput) {
+    var input = document.getElementById(scanTargetInput);
+    if (input) {
+      input.value = lastScanText;
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+  }
+  var filled = lastScanText;
+  closeScanModal();
+  showToast('✅ Plate filled: ' + filled);
+};
 
 // ── TOAST ──
 function showToast(msg) {
