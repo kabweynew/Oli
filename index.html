@@ -2338,7 +2338,7 @@
     <div class="modal-title">📷 Scan Plate Number</div>
     <div style="position:relative;border-radius:var(--radius-sm);overflow:hidden;background:#000;">
       <video id="scanVideo" autoplay playsinline muted style="width:100%;display:block;max-height:50vh;object-fit:cover;"></video>
-      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:82%;height:64px;border:2px solid var(--accent);border-radius:8px;box-shadow:0 0 0 2000px rgba(0,0,0,0.45);pointer-events:none;"></div>
+      <div id="scanGuideBox" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:82%;height:64px;border:2px solid var(--accent);border-radius:8px;box-shadow:0 0 0 2000px rgba(0,0,0,0.45);pointer-events:none;"></div>
     </div>
     <canvas id="scanCanvas" style="display:none;"></canvas>
     <canvas id="scanPhotoCanvas" style="display:none;"></canvas>
@@ -5848,13 +5848,31 @@ window.captureAndScan = async function() {
     var worker = await ensureOcrWorker();
     status.textContent = 'Reading plate...';
 
-    // Crop to the guide box area (matches the on-screen overlay) at full video resolution
+    // Map the on-screen guide box to real video pixel coordinates. The video
+    // is rendered with object-fit:cover, so its displayed size can differ from
+    // its native camera resolution — we measure both rects and account for
+    // the cover-scale + centering crop that the browser applies.
+    var videoRect = video.getBoundingClientRect();
+    var boxRect = document.getElementById('scanGuideBox').getBoundingClientRect();
     var vw = video.videoWidth, vh = video.videoHeight;
-    var boxWFrac = 0.82, boxHpx = 64, dispH = video.clientHeight || vh;
-    var cropW = vw * boxWFrac;
-    var cropH = Math.min(vh, (boxHpx / dispH) * vh * 1.6);
-    var cropX = (vw - cropW) / 2;
-    var cropY = (vh - cropH) / 2;
+    var coverScale = Math.max(videoRect.width / vw, videoRect.height / vh);
+    var contentW = vw * coverScale, contentH = vh * coverScale;
+    var cropLeftContent = (contentW - videoRect.width) / 2;
+    var cropTopContent = (contentH - videoRect.height) / 2;
+
+    var relX = boxRect.left - videoRect.left;
+    var relY = boxRect.top - videoRect.top;
+    var nativeX = (relX + cropLeftContent) / coverScale;
+    var nativeY = (relY + cropTopContent) / coverScale;
+    var nativeW = boxRect.width / coverScale;
+    var nativeH = boxRect.height / coverScale;
+
+    // Small padding around the box so a slightly-misaligned plate isn't clipped
+    var padX = nativeW * 0.1, padY = nativeH * 0.6;
+    var cropX = Math.max(0, nativeX - padX);
+    var cropY = Math.max(0, nativeY - padY);
+    var cropW = Math.min(vw - cropX, nativeW + padX * 2);
+    var cropH = Math.min(vh - cropY, nativeH + padY * 2);
 
     // Downscale before OCR — a smaller image recognizes much faster with
     // negligible accuracy loss for short plate text on an already-warm engine.
