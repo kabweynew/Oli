@@ -2341,17 +2341,14 @@
       <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:82%;height:64px;border:2px solid var(--accent);border-radius:8px;box-shadow:0 0 0 2000px rgba(0,0,0,0.45);pointer-events:none;"></div>
     </div>
     <canvas id="scanCanvas" style="display:none;"></canvas>
+    <canvas id="scanPhotoCanvas" style="display:none;"></canvas>
     <div id="scanStatus" style="text-align:center;color:var(--text2);font-size:13px;margin:12px 0;">Align the plate inside the box, then capture</div>
     <div id="scanResultWrap" style="display:none;text-align:center;margin-bottom:12px;">
-      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:var(--text);letter-spacing:0.05em;" id="scanResultText"></div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:var(--green);letter-spacing:0.05em;" id="scanResultText"></div>
     </div>
     <div class="modal-actions" id="scanActionsCapture">
       <button class="btn-secondary" onclick="closeScanModal()">Cancel</button>
       <button class="btn-primary" id="scanCaptureBtn" onclick="captureAndScan()">📸 Capture</button>
-    </div>
-    <div class="modal-actions" id="scanActionsConfirm" style="display:none;">
-      <button class="btn-secondary" onclick="retryScan()">🔄 Retry</button>
-      <button class="btn-primary" onclick="acceptScanResult()">✅ Use This</button>
     </div>
   </div>
 </div>
@@ -2541,7 +2538,7 @@
    'renderSettlementTab','switchSettlementView','stlSelectDate',
    'stlRemoveUnpaid','stlAddManualUnpaid','submitSettlement','unlockSettlement',
    'stlShareReport','stlExportPDF',
-   'openScanPlate','captureAndScan','closeScanModal','retryScan','acceptScanResult'
+   'openScanPlate','captureAndScan','closeScanModal'
   ].forEach(function(fn) {
     if (!window[fn]) {
       window[fn] = function() {
@@ -2575,6 +2572,9 @@ import {
   onSnapshot,
   query, orderBy
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import {
+  getStorage, ref as storageRef, uploadBytes, getDownloadURL
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
 // ── FIREBASE CONFIG ──
 const firebaseConfig = {
@@ -2588,6 +2588,7 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+const storage = getStorage(app);
 
 // ── OFFLINE PERSISTENCE (Firebase v10 — works like WhatsApp) ──
 // Data is cached locally — app works offline, syncs instantly when back online
@@ -3898,6 +3899,7 @@ window.openEditPlate = function(id) {
   const truck = trucks[id];
   if (!truck) return;
   document.getElementById('editPlateInput').value = truck.plate || '';
+  delete pendingPlatePhotos['editPlateInput'];
   openModal('modalEditPlate');
 }
 window.saveEditPlate = function() {
@@ -3910,10 +3912,14 @@ window.saveEditPlate = function() {
   updateDoc(doc(db,'trucks',editingPlateId), {plate});
   showToast('✅ Plate updated');
   closeModal('modalEditPlate');
+  uploadPendingPlatePhoto('editPlateInput', plate).then(function(url) {
+    if (url) updateDoc(doc(db,'trucks',editingPlateId), { photoURL: url });
+  });
 }
 
 window.openEditTruck = function(id) {
   editingTruckId = id;
+  delete pendingPlatePhotos['truckPlate'];
   const truck = trucks[id];
   if (!truck) return;
   document.getElementById('truckModalTitle').textContent = '✏️ Edit Truck';
@@ -3997,6 +4003,7 @@ window.checkDuplicate = function() {
 // ── ADD TRUCK ──
 window.openAddTruck = function() {
   editingTruckId = null;
+  delete pendingPlatePhotos['truckPlate'];
   document.getElementById('truckModalTitle').textContent = '🚛 '+t('addTruck');
   document.getElementById('truckPlate').value = '';
   var sb = document.getElementById('saveTruckBtn'); if (sb) { sb.disabled=false; sb.style.opacity=''; sb.style.cursor=''; sb.textContent='Save Truck'; }
@@ -4134,10 +4141,16 @@ window.saveTruck = function() {
       });
       showToast('✅ Truck updated');
       closeModal('modalTruck');
+      uploadPendingPlatePhoto('truckPlate', plate).then(function(url) {
+        if (url) updateDoc(doc(db,'trucks',editingTruckId), { photoURL: url });
+      });
     } else {
       closeModal('modalTruck');
       addDoc(collection(db,'trucks'), data).then(function(docRef) {
         showToast('✅ Truck added');
+        uploadPendingPlatePhoto('truckPlate', plate).then(function(url) {
+          if (url) updateDoc(doc(db,'trucks',docRef.id), { photoURL: url });
+        });
       }).catch(function(e) {
         showToast('❌ Failed to save: ' + (e.code || e.message || 'unknown'));
       });
@@ -5708,6 +5721,22 @@ window.deleteSelected = function() {
 };
 
 // ── MODAL HELPERS ──
+// Uploads the photo captured for a given field (if any) to Firebase Storage
+// and returns its download URL, or null if there was nothing to upload / it failed.
+// Consumes (clears) the pending photo either way so it isn't reused on a later save.
+function uploadPendingPlatePhoto(targetId, plate) {
+  var blob = pendingPlatePhotos[targetId];
+  if (!blob) return Promise.resolve(null);
+  delete pendingPlatePhotos[targetId];
+  var path = 'plate-photos/' + (plate || 'unknown') + '_' + Date.now() + '.jpg';
+  return uploadBytes(storageRef(storage, path), blob)
+    .then(function(snap) { return getDownloadURL(snap.ref); })
+    .catch(function(err) {
+      showToast('⚠️ Truck saved, but plate photo failed to upload');
+      return null;
+    });
+}
+
 window.openModal = function(id) { document.getElementById(id).classList.add('active'); }
 window.closeModal = function(id) { document.getElementById(id).classList.remove('active'); }
 document.querySelectorAll('.modal-overlay').forEach(o=>{
@@ -5717,10 +5746,10 @@ document.querySelectorAll('.modal-overlay').forEach(o=>{
 // ── PLATE SCANNER (camera + on-device OCR, fast persistent worker) ──
 var scanStream = null;
 var scanTargetInput = null;
-var lastScanText = '';
 var tesseractLoadPromise = null;
 var ocrWorker = null;
 var ocrWorkerPromise = null;
+var pendingPlatePhotos = {}; // { [inputId]: Blob } — captured photo awaiting upload on save
 
 function loadTesseractLib() {
   if (window.Tesseract) return Promise.resolve();
@@ -5746,7 +5775,7 @@ function ensureOcrWorker() {
   }).then(function(w) {
     var psm = (window.Tesseract && Tesseract.PSM && Tesseract.PSM.SINGLE_LINE) || '7';
     return w.setParameters({
-      tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
+      tessedit_char_whitelist: '0123456789AD', // fleet plates are digits only, sometimes with a leading A or an internal D
       tessedit_pageseg_mode: psm // treat crop as one line of text — faster & more accurate for plates
     }).then(function() {
       ocrWorker = w;
@@ -5769,10 +5798,8 @@ if ('requestIdleCallback' in window) {
 
 window.openScanPlate = async function(targetId) {
   scanTargetInput = targetId;
-  lastScanText = '';
+  delete pendingPlatePhotos[targetId]; // clear any stale photo from a previous scan of this field
   document.getElementById('scanResultWrap').style.display = 'none';
-  document.getElementById('scanActionsConfirm').style.display = 'none';
-  document.getElementById('scanActionsCapture').style.display = 'flex';
   var status = document.getElementById('scanStatus');
   status.textContent = 'Align the plate inside the box, then capture';
   var btn = document.getElementById('scanCaptureBtn');
@@ -5852,7 +5879,7 @@ window.captureAndScan = async function() {
     ctx.putImageData(imgData, 0, 0);
 
     var result = await worker.recognize(canvas);
-    var text = ((result && result.data && result.data.text) || '').replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+    var text = ((result && result.data && result.data.text) || '').toUpperCase().replace(/[^0-9AD]/g, '');
 
     if (!text) {
       status.textContent = '❌ No text detected — move closer, hold steady, ensure good light';
@@ -5860,38 +5887,40 @@ window.captureAndScan = async function() {
       return;
     }
 
-    lastScanText = text;
-    document.getElementById('scanResultText').textContent = text;
+    // Grab a full, un-cropped frame (JPEG, capped width) as the record photo —
+    // kept separate from the small OCR crop above so the saved photo shows the
+    // whole plate/truck, not just the tight recognition window.
+    var photoW = Math.min(vw, 1280);
+    var photoScale = photoW / vw;
+    var photoCanvas = document.getElementById('scanPhotoCanvas');
+    photoCanvas.width = photoW;
+    photoCanvas.height = Math.round(vh * photoScale);
+    photoCanvas.getContext('2d').drawImage(video, 0, 0, photoCanvas.width, photoCanvas.height);
+    photoCanvas.toBlob(function(blob) {
+      if (blob) pendingPlatePhotos[scanTargetInput] = blob;
+    }, 'image/jpeg', 0.85);
+
+    // Auto-fill immediately — no manual confirm step. The field is still visible
+    // and editable on the form behind this modal, so a quick glance there before
+    // hitting Save is the safety net rather than an extra tap here.
+    var input = document.getElementById(scanTargetInput);
+    if (input) {
+      input.value = text;
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+
+    document.getElementById('scanResultText').textContent = '✅ ' + text;
     document.getElementById('scanResultWrap').style.display = 'block';
-    document.getElementById('scanActionsCapture').style.display = 'none';
-    document.getElementById('scanActionsConfirm').style.display = 'flex';
-    status.textContent = 'Is this correct?';
+    status.textContent = 'Plate filled';
+
+    setTimeout(function() {
+      closeScanModal();
+      showToast('✅ Plate filled: ' + text);
+    }, 500);
   } catch (err) {
     status.textContent = '❌ Scan failed — try again';
     btn.disabled = false; btn.textContent = '📸 Capture';
   }
-};
-
-window.retryScan = function() {
-  document.getElementById('scanResultWrap').style.display = 'none';
-  document.getElementById('scanActionsConfirm').style.display = 'none';
-  document.getElementById('scanActionsCapture').style.display = 'flex';
-  var btn = document.getElementById('scanCaptureBtn');
-  btn.disabled = false; btn.textContent = '📸 Capture';
-  document.getElementById('scanStatus').textContent = 'Align the plate inside the box, then capture';
-};
-
-window.acceptScanResult = function() {
-  if (scanTargetInput) {
-    var input = document.getElementById(scanTargetInput);
-    if (input) {
-      input.value = lastScanText;
-      input.dispatchEvent(new Event('input', { bubbles: true }));
-    }
-  }
-  var filled = lastScanText;
-  closeScanModal();
-  showToast('✅ Plate filled: ' + filled);
 };
 
 // ── TOAST ──
