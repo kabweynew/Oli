@@ -1475,8 +1475,8 @@
         <div class="meal-card" onclick="openMealsModal()">
           <div class="meal-num" id="statDinner">—</div><div class="meal-label">🍽️ DINNER</div>
         </div>
-        <div class="meal-card" onclick="openMealsModal()" style="border-color:rgba(239,68,68,0.3)">
-          <div class="meal-num" id="statNetCompany" style="color:var(--green)">—</div><div class="meal-label">🏦 NET</div>
+        <div class="meal-card" id="statNetCard" onclick="openMealsModal()" style="border-color:rgba(239,68,68,0.3)">
+          <div class="meal-num" id="statNetCompany" style="color:var(--green)">—</div><div class="meal-label" id="statNetLabel">🏦 NET</div>
         </div>
       </div>
       <div class="date-bar">
@@ -1774,11 +1774,6 @@
           <span style="font-size:11px;color:var(--text2)">👷 Sealer pay (all paid)</span>
           <span style="font-size:11px;font-weight:700;color:var(--teal)">0 ETB</span>
         </div>
-        <div style="display:flex;justify-content:space-between">
-          <span style="font-size:11px;color:var(--text2)">🏢 Net company (all paid)</span>
-          <span style="font-size:12px;font-weight:800;color:var(--green)">0 ETB</span>
-        </div>
-        
       </div>
 
       
@@ -3400,6 +3395,7 @@ function buildNav() {
     {id:'settlement', icon:'📋', label:'Settlement'},
     {id:'recycle', icon:'🗑️', label:'Bin'},
     {id:'manage', icon:'⚙️', label:t('manage')},
+    {id:'logout', icon:'🚪', label:t('logout')},
   ];
   else if (role==='cashier') {
     const p = getUserPerms(currentUser.id);
@@ -3635,22 +3631,25 @@ function renderTrucks() {
   // Workers see ALL trucks on the trucks tab (numbering order)
   // Their own trucks are in "My List" tab
 
-  // Status filter
+  // Status filter (also kept separately as `statusFiltered` so per-sealer
+  // chip counts below can reflect "per person, per payment status")
+  let statusFiltered = [...allForDateUnfiltered];
   if (filterStatus==='nosealer') {
-    list = list.filter(t => !t.worker || t.status === 'pending');
+    statusFiltered = statusFiltered.filter(t => !t.worker || t.status === 'pending');
   } else if (filterStatus!=='all') {
-    list = list.filter(t=>t.status===filterStatus);
+    statusFiltered = statusFiltered.filter(t=>t.status===filterStatus);
   }
+  list = [...statusFiltered];
 
-  // Worker filter (only for admin/cashier/head)
+  // Worker filter — now available to everyone, including sealers
   if (filterWorker === 'nosealer') {
     list = list.filter(t => !t.worker || t.status === 'pending');
-  } else if (filterWorker!=='all' && role!=='worker') {
+  } else if (filterWorker!=='all') {
     list = list.filter(t=>t.worker===filterWorker);
   }
 
-  // No Sealer count chip
-  const noSealerCount = allForDateUnfiltered.filter(t => !t.worker || t.status === 'pending').length;
+  // No Sealer count chip — reflects the currently selected payment status
+  const noSealerCount = statusFiltered.filter(t => !t.worker || t.status === 'pending').length;
   const wcountNS = document.getElementById('wcount_nosealer');
   if (wcountNS) wcountNS.textContent = noSealerCount;
   const wchipNS = document.getElementById('wchip_nosealer');
@@ -3676,31 +3675,46 @@ function renderTrucks() {
   document.getElementById('statPaid').textContent = statsBase.filter(t=>t.status==='paid'||t.status==='pending').length;
   document.getElementById('statPartial').textContent = statsBase.filter(t=>t.status==='partial').length;
   document.getElementById('statUnpaid').textContent = statsBase.filter(t=>t.status==='unpaid').length;
-  const earn = statsBase.reduce((s,t)=>s+(t.status==='paid'||t.status==='pending'?CLIENT_PRICE:t.status==='partial'?window.tariffs.partialFare:0),0);
+
+  // ETB stat card: workers see their OWN sealer earnings (commission), not the client/company rate
+  const earn = role==='worker'
+    ? statsBase.reduce((s,t)=>s+(t.status==='paid'||t.status==='pending'?WORKER_PAY.paid:t.status==='partial'?WORKER_PAY.partial:0),0)
+    : statsBase.reduce((s,t)=>s+(t.status==='paid'||t.status==='pending'?CLIENT_PRICE:t.status==='partial'?window.tariffs.partialFare:0),0);
   document.getElementById('statETB').textContent = earn>=1000 ? (earn/1000).toFixed(1)+'k' : earn;
 
   // ── Meals bar (Lunch / Dinner / Net) ──
   const dedForBar = dailyDeductions[date] || {};
   const barLunch = dedForBar.lunch || 0;
   const barDinner = dedForBar.dinner || 0;
-  const totalMeals = barLunch + barDinner;
-  const totalClientEarn = statsBase.reduce((s,t)=>s+(t.status==='paid'||t.status==='pending'?CLIENT_PRICE:t.status==='partial'?2800:0),0);
-  const totalWorkerPay = statsBase.reduce((s,t)=>s+(t.status==='pending'?WORKER_PAY.paid:(WORKER_PAY[t.status]||0)),0);
-  const companyEarn = totalClientEarn - totalWorkerPay;
-  const netAfterMeals = companyEarn - totalMeals;
   const lunchEl = document.getElementById('statLunch');
   const dinnerEl = document.getElementById('statDinner');
   const netEl = document.getElementById('statNetCompany');
+  const netLabelEl = document.getElementById('statNetLabel');
+  const netCardEl = document.getElementById('statNetCard');
+  const mealsBarEl = document.getElementById('mealsBar');
   if (lunchEl) lunchEl.textContent = barLunch > 0 ? (barLunch>=1000?(barLunch/1000).toFixed(1)+'k':barLunch) : '—';
   if (dinnerEl) dinnerEl.textContent = barDinner > 0 ? (barDinner>=1000?(barDinner/1000).toFixed(1)+'k':barDinner) : '—';
-  if (netEl) {
-    netEl.textContent = totalClientEarn > 0 ? (Math.abs(netAfterMeals)>=1000?(netAfterMeals/1000).toFixed(1)+'k':netAfterMeals) : '—';
-    netEl.style.color = netAfterMeals >= 0 ? 'var(--green)' : 'var(--red)';
+
+  if (role==='worker') {
+    // Sealers see their own "if all paid" potential earnings — not company profit
+    if (netCardEl) netCardEl.style.display = '';
+    if (mealsBarEl) mealsBarEl.style.gridTemplateColumns = '1fr 1fr 1fr';
+    if (netLabelEl) netLabelEl.textContent = '💰 IF ALL PAID';
+    const ownTotalTrucks = statsBase.length;
+    const ifAllPaidEarn = ownTotalTrucks * WORKER_PAY.paid;
+    if (netEl) {
+      netEl.textContent = ownTotalTrucks > 0 ? (ifAllPaidEarn>=1000?(ifAllPaidEarn/1000).toFixed(1)+'k':ifAllPaidEarn) : '—';
+      netEl.style.color = 'var(--green)';
+    }
+  } else {
+    // Company net earnings card removed — just hide it, keep Lunch/Dinner
+    if (netCardEl) netCardEl.style.display = 'none';
+    if (mealsBarEl) mealsBarEl.style.gridTemplateColumns = '1fr 1fr';
   }
 
-  // ── Worker chip counts — only for today's date ──
+  // ── Worker chip counts — reflect the selected payment status (per person, per status) ──
   const workers = getWorkerList();
-  const allDateTrucks = allForDateUnfiltered;
+  const allDateTrucks = statusFiltered;
   const wcountAll = document.getElementById('wcount_all');
   if (wcountAll) wcountAll.textContent = allDateTrucks.length;
   workers.forEach(w=>{
@@ -4051,8 +4065,8 @@ window.openAddTruckWithPlate = function(plate) {
 function buildStatusRadio(containerId, selected) {
   const opts = [
     {val:'unpaid', label:'❌ '+t('unpaid'), sub:'0 ETB to sealer'},
-    {val:'partial', label:'⚡ '+t('partial'), sub:'Sealer: 700 ETB · Company: 2,100 ETB · Total: 2,800 ETB'},
-    {val:'paid', label:'✅ '+t('paid'), sub:'Sealer: 1,300 ETB · Client: 5,500 ETB'},
+    {val:'partial', label:'⚡ '+t('partial'), sub:'Sealer: '+window.tariffs.sealerPartial.toLocaleString()+' ETB · Company: '+(window.tariffs.partialFare-window.tariffs.sealerPartial).toLocaleString()+' ETB · Total: '+window.tariffs.partialFare.toLocaleString()+' ETB'},
+    {val:'paid', label:'✅ '+t('paid'), sub:'Sealer: '+window.tariffs.sealerPaid.toLocaleString()+' ETB · Client: '+window.tariffs.clientETB.toLocaleString()+' ETB'},
   ];
   document.getElementById(containerId).innerHTML = opts.map(o=>`
     <div class="radio-opt${o.val===selected?' selected':''}" onclick="selectRadio(this,'${containerId}')">
@@ -4591,15 +4605,12 @@ function renderReports() {
   // Combined total if all were paid
   const allPaidTotal       = totalTrucks * CLIENT_PRICE;
   const allPaidSealerTotal = totalTrucks * WORKER_PAY.paid;          // sealer pay if all paid
-  const allPaidNetCompany  = allPaidTotal - allPaidSealerTotal;       // company net if all paid
   const noSealerCount      = filtered.filter(function(t){ return !t.worker || t.status==='pending'; }).length;
 
   const dedKey = selectedDate || '';
   const dedForDate = dailyDeductions[dedKey] || {};
   const dedLunch  = dedForDate.lunch  || 0;
   const dedDinner = dedForDate.dinner || 0;
-  const totalDed  = dedLunch + dedDinner;
-  const netCompany = totalCompany - totalDed;
 
   const statusChips = ['all','paid','partial','unpaid'].map(s => `
     <button class="filter-chip${sf===s?' active':''}" onclick="setReportFilter('${s}',this)" style="font-size:11px;padding:4px 10px">
@@ -4655,7 +4666,6 @@ function renderReports() {
       ${reportToggles.meals ? `
         <div class="report-row"><span class="report-label">🥗 Lunch</span><span class="report-val" style="color:var(--red)">${dedLunch>0?'-'+dedLunch.toLocaleString()+' ETB':'—'}</span></div>
         <div class="report-row"><span class="report-label">🍽️ Dinner</span><span class="report-val" style="color:var(--red)">${dedDinner>0?'-'+dedDinner.toLocaleString()+' ETB':'—'}</span></div>
-        ${totalDed>0?`<div class="report-row" style="border-top:2px solid var(--border);margin-top:4px;padding-top:8px"><span class="report-label" style="font-weight:700">🏦 Net Company</span><span class="report-val" style="color:${netCompany>=0?'var(--green)':'var(--red)'};font-size:16px">${netCompany.toLocaleString()} ETB</span></div>`:''}
         <div style="margin-top:10px"><button onclick="openMealsModal('${selectedDate||''}')" style="width:100%;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.3);color:var(--accent);border-radius:var(--radius-sm);padding:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">🍽️ Set Lunch / Dinner Amounts</button></div>
       ` : ''}
 
@@ -4671,10 +4681,6 @@ function renderReports() {
         <div style="border-top:1px solid rgba(99,102,241,0.2);padding-top:6px;display:flex;justify-content:space-between">
           <span style="font-size:11px;color:var(--text2)">👷 Sealer pay (all paid)</span>
           <span style="font-size:11px;font-weight:700;color:var(--teal)">${allPaidSealerTotal.toLocaleString()} ETB</span>
-        </div>
-        <div style="display:flex;justify-content:space-between">
-          <span style="font-size:11px;color:var(--text2)">🏢 Net company (all paid)</span>
-          <span style="font-size:12px;font-weight:800;color:var(--green)">${allPaidNetCompany.toLocaleString()} ETB</span>
         </div>
         ${noSealerCount > 0 ? `<div style="display:flex;justify-content:space-between;border-top:1px solid rgba(99,102,241,0.2);padding-top:6px">
           <span style="font-size:11px;color:var(--orange)">⏳ No sealer assigned</span>
@@ -4727,8 +4733,8 @@ function renderReports() {
   window._lastReportData = {
     dateLabel, totalTrucks, paidCount, partialCount, unpaidCount,
     totalClient, totalWorker, totalCompany, totalAdv,
-    unpaidAmount, allPaidTotal, allPaidSealerTotal, allPaidNetCompany, noSealerCount,
-    netCompany, dedLunch, dedDinner,
+    unpaidAmount, allPaidTotal, allPaidSealerTotal, noSealerCount,
+    dedLunch, dedDinner,
     workerList, filtered, allAdvances
   };
 }
@@ -4803,10 +4809,6 @@ window.shareReportAsImage = function() {
         <div style="border-top:1px solid rgba(99,102,241,0.25);padding-top:7px;display:flex;justify-content:space-between;margin-bottom:5px">
           <span style="font-size:11px;color:#94a3b8">👷 Sealer pay (all paid)</span>
           <span style="font-size:11px;font-weight:700;color:#22d3ee">${d.allPaidSealerTotal.toLocaleString()} ETB</span>
-        </div>
-        <div style="display:flex;justify-content:space-between${d.noSealerCount>0?';margin-bottom:5px':''}">
-          <span style="font-size:11px;color:#94a3b8">🏢 Net company (all paid)</span>
-          <span style="font-size:12px;font-weight:800;color:#4ade80">${d.allPaidNetCompany.toLocaleString()} ETB</span>
         </div>
         ${d.noSealerCount > 0 ? `<div style="border-top:1px solid rgba(99,102,241,0.25);padding-top:7px;display:flex;justify-content:space-between">
           <span style="font-size:11px;color:#f59e0b">⏳ No sealer assigned</span>
@@ -4898,6 +4900,7 @@ window.setReportWorkerFilter = function(w, el) {
 
 // ── TARIFF SAVE ──
 window.saveTariff = function(key, rawVal) {
+  if (!currentUser || currentUser.role !== 'admin') { showToast('⛔ Only Admin can edit tariffs'); renderManage(); return; }
   const val = parseFloat(rawVal);
   if (isNaN(val) || val < 0) { showToast('❌ Invalid value'); return; }
   window.tariffs[key] = val;
@@ -4911,6 +4914,7 @@ function renderManage() {
   const container = document.getElementById('manageContent');
   if (!container) return;
   const workers = getWorkerList();
+  const isAdmin = currentUser && currentUser.role === 'admin';
 
   container.innerHTML = `
     <div>
@@ -4926,8 +4930,10 @@ function renderManage() {
               </div>
             </div>
             <div class="manage-item-right">
+              ${isAdmin ? `
               <button class="manage-btn" onclick="openWorkerPerms('${w}')">⚙️ Perms</button>
               <button class="manage-btn" onclick="openPinChange('${w}')">🔐 PIN</button>
+              ` : ''}
               <button class="manage-btn danger" onclick="removeWorker('${w}')">🗑️</button>
             </div>
           </div>
@@ -4954,14 +4960,17 @@ function renderManage() {
               </div>
             </div>
             <div class="manage-item-right">
+              ${isAdmin ? `
               <button class="manage-btn" onclick="openCashierPerms('${c}')">⚙️ Perms</button>
               <button class="manage-btn" onclick="openPinChange('${c}')">🔐 PIN</button>
+              ` : ''}
             </div>
           </div>
         `).join('')}
       </div>
     </div>
 
+    ${isAdmin ? `
     <div>
       <div class="manage-section-title">🔐 ADMIN PIN</div>
       <div class="manage-card">
@@ -4974,6 +4983,7 @@ function renderManage() {
         </div>
       </div>
     </div>
+    ` : ''}
 
     <div>
       <div class="manage-section-title">🏢 COMPANY HEAD</div>
@@ -5067,7 +5077,7 @@ function renderManage() {
     <div>
       <div class="manage-section-title">💰 TARIFFS</div>
       <div class="manage-card" style="padding:14px 16px">
-        <div style="font-size:11px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:12px">Changes save live — all devices update instantly</div>
+        <div style="font-size:11px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:12px">${isAdmin ? 'Changes save live — all devices update instantly' : 'View only — contact Admin to change rates'}</div>
         ${(()=>{
           const T = window.tariffs;
           const row = (key, label, val, sub) =>
@@ -5076,9 +5086,11 @@ function renderManage() {
             + '<div style="font-size:13px;font-weight:600;color:var(--text)">'+label+'</div>'
             + '<div style="font-size:11px;color:var(--text3);margin-top:2px">'+sub+'</div>'
             + '</div>'
-            + '<input id="tariff_'+key+'" type="number" value="'+val+'"'
-            + ' style="width:82px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:14px;font-weight:700;color:var(--text);text-align:right;font-family:JetBrains Mono,monospace"'
-            + ' onchange="saveTariff(\''+key+'\',this.value)">'
+            + (isAdmin
+              ? '<input id="tariff_'+key+'" type="number" value="'+val+'"'
+                + ' style="width:82px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:14px;font-weight:700;color:var(--text);text-align:right;font-family:JetBrains Mono,monospace"'
+                + ' onchange="saveTariff(\''+key+'\',this.value)">'
+              : '<div style="font-size:14px;font-weight:700;color:var(--text3);font-family:JetBrains Mono,monospace">'+Number(val).toLocaleString()+'</div>')
             + '</div>';
           return [
             row('clientETB',     '🚛 Client Rate — ETB',        T.clientETB,      'What client pays per truck (ETB)'),
@@ -5141,12 +5153,14 @@ function renderManage() {
     <div>
       <div class="manage-section-title">⚠️ DANGER ZONE</div>
       <div class="manage-card">
+${isAdmin ? `
 <div class="manage-item" onclick="clearAllData()">
           <div class="manage-item-left">
             <div class="manage-item-icon">⚠️</div>
             <div><div class="manage-item-name" style="color:var(--red)">Clear All Truck Data</div></div>
           </div>
         </div>
+` : ''}
         <div class="manage-item" onclick="goLogin()">
           <div class="manage-item-left">
             <div class="manage-item-icon">🚪</div>
@@ -5185,6 +5199,9 @@ window.saveHeadName = function() {
 
 // ── PIN MANAGEMENT ──
 window.openPinChange = function(user) {
+  const isAdminUser = currentUser && currentUser.role === 'admin';
+  if (user === 'admin' && !isAdminUser) { showToast('⛔ Only Admin can change the Admin PIN'); return; }
+  if (user !== 'admin' && user !== 'head' && !isAdminUser) { showToast('⛔ Only Admin can manage sealer/cashier PINs'); return; }
   pinChangingUser = user;
   document.getElementById('pinModalTitle').textContent = `🔐 Change PIN — ${user}`;
   document.getElementById('newPin').value = '';
@@ -5220,6 +5237,7 @@ window.savePin = function() {
 
 // ── PERMISSIONS ──
 window.openCashierPerms = function(user) {
+  if (!currentUser || currentUser.role !== 'admin') { showToast('⛔ Only Admin can edit permissions'); return; }
   permsEditingUser = user;
   const p = getUserPerms(user);
   document.getElementById('permsModalTitle').textContent = `⚙️ ${user==='cashier1'?'Cashier 1':'Cashier 2'} Permissions`;
@@ -5244,6 +5262,7 @@ window.openCashierPerms = function(user) {
   openModal('modalPerms');
 }
 window.openWorkerPerms = function(user) {
+  if (!currentUser || currentUser.role !== 'admin') { showToast('⛔ Only Admin can edit permissions'); return; }
   permsEditingUser = user;
   const p = getUserPerms(user);
   document.getElementById('permsModalTitle').textContent = `⚙️ Worker Permissions`;
@@ -5666,6 +5685,7 @@ window.emptyRecycleBin = function() {
   renderRecycleList();
 }
 window.clearAllData = function() {
+  if (!currentUser || currentUser.role !== 'admin') { showToast('⛔ Only Admin can clear truck data'); return; }
   const date = document.getElementById('dateFilter')?.value || getWorkingDate();
   const dateLabel = new Date(date).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
   if (!confirm('Move ALL trucks for ' + dateLabel + ' to the Recycle Bin?')) return;
@@ -6124,7 +6144,7 @@ window.openShareReport = function() {
   const unpaid = allForDate.filter(function(tk){ return tk.status==='unpaid'; }).length;
   const revenue = allForDate.reduce(function(s,tk){ return s+(tk.status==='paid'||tk.status==='pending'?CLIENT_PRICE:tk.status==='partial'?window.tariffs.partialFare:0); },0);
   const totalSealerPay = allForDate.reduce(function(s,tk){
-    // pending = paid by client but no sealer yet — count 1,300 ETB as future sealer payment
+    // pending = paid by client but no sealer yet — count the Agash rate as future sealer payment
     if (tk.status==='pending') return s + WORKER_PAY.paid;
     return s + (WORKER_PAY[tk.status]||0);
   },0);
@@ -7343,7 +7363,7 @@ function renderSettlementForm() {
   // Expected company earnings card
   html += '<div style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.25);border-radius:var(--radius);padding:12px 14px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;">'
     + '<div><div style="font-size:10px;color:var(--text3);font-weight:700;letter-spacing:0.06em">💡 EXPECTED COMPANY EARNINGS</div>'
-    + '<div style="font-size:11px;color:var(--text2);margin-top:2px">' + paidCount + ' paid × 4,200 + ' + partialCount + ' partial × 2,100</div></div>'
+    + '<div style="font-size:11px;color:var(--text2);margin-top:2px">' + paidCount + ' paid × ' + (CLIENT_PRICE - WORKER_PAY.paid).toLocaleString() + ' + ' + partialCount + ' partial × ' + (window.tariffs.partialFare - WORKER_PAY.partial).toLocaleString() + '</div></div>'
     + '<div style="font-size:20px;font-weight:800;font-family:\'JetBrains Mono\',monospace;color:var(--accent)">' + expectedCompany.toLocaleString() + '<span style="font-size:11px;font-weight:600;margin-left:3px">ETB</span></div>'
     + '</div>';
 
@@ -7445,6 +7465,7 @@ function renderSettlementForm() {
 
 function renderSettlementFormCard(cashierId, cashierName, date, dayTrucks, unpaidCount, expectedCompany, existing) {
   var PRICE  = window.tariffs.agashETB;
+  var PRICE_FD = window.tariffs.agashFD;
   var formId = 'stlForm_' + cashierId;
 
   var savedNotes       = existing ? (existing.notes          || '') : '';
@@ -7477,7 +7498,7 @@ function renderSettlementFormCard(cashierId, cashierName, date, dayTrucks, unpai
       + '<input class="stl-tbl-input" type="number" id="'+idEtbCnt+'" value="'+cntEtb+'" min="0" placeholder="0" '+(readonly?roStyle:inputStyle)+roAttr+onChange+'>'
       + '<div style="font-size:12px;font-weight:700;color:var(--green);text-align:right;font-family:\'JetBrains Mono\',monospace" id="'+idEtbAmt+'">'+(cntEtb*PRICE).toLocaleString()+'</div>'
       + '<input class="stl-tbl-input" type="number" id="'+idDjfCnt+'" value="'+cntDjf+'" min="0" placeholder="0" '+(readonly?roStyle:'style="'+inputStyle.slice(7,-1)+';border-color:rgba(20,184,166,0.4);color:var(--teal)"')+roAttr+onChange+'>'
-      + '<div style="font-size:12px;font-weight:700;color:var(--teal);text-align:right;font-family:\'JetBrains Mono\',monospace;padding-right:2px" id="'+idDjfAmt+'">'+(cntDjf*1000).toLocaleString()+'</div>'
+      + '<div style="font-size:12px;font-weight:700;color:var(--teal);text-align:right;font-family:\'JetBrains Mono\',monospace;padding-right:2px" id="'+idDjfAmt+'">'+(cntDjf*PRICE_FD).toLocaleString()+'</div>'
       + '</div>';
   }
 
@@ -7489,14 +7510,15 @@ function renderSettlementFormCard(cashierId, cashierName, date, dayTrucks, unpai
   var cntMetalETB  = (existing && existing.cntMetalETB  != null) ? existing.cntMetalETB  : cntMetal;
   var cntMetalDJF  = (existing && existing.cntMetalDJF  != null) ? existing.cntMetalDJF  : 0;
 
-  // Shibo suggestion: Shirac total × 1,300 — computed AFTER cntShiracETB/DJF are known
-  var shiboSuggested   = (cntShiracETB + cntShiracDJF) * PRICE;
+  // Shibo suggestion: Shirac total × live Sealer rate — Shibo Workers ARE Sealers, so use tariffs.sealerPaid, not the Agash rate
+  var SEALER_PRICE     = window.tariffs.sealerPaid;
+  var shiboSuggested   = (cntShiracETB + cntShiracDJF) * SEALER_PRICE;
   var shiboManual      = existing && existing.shiboGiven != null && existing.shiboGiven !== shiboSuggested;
   var savedShiboGiven  = existing ? (existing.shiboGiven != null ? existing.shiboGiven : shiboSuggested) : shiboSuggested;
 
   // Footer totals
   var footETB = (cntShiracETB + cntBilaETB + cntMetalETB) * PRICE;
-  var footDJF = (cntShiracDJF + cntBilaDJF + cntMetalDJF) * 1000;
+  var footDJF = (cntShiracDJF + cntBilaDJF + cntMetalDJF) * PRICE_FD;
 
   // Summary block: Shirac row, Metal row, TOTAL row — all × 5500/5000
   var smShiracETB = (cntShiracETB + cntShiracDJF) * window.tariffs.clientETB;
@@ -7520,14 +7542,14 @@ function renderSettlementFormCard(cashierId, cashierName, date, dayTrucks, unpai
     + '</div>'
 
     // ══ TABLE 1 — AGASH REPORT ══
-    + '<div class="sec-title">📋 Table 1 — Agash Report · 1,300 ETB / truck</div>'
+    + '<div class="sec-title">📋 Table 1 — Agash Report · '+PRICE.toLocaleString()+' ETB / truck</div>'
     + '<div class="tbl-wrap">'
 
     // Double header row: TYPE | ←ETB→ | ←DJF→
     + '<div style="display:grid;grid-template-columns:'+COLS+';background:var(--bg4);padding:5px 10px 3px;border-bottom:1px solid var(--border);gap:3px;align-items:end">'
     + '<div></div>'
-    + '<div style="grid-column:2/4;text-align:center;font-size:9px;font-weight:800;color:var(--green);border-bottom:2px solid rgba(34,197,94,0.4);padding-bottom:2px;letter-spacing:.05em">ETB × 1,300</div>'
-    + '<div style="grid-column:4/6;text-align:center;font-size:9px;font-weight:800;color:var(--teal);border-bottom:2px solid rgba(20,184,166,0.4);padding-bottom:2px;letter-spacing:.05em">DJF × 1,000</div>'
+    + '<div style="grid-column:2/4;text-align:center;font-size:9px;font-weight:800;color:var(--green);border-bottom:2px solid rgba(34,197,94,0.4);padding-bottom:2px;letter-spacing:.05em">ETB × '+PRICE.toLocaleString()+'</div>'
+    + '<div style="grid-column:4/6;text-align:center;font-size:9px;font-weight:800;color:var(--teal);border-bottom:2px solid rgba(20,184,166,0.4);padding-bottom:2px;letter-spacing:.05em">DJF × '+PRICE_FD.toLocaleString()+'</div>'
     + '</div>'
     + '<div style="display:grid;grid-template-columns:'+COLS+';background:var(--bg4);padding:3px 10px 6px;border-bottom:1px solid var(--border);gap:3px">'
     + '<div style="font-size:9px;font-weight:800;color:var(--text3);letter-spacing:.07em">TYPE</div>'
@@ -7565,7 +7587,7 @@ function renderSettlementFormCard(cashierId, cashierName, date, dayTrucks, unpai
     + '<div class="stl-label" style="margin-bottom:0">👷 Given to Shibo Workers</div>'
     + '<button type="button" id="stlShiboUnlock_'+cashierId+'" onclick="stlShiboUnlock(\''+cashierId+'\')" style="display:'+(shiboManual?'inline-flex':'none')+';align-items:center;gap:3px;font-size:9px;font-weight:700;color:var(--orange);background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.35);border-radius:20px;padding:2px 7px;cursor:pointer;font-family:inherit">🔒 locked · reset</button>'
     + '</div>'
-    + '<div style="font-size:9px;color:var(--text3);margin-bottom:4px" id="stlShiboHint_'+cashierId+'">💡 Suggested: '+(cntShiracETB+cntShiracDJF)+' Shirac × 1,300 = '+shiboSuggested.toLocaleString()+' ETB</div>'
+    + '<div style="font-size:9px;color:var(--text3);margin-bottom:4px" id="stlShiboHint_'+cashierId+'">💡 Suggested: '+(cntShiracETB+cntShiracDJF)+' Shirac × '+SEALER_PRICE.toLocaleString()+' = '+shiboSuggested.toLocaleString()+' ETB</div>'
     + '<input class="stl-input" type="text" inputmode="decimal" id="stlShiboGiven_'+cashierId+'" placeholder="0" value="'+savedShiboGiven+'"'
     + ' data-auto="'+(shiboManual?'0':'1')+'" oninput="stlSanitizeAmount(this); stlShiboOnInput(\''+cashierId+'\')">'
     + '</div>'
@@ -7582,7 +7604,7 @@ function renderSettlementFormCard(cashierId, cashierName, date, dayTrucks, unpai
     + '</div>'
 
     // ── SHIRAC RATE SECTION (form) — with FD input ──
-    + '<div style="font-size:10px;font-weight:800;color:var(--text3);letter-spacing:0.06em;margin-bottom:6px;padding-top:4px">🚛 SHIRAC COUNT — RATES (×5,500 ETB / ×5,000 FD)</div>'
+    + '<div style="font-size:10px;font-weight:800;color:var(--text3);letter-spacing:0.06em;margin-bottom:6px;padding-top:4px">🚛 SHIRAC COUNT — RATES (×'+window.tariffs.clientETB.toLocaleString()+' ETB / ×'+window.tariffs.clientFD.toLocaleString()+' FD)</div>'
     + '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;margin-bottom:6px">'
     + '<div style="display:grid;grid-template-columns:1fr 44px 76px 68px;background:var(--bg4);padding:6px 10px;border-bottom:1px solid var(--border)">'
     + '<div style="font-size:9px;font-weight:800;color:var(--text3)">TYPE</div>'
@@ -7594,7 +7616,7 @@ function renderSettlementFormCard(cashierId, cashierName, date, dayTrucks, unpai
     + '<div style="display:grid;grid-template-columns:1fr 44px 76px 68px;padding:9px 10px;align-items:center" id="stlT2ShiracRow_'+cashierId+'" data-t2total="'+t2Total+'">'
     + '<div style="font-size:12px;font-weight:700;color:#10b981">🚛 Shirac</div>'
     + '<div style="font-size:13px;font-weight:800;color:var(--accent);text-align:center;font-family:\'JetBrains Mono\',monospace">'+t2Total+'</div>'
-    + '<div style="font-size:11px;font-weight:800;color:var(--orange);text-align:right;font-family:\'JetBrains Mono\',monospace" id="stlT2EtbAmt_'+cashierId+'">'+(t2Total*5500).toLocaleString()+'</div>'
+    + '<div style="font-size:11px;font-weight:800;color:var(--orange);text-align:right;font-family:\'JetBrains Mono\',monospace" id="stlT2EtbAmt_'+cashierId+'">'+(t2Total*window.tariffs.clientETB).toLocaleString()+'</div>'
     + '<div style="font-size:11px;font-weight:800;color:var(--teal);text-align:right;font-family:\'JetBrains Mono\',monospace;padding-right:2px" id="stlT2FdAmt_'+cashierId+'">0</div>'
     + '</div>'
     // ETB trucks / FD trucks breakdown sub-row
@@ -7610,7 +7632,7 @@ function renderSettlementFormCard(cashierId, cashierName, date, dayTrucks, unpai
     + '<input class="stl-input" type="text" inputmode="decimal" id="stlT2FdInput_'+cashierId+'" placeholder="e.g. 10000" value="'+(existing&&existing.t2ShiracFD?existing.t2ShiracFD:'')+'" style="margin-bottom:0;flex:1" oninput="stlSanitizeAmount(this); stlT2FdChanged(\''+cashierId+'\')">'
     + '<div style="font-size:11px;font-weight:700;color:var(--teal);white-space:nowrap">FD</div>'
     + '</div>'
-    + '<div style="font-size:9px;color:var(--text3);margin-top:5px" id="stlT2FdHint_'+cashierId+'">Every 5,000 FD = 1 truck in DJF. Rest = ETB.</div>'
+    + '<div style="font-size:9px;color:var(--text3);margin-top:5px" id="stlT2FdHint_'+cashierId+'">Every '+window.tariffs.clientFD.toLocaleString()+' FD = 1 truck in DJF. Rest = ETB.</div>'
     + '</div>'
 
     // Unpaid list
@@ -7620,19 +7642,25 @@ function renderSettlementFormCard(cashierId, cashierName, date, dayTrucks, unpai
     + '</div>'
     + '<div id="stlUnpaidList_'+cashierId+'" style="margin-bottom:14px"></div>'
 
-    // IF ALL PAID (client) + MISSING — auto ETB/FD split based on FD input
-    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px" id="stlSummaryCards_'+cashierId+'">'
-    + '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 10px;text-align:center">'
-    + '<div style="font-size:9px;font-weight:800;color:var(--text3);letter-spacing:0.07em;margin-bottom:5px">💡 IF ALL PAID</div>'
-    + '<div id="stlIfAllMain_'+cashierId+'" style="font-size:15px;font-weight:800;font-family:\'JetBrains Mono\',monospace;color:var(--accent)">'+(t2Total*5500).toLocaleString()+' ETB</div>'
-    + '<div id="stlIfAllSub_'+cashierId+'" style="font-size:9px;color:var(--text3);margin-top:2px">'+t2Total+' × 5,500 ETB</div>'
+    // IF ALL PAID (client) + COLLECTED + MISSING — auto ETB/FD split based on FD input
+    + '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:12px" id="stlSummaryCards_'+cashierId+'">'
+    + '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 6px;text-align:center">'
+    + '<div style="font-size:8px;font-weight:800;color:var(--text3);letter-spacing:0.06em;margin-bottom:5px">💡 IF ALL PAID</div>'
+    + '<div id="stlIfAllMain_'+cashierId+'" style="font-size:13px;font-weight:800;font-family:\'JetBrains Mono\',monospace;color:var(--accent)">'+(t2Total*window.tariffs.clientETB).toLocaleString()+' ETB</div>'
+    + '<div id="stlIfAllSub_'+cashierId+'" style="font-size:8px;color:var(--text3);margin-top:2px">'+t2Total+' × '+window.tariffs.clientETB.toLocaleString()+' ETB</div>'
     + '</div>'
-    + '<div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);border-radius:var(--radius-sm);padding:12px 10px;text-align:center">'
-    + '<div style="font-size:9px;font-weight:800;color:var(--red);letter-spacing:0.07em;margin-bottom:5px">❌ MISSING</div>'
-    + '<div id="stlMissingMain_'+cashierId+'" style="font-size:15px;font-weight:800;font-family:\'JetBrains Mono\',monospace;color:var(--red)">'+(t2Unpaid*5500).toLocaleString()+' ETB</div>'
-    + '<div id="stlMissingSub_'+cashierId+'" style="font-size:9px;color:var(--text3);margin-top:2px">'+t2Unpaid+' unpaid × 5,500</div>'
+    + '<div style="background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.25);border-radius:var(--radius-sm);padding:10px 6px;text-align:center">'
+    + '<div style="font-size:8px;font-weight:800;color:var(--green);letter-spacing:0.06em;margin-bottom:5px">✅ COLLECTED</div>'
+    + '<div id="stlCollectedMain_'+cashierId+'" style="font-size:13px;font-weight:800;font-family:\'JetBrains Mono\',monospace;color:var(--green)">'+((t2Total-t2Unpaid)*window.tariffs.clientETB).toLocaleString()+' ETB</div>'
+    + '<div id="stlCollectedSub_'+cashierId+'" style="font-size:8px;color:var(--text3);margin-top:2px">'+(t2Total-t2Unpaid)+' × '+window.tariffs.clientETB.toLocaleString()+' ETB</div>'
+    + '</div>'
+    + '<div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);border-radius:var(--radius-sm);padding:10px 6px;text-align:center">'
+    + '<div style="font-size:8px;font-weight:800;color:var(--red);letter-spacing:0.06em;margin-bottom:5px">❌ MISSING</div>'
+    + '<div id="stlMissingMain_'+cashierId+'" style="font-size:13px;font-weight:800;font-family:\'JetBrains Mono\',monospace;color:var(--red)">'+(t2Unpaid*window.tariffs.clientETB).toLocaleString()+' ETB</div>'
+    + '<div id="stlMissingSub_'+cashierId+'" style="font-size:8px;color:var(--text3);margin-top:2px">'+t2Unpaid+' unpaid × '+window.tariffs.clientETB.toLocaleString()+'</div>'
     + '</div>'
     + '</div>'
+
 
     // Submitted to company — inside Table 2
     + '<div style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.3);border-radius:var(--radius-sm);padding:12px;margin-bottom:12px">'
@@ -7701,26 +7729,38 @@ function renderLockedSettlement(s, cashierName, cashierId, date, role, expectedC
       + '</div>';
   }
 
-  // Summary block values
-  var hasETB = (eS+eB+eM) > 0;
-  var hasDJF = (dS+dB+dM) > 0;
-  var shiracETB = eS*window.tariffs.clientETB, shiracDJF = dS*window.tariffs.clientFD;
-  var metalETB  = eM*PRICE, metalDJF  = dM*PRICE_FD;
-  var totSmETB  = shiracETB + metalETB;
-  var totSmDJF  = shiracDJF + metalDJF;
-  var smCols = (hasETB && hasDJF) ? '1fr 96px 84px' : '1fr 110px';
-  function smVal(val, color, pr) {
-    return '<div style="font-size:12px;font-weight:800;color:'+color+';text-align:right;font-family:\'JetBrains Mono\',monospace'+(pr?';padding-right:2px':'')+'">'+(val).toLocaleString()+'</div>';
+  // ── Recap values (sealer deduction breakdown) — Metal & Bila Shirac have no sealer work ──
+  var sealerRate = window.tariffs.sealerPaid;
+  var hasBila    = (eB + dB) > 0; // Bila Shirac trucks added?
+
+  var shiracAgash = eS * PRICE,  shiracSealer = eS * sealerRate,  shiracRest = shiracAgash - shiracSealer;
+  var metalAgash  = eM * PRICE,  metalSealer  = 0,                metalRest  = metalAgash;
+  var bilaAgash   = eB * PRICE,  bilaSealer   = 0,                bilaRest   = bilaAgash;
+
+  var wholeTotal = shiracRest + metalRest + (hasBila ? bilaRest : 0);
+  var wholeDiff  = (s.agashSubmitted || 0) - wholeTotal;
+  var totalTrucksCount = eS + eM + (hasBila ? eB : 0);
+  var truckEquiv = PRICE > 0 ? Math.round(wholeDiff / PRICE) : 0;
+
+  var recapCOLS = '1fr 40px 62px 62px 62px';
+  function recapRow(label, color, trucksCount, agashAmt, sealerAmt, restAmt) {
+    return '<div style="display:grid;grid-template-columns:'+recapCOLS+';padding:8px 10px;border-bottom:1px solid var(--border);align-items:center;gap:3px">'
+      + '<div style="font-size:11px;font-weight:700;color:'+color+'">'+label+'</div>'
+      + '<div style="font-size:12px;font-weight:700;color:var(--text);text-align:center;font-family:\'JetBrains Mono\',monospace">'+trucksCount+'</div>'
+      + '<div style="font-size:11px;font-weight:700;color:var(--green);text-align:right;font-family:\'JetBrains Mono\',monospace">'+agashAmt.toLocaleString()+'</div>'
+      + '<div style="font-size:11px;font-weight:700;color:var(--purple);text-align:right;font-family:\'JetBrains Mono\',monospace">'+sealerAmt.toLocaleString()+'</div>'
+      + '<div style="font-size:11px;font-weight:800;color:var(--orange);text-align:right;font-family:\'JetBrains Mono\',monospace;padding-right:2px">'+restAmt.toLocaleString()+'</div>'
+      + '</div>';
   }
 
   var table1HTML =
-    '<div style="font-size:10px;font-weight:800;color:var(--text3);letter-spacing:0.08em;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--border)">📋 TABLE 1 — AGASH REPORT · 1,300 ETB / truck</div>'
+    '<div style="font-size:10px;font-weight:800;color:var(--text3);letter-spacing:0.08em;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--border)">📋 TABLE 1 — AGASH REPORT · '+PRICE.toLocaleString()+' ETB / truck</div>'
     + '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;margin-bottom:10px">'
-    // Group header: ETB × 1,300 | DJF × 1,000
+    // Group header: dynamic ETB/DJF rates from live tariffs
     + '<div style="display:grid;grid-template-columns:'+COLS+';background:var(--bg4);padding:5px 10px 3px;border-bottom:1px solid var(--border);gap:3px;align-items:end">'
     + '<div></div>'
-    + '<div style="grid-column:2/4;text-align:center;font-size:9px;font-weight:800;color:var(--green);border-bottom:2px solid rgba(34,197,94,0.4);padding-bottom:2px;letter-spacing:.05em">ETB × 1,300</div>'
-    + '<div style="grid-column:4/6;text-align:center;font-size:9px;font-weight:800;color:var(--teal);border-bottom:2px solid rgba(20,184,166,0.4);padding-bottom:2px;letter-spacing:.05em">DJF × 1,000</div>'
+    + '<div style="grid-column:2/4;text-align:center;font-size:9px;font-weight:800;color:var(--green);border-bottom:2px solid rgba(34,197,94,0.4);padding-bottom:2px;letter-spacing:.05em">ETB × '+PRICE.toLocaleString()+'</div>'
+    + '<div style="grid-column:4/6;text-align:center;font-size:9px;font-weight:800;color:var(--teal);border-bottom:2px solid rgba(20,184,166,0.4);padding-bottom:2px;letter-spacing:.05em">DJF × '+PRICE_FD.toLocaleString()+'</div>'
     + '</div>'
     // Sub-header: TYPE | TRUCKS | TOTAL | TRUCKS | TOTAL
     + '<div style="display:grid;grid-template-columns:'+COLS+';background:var(--bg4);padding:3px 10px 6px;border-bottom:1px solid var(--border);gap:3px">'
@@ -7743,32 +7783,43 @@ function renderLockedSettlement(s, cashierName, cashierId, date, role, expectedC
     + '</div>'
     + '</div>'
 
-    // ── Summary block (TYPE | ×ETB | ×DJF) ──
+    // ── Recap: Trucks × Agash Rate × Sealer's Amount × The Rest ──
+    + '<div style="font-size:10px;font-weight:800;color:var(--text3);letter-spacing:0.07em;margin:4px 0 8px">🧾 RECAP — SEALER DEDUCTION</div>'
     + '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;margin-bottom:10px">'
-    + '<div style="display:grid;grid-template-columns:'+smCols+';background:var(--bg4);padding:5px 10px;border-bottom:1px solid var(--border)">'
-    + '<div style="font-size:9px;font-weight:800;color:var(--text3)">TYPE</div>'
-    + (hasETB ? '<div style="font-size:9px;font-weight:800;color:var(--orange);text-align:right">× ETB</div>' : '')
-    + (hasDJF ? '<div style="font-size:9px;font-weight:800;color:var(--teal);text-align:right;padding-right:2px">× DJF</div>' : '')
+    + '<div style="display:grid;grid-template-columns:'+recapCOLS+';background:var(--bg4);padding:5px 10px;border-bottom:1px solid var(--border);gap:3px">'
+    + '<div style="font-size:9px;font-weight:800;color:var(--text3);letter-spacing:.06em">TYPE</div>'
+    + '<div style="font-size:9px;font-weight:800;color:var(--text3);text-align:center">TRUCKS</div>'
+    + '<div style="font-size:9px;font-weight:800;color:var(--green);text-align:right">AGASH</div>'
+    + '<div style="font-size:9px;font-weight:800;color:var(--purple);text-align:right">SEALER</div>'
+    + '<div style="font-size:9px;font-weight:800;color:var(--orange);text-align:right;padding-right:2px">REST</div>'
     + '</div>'
-    // Shirac row
-    + '<div style="display:grid;grid-template-columns:'+smCols+';padding:8px 10px;border-bottom:1px solid var(--border);align-items:center">'
-    + '<div><div style="font-size:12px;font-weight:700;color:#10b981">🚛 Shirac</div>'
-    + '<div style="font-size:9px;color:var(--text3);margin-top:1px">'+(hasETB?'×5,500 ETB':'')+(hasETB&&hasDJF?' · ':'')+(hasDJF?'×5,000 DJF':'')+'</div></div>'
-    + (hasETB ? smVal(shiracETB,'var(--orange)',!hasDJF) : '')
-    + (hasDJF ? smVal(shiracDJF,'var(--teal)',true) : '')
+    + recapRow('🚛 Shirac', '#10b981', eS, shiracAgash, shiracSealer, shiracRest)
+    + recapRow('🏗️ Metal', '#ef4444', eM, metalAgash, metalSealer, metalRest)
+    + (hasBila ? recapRow('🚚 Bila Shirac', '#3b82f6', eB, bilaAgash, bilaSealer, bilaRest) : '')
+    + '<div style="display:grid;grid-template-columns:'+recapCOLS+';padding:8px 10px;background:rgba(59,130,246,.07);border-top:2px solid var(--border);align-items:center;gap:3px">'
+    + '<div style="font-size:10px;font-weight:800">TOTAL</div>'
+    + '<div style="font-size:12px;font-weight:800;color:var(--text);text-align:center;font-family:\'JetBrains Mono\',monospace">'+totalTrucksCount+'</div>'
+    + '<div></div>'
+    + '<div></div>'
+    + '<div style="font-size:13px;font-weight:800;color:var(--orange);text-align:right;font-family:\'JetBrains Mono\',monospace;padding-right:2px">'+wholeTotal.toLocaleString()+'</div>'
     + '</div>'
-    // Metal row
-    + '<div style="display:grid;grid-template-columns:'+smCols+';padding:8px 10px;border-bottom:2px solid var(--border);align-items:center">'
-    + '<div><div style="font-size:12px;font-weight:700;color:#ef4444">🏗️ Metal</div>'
-    + '<div style="font-size:9px;color:var(--text3);margin-top:1px">'+(hasETB?'×1,300 ETB':'')+(hasETB&&hasDJF?' · ':'')+(hasDJF?'×1,000 DJF':'')+'</div></div>'
-    + (hasETB ? smVal(metalETB,'var(--orange)',!hasDJF) : '')
-    + (hasDJF ? smVal(metalDJF,'var(--teal)',true) : '')
     + '</div>'
-    // TOTAL row
-    + '<div style="display:grid;grid-template-columns:'+smCols+';padding:8px 10px;background:rgba(59,130,246,.07);align-items:center">'
-    + '<div style="font-size:11px;font-weight:800">TOTAL</div>'
-    + (hasETB ? '<div style="font-size:13px;font-weight:800;color:var(--orange);text-align:right;font-family:\'JetBrains Mono\',monospace'+(hasDJF?'':';padding-right:2px')+'">'+totSmETB.toLocaleString()+'</div>' : '')
-    + (hasDJF ? '<div style="font-size:13px;font-weight:800;color:var(--teal);text-align:right;font-family:\'JetBrains Mono\',monospace;padding-right:2px">'+totSmDJF.toLocaleString()+'</div>' : '')
+
+    // ── Summary block — one horizontal row: Total Trucks | Total(Rest) | Submitted | Discrepancy | Truck Equiv ──
+    + '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 6px;margin-bottom:14px">'
+    + '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:6px">'
+    + '<div style="font-size:8px;font-weight:800;color:var(--text3);text-align:center;letter-spacing:.03em">TRUCKS</div>'
+    + '<div style="font-size:8px;font-weight:800;color:var(--text3);text-align:center;letter-spacing:.03em">TOTAL (REST)</div>'
+    + '<div style="font-size:8px;font-weight:800;color:var(--text3);text-align:center;letter-spacing:.03em">SUBMITTED</div>'
+    + '<div style="font-size:8px;font-weight:800;color:var(--text3);text-align:center;letter-spacing:.03em">DISCREPANCY</div>'
+    + '<div style="font-size:8px;font-weight:800;color:var(--text3);text-align:center;letter-spacing:.03em">TRUCK EQUIV</div>'
+    + '</div>'
+    + '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;align-items:center">'
+    + '<div style="font-size:12px;font-weight:800;color:var(--text);text-align:center;font-family:\'JetBrains Mono\',monospace">'+totalTrucksCount+'</div>'
+    + '<div style="font-size:12px;font-weight:800;color:var(--orange);text-align:center;font-family:\'JetBrains Mono\',monospace">'+wholeTotal.toLocaleString()+'</div>'
+    + '<div style="font-size:12px;font-weight:800;color:var(--green);text-align:center;font-family:\'JetBrains Mono\',monospace">'+(s.agashSubmitted||0).toLocaleString()+'</div>'
+    + '<div style="font-size:11px;font-weight:800;color:'+(wholeDiff===0?'var(--green)':'var(--red)')+';text-align:center;font-family:\'JetBrains Mono\',monospace">'+(wholeDiff===0?'✅0':(wholeDiff>0?'⬆️+':'⬇️')+Math.abs(wholeDiff).toLocaleString())+'</div>'
+    + '<div style="font-size:11px;font-weight:800;color:'+(truckEquiv===0?'var(--green)':'var(--red)')+';text-align:center;font-family:\'JetBrains Mono\',monospace">'+(truckEquiv===0?'0':(truckEquiv>0?'+':'')+truckEquiv)+'</div>'
     + '</div>'
     + '</div>'
 
@@ -7842,7 +7893,7 @@ function renderLockedSettlement(s, cashierName, cashierId, date, role, expectedC
     + '</div>'
 
     // ── SHIRAC RATE SECTION — ETB/FD split ──
-    + '<div style="font-size:10px;font-weight:800;color:var(--text3);letter-spacing:0.06em;margin-bottom:6px;padding:4px 0 4px;border-top:1px solid var(--border)">🚛 SHIRAC COUNT — RATES (×5,500 ETB / ×5,000 FD)</div>'
+    + '<div style="font-size:10px;font-weight:800;color:var(--text3);letter-spacing:0.06em;margin-bottom:6px;padding:4px 0 4px;border-top:1px solid var(--border)">🚛 SHIRAC COUNT — RATES (×'+window.tariffs.clientETB.toLocaleString()+' ETB / ×'+window.tariffs.clientFD.toLocaleString()+' FD)</div>'
     + '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;margin-bottom:12px">'
     + '<div style="display:grid;grid-template-columns:1fr 44px 76px 68px;background:var(--bg4);padding:6px 10px;border-bottom:1px solid var(--border)">'
     + '<div style="font-size:9px;font-weight:800;color:var(--text3)">TYPE</div>'
@@ -7857,8 +7908,8 @@ function renderLockedSettlement(s, cashierName, cashierId, date, role, expectedC
     + '<div style="font-size:11px;font-weight:800;color:var(--teal);text-align:right;font-family:\'JetBrains Mono\',monospace;padding-right:2px">'+t2ShiracFDAmount.toLocaleString()+'</div>'
     + '</div>'
     + '<div style="display:grid;grid-template-columns:1fr 1fr;padding:4px 10px 6px;border-top:1px solid var(--border)">'
-    + '<div style="font-size:9px;color:var(--orange)">'+t2ShiracETBTrucks+' trucks × 5,500 ETB</div>'
-    + '<div style="font-size:9px;color:var(--teal);text-align:right">'+t2ShiracDJFTrucks+' trucks × 5,000 FD</div>'
+    + '<div style="font-size:9px;color:var(--orange)">'+t2ShiracETBTrucks+' trucks × '+window.tariffs.clientETB.toLocaleString()+' ETB</div>'
+    + '<div style="font-size:9px;color:var(--teal);text-align:right">'+t2ShiracDJFTrucks+' trucks × '+window.tariffs.clientFD.toLocaleString()+' FD</div>'
     + '</div>'
     + '</div>'
 
@@ -7929,9 +7980,9 @@ function renderLockedSettlement(s, cashierName, cashierId, date, role, expectedC
         + (hasFD
             ? '<div style="font-size:13px;font-weight:800;font-family:\'JetBrains Mono\',monospace;color:var(--accent)">'+t2IfAllETB.toLocaleString()+' <span style="font-size:10px">ETB</span></div>'
             + '<div style="font-size:11px;font-weight:800;font-family:\'JetBrains Mono\',monospace;color:var(--teal);margin-top:2px">'+t2IfAllFD.toLocaleString()+' <span style="font-size:10px">FD</span></div>'
-            + '<div style="font-size:9px;color:var(--text3);margin-top:3px">'+t2ShiracETBTrucks+' × 5,500 ETB · '+t2ShiracDJFTrucks+' × 5,000 FD</div>'
+            + '<div style="font-size:9px;color:var(--text3);margin-top:3px">'+t2ShiracETBTrucks+' × '+window.tariffs.clientETB.toLocaleString()+' ETB · '+t2ShiracDJFTrucks+' × '+window.tariffs.clientFD.toLocaleString()+' FD</div>'
             : '<div style="font-size:15px;font-weight:800;font-family:\'JetBrains Mono\',monospace;color:var(--accent)">'+t2IfAllETB.toLocaleString()+'</div>'
-            + '<div style="font-size:9px;color:var(--text3);margin-top:3px">'+t2Total+' × 5,500 ETB</div>'
+            + '<div style="font-size:9px;color:var(--text3);margin-top:3px">'+t2Total+' × '+window.tariffs.clientETB.toLocaleString()+' ETB</div>'
           )
         + '</div>'
         + '<div style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.3);border-radius:var(--radius-sm);padding:12px 10px;text-align:center">'
@@ -8111,6 +8162,7 @@ window.stlAddManualUnpaid = function(cashierId) {
 
 window.stlRecomputeTable = function(cashierId) {
   var PRICE = window.tariffs.agashETB;
+  var PRICE_FD = window.tariffs.agashFD;
 
   // Read ETB truck counts
   var eS = parseInt(document.getElementById('stlEtbCntS_' + cashierId)?.value) || 0;
@@ -8121,7 +8173,7 @@ window.stlRecomputeTable = function(cashierId) {
   var dB = parseInt(document.getElementById('stlDjfCntB_' + cashierId)?.value) || 0;
   var dM = parseInt(document.getElementById('stlDjfCntM_' + cashierId)?.value) || 0;
 
-  // Update ETB amount cells (×1,300)
+  // Update ETB amount cells (live Agash ETB rate)
   var aES = document.getElementById('stlEtbAmtS_' + cashierId);
   var aEB = document.getElementById('stlEtbAmtB_' + cashierId);
   var aEM = document.getElementById('stlEtbAmtM_' + cashierId);
@@ -8129,17 +8181,17 @@ window.stlRecomputeTable = function(cashierId) {
   if (aEB) aEB.textContent = (eB * PRICE).toLocaleString();
   if (aEM) aEM.textContent = (eM * PRICE).toLocaleString();
 
-  // Update DJF amount cells (×1,000)
+  // Update DJF amount cells (dynamic agash FD rate)
   var aDS = document.getElementById('stlDjfAmtS_' + cashierId);
   var aDB = document.getElementById('stlDjfAmtB_' + cashierId);
   var aDM = document.getElementById('stlDjfAmtM_' + cashierId);
-  if (aDS) aDS.textContent = (dS * 1000).toLocaleString();
-  if (aDB) aDB.textContent = (dB * 1000).toLocaleString();
-  if (aDM) aDM.textContent = (dM * 1000).toLocaleString();
+  if (aDS) aDS.textContent = (dS * PRICE_FD).toLocaleString();
+  if (aDB) aDB.textContent = (dB * PRICE_FD).toLocaleString();
+  if (aDM) aDM.textContent = (dM * PRICE_FD).toLocaleString();
 
   // Footer totals (Table 1)
   var totETB = (eS + eB + eM) * PRICE;
-  var totDJF = (dS + dB + dM) * 1000;
+  var totDJF = (dS + dB + dM) * PRICE_FD;
   var tE = document.getElementById('stlTotalAmt_' + cashierId);
   var tD = document.getElementById('stlTotalDJF_' + cashierId);
   if (tE) tE.textContent = totETB.toLocaleString();
@@ -8157,8 +8209,8 @@ window.stlRecomputeTable = function(cashierId) {
 
   var shiracETB  = etbTrucks * window.tariffs.clientETB;
   var shiracDJF  = fdTrucks  * window.tariffs.clientFD;
-  var metalETB   = eM * PRICE;   // × 1,300 from Table 1
-  var metalDJF   = dM * 1000;    // × 1,000 from Table 1
+  var metalETB   = eM * PRICE;      // Agash ETB rate from Manage tariffs
+  var metalDJF   = dM * PRICE_FD;   // Agash FD rate from Manage tariffs
 
   var hasShiracETB = etbTrucks > 0;
   var hasShiracDJF = fdTrucks  > 0;
@@ -8210,7 +8262,7 @@ window.stlRecomputeTable = function(cashierId) {
     + '<div style="display:grid;grid-template-columns:'+cols+';padding:8px 10px;border-bottom:1px solid var(--border);align-items:center">'
     + '<div><div style="font-size:12px;font-weight:700;color:#10b981">🚛 Shirac</div>'
     + '<div style="font-size:9px;color:var(--text3);margin-top:1px">'
-    + (hasShiracETB ? '×5,500 ETB' : '') + (hasShiracETB && hasShiracDJF ? ' · ' : '') + (hasShiracDJF ? '×5,000 DJF' : '')
+    + (hasShiracETB ? '×'+window.tariffs.clientETB.toLocaleString()+' ETB' : '') + (hasShiracETB && hasShiracDJF ? ' · ' : '') + (hasShiracDJF ? '×'+window.tariffs.clientFD.toLocaleString()+' DJF' : '')
     + '</div></div>'
     + (hasETB ? smVal(shiracETB, 'var(--orange)', !hasDJF) : '<div></div>')
     + (hasDJF ? smVal(shiracDJF, 'var(--teal)',   true)    : '')
@@ -8219,7 +8271,7 @@ window.stlRecomputeTable = function(cashierId) {
     + '<div style="display:grid;grid-template-columns:'+cols+';padding:8px 10px;border-bottom:2px solid var(--border);align-items:center">'
     + '<div><div style="font-size:12px;font-weight:700;color:#ef4444">🏗️ Metal</div>'
     + '<div style="font-size:9px;color:var(--text3);margin-top:1px">'
-    + (hasMetalETB ? '×1,300 ETB' : '') + (hasMetalETB && hasMetalDJF ? ' · ' : '') + (hasMetalDJF ? '×1,000 DJF' : '')
+    + (hasMetalETB ? '×'+window.tariffs.agashETB.toLocaleString()+' ETB' : '') + (hasMetalETB && hasMetalDJF ? ' · ' : '') + (hasMetalDJF ? '×'+window.tariffs.agashFD.toLocaleString()+' DJF' : '')
     + '</div></div>'
     + (hasETB ? smVal(metalETB, 'var(--orange)', !hasDJF) : '<div></div>')
     + (hasDJF ? smVal(metalDJF, 'var(--teal)',   true)    : '')
@@ -8235,12 +8287,13 @@ window.stlRecomputeTable = function(cashierId) {
   var smBlock = document.getElementById('stlSummaryBlock_' + cashierId);
   if (smBlock) smBlock.innerHTML = smHTML;
 
-  // Auto-suggest Shibo amount = Bila Shirac total × 1,300 (only if not manually overridden)
+  // Auto-suggest Shibo amount = Bila Shirac total × live Sealer rate — Shibo Workers ARE Sealers (only if not manually overridden)
+  var SEALER_PRICE = window.tariffs.sealerPaid;
   var bilaTotal    = eS + dS;
-  var shiboSuggest = bilaTotal * PRICE;
+  var shiboSuggest = bilaTotal * SEALER_PRICE;
   var shiboInput   = document.getElementById('stlShiboGiven_' + cashierId);
   var shiboHint    = document.getElementById('stlShiboHint_'  + cashierId);
-  if (shiboHint) shiboHint.textContent = '💡 Suggested: ' + bilaTotal + ' Shirac × 1,300 = ' + shiboSuggest.toLocaleString() + ' ETB';
+  if (shiboHint) shiboHint.textContent = '💡 Suggested: ' + bilaTotal + ' Shirac × ' + SEALER_PRICE.toLocaleString() + ' = ' + shiboSuggest.toLocaleString() + ' ETB';
   if (shiboInput && shiboInput.dataset.auto === '1') shiboInput.value = shiboSuggest;
 
   // Re-check agash discrepancy
@@ -8258,16 +8311,16 @@ window.stlShiboOnInput = function(cashierId) {
 };
 
 window.stlShiboUnlock = function(cashierId) {
-  var PRICE = window.tariffs.agashETB;
+  var SEALER_PRICE = window.tariffs.sealerPaid; // Shibo Workers ARE Sealers — use sealer tariff, not Agash rate
   var eS = parseInt(document.getElementById('stlEtbCntS_' + cashierId)?.value) || 0;
   var dS = parseInt(document.getElementById('stlDjfCntS_' + cashierId)?.value) || 0;
   var bilaTotal    = eS + dS;
-  var shiboSuggest = bilaTotal * PRICE;
+  var shiboSuggest = bilaTotal * SEALER_PRICE;
   var inp       = document.getElementById('stlShiboGiven_'  + cashierId);
   var hint      = document.getElementById('stlShiboHint_'   + cashierId);
   var unlockBtn = document.getElementById('stlShiboUnlock_' + cashierId);
   if (inp)       { inp.dataset.auto = '1'; inp.value = shiboSuggest; }
-  if (hint)      hint.textContent = '💡 Suggested: ' + bilaTotal + ' Shirac × 1,300 = ' + shiboSuggest.toLocaleString() + ' ETB';
+  if (hint)      hint.textContent = '💡 Suggested: ' + bilaTotal + ' Shirac × ' + SEALER_PRICE.toLocaleString() + ' = ' + shiboSuggest.toLocaleString() + ' ETB';
   if (unlockBtn) unlockBtn.style.display = 'none';
 };
 
@@ -8337,20 +8390,38 @@ window.stlT2FdChanged = function(cashierId) {
   // so unpaid trucks are all ETB unless fdTrucks > t2Paid
   var unpaidFD  = Math.max(0, fdTrucks - t2Paid);
   var unpaidETB = t2Unpaid - unpaidFD;
+  // Collected = paid trucks (complement of unpaid), split the same ETB/FD way
+  var paidFD    = fdTrucks - unpaidFD;   // FD trucks that are actually paid
+  var paidETB   = t2Paid - paidFD;       // Remaining paid trucks are ETB
 
   var ifAllMainEl  = document.getElementById('stlIfAllMain_'  + cashierId);
   var ifAllSubEl   = document.getElementById('stlIfAllSub_'   + cashierId);
+  var collectedMainEl = document.getElementById('stlCollectedMain_' + cashierId);
+  var collectedSubEl  = document.getElementById('stlCollectedSub_'  + cashierId);
   var missingMainEl= document.getElementById('stlMissingMain_'+ cashierId);
   var missingSubEl = document.getElementById('stlMissingSub_' + cashierId);
 
   if (ifAllMainEl) {
     if (fdTrucks > 0) {
-      ifAllMainEl.innerHTML = (etbTrucks*5500).toLocaleString() + ' <span style="color:var(--text3);font-size:11px">ETB</span>'
+      ifAllMainEl.innerHTML = (etbTrucks*window.tariffs.clientETB).toLocaleString() + ' <span style="color:var(--text3);font-size:11px">ETB</span>'
         + ' + ' + fdActual.toLocaleString() + ' <span style="color:var(--teal);font-size:11px">FD</span>';
-      if (ifAllSubEl) ifAllSubEl.textContent = etbTrucks + ' × 5,500 ETB · ' + fdTrucks + ' × 5,000 FD';
+      if (ifAllSubEl) ifAllSubEl.textContent = etbTrucks + ' × ' + window.tariffs.clientETB.toLocaleString() + ' ETB · ' + fdTrucks + ' × ' + window.tariffs.clientFD.toLocaleString() + ' FD';
     } else {
-      ifAllMainEl.innerHTML = (t2Total*5500).toLocaleString() + ' <span style="color:var(--text3);font-size:11px">ETB</span>';
-      if (ifAllSubEl) ifAllSubEl.textContent = t2Total + ' × 5,500 ETB';
+      ifAllMainEl.innerHTML = (t2Total*window.tariffs.clientETB).toLocaleString() + ' <span style="color:var(--text3);font-size:11px">ETB</span>';
+      if (ifAllSubEl) ifAllSubEl.textContent = t2Total + ' × ' + window.tariffs.clientETB.toLocaleString() + ' ETB';
+    }
+  }
+
+  if (collectedMainEl) {
+    var collectedETBVal = paidETB * window.tariffs.clientETB;
+    var collectedFDVal  = paidFD  * window.tariffs.clientFD;
+    if (paidFD > 0) {
+      collectedMainEl.innerHTML = collectedETBVal.toLocaleString() + ' <span style="color:var(--text3);font-size:11px">ETB</span>'
+        + ' + ' + collectedFDVal.toLocaleString() + ' <span style="color:var(--teal);font-size:11px">FD</span>';
+      if (collectedSubEl) collectedSubEl.textContent = paidETB + ' × ' + window.tariffs.clientETB.toLocaleString() + ' ETB · ' + paidFD + ' × ' + window.tariffs.clientFD.toLocaleString() + ' FD';
+    } else {
+      collectedMainEl.innerHTML = (t2Paid*window.tariffs.clientETB).toLocaleString() + ' <span style="color:var(--text3);font-size:11px">ETB</span>';
+      if (collectedSubEl) collectedSubEl.textContent = t2Paid + ' × ' + window.tariffs.clientETB.toLocaleString() + ' ETB';
     }
   }
 
@@ -8360,10 +8431,10 @@ window.stlT2FdChanged = function(cashierId) {
     if (unpaidFD > 0) {
       missingMainEl.innerHTML = missingETBVal.toLocaleString() + ' <span style="color:var(--text3);font-size:11px">ETB</span>'
         + ' + ' + missingFDVal.toLocaleString() + ' <span style="color:var(--teal);font-size:11px">FD</span>';
-      if (missingSubEl) missingSubEl.textContent = unpaidETB + ' × 5,500 ETB · ' + unpaidFD + ' × 5,000 FD';
+      if (missingSubEl) missingSubEl.textContent = unpaidETB + ' × ' + window.tariffs.clientETB.toLocaleString() + ' ETB · ' + unpaidFD + ' × ' + window.tariffs.clientFD.toLocaleString() + ' FD';
     } else {
-      missingMainEl.innerHTML = (t2Unpaid*5500).toLocaleString() + ' <span style="color:var(--text3);font-size:11px">ETB</span>';
-      if (missingSubEl) missingSubEl.textContent = t2Unpaid + ' unpaid × 5,500 ETB';
+      missingMainEl.innerHTML = (t2Unpaid*window.tariffs.clientETB).toLocaleString() + ' <span style="color:var(--text3);font-size:11px">ETB</span>';
+      if (missingSubEl) missingSubEl.textContent = t2Unpaid + ' unpaid × ' + window.tariffs.clientETB.toLocaleString() + ' ETB';
     }
   }
 
@@ -8379,6 +8450,7 @@ window.stlT2FdChanged = function(cashierId) {
 
 window.submitSettlement = function(cashierId, date, expectedCompany) {
   var PRICE  = window.tariffs.agashETB;
+  var PRICE_FD = window.tariffs.agashFD;
   var CLIENT = window.tariffs.clientETB;
 
   var agashSubmitted = parseAmount(document.getElementById('stlAgashSubmit_'  + cashierId)?.value);
@@ -8398,7 +8470,7 @@ window.submitSettlement = function(cashierId, date, expectedCompany) {
   var cntMetal      = cntMetalETB  + cntMetalDJF;
   var t1Total       = cntShirac + cntBilaShirac + cntMetal;
   var t1Amount      = (cntShiracETB + cntBilaETB + cntMetalETB) * PRICE
-                    + (cntShiracDJF + cntBilaDJF + cntMetalDJF) * 1000;
+                    + (cntShiracDJF + cntBilaDJF + cntMetalDJF) * PRICE_FD;
   var t1Diff        = agashSubmitted - t1Amount;
 
   if (!agashSubmitted) { showToast('⚠️ Enter amount submitted by Agash Supervisor'); return; }
@@ -8693,7 +8765,6 @@ function _renderSettlementCanvas(s, cashierId, date, inclT1, inclT2, unpaidList)
   var companyEarnings = paidRevenue - sealerPay;
   var missingRevenue  = unpaidCount * CLIENT_FARE;
   var combinedTotal   = totalTrucks * CLIENT_FARE;
-  var netCompanyAllPaid = combinedTotal - totalTrucks * SEALER_PAY;
 
   // Per-sealer stats
   var sealerMap = {};
@@ -8719,12 +8790,14 @@ function _renderSettlementCanvas(s, cashierId, date, inclT1, inclT2, unpaidList)
 
   // Height calculation
   var headerH  = 110;
-  var summaryH = 32 + 130 + 16 + ROW_H*3 + 16; // section label + paid/unpaid boxes + gap + 3 rows
-  var combinedH = 32 + 80 + ROW_H*2 + (noSealerCount>0?ROW_H:0) + 16;
-  var sealerH  = sealerList.length > 0 ? (32 + sealerList.length * ROW_H + 8) : 0;
-  var unpaidH  = (unpaidList && unpaidList.length > 0) ? (32 + unpaidList.length * 50 + 8) : 0;
+  var summaryH  = inclT1 ? (32 + 130 + 16 + ROW_H*3 + 16) : 0; // section label + paid/unpaid boxes + gap + 3 rows
+  var combinedH = inclT2 ? (32 + 80 + ROW_H*2 + (noSealerCount>0?ROW_H:0) + 16) : 0;
+  var sealerH   = (inclT2 && sealerList.length > 0) ? (32 + sealerList.length * ROW_H + 8) : 0;
+  var unpaidH   = (unpaidList && unpaidList.length > 0) ? (32 + unpaidList.length * 50 + 8) : 0;
   var footerH  = 48;
-  var totalH   = headerH + summaryH + 16 + combinedH + 16 + sealerH + (unpaidH>0?16:0) + unpaidH + footerH + PAD;
+  var gap1 = (summaryH > 0 && (combinedH > 0 || unpaidH > 0)) ? 16 : 0;
+  var gap2 = (combinedH > 0 && unpaidH > 0) ? 16 : 0;
+  var totalH   = headerH + summaryH + gap1 + combinedH + (combinedH>0?16:0) + sealerH + gap2 + unpaidH + footerH + PAD;
 
   var canvas = document.createElement('canvas');
   canvas.width  = W * DPR;
@@ -8817,7 +8890,8 @@ function _renderSettlementCanvas(s, cashierId, date, inclT1, inclT2, unpaidList)
   // ── BODY ──
   var cy = headerH + 20;
 
-  // ── SUMMARY ──
+  // ── SUMMARY (Table 1 — Agash Report) ──
+  if (inclT1) {
   cy = sectionLabel(PAD, cy, '📊  SUMMARY');
 
   // Paid / Unpaid big boxes
@@ -8852,9 +8926,11 @@ function _renderSettlementCanvas(s, cashierId, date, inclT1, inclT2, unpaidList)
   m('-' + missingRevenue.toLocaleString() + ' ETB', W-PAD, cy+ROW_H/2, RED, 14, 'right');
   hline(cy+ROW_H, BORDER+'88');
   cy += ROW_H + 16;
+  }
 
-  // ── COMBINED TOTAL box ──
-  var ctBoxH = 80 + ROW_H*2 + (noSealerCount>0?ROW_H:0) + 16;
+  // ── COMBINED TOTAL box + PER SEALER (Table 2 — Trucks & Unpaid Collection) ──
+  if (inclT2) {
+  var ctBoxH = 80 + ROW_H*1 + (noSealerCount>0?ROW_H:0) + 16;
   rr(PAD, cy, W-PAD*2, ctBoxH, 14, BG3, BORDER, 1);
 
   // Combined total label + big number
@@ -8867,8 +8943,6 @@ function _renderSettlementCanvas(s, cashierId, date, inclT1, inclT2, unpaidList)
   iny += 10;
 
   rowLine('Sealer pay (all paid)', sealerPay.toLocaleString() + ' ETB', iny, TEXT2, ACCENT, '👷');
-  iny += ROW_H;
-  rowLine('Net company (all paid)', netCompanyAllPaid.toLocaleString() + ' ETB', iny, TEXT2, GREEN, '🏦');
   iny += ROW_H;
 
   if (noSealerCount > 0) {
@@ -8909,6 +8983,7 @@ function _renderSettlementCanvas(s, cashierId, date, inclT1, inclT2, unpaidList)
     });
     cy += 8;
   }
+  }
 
   // ── UNPAID TRUCKS LIST ──
   if (unpaidList && unpaidList.length > 0) {
@@ -8943,411 +9018,6 @@ function _renderSettlementCanvas(s, cashierId, date, inclT1, inclT2, unpaidList)
     } else {
       var a = document.createElement('a'); a.href=url; a.download=fname; a.click();
       showToast('📸 Report saved');
-    }
-    setTimeout(function(){ URL.revokeObjectURL(url); }, 5000);
-  }, 'image/png');
-}
-// ── OLD CANVAS (kept for reference, unreachable) ──
-function _renderSettlementCanvas_OLD(s, cashierId, date, inclT1, inclT2, unpaidList) {
-  var PRICE = window.tariffs.agashETB;
-  var DATE_LBL = { tomorrow:'Demain', aftertomorrow:'Après-demain' };
-  var COLL_LBL = { head_agash:'Sup. Agash', head_ops:'Sup. Ops' };
-  var TYPE_LBL = { shirac:'Shirac', bilashirac:'Bila Shirac', metal:'Métal' };
-  var TYPE_COL = { shirac:'#10b981', bilashirac:'#3b82f6', metal:'#ef4444' };
-
-  var dateObj = new Date(date + 'T12:00:00');
-  var dateLabel = dateObj.toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
-  var cashierName = s.cashierName || getCashierLabel(cashierId);
-
-  // ── Measure canvas height ──
-  var W = 720;
-  var PAD = 28;
-  var ROW_H = 36;
-  var SEC_H = 30;
-
-  var sections = [];
-
-  // Header is always included
-  var headerH = 120;
-
-  if (inclT1) {
-    // Table 1: title(26) + group-header(14) + sub-header(16) + 3 rows + footer(36) + 16 + 52 + 10 + 28 + 18
-    sections.push({ type:'table1', h: 26+14+16+(3*ROW_H)+ROW_H+16+52+10+28+18 });
-  }
-  if (inclT2) {
-    sections.push({ type:'table2', h: 26+10+56+14+54+10+44+18 });
-  }
-  if (unpaidList !== null) {
-    var upH = 28+6 + (unpaidList.length > 0 ? unpaidList.length*56+10 : 42);
-    sections.push({ type:'unpaid', h: upH });
-  }
-  if (s.notes) sections.push({ type:'notes', h: 52 });
-  if (s.reporterName || s.submittedBy) sections.push({ type:'reporter', h: 38 });
-
-  var totalH = headerH + sections.reduce(function(a,b){return a+b.h;},0) + PAD * 2 + 32; // footer
-
-  var canvas = document.createElement('canvas');
-  var ratio = window.devicePixelRatio || 2;
-  canvas.width  = W * ratio;
-  canvas.height = totalH * ratio;
-  canvas.style.width  = W + 'px';
-  canvas.style.height = totalH + 'px';
-  var ctx = canvas.getContext('2d');
-  ctx.scale(ratio, ratio);
-
-  // ── Palette ──
-  var BG     = '#0f1623';
-  var BG2    = '#161e2e';
-  var BG3    = '#1e2a3f';
-  var BG4    = '#243048';
-  var BORDER = '#2a3a55';
-  var TEXT   = '#e8edf5';
-  var TEXT2  = '#8a9bb5';
-  var TEXT3  = '#5a6f8a';
-  var ACCENT = '#3b82f6';
-  var GREEN  = '#22c55e';
-  var RED    = '#ef4444';
-  var ORANGE = '#f59e0b';
-  var PURPLE = '#a855f7';
-
-  // ── Helpers ──
-  function fillRoundRect(x, y, w, h, r, color) {
-    ctx.save(); ctx.fillStyle = color;
-    ctx.beginPath();
-    ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
-    ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
-    ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
-    ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y);
-    ctx.closePath(); ctx.fill(); ctx.restore();
-  }
-  function strokeRoundRect(x, y, w, h, r, color, lw) {
-    ctx.save(); ctx.strokeStyle = color; ctx.lineWidth = lw||1;
-    ctx.beginPath();
-    ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
-    ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
-    ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
-    ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y);
-    ctx.closePath(); ctx.stroke(); ctx.restore();
-  }
-  function txt(text, x, y, color, size, weight, align, maxW) {
-    ctx.save();
-    ctx.fillStyle = color;
-    ctx.font = (weight||'600') + ' ' + (size||13) + 'px "Space Grotesk", sans-serif';
-    ctx.textAlign = align || 'left';
-    ctx.textBaseline = 'middle';
-    if (maxW) ctx.fillText(text, x, y, maxW);
-    else      ctx.fillText(text, x, y);
-    ctx.restore();
-  }
-  function mono(text, x, y, color, size) {
-    ctx.save();
-    ctx.fillStyle = color;
-    ctx.font = '700 ' + (size||13) + 'px "JetBrains Mono", monospace';
-    ctx.textAlign = 'left';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(text, x, y);
-    ctx.restore();
-  }
-  function monoR(text, x, y, color, size) {
-    ctx.save();
-    ctx.fillStyle = color;
-    ctx.font = '700 ' + (size||13) + 'px "JetBrains Mono", monospace';
-    ctx.textAlign = 'right';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(text, x, y);
-    ctx.restore();
-  }
-  function hline(y, color) {
-    ctx.save(); ctx.strokeStyle = color||BORDER; ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(PAD, y); ctx.lineTo(W-PAD, y); ctx.stroke(); ctx.restore();
-  }
-  function sectionTitle(y, label) {
-    fillRoundRect(PAD, y, W - PAD*2, SEC_H, 6, BG3);
-    txt(label, PAD+10, y + SEC_H/2, TEXT3, 10, '800');
-    return y + SEC_H + 8;
-  }
-
-  // ── Background — light white ──
-  ctx.fillStyle = '#f4f6fb';
-  ctx.fillRect(0, 0, W, totalH);
-
-  // ── Header — blue gradient ──
-  var hGrad = ctx.createLinearGradient(0, 0, W, headerH);
-  hGrad.addColorStop(0, '#1e3a8a');
-  hGrad.addColorStop(0.6, '#2563eb');
-  hGrad.addColorStop(1, '#3b82f6');
-  ctx.fillStyle = hGrad;
-  ctx.fillRect(0, 0, W, headerH);
-
-  // Circle decoration
-  ctx.save(); ctx.globalAlpha=0.07; ctx.fillStyle='#fff';
-  ctx.beginPath(); ctx.arc(W-30,30,80,0,Math.PI*2); ctx.fill(); ctx.restore();
-
-  // Logo
-  fillRoundRect(PAD, 22, 46, 46, 12, 'rgba(255,255,255,0.2)');
-  strokeRoundRect(PAD, 22, 46, 46, 12, 'rgba(255,255,255,0.3)');
-  ctx.save(); ctx.font='800 20px "Space Grotesk",sans-serif';
-  ctx.fillStyle='#fff'; ctx.textAlign='center'; ctx.textBaseline='middle';
-  ctx.fillText('W', PAD+23, 45); ctx.restore();
-
-  ctx.save(); ctx.font='800 17px "Space Grotesk",sans-serif';
-  ctx.fillStyle='#fff'; ctx.textAlign='left'; ctx.textBaseline='middle';
-  ctx.fillText('WKABE Hask Services', PAD+58, 33); ctx.restore();
-  ctx.save(); ctx.font='500 11px "Space Grotesk",sans-serif';
-  ctx.fillStyle='rgba(255,255,255,0.65)'; ctx.textAlign='left'; ctx.textBaseline='middle';
-  ctx.fillText('Rapport de règlement journalier', PAD+58, 53); ctx.restore();
-
-  // Date chip
-  fillRoundRect(PAD, 76, 240, 24, 12, 'rgba(255,255,255,0.2)');
-  ctx.save(); ctx.font='600 10px "Space Grotesk",sans-serif'; ctx.fillStyle='#fff';
-  ctx.textAlign='left'; ctx.textBaseline='middle'; ctx.fillText('📅 '+dateLabel, PAD+10, 88); ctx.restore();
-
-  // Cashier chip
-  fillRoundRect(W-PAD-140, 76, 140, 24, 12, 'rgba(255,255,255,0.15)');
-  strokeRoundRect(W-PAD-140, 76, 140, 24, 12, 'rgba(255,255,255,0.3)');
-  ctx.save(); ctx.font='700 10px "Space Grotesk",sans-serif'; ctx.fillStyle='#fff';
-  ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('💼 '+cashierName, W-PAD-70, 88); ctx.restore();
-
-  var cy = headerH + 14;
-
-  function lightCard(x, y, w, h, r) {
-    ctx.save(); ctx.shadowColor='rgba(0,0,0,0.07)'; ctx.shadowBlur=8; ctx.shadowOffsetY=2;
-    fillRoundRect(x,y,w,h,r,'#ffffff'); ctx.restore();
-    strokeRoundRect(x,y,w,h,r,'rgba(0,0,0,0.06)');
-  }
-  function cardTitle(x, y, w, h, label) {
-    ctx.fillStyle='#f8faff'; ctx.fillRect(x,y,w,h);
-    ctx.save(); ctx.strokeStyle='#e8eef8'; ctx.lineWidth=1;
-    ctx.beginPath(); ctx.moveTo(x,y+h); ctx.lineTo(x+w,y+h); ctx.stroke(); ctx.restore();
-    ctx.save(); ctx.font='700 9px "Space Grotesk",sans-serif';
-    ctx.fillStyle='#6b7280'; ctx.textAlign='left'; ctx.textBaseline='middle';
-    ctx.fillText(label, x+12, y+h/2); ctx.restore();
-  }
-
-  // ══ TABLE 1 ══
-  if (inclT1) {
-    var PRICE_FD = window.tariffs.agashFD;
-    var t1X=PAD, t1W=W-PAD*2;
-
-    // Read ETB+DJF split counts (saved since the ETB/DJF form was introduced)
-    var eS=s.cntShiracETB||0, dS=s.cntShiracDJF||0;
-    var eB=s.cntBilaETB  ||0, dB=s.cntBilaDJF  ||0;
-    var eM=s.cntMetalETB ||0, dM=s.cntMetalDJF  ||0;
-    // Fallback: if ETB split fields absent, use combined total on ETB side
-    if (eS===0 && dS===0 && s.cntShirac) { eS=s.cntShirac; }
-    if (eB===0 && dB===0 && s.cntBilaShirac) { eB=s.cntBilaShirac; }
-    if (eM===0 && dM===0 && s.cntMetal) { eM=s.cntMetal; }
-
-    var t1Rows=[
-      {label:'🚛 Shirac',     color:'#10b981', eC:eS, dC:dS},
-      {label:'🚚 Bila Shirac',color:'#3b82f6', eC:eB, dC:dB},
-      {label:'🏗️ Métal',    color:'#ef4444', eC:eM, dC:dM}
-    ];
-    var t1TotalCnt = eS+dS+eB+dB+eM+dM;
-    var t1TotalETB = (eS+eB+eM)*PRICE + (dS+dB+dM)*PRICE_FD;
-    var t1TotalFD  = (dS+dB+dM)*PRICE_FD; // kept for display
-
-    // Card height: double-header(36) + 3 rows + footer row + 16 + 52 + 10 + 28 + 18
-    var t1CardH = 36 + 3*ROW_H + ROW_H + 16 + 52 + 10 + 28 + 18;
-    lightCard(t1X, cy, t1W, t1CardH, 10);
-    cardTitle(t1X, cy, t1W, 26, '📋 TABLEAU 1 — RAPPORT AGASH · 1 300 ETB / 1 000 FD');
-    cy += 26;
-
-    // ── Double header: TYPE | ←ETB×1,300→ | ←DJF×1,000→ ──
-    // Column x positions: TYPE | ETB_CNT | ETB_AMT | DJF_CNT | DJF_AMT
-    var cT=t1X+12;
-    var cEC=t1X+t1W*0.38; // ETB count center
-    var cEA=t1X+t1W*0.56; // ETB amount right-align
-    var cDC=t1X+t1W*0.73; // DJF count center
-    var cDA=t1X+t1W-10;   // DJF amount right-align
-
-    // Group header row
-    ctx.fillStyle='#f0f6ff'; ctx.fillRect(t1X,cy,t1W,14);
-    ctx.save();
-    ctx.font='700 8px "Space Grotesk",sans-serif';
-    // ETB group label
-    ctx.fillStyle='#16a34a'; ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText('ETB × 1,300', t1X+(cEA-cT)*0.55+cT, cy+7);
-    // DJF group label
-    ctx.fillStyle='#0d9488'; ctx.textAlign='center';
-    ctx.fillText('DJF × 1,000', (cDC+cDA)/2, cy+7);
-    ctx.restore();
-    // Underlines for groups
-    ctx.save(); ctx.strokeStyle='rgba(22,163,74,0.4)'; ctx.lineWidth=1.5;
-    ctx.beginPath(); ctx.moveTo(cT+60,cy+13); ctx.lineTo(cEA,cy+13); ctx.stroke();
-    ctx.strokeStyle='rgba(13,148,136,0.4)';
-    ctx.beginPath(); ctx.moveTo(cDC-20,cy+13); ctx.lineTo(cDA,cy+13); ctx.stroke();
-    ctx.restore();
-    cy+=14;
-
-    // Sub-header row
-    ctx.fillStyle='#f8faff'; ctx.fillRect(t1X,cy,t1W,16);
-    ctx.save();ctx.strokeStyle='#e8eef8';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(t1X,cy+16);ctx.lineTo(t1X+t1W,cy+16);ctx.stroke();ctx.restore();
-    ctx.save();ctx.font='700 8px "Space Grotesk",sans-serif';ctx.fillStyle='#9ca3af';ctx.textBaseline='middle';
-    ctx.textAlign='left';   ctx.fillText('TYPE',   cT,  cy+8);
-    ctx.textAlign='center'; ctx.fillText('CAMIONS',cEC, cy+8);
-    ctx.fillStyle='#16a34a';ctx.textAlign='right';  ctx.fillText('TOTAL',  cEA, cy+8);
-    ctx.fillStyle='#9ca3af';ctx.textAlign='center'; ctx.fillText('CAMIONS',cDC, cy+8);
-    ctx.fillStyle='#0d9488';ctx.textAlign='right';  ctx.fillText('TOTAL',  cDA, cy+8);
-    ctx.restore();
-    cy+=16;
-
-    // Data rows
-    t1Rows.forEach(function(row,ri){
-      var ry=cy+ri*ROW_H;
-      if(ri>0){ctx.save();ctx.strokeStyle='#f3f4f6';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(t1X,ry);ctx.lineTo(t1X+t1W,ry);ctx.stroke();ctx.restore();}
-      ctx.save();ctx.fillStyle=row.color;ctx.beginPath();ctx.arc(cT+4,ry+ROW_H/2,4,0,Math.PI*2);ctx.fill();ctx.restore();
-      ctx.save();ctx.font='600 11px "Space Grotesk",sans-serif';ctx.fillStyle=row.color;ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(row.label,cT+14,ry+ROW_H/2);ctx.restore();
-      // ETB count + amount
-      ctx.save();ctx.font='700 13px "JetBrains Mono",monospace';ctx.fillStyle='#374151';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(String(row.eC),cEC,ry+ROW_H/2);ctx.restore();
-      ctx.save();ctx.font='600 11px "JetBrains Mono",monospace';ctx.fillStyle='#059669';ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText((row.eC*PRICE).toLocaleString(),cEA,ry+ROW_H/2);ctx.restore();
-      // DJF count + amount
-      ctx.save();ctx.font='700 13px "JetBrains Mono",monospace';ctx.fillStyle='#374151';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(String(row.dC),cDC,ry+ROW_H/2);ctx.restore();
-      ctx.save();ctx.font='600 11px "JetBrains Mono",monospace';ctx.fillStyle='#0d9488';ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText((row.dC*PRICE_FD).toLocaleString(),cDA,ry+ROW_H/2);ctx.restore();
-    });
-    cy+=3*ROW_H;
-
-    // Footer — TOTAL row
-    ctx.fillStyle='#eff6ff'; ctx.fillRect(t1X,cy,t1W,ROW_H);
-    ctx.save();ctx.strokeStyle='#dbeafe';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(t1X,cy);ctx.lineTo(t1X+t1W,cy);ctx.stroke();ctx.restore();
-    ctx.save();ctx.font='800 11px "Space Grotesk",sans-serif';ctx.fillStyle='#1e3a8a';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText('TOTAL',cT,cy+ROW_H/2);ctx.restore();
-    // ETB total
-    var totETB=(eS+eB+eM)*PRICE;
-    ctx.save();ctx.font='700 12px "JetBrains Mono",monospace';ctx.fillStyle='#059669';ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText(totETB.toLocaleString()+' ETB',cEA,cy+ROW_H/2);ctx.restore();
-    // DJF total
-    var totDJF=(dS+dB+dM)*PRICE_FD;
-    ctx.save();ctx.font='700 12px "JetBrains Mono",monospace';ctx.fillStyle='#0d9488';ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText(totDJF.toLocaleString()+' FD',cDA,cy+ROW_H/2);ctx.restore();
-    cy+=ROW_H+16;
-
-    // Submitted by Agash + Shibo cards
-    var hw=(t1W-8)/2;
-    lightCard(t1X,cy,hw,52,8);
-    ctx.save();ctx.font='700 8px "Space Grotesk",sans-serif';ctx.fillStyle='#16a34a';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText('SOUMIS PAR SUP. AGASH',t1X+10,cy+14);ctx.restore();
-    ctx.save();ctx.font='700 17px "JetBrains Mono",monospace';ctx.fillStyle='#15803d';ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText((s.agashSubmitted||0).toLocaleString()+' ETB',t1X+hw-10,cy+34);ctx.restore();
-
-    lightCard(t1X+hw+8,cy,hw,52,8);
-    ctx.save();ctx.font='700 8px "Space Grotesk",sans-serif';ctx.fillStyle='#9333ea';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText('DONNÉ AUX WORKERS SHIBO',t1X+hw+18,cy+14);ctx.restore();
-    ctx.save();ctx.font='700 17px "JetBrains Mono",monospace';ctx.fillStyle='#7e22ce';ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText((s.shiboGiven||0).toLocaleString()+' ETB',t1X+t1W-10,cy+34);ctx.restore();
-    cy+=52+10;
-
-    // Discrepancy bar (compares agashSubmitted vs ETB total only)
-    var agashDiff=(s.agashSubmitted||0)-totETB;
-    var dBg=agashDiff===0?'#f0fdf4':'#fef2f2', dBd=agashDiff===0?'#bbf7d0':'#fecaca';
-    var dTxt=agashDiff===0?'✅ Montant soumis correspond exactement':(agashDiff>0?'⬆️ +':'⬇️ ')+Math.abs(agashDiff).toLocaleString()+' ETB';
-    var dCol=agashDiff===0?'#15803d':'#dc2626';
-    fillRoundRect(t1X,cy,t1W,28,6,dBg); strokeRoundRect(t1X,cy,t1W,28,6,dBd);
-    ctx.save();ctx.font='700 11px "Space Grotesk",sans-serif';ctx.fillStyle=dCol;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(dTxt,t1X+t1W/2,cy+14);ctx.restore();
-    cy+=28+18;
-  }
-
-  // ══ TABLE 2 ══
-  if (inclT2) {
-    var t2X=PAD, t2W=W-PAD*2;
-    var t2n=s.t2Total||0, t2p=s.t2Paid||0, t2u=s.t2Unpaid||0;
-    var ifAll=s.t2IfAllPaid||t2n*window.tariffs.clientETB, miss=s.t2Missing||t2u*window.tariffs.clientETB, coll=s.t2Collected||t2p*window.tariffs.clientETB;
-
-    lightCard(t2X, cy, t2W, 26+10+64+14+62+12+52+18, 10);
-    cardTitle(t2X, cy, t2W, 26, '🚛 TABLEAU 2 — RÉSUMÉ DES CAMIONS');
-    cy+=26+10;
-
-    var bw=(t2W-16)/3;
-    [{l:'TOTAL',v:String(t2n),bg:'#eff6ff',bd:'#bfdbfe',c:'#2563eb'},
-     {l:'PAYÉS',v:String(t2p),bg:'#f0fdf4',bd:'#bbf7d0',c:'#16a34a'},
-     {l:'NON PAYÉS',v:String(t2u),bg:'#fef2f2',bd:'#fecaca',c:'#dc2626'}
-    ].forEach(function(st,i){
-      var bx=t2X+i*(bw+8);
-      fillRoundRect(bx,cy,bw,56,8,st.bg); strokeRoundRect(bx,cy,bw,56,8,st.bd);
-      ctx.save();ctx.font='700 9px "Space Grotesk",sans-serif';ctx.fillStyle='#6b7280';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(st.l,bx+bw/2,cy+15);ctx.restore();
-      ctx.save();ctx.font='800 26px "JetBrains Mono",monospace';ctx.fillStyle=st.c;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(st.v,bx+bw/2,cy+38);ctx.restore();
-    });
-    cy+=56+14;
-
-    var fw=(t2W-8)/2;
-    fillRoundRect(t2X,cy,fw,54,8,'#eff6ff'); strokeRoundRect(t2X,cy,fw,54,8,'#bfdbfe');
-    ctx.save();ctx.font='700 8px "Space Grotesk",sans-serif';ctx.fillStyle='#1d4ed8';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('💡 SI TOUT PAYÉ',t2X+fw/2,cy+14);ctx.restore();
-    ctx.save();ctx.font='700 17px "JetBrains Mono",monospace';ctx.fillStyle='#1d4ed8';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(ifAll.toLocaleString()+' ETB',t2X+fw/2,cy+34);ctx.restore();
-    ctx.save();ctx.font='500 9px "Space Grotesk",sans-serif';ctx.fillStyle='#9ca3af';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(String(t2n)+' × 5,500',t2X+fw/2,cy+47);ctx.restore();
-
-    fillRoundRect(t2X+fw+8,cy,fw,54,8,'#fef2f2'); strokeRoundRect(t2X+fw+8,cy,fw,54,8,'#fecaca');
-    ctx.save();ctx.font='700 8px "Space Grotesk",sans-serif';ctx.fillStyle='#dc2626';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('❌ MANQUANT',t2X+fw+8+fw/2,cy+14);ctx.restore();
-    ctx.save();ctx.font='700 17px "JetBrains Mono",monospace';ctx.fillStyle='#dc2626';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(miss.toLocaleString()+' ETB',t2X+fw+8+fw/2,cy+34);ctx.restore();
-    ctx.save();ctx.font='500 9px "Space Grotesk",sans-serif';ctx.fillStyle='#9ca3af';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(String(t2u)+' × 5,500',t2X+fw+8+fw/2,cy+47);ctx.restore();
-    cy+=54+10;
-
-    fillRoundRect(t2X,cy,t2W,44,8,'#f0fdf4'); strokeRoundRect(t2X,cy,t2W,44,8,'#bbf7d0');
-    ctx.save();ctx.font='700 9px "Space Grotesk",sans-serif';ctx.fillStyle='#16a34a';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText('✅ COLLECTÉ',t2X+12,cy+16);ctx.restore();
-    ctx.save();ctx.font='700 17px "JetBrains Mono",monospace';ctx.fillStyle='#15803d';ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText(coll.toLocaleString()+' ETB',t2X+t2W-12,cy+28);ctx.restore();
-    cy+=44+18;
-  }
-
-  // ══ UNPAID LIST ══
-  if (unpaidList !== null) {
-    var ulX=PAD, ulW=W-PAD*2;
-    fillRoundRect(ulX,cy,ulW,28,8,'#fef2f2'); strokeRoundRect(ulX,cy,ulW,28,8,'#fecaca');
-    ctx.save();ctx.font='700 9px "Space Grotesk",sans-serif';ctx.fillStyle='#dc2626';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText('❌ CAMIONS NON PAYÉS ('+unpaidList.length+')',ulX+12,cy+14);ctx.restore();
-    cy+=28+6;
-
-    if(unpaidList.length===0){
-      fillRoundRect(ulX,cy,ulW,34,8,'#f0fdf4'); strokeRoundRect(ulX,cy,ulW,34,8,'#bbf7d0');
-      ctx.save();ctx.font='700 12px "Space Grotesk",sans-serif';ctx.fillStyle='#15803d';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('✅ Aucun camion non payé',W/2,cy+17);ctx.restore();
-      cy+=34+8;
-    } else {
-      unpaidList.forEach(function(ut,i){
-        var col=TYPE_COL[ut.truckType]||'#6b7280';
-        var dyl=DATE_LBL[ut.payDate]||ut.payDate||'—';
-        var cyl=COLL_LBL[ut.collector]||ut.collector||'—';
-        var rh=50, ry=cy+i*(rh+6);
-        lightCard(ulX,ry,ulW,rh,8);
-        fillRoundRect(ulX,ry,5,rh,8,col);
-        fillRoundRect(ulX+14,ry+rh/2-12,24,24,6,col+'20');
-        ctx.save();ctx.font='700 10px "Space Grotesk",sans-serif';ctx.fillStyle=col;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(String(i+1),ulX+26,ry+rh/2);ctx.restore();
-        ctx.save();ctx.font='700 16px "JetBrains Mono",monospace';ctx.fillStyle='#111827';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(ut.plate,ulX+46,ry+rh/2);ctx.restore();
-        ctx.save();ctx.font='700 11px "Space Grotesk",sans-serif';ctx.fillStyle='#2563eb';ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText(dyl,ulX+ulW-10,ry+rh/2-9);ctx.restore();
-        ctx.save();ctx.font='500 10px "Space Grotesk",sans-serif';ctx.fillStyle='#9ca3af';ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText(cyl,ulX+ulW-10,ry+rh/2+9);ctx.restore();
-      });
-      cy+=unpaidList.length*(50+6)+10;
-    }
-  }
-
-  // ── Notes ──
-  if(s.notes){
-    fillRoundRect(PAD,cy,W-PAD*2,42,8,'#fff'); strokeRoundRect(PAD,cy,W-PAD*2,42,8,'#e5e7eb');
-    ctx.save();ctx.font='500 11px "Space Grotesk",sans-serif';ctx.fillStyle='#374151';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText('📝 '+s.notes,PAD+12,cy+21);ctx.restore();
-    cy+=42+10;
-  }
-
-  // ── Reporter ──
-  if(s.reporterName||s.submittedBy){
-    cy+=6;
-    ctx.save();ctx.strokeStyle='#e5e7eb';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(PAD,cy);ctx.lineTo(W-PAD,cy);ctx.stroke();ctx.restore();
-    ctx.save();ctx.font='500 10px "Space Grotesk",sans-serif';ctx.fillStyle='#9ca3af';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText('📋 Rapporté par',PAD,cy+18);ctx.restore();
-    ctx.save();ctx.font='700 12px "Space Grotesk",sans-serif';ctx.fillStyle='#1e3a8a';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(s.reporterName||s.submittedBy,PAD+115,cy+18);ctx.restore();
-    cy+=32;
-  }
-
-  // ── Footer ──
-  cy+=8;
-  ctx.save();ctx.strokeStyle='#e5e7eb';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();ctx.restore();
-  ctx.save();ctx.font='500 10px "Space Grotesk",sans-serif';ctx.fillStyle='#9ca3af';ctx.textAlign='center';ctx.textBaseline='middle';
-  ctx.fillText('WKABE Hask Tracker · Généré le '+new Date().toLocaleString('fr-FR',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}),W/2,cy+18);
-  ctx.restore();
-
-  // ── Export ──
-  canvas.toBlob(function(blob) {
-    if (!blob) { showToast('❌ Échec de génération'); return; }
-    var url = URL.createObjectURL(blob);
-    if (navigator.share && navigator.canShare && navigator.canShare({ files: [new File([blob],'rapport.png',{type:'image/png'})] })) {
-      navigator.share({
-        title: 'Rapport WKABE Hask',
-        files: [new File([blob],'rapport_hask.png',{type:'image/png'})]
-      }).catch(function(){});
-    } else {
-      // Fallback: open image in new tab or trigger download
-      var a = document.createElement('a');
-      a.href = url;
-      a.download = 'rapport_hask_' + date + '.png';
-      a.click();
-      showToast('📸 Image sauvegardée');
     }
     setTimeout(function(){ URL.revokeObjectURL(url); }, 5000);
   }, 'image/png');
