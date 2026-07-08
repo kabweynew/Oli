@@ -1752,7 +1752,6 @@
       <div class="report-row"><span class="report-label">❌ Unpaid</span><span class="report-val" style="color:var(--red)">0</span></div>
       <div class="report-row"><span class="report-label">💰 Paid Revenue</span><span class="report-val" style="color:var(--teal)">0 ETB</span></div>
       <div class="report-row"><span class="report-label">👷 Total Sealer Pay</span><span class="report-val">0 ETB</span></div>
-      <div class="report-row"><span class="report-label">🏢 Company Earnings</span><span class="report-val" style="color:var(--green)">0 ETB</span></div>
       <div class="report-row"><span class="report-label">💸 Total Advances</span><span class="report-val" style="color:var(--red)">-0 ETB</span></div>
       
         <div class="report-row"><span class="report-label">🥗 Lunch</span><span class="report-val" style="color:var(--red)">—</span></div>
@@ -2477,7 +2476,7 @@
   <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-title">🍽️ Lunch &amp; Dinner</div>
-    <div style="font-size:12px;color:var(--text2);margin-bottom:14px">Amounts deducted from company earnings for this day.</div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:14px">Amounts deducted for this day.</div>
     <div class="form-group">
       <label class="form-label">🥗 LUNCH (ETB)</label>
       <input class="form-input" type="number" id="mealLunchInput" placeholder="0" min="0" style="font-family:'JetBrains Mono',monospace">
@@ -4661,7 +4660,6 @@ function renderReports() {
       <div class="report-row"><span class="report-label">❌ Unpaid</span><span class="report-val" style="color:var(--red)">${unpaidCount}</span></div>
       <div class="report-row"><span class="report-label">💰 Paid Revenue</span><span class="report-val" style="color:var(--teal)">${totalClient.toLocaleString()} ETB</span></div>
       ${reportToggles.advances ? `<div class="report-row"><span class="report-label">👷 Total Sealer Pay</span><span class="report-val">${totalWorker.toLocaleString()} ETB</span></div>` : ''}
-      <div class="report-row"><span class="report-label">🏢 Company Earnings</span><span class="report-val" style="color:var(--green)">${totalCompany.toLocaleString()} ETB</span></div>
       ${reportToggles.advances ? `<div class="report-row"><span class="report-label">💸 Total Advances</span><span class="report-val" style="color:var(--red)">-${totalAdv.toLocaleString()} ETB</span></div>` : ''}
       ${reportToggles.meals ? `
         <div class="report-row"><span class="report-label">🥗 Lunch</span><span class="report-val" style="color:var(--red)">${dedLunch>0?'-'+dedLunch.toLocaleString()+' ETB':'—'}</span></div>
@@ -4788,10 +4786,6 @@ window.shareReportAsImage = function() {
       <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.07)">
         <span style="font-size:12px;color:#94a3b8">💰 Paid Revenue</span>
         <span style="font-size:12px;font-weight:700;color:#22d3ee">${d.totalClient.toLocaleString()} ETB</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.07)">
-        <span style="font-size:12px;color:#94a3b8">🏢 Company Earnings</span>
-        <span style="font-size:12px;font-weight:700;color:#4ade80">${d.totalCompany.toLocaleString()} ETB</span>
       </div>
       ${d.unpaidAmount > 0 ? `
       <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(239,68,68,0.2)">
@@ -7360,13 +7354,6 @@ function renderSettlementForm() {
     + '<div class="stl-stat"><div class="stl-stat-num" style="color:var(--red)">' + unpaidCount + '</div><div class="stl-stat-lbl">UNPAID</div></div>'
     + '</div>';
 
-  // Expected company earnings card
-  html += '<div style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.25);border-radius:var(--radius);padding:12px 14px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;">'
-    + '<div><div style="font-size:10px;color:var(--text3);font-weight:700;letter-spacing:0.06em">💡 EXPECTED COMPANY EARNINGS</div>'
-    + '<div style="font-size:11px;color:var(--text2);margin-top:2px">' + paidCount + ' paid × ' + (CLIENT_PRICE - WORKER_PAY.paid).toLocaleString() + ' + ' + partialCount + ' partial × ' + (window.tariffs.partialFare - WORKER_PAY.partial).toLocaleString() + '</div></div>'
-    + '<div style="font-size:20px;font-weight:800;font-family:\'JetBrains Mono\',monospace;color:var(--accent)">' + expectedCompany.toLocaleString() + '<span style="font-size:11px;font-weight:600;margin-left:3px">ETB</span></div>'
-    + '</div>';
-
   // Show settlement card for each cashier (cashiers only see their own, never the other);
   // a Foreman gets their own slot keyed by their worker id
   const isForeman = role === 'worker' && !!getUserPerms(currentUser.id).seeSettlement;
@@ -7709,7 +7696,6 @@ function renderLockedSettlement(s, cashierName, cashierId, date, role, expectedC
   var t1Total    = b + nb + m;
   var t1Amount   = eS*PRICE + eB*PRICE + eM*PRICE;
   var t1AmountFD = dS*PRICE_FD + dB*PRICE_FD + dM*PRICE_FD;
-  var agashDiff  = (s.agashSubmitted || 0) - t1Amount;
 
   var rows = [
     { label:'🚛 Shirac',     color:'#10b981', eC:eS, dC:dS },
@@ -7828,10 +7814,10 @@ function renderLockedSettlement(s, cashierName, cashierId, date, role, expectedC
     + '<div class="stl-stat"><div class="stl-stat-num" style="color:var(--green);font-size:16px">'+(s.agashSubmitted||0).toLocaleString()+'</div><div class="stl-stat-lbl">SUBMITTED BY AGASH SUPERVISOR</div></div>'
     + '<div class="stl-stat"><div class="stl-stat-num" style="color:var(--purple);font-size:16px">'+(s.shiboGiven||0).toLocaleString()+'</div><div class="stl-stat-lbl">GIVEN TO SHIBO WORKERS</div></div>'
     + '</div>'
-    + '<div class="stl-discrepancy '+(agashDiff===0?'ok':'warn')+'" style="margin-bottom:14px">'
-    + (agashDiff===0 ? '✅ Submitted matches total exactly'
-      : agashDiff>0  ? '⬆️ +'+Math.abs(agashDiff).toLocaleString()+' ETB over'
-                     : '⬇️ '+Math.abs(agashDiff).toLocaleString()+' ETB short')
+    + '<div class="stl-discrepancy '+(wholeDiff===0?'ok':'warn')+'" style="margin-bottom:14px">'
+    + (wholeDiff===0 ? '✅ Submitted matches total exactly'
+      : wholeDiff>0  ? '⬆️ +'+Math.abs(wholeDiff).toLocaleString()+' ETB over'
+                     : '⬇️ '+Math.abs(wholeDiff).toLocaleString()+' ETB short')
     + '</div>';
 
   // ── TABLE 2 — app trucks only ──
@@ -8748,6 +8734,29 @@ function _renderSettlementCanvas(s, cashierId, date, inclT1, inclT2, unpaidList)
   var PARTIAL_FARE = window.tariffs.partialFare;
   var PARTIAL_SEALER = window.tariffs.sealerPartial;
 
+  // ── TABLE 1 — AGASH REPORT data (ETB/DJF split) — mirrors the in-app Table 1 exactly ──
+  var PRICE    = window.tariffs.agashETB;
+  var PRICE_FD = window.tariffs.agashFD;
+  var t1eS = s.cntShiracETB != null ? s.cntShiracETB : (s.cntShirac || 0);
+  var t1dS = s.cntShiracDJF != null ? s.cntShiracDJF : 0;
+  var t1eB = s.cntBilaETB   != null ? s.cntBilaETB   : (s.cntBilaShirac || 0);
+  var t1dB = s.cntBilaDJF   != null ? s.cntBilaDJF   : 0;
+  var t1eM = s.cntMetalETB  != null ? s.cntMetalETB  : (s.cntMetal || 0);
+  var t1dM = s.cntMetalDJF  != null ? s.cntMetalDJF  : 0;
+
+  var t1Amount   = t1eS*PRICE + t1eB*PRICE + t1eM*PRICE;
+  var t1AmountFD = t1dS*PRICE_FD + t1dB*PRICE_FD + t1dM*PRICE_FD;
+
+  var t1SealerRate = window.tariffs.sealerPaid;
+  var t1HasBila    = (t1eB + t1dB) > 0;
+  var t1ShiracAgash = t1eS*PRICE, t1ShiracSealer = t1eS*t1SealerRate, t1ShiracRest = t1ShiracAgash - t1ShiracSealer;
+  var t1MetalAgash  = t1eM*PRICE, t1MetalSealer  = 0,                 t1MetalRest  = t1MetalAgash;
+  var t1BilaAgash   = t1eB*PRICE, t1BilaSealer   = 0,                 t1BilaRest   = t1BilaAgash;
+  var t1WholeTotal  = t1ShiracRest + t1MetalRest + (t1HasBila ? t1BilaRest : 0);
+  var t1WholeDiff   = (s.agashSubmitted || 0) - t1WholeTotal;
+  var t1TotalTrucks = t1eS + t1eM + (t1HasBila ? t1eB : 0);
+  var t1TruckEquiv  = PRICE > 0 ? Math.round(t1WholeDiff / PRICE) : 0;
+
   // Live truck data for this date
   var dayTrucks = Object.values(trucks).filter(function(t){ return t.date === date; });
   var paidTrucks    = dayTrucks.filter(function(t){ return t.status==='paid'; });
@@ -8762,7 +8771,6 @@ function _renderSettlementCanvas(s, cashierId, date, inclT1, inclT2, unpaidList)
 
   var paidRevenue     = paidCount * CLIENT_FARE + partialCount * PARTIAL_FARE;
   var sealerPay       = paidCount * SEALER_PAY + partialCount * PARTIAL_SEALER;
-  var companyEarnings = paidRevenue - sealerPay;
   var missingRevenue  = unpaidCount * CLIENT_FARE;
   var combinedTotal   = totalTrucks * CLIENT_FARE;
 
@@ -8787,23 +8795,16 @@ function _renderSettlementCanvas(s, cashierId, date, inclT1, inclT2, unpaidList)
   // ── Canvas dimensions ──
   var W = 720, PAD = 32, DPR = window.devicePixelRatio || 2;
   var ROW_H = 44;
-
-  // Height calculation
   var headerH  = 110;
-  var summaryH  = inclT1 ? (32 + 130 + 16 + ROW_H*3 + 16) : 0; // section label + paid/unpaid boxes + gap + 3 rows
-  var combinedH = inclT2 ? (32 + 80 + ROW_H*2 + (noSealerCount>0?ROW_H:0) + 16) : 0;
-  var sealerH   = (inclT2 && sealerList.length > 0) ? (32 + sealerList.length * ROW_H + 8) : 0;
-  var unpaidH   = (unpaidList && unpaidList.length > 0) ? (32 + unpaidList.length * 50 + 8) : 0;
-  var footerH  = 48;
-  var gap1 = (summaryH > 0 && (combinedH > 0 || unpaidH > 0)) ? 16 : 0;
-  var gap2 = (combinedH > 0 && unpaidH > 0) ? 16 : 0;
-  var totalH   = headerH + summaryH + gap1 + combinedH + (combinedH>0?16:0) + sealerH + gap2 + unpaidH + footerH + PAD;
+
+  // Draw onto a generously-tall canvas first, then crop to the actual content
+  // height afterwards. This avoids brittle manual height math having to track
+  // every section's exact pixel height as the report layout changes.
+  var MAX_H = 4200;
 
   var canvas = document.createElement('canvas');
   canvas.width  = W * DPR;
-  canvas.height = totalH * DPR;
-  canvas.style.width  = W + 'px';
-  canvas.style.height = totalH + 'px';
+  canvas.height = MAX_H * DPR;
   var ctx = canvas.getContext('2d');
   ctx.scale(DPR, DPR);
 
@@ -8859,7 +8860,7 @@ function _renderSettlementCanvas(s, cashierId, date, inclT1, inclT2, unpaidList)
 
   // ── BACKGROUND ──
   ctx.fillStyle = BG;
-  ctx.fillRect(0, 0, W, totalH);
+  ctx.fillRect(0, 0, W, MAX_H);
 
   // ── HEADER ──
   var hGrad = ctx.createLinearGradient(0,0,W,headerH);
@@ -8890,42 +8891,139 @@ function _renderSettlementCanvas(s, cashierId, date, inclT1, inclT2, unpaidList)
   // ── BODY ──
   var cy = headerH + 20;
 
-  // ── SUMMARY (Table 1 — Agash Report) ──
+  // ── TABLE 1 — AGASH REPORT (mirrors the in-app Table 1 exactly) ──
   if (inclT1) {
-  cy = sectionLabel(PAD, cy, '📊  SUMMARY');
+  var CW = W - PAD*2;
+  var PURPLE = '#a855f7';
 
-  // Paid / Unpaid big boxes
-  var bw = (W - PAD*2 - 12) / 2;
-  // Paid box
-  rr(PAD, cy, bw, 120, 12, 'rgba(34,197,94,0.12)', 'rgba(34,197,94,0.3)', 1.5);
-  ctx.save(); ctx.font='800 52px "JetBrains Mono",monospace';
-  ctx.fillStyle=GREEN; ctx.textAlign='center'; ctx.textBaseline='middle';
-  ctx.fillText(String(paidCount), PAD+bw/2, cy+52); ctx.restore();
-  ctx.save(); ctx.font='700 14px "Space Grotesk",sans-serif';
-  ctx.fillStyle=GREEN; ctx.textAlign='center'; ctx.textBaseline='middle';
-  ctx.fillText('✅ Paid', PAD+bw/2, cy+95); ctx.restore();
+  cy = sectionLabel(PAD, cy, '📋  TABLE 1 — AGASH REPORT · ' + PRICE.toLocaleString() + ' ETB / truck');
 
-  // Unpaid box
-  rr(PAD+bw+12, cy, bw, 120, 12, 'rgba(239,68,68,0.12)', 'rgba(239,68,68,0.3)', 1.5);
-  ctx.save(); ctx.font='800 52px "JetBrains Mono",monospace';
-  ctx.fillStyle=RED; ctx.textAlign='center'; ctx.textBaseline='middle';
-  ctx.fillText(String(unpaidCount), PAD+bw+12+bw/2, cy+52); ctx.restore();
-  ctx.save(); ctx.font='700 14px "Space Grotesk",sans-serif';
-  ctx.fillStyle=RED; ctx.textAlign='center'; ctx.textBaseline='middle';
-  ctx.fillText('❌ Unpaid', PAD+bw+12+bw/2, cy+95); ctx.restore();
+  // Column layout: label | ETB-trucks | ETB-total | DJF-trucks | DJF-total
+  var w0 = 210, w1 = 95, w2 = 130, w3 = 95, w4 = CW - w0 - w1 - w2 - w3;
+  var c0 = PAD, c1 = c0+w0, c2 = c1+w1, c3 = c2+w2, c4 = c3+w3;
 
-  cy += 130 + 16;
+  var headRowH = 24, subRowH = 22, dataRowH = 38, totRowH = 40;
+  var t1Rows = [
+    {label:'🚛 Shirac',      color:GREEN, eC:t1eS, dC:t1dS, eAmt:t1eS*PRICE, dAmt:t1dS*PRICE_FD},
+    {label:'🚚 Bila Shirac', color:ACCENT, eC:t1eB, dC:t1dB, eAmt:t1eB*PRICE, dAmt:t1dB*PRICE_FD},
+    {label:'🏗️ Metal',      color:RED,   eC:t1eM, dC:t1dM, eAmt:t1eM*PRICE, dAmt:t1dM*PRICE_FD}
+  ];
+  var t1BoxH = headRowH + subRowH + dataRowH*t1Rows.length + totRowH;
+  var t1Top = cy;
+  rr(PAD, t1Top, CW, t1BoxH, 10, BG3, BORDER, 1);
 
-  // Revenue rows
-  rowLine('Paid Revenue', paidRevenue.toLocaleString() + ' ETB', cy, TEXT2, TEAL, '💰');
-  cy += ROW_H;
-  rowLine('Company Earnings', companyEarnings.toLocaleString() + ' ETB', cy, TEXT2, GREEN, '🏦');
-  cy += ROW_H;
-  // Missing row in red
-  t('⚠️ Missing (Unpaid)', PAD, cy+ROW_H/2, RED, 13, '700');
-  m('-' + missingRevenue.toLocaleString() + ' ETB', W-PAD, cy+ROW_H/2, RED, 14, 'right');
-  hline(cy+ROW_H, BORDER+'88');
-  cy += ROW_H + 16;
+  var ry = t1Top;
+  t('ETB × ' + PRICE.toLocaleString(),    c1+(w1+w2)/2, ry+headRowH/2, GREEN, 10, '800', 'center');
+  t('DJF × ' + PRICE_FD.toLocaleString(), c3+(w3+w4)/2, ry+headRowH/2, TEAL,  10, '800', 'center');
+  hline(ry+headRowH, BORDER);
+  ry += headRowH;
+
+  t('TYPE',   c0+8,      ry+subRowH/2, TEXT3, 9, '800');
+  t('TRUCKS', c1+w1/2,   ry+subRowH/2, GREEN, 9, '800', 'center');
+  t('TOTAL',  c2+w2/2,   ry+subRowH/2, GREEN, 9, '800', 'center');
+  t('TRUCKS', c3+w3/2,   ry+subRowH/2, TEAL,  9, '800', 'center');
+  t('TOTAL',  c4+w4/2,   ry+subRowH/2, TEAL,  9, '800', 'center');
+  hline(ry+subRowH, BORDER);
+  ry += subRowH;
+
+  t1Rows.forEach(function(rd){
+    t(rd.label, c0+8, ry+dataRowH/2, rd.color, 12, '700');
+    m(String(rd.eC),        c1+w1/2,  ry+dataRowH/2, GREEN, 13, 'center');
+    m(rd.eAmt.toLocaleString(), c2+w2-8, ry+dataRowH/2, GREEN, 12, 'right');
+    m(String(rd.dC),        c3+w3/2,  ry+dataRowH/2, TEAL,  13, 'center');
+    m(rd.dAmt.toLocaleString(), c4+w4-8, ry+dataRowH/2, TEAL,  12, 'right');
+    hline(ry+dataRowH, BORDER+'88');
+    ry += dataRowH;
+  });
+
+  t('TOTAL', c0+8, ry+totRowH/2, TEXT, 12, '800');
+  m(t1Amount.toLocaleString(),   c2+w2-8, ry+totRowH/2, GREEN, 14, 'right');
+  m(t1AmountFD.toLocaleString(), c4+w4-8, ry+totRowH/2, TEAL,  14, 'right');
+
+  cy = t1Top + t1BoxH + 16;
+
+  // ── RECAP — SEALER DEDUCTION ──
+  cy = sectionLabel(PAD, cy, '🧾  RECAP — SEALER DEDUCTION');
+
+  var rw0 = 230, rw1 = 80, rw2 = 116, rw3 = 116, rw4 = CW - rw0 - rw1 - rw2 - rw3;
+  var rc0 = PAD, rc1 = rc0+rw0, rc2 = rc1+rw1, rc3 = rc2+rw2, rc4 = rc3+rw3;
+
+  var recapHeadH = 22, recapRowH = 34, recapTotH = 36;
+  var recapRows = [
+    {label:'🚛 Shirac', color:GREEN, trucks:t1eS, agash:t1ShiracAgash, sealer:t1ShiracSealer, rest:t1ShiracRest},
+    {label:'🏗️ Metal', color:RED,   trucks:t1eM, agash:t1MetalAgash,  sealer:t1MetalSealer,  rest:t1MetalRest}
+  ];
+  if (t1HasBila) recapRows.push({label:'🚚 Bila Shirac', color:ACCENT, trucks:t1eB, agash:t1BilaAgash, sealer:t1BilaSealer, rest:t1BilaRest});
+
+  var recapBoxH = recapHeadH + recapRowH*recapRows.length + recapTotH;
+  var recapTop = cy;
+  rr(PAD, recapTop, CW, recapBoxH, 10, BG3, BORDER, 1);
+
+  var rry = recapTop;
+  t('TYPE',   rc0+8,    rry+recapHeadH/2, TEXT3, 9, '800');
+  t('TRUCKS', rc1+rw1/2,rry+recapHeadH/2, TEXT3, 9, '800', 'center');
+  t('AGASH',  rc2+rw2-8,rry+recapHeadH/2, GREEN, 9, '800', 'right');
+  t('SEALER', rc3+rw3-8,rry+recapHeadH/2, PURPLE,9, '800', 'right');
+  t('REST',   rc4+rw4-8,rry+recapHeadH/2, ORANGE,9, '800', 'right');
+  hline(rry+recapHeadH, BORDER);
+  rry += recapHeadH;
+
+  recapRows.forEach(function(rd){
+    t(rd.label, rc0+8, rry+recapRowH/2, rd.color, 11, '700');
+    m(String(rd.trucks),          rc1+rw1/2,  rry+recapRowH/2, TEXT,   12, 'center');
+    m(rd.agash.toLocaleString(),  rc2+rw2-8,  rry+recapRowH/2, GREEN,  11, 'right');
+    m(rd.sealer.toLocaleString(), rc3+rw3-8,  rry+recapRowH/2, PURPLE, 11, 'right');
+    m(rd.rest.toLocaleString(),   rc4+rw4-8,  rry+recapRowH/2, ORANGE, 11, 'right');
+    hline(rry+recapRowH, BORDER+'88');
+    rry += recapRowH;
+  });
+
+  t('TOTAL', rc0+8, rry+recapTotH/2, TEXT, 11, '800');
+  m(String(t1TotalTrucks),        rc1+rw1/2, rry+recapTotH/2, TEXT,   12, 'center');
+  m(t1WholeTotal.toLocaleString(),rc4+rw4-8, rry+recapTotH/2, ORANGE, 14, 'right');
+
+  cy = recapTop + recapBoxH + 16;
+
+  // ── SUMMARY ROW: TRUCKS | TOTAL (REST) | SUBMITTED | DISCREPANCY | TRUCK EQUIV ──
+  var sumBoxH = 62;
+  rr(PAD, cy, CW, sumBoxH, 10, BG3, BORDER, 1);
+  var scw = CW / 5;
+  var diffOk  = t1WholeDiff === 0;
+  var equivOk = t1TruckEquiv === 0;
+  var sumCols = [
+    {label:'TRUCKS',       val:String(t1TotalTrucks), col:TEXT},
+    {label:'TOTAL (REST)', val:t1WholeTotal.toLocaleString(), col:ORANGE},
+    {label:'SUBMITTED',    val:(s.agashSubmitted||0).toLocaleString(), col:GREEN},
+    {label:'DISCREPANCY',  val:diffOk ? '✅0' : (t1WholeDiff>0?'⬆️+':'⬇️')+Math.abs(t1WholeDiff).toLocaleString(), col:diffOk?GREEN:RED},
+    {label:'TRUCK EQUIV',  val:equivOk ? '0' : (t1TruckEquiv>0?'+':'')+t1TruckEquiv, col:equivOk?GREEN:RED}
+  ];
+  sumCols.forEach(function(sc, si){
+    var sx = PAD + scw*si;
+    t(sc.label, sx+scw/2, cy+16, TEXT3, 8, '800', 'center');
+    m(sc.val,   sx+scw/2, cy+40, sc.col, 12, 'center');
+  });
+  cy += sumBoxH + 16;
+
+  // ── STAT BOXES: Submitted by Agash Supervisor / Given to Shibo Workers ──
+  var statW = (CW - 12) / 2, statH = 66;
+  rr(PAD, cy, statW, statH, 10, 'rgba(34,197,94,0.08)', 'rgba(34,197,94,0.25)', 1);
+  m((s.agashSubmitted||0).toLocaleString(), PAD+statW/2, cy+26, GREEN, 18, 'center');
+  t('SUBMITTED BY AGASH SUPERVISOR', PAD+statW/2, cy+48, TEXT3, 8, '700', 'center');
+
+  rr(PAD+statW+12, cy, statW, statH, 10, 'rgba(168,85,247,0.08)', 'rgba(168,85,247,0.25)', 1);
+  m((s.shiboGiven||0).toLocaleString(), PAD+statW+12+statW/2, cy+26, PURPLE, 18, 'center');
+  t('GIVEN TO SHIBO WORKERS', PAD+statW+12+statW/2, cy+48, TEXT3, 8, '700', 'center');
+
+  cy += statH + 16;
+
+  // ── DISCREPANCY BANNER ──
+  var discH = 40;
+  rr(PAD, cy, CW, discH, 10, diffOk ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)', diffOk ? 'rgba(34,197,94,0.3)' : 'rgba(239,68,68,0.3)', 1);
+  var discText = diffOk ? '✅ Submitted matches total exactly'
+    : (t1WholeDiff>0 ? '⬆️ +'+Math.abs(t1WholeDiff).toLocaleString()+' ETB over' : '⬇️ '+Math.abs(t1WholeDiff).toLocaleString()+' ETB short');
+  t(discText, W/2, cy+discH/2, diffOk?GREEN:RED, 13, '800', 'center');
+
+  cy += discH + 16;
   }
 
   // ── COMBINED TOTAL box + PER SEALER (Table 2 — Trucks & Unpaid Collection) ──
@@ -9008,8 +9106,18 @@ function _renderSettlementCanvas(s, cashierId, date, inclT1, inclT2, unpaidList)
   ctx.fillText('Generated by WKABE Hask · ' + new Date().toLocaleString('en-GB',{day:'numeric',month:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'}), W/2, cy+20);
   ctx.restore();
 
+  // ── CROP to actual content height (canvas was drawn oversized to avoid manual height math) ──
+  var finalH = Math.min(cy + 40, MAX_H);
+  var outCanvas = document.createElement('canvas');
+  outCanvas.width  = W * DPR;
+  outCanvas.height = finalH * DPR;
+  outCanvas.style.width  = W + 'px';
+  outCanvas.style.height = finalH + 'px';
+  var outCtx = outCanvas.getContext('2d');
+  outCtx.drawImage(canvas, 0, 0, W*DPR, finalH*DPR, 0, 0, W*DPR, finalH*DPR);
+
   // ── EXPORT ──
-  canvas.toBlob(function(blob) {
+  outCanvas.toBlob(function(blob) {
     if (!blob) { showToast('❌ Failed to generate'); return; }
     var fname = 'WKABE-Report-' + dateLabel.replace(/,/g,'').replace(/ /g,'-') + '.png';
     var url = URL.createObjectURL(blob);
