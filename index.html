@@ -196,33 +196,33 @@
   /* ── STATS BAR ── */
   .stats-bar {
     display: grid; grid-template-columns: repeat(5, 1fr);
-    gap: 8px; padding: 12px 16px 6px;
+    gap: 6px; padding: 8px 16px 4px;
   }
   .meals-bar {
     display: grid; grid-template-columns: 1fr 1fr 1fr;
-    gap: 8px; padding: 0 16px 10px;
+    gap: 6px; padding: 0 16px 6px;
   }
   .meal-card {
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
-    padding: 8px;
+    padding: 5px 6px;
     text-align: center;
     cursor: pointer;
     transition: all 0.2s;
   }
   .meal-card:active { transform: scale(0.96); border-color: var(--accent); }
-  .meal-num { font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--red); }
-  .meal-label { font-size: 9px; color: var(--text3); font-weight: 600; letter-spacing: 0.05em; margin-top: 2px; }
+  .meal-num { font-size: 12px; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--red); }
+  .meal-label { font-size: 8px; color: var(--text3); font-weight: 600; letter-spacing: 0.05em; margin-top: 1px; }
   .stat-card {
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
-    padding: 10px 8px;
+    padding: 6px 6px;
     text-align: center;
   }
-  .stat-num { font-size: 20px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
-  .stat-label { font-size: 9px; color: var(--text3); font-weight: 600; letter-spacing: 0.05em; margin-top: 2px; }
+  .stat-num { font-size: 16px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+  .stat-label { font-size: 8px; color: var(--text3); font-weight: 600; letter-spacing: 0.05em; margin-top: 1px; }
   .stat-num.blue { color: var(--accent); }
   .stat-num.green { color: var(--green); }
   .stat-num.orange { color: var(--orange); }
@@ -230,14 +230,14 @@
   .stat-num.teal { color: var(--teal); }
 
   /* ── DATE SELECTOR ── */
-  .date-bar { padding: 8px 16px; display: flex; align-items: center; gap: 8px; }
+  .date-bar { padding: 5px 16px; display: flex; align-items: center; gap: 6px; }
   .date-chip {
     background: var(--accent);
     color: #fff;
     border: none;
     border-radius: 20px;
-    padding: 6px 14px;
-    font-size: 13px; font-weight: 600;
+    padding: 5px 10px;
+    font-size: 12px; font-weight: 600;
     cursor: pointer;
     display: flex; align-items: center; gap: 6px;
     font-family: inherit;
@@ -247,24 +247,24 @@
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: 20px;
-    padding: 6px 14px;
+    padding: 5px 10px;
     display: flex; align-items: center; gap: 6px;
   }
   .date-input-wrap input {
     background: none; border: none; color: var(--text);
-    font-size: 13px; font-weight: 600; font-family: inherit;
+    font-size: 12px; font-weight: 600; font-family: inherit;
     flex: 1; outline: none;
   }
 
   /* ── FILTER TABS ── */
-  .filter-bar { padding: 8px 16px; display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
+  .filter-bar { padding: 5px 16px; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
   .filter-bar::-webkit-scrollbar { display: none; }
   .filter-chip {
     background: var(--card);
     border: 1.5px solid var(--border);
     border-radius: 20px;
-    padding: 6px 14px;
-    font-size: 12px; font-weight: 600;
+    padding: 5px 10px;
+    font-size: 11px; font-weight: 600;
     cursor: pointer;
     white-space: nowrap;
     color: var(--text2);
@@ -274,14 +274,14 @@
   .filter-chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
 
   /* ── WORKER CHIPS ── */
-  .worker-bar { padding: 4px 16px 8px; display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
+  .worker-bar { padding: 3px 16px 5px; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
   .worker-bar::-webkit-scrollbar { display: none; }
   .worker-chip {
     background: var(--card);
     border: 1.5px solid var(--border);
     border-radius: 20px;
-    padding: 5px 12px;
-    font-size: 12px; font-weight: 600;
+    padding: 4px 8px;
+    font-size: 11px; font-weight: 600;
     cursor: pointer;
     white-space: nowrap;
     color: var(--text2);
@@ -955,13 +955,13 @@
 
   /* ── PLATE SEARCH BAR ── */
   .plate-search-wrap {
-    padding: 4px 16px 8px;
+    padding: 3px 16px 6px;
     display: flex; gap: 8px; align-items: center;
   }
   .plate-search-input {
     flex: 1;
     background: var(--card); border: 1px solid var(--border);
-    border-radius: 20px; padding: 7px 14px;
+    border-radius: 20px; padding: 6px 12px;
     font-size: 13px; font-weight: 600; color: var(--text);
     font-family: inherit; outline: none;
   }
@@ -1481,6 +1481,13 @@
           <div class="meal-num" id="statNetCompany" style="color:var(--green)">—</div><div class="meal-label" id="statNetLabel">🏦 NET</div>
         </div>
       </div>
+      <div id="companyMoneyBar" style="display:none;align-items:center;gap:8px;padding:2px 14px 6px;font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--text2);flex-wrap:wrap">
+        <span>💰 If all paid: <strong id="statIfAllPaid" style="color:var(--teal)">—</strong></span>
+        <span style="color:var(--border)">·</span>
+        <span>✅ Paid: <strong id="statPaidETB" style="color:var(--green)">—</strong></span>
+        <span style="color:var(--border)">·</span>
+        <span>❌ Unpaid: <strong id="statUnpaidETB" style="color:var(--red)">—</strong></span>
+      </div>
       <div class="date-bar">
         <button class="date-chip" id="todayChip" onclick="setToday()" style="background: var(--green); opacity: 1;">🟢 Today</button>
         <div class="date-input-wrap" style="cursor:pointer" onclick="openDatePicker()" id="datePickerBtn">
@@ -1491,7 +1498,7 @@
         </div>
       </div>
       <!-- 6AM RULE NOTICE -->
-      <div id="shiftRuleBanner" style="display:none;margin:0 16px 6px;padding:7px 12px;background:rgba(20,184,166,0.1);border:1px solid rgba(20,184,166,0.3);border-radius:8px;font-size:11px;color:var(--teal);font-weight:600;display:flex;align-items:center;gap:6px">
+      <div id="shiftRuleBanner" style="display:none;margin:0 16px 4px;padding:4px 10px;background:rgba(20,184,166,0.1);border:1px solid rgba(20,184,166,0.3);border-radius:8px;font-size:10px;color:var(--teal);font-weight:600;display:flex;align-items:center;gap:6px">
         🕕 Working day: <span id="shiftRuleText">Thu 2 Jul 06:00 → Fri 3 Jul 05:59  (Djibouti time)</span>
       </div>
       <!-- SUSPEND BANNER -->
@@ -3108,6 +3115,7 @@ function initFirebase() {
     }
 
     markReady('trucks');
+    updateCollectionsBadge();
     // Also re-render on subsequent live updates (after first load)
     if (_ready['tariffs'] && _ready['settings'] && _ready['advances']) {
       renderTrucks();
@@ -3898,10 +3906,31 @@ function renderTrucks() {
       netEl.textContent = ownTotalTrucks > 0 ? (ifAllPaidEarn>=1000?(ifAllPaidEarn/1000).toFixed(1)+'k':ifAllPaidEarn) : '—';
       netEl.style.color = 'var(--green)';
     }
+    const companyBarEl = document.getElementById('companyMoneyBar');
+    if (companyBarEl) companyBarEl.style.display = 'none';
   } else {
     // Company net earnings card removed — just hide it, keep Lunch/Dinner
     if (netCardEl) netCardEl.style.display = 'none';
     if (mealsBarEl) mealsBarEl.style.gridTemplateColumns = '1fr 1fr';
+
+    // Company-side money row: If All Paid (full potential at client rate),
+    // Paid (actually collected so far), Unpaid (still outstanding) — all at client billing rate.
+    const companyBarEl = document.getElementById('companyMoneyBar');
+    if (companyBarEl) companyBarEl.style.display = 'flex';
+    const totalTrucksCount = statsBase.length;
+    const paidCount = statsBase.filter(t=>t.status==='paid'||t.status==='pending').length;
+    const partialCount = statsBase.filter(t=>t.status==='partial').length;
+    const unpaidCount = statsBase.filter(t=>t.status==='unpaid').length;
+    const ifAllPaidTotal = totalTrucksCount * CLIENT_PRICE;
+    const paidTotal = paidCount * CLIENT_PRICE + partialCount * window.tariffs.partialFare;
+    const unpaidTotal = unpaidCount * CLIENT_PRICE;
+    const fmt = n => n>=1000 ? (n/1000).toFixed(1)+'k' : n;
+    const ifAllPaidEl = document.getElementById('statIfAllPaid');
+    const paidETBEl = document.getElementById('statPaidETB');
+    const unpaidETBEl = document.getElementById('statUnpaidETB');
+    if (ifAllPaidEl) ifAllPaidEl.textContent = totalTrucksCount > 0 ? fmt(ifAllPaidTotal) : '—';
+    if (paidETBEl) paidETBEl.textContent = fmt(paidTotal);
+    if (unpaidETBEl) unpaidETBEl.textContent = fmt(unpaidTotal);
   }
 
   // ── Worker chip counts — reflect the selected payment status (per person, per status) ──
@@ -4051,9 +4080,9 @@ function renderTrucks() {
     // Only relevant for trucks still officially "unpaid" — once marked Paid, the collected flag is retired.
     const isAssignedSealer = role==='worker' && truck.worker===id;
     const canSeeCollected = !!truck.worker && truck.status==='unpaid' && (role==='admin' || role==='head' || role==='cashier' || isAssignedSealer);
-    // Marking "collected" is the sealer's own duty — cashier/head/admin's role is the clearance step (Collections tab), not this tick.
-    // Admin keeps override rights as a safety net for corrections.
-    const canToggleCollected = !!truck.worker && truck.status==='unpaid' && ((isAssignedSealer && !truck.cashHandedIn) || role==='admin');
+    // Marking "collected" is the sealer's own duty only — cashier/head/admin never toggle it themselves,
+    // they just watch it happen via the Collections tab (clearance step).
+    const canToggleCollected = !!truck.worker && truck.status==='unpaid' && isAssignedSealer && !truck.cashHandedIn;
     let collectedBadge = '';
     if (canSeeCollected && truck.cashCollected) {
       collectedBadge = truck.cashHandedIn
@@ -4460,7 +4489,7 @@ window.toggleCashCollected = function(id) {
   if (!truck) return;
   const role = currentUser.role;
   const isAssignedSealer = role==='worker' && truck.worker===currentUser.id;
-  const canToggle = !!truck.worker && truck.status==='unpaid' && ((isAssignedSealer && !truck.cashHandedIn) || role==='admin');
+  const canToggle = !!truck.worker && truck.status==='unpaid' && isAssignedSealer && !truck.cashHandedIn;
   if (!canToggle) { showToast('⛔ Not allowed'); return; }
   const next = !truck.cashCollected;
   const update = next
@@ -4498,6 +4527,37 @@ window.confirmHandIn = function(worker) {
 // ── COLLECTIONS TAB — per-sealer view of collected-but-uncleared trucks ──
 let expandedCollectionSealer = null;
 let collectionUnchecked = new Set(); // truck ids the cashier has manually unticked (all others default checked)
+// Truck ids whose "collected" flag this device has already seen/acknowledged (persisted locally,
+// so the Collections nav badge only flags genuinely NEW collections, not ones already reviewed).
+let seenCollectedIds = new Set();
+try { seenCollectedIds = new Set(JSON.parse(localStorage.getItem('seenCollectedIds') || '[]')); } catch(e) { seenCollectedIds = new Set(); }
+function saveSeenCollectedIds() {
+  try { localStorage.setItem('seenCollectedIds', JSON.stringify([...seenCollectedIds])); } catch(e) {}
+}
+// Recompute + show the "new collected trucks" badge on the Collections nav tab
+function updateCollectionsBadge() {
+  const nav = document.getElementById('nav_collections');
+  if (!nav) return;
+  const uncleared = Object.entries(trucks).filter(([id,t]) => t.status==='unpaid' && t.cashCollected && !t.cashHandedIn);
+  // Prune ids no longer relevant (cleared, reverted, or deleted) so the seen-set doesn't grow forever
+  const unclearedIds = new Set(uncleared.map(([id]) => id));
+  let pruned = false;
+  seenCollectedIds.forEach(id => { if (!unclearedIds.has(id)) { seenCollectedIds.delete(id); pruned = true; } });
+  if (pruned) saveSeenCollectedIds();
+  const newCount = uncleared.filter(([id]) => !seenCollectedIds.has(id)).length;
+  const lbl = nav.querySelector('.nav-label');
+  if (lbl) lbl.textContent = newCount>0 ? 'Collections ('+newCount+')' : 'Collections';
+  nav.style.color = newCount>0 ? '#eab308' : '';
+  nav.style.fontWeight = newCount>0 ? '800' : '';
+}
+// Mark all currently-uncleared collected trucks as "seen" (called when the Collections tab is opened)
+function markCollectionsSeen() {
+  Object.entries(trucks).forEach(([id,t]) => {
+    if (t.status==='unpaid' && t.cashCollected && !t.cashHandedIn) seenCollectedIds.add(id);
+  });
+  saveSeenCollectedIds();
+  updateCollectionsBadge();
+}
 window.toggleCollectionSealer = function(worker) {
   expandedCollectionSealer = (expandedCollectionSealer === worker) ? null : worker;
   renderCollectionsTab();
@@ -4521,12 +4581,21 @@ window.renderCollectionsTab = function() {
 
   const workers = getWorkerList();
 
+  // Collect all currently-new (unseen) collections across sealers, for the top banner
+  const newBannerItems = [];
+
   const cards = workers.map(w => {
     const color = WORKER_COLORS[w] || '#6b7280';
     const entries = Object.entries(trucks).filter(([id,t]) => t.worker===w && t.date===selectedDate && t.status==='unpaid' && t.cashCollected && !t.cashHandedIn);
     const selectedEntries = entries.filter(([id]) => !collectionUnchecked.has(id));
     const amount = entries.length * CLIENT_PRICE;
     const expanded = expandedCollectionSealer === w;
+    const hasNew = entries.some(([id]) => !seenCollectedIds.has(id));
+    entries.forEach(([id,t]) => {
+      if (!seenCollectedIds.has(id)) {
+        newBannerItems.push({ worker: w, plate: t.plate, at: t.cashCollectedAt || 0 });
+      }
+    });
 
     // Sealing blombs — issued / used / remaining (tracking only, never blocks sealing)
     const sealIssued = getSealIssuedTotal(w, selectedDate);
@@ -4550,7 +4619,7 @@ window.renderCollectionsTab = function() {
             ${w.substring(0,2).toUpperCase()}
           </div>
           <div class="worker-info">
-            <div class="worker-name">${w}</div>
+            <div class="worker-name">${w}${hasNew ? ' <span style="font-size:10px;font-weight:800;color:#0a0a0a;background:#eab308;border-radius:6px;padding:2px 6px;vertical-align:middle;margin-left:4px;">🆕 NEW</span>' : ''}</div>
             <div class="worker-stats-row">
               <div class="worker-stat">💵 Collected: <span style="color:${entries.length>0?'#eab308':'var(--text2)'};font-weight:700">${entries.length}</span></div>
               <div class="worker-stat">${amount.toLocaleString()} ETB</div>
@@ -4576,7 +4645,26 @@ window.renderCollectionsTab = function() {
     `;
   }).join('');
 
-  container.innerHTML = cards || '<div style="padding:24px 0;text-align:center;color:var(--text3)">No sealers found.</div>';
+  // Top banner listing individual new (unseen) collections, newest first
+  let banner = '';
+  if (newBannerItems.length > 0) {
+    newBannerItems.sort((a,b) => b.at - a.at);
+    const rows = newBannerItems.map(it => {
+      const timeStr = it.at ? new Date(it.at).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}) : '';
+      return `<div style="font-size:12px;color:var(--text);padding:4px 0">🆕 <strong>${it.worker}</strong> collected <span style="font-family:'JetBrains Mono',monospace;font-weight:700">${it.plate}</span>${timeStr ? ' · '+timeStr : ''}</div>`;
+    }).join('');
+    banner = `
+      <div style="background:rgba(234,179,8,0.08);border:1px solid rgba(234,179,8,0.3);border-radius:10px;padding:10px 12px;margin-bottom:12px">
+        <div style="font-size:11px;font-weight:800;color:#eab308;letter-spacing:0.06em;margin-bottom:4px">🔔 NEW COLLECTIONS</div>
+        ${rows}
+      </div>
+    `;
+  }
+
+  container.innerHTML = banner + (cards || '<div style="padding:24px 0;text-align:center;color:var(--text3)">No sealers found.</div>');
+
+  // This tab is now visibly showing everything above — treat it all as seen from here on
+  markCollectionsSeen();
 }
 
 // One click: officially mark the ticked collected-but-uncleared trucks for this sealer as Paid, and confirm cash hand-in
