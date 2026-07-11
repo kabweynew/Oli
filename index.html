@@ -342,6 +342,8 @@
   .status-badge.partial { background: rgba(245,158,11,0.15); color: var(--orange); border: 1px solid rgba(245,158,11,0.3); }
   .status-badge.unpaid { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
   .status-badge.pending { background: rgba(168,85,247,0.15); color: var(--purple); border: 1px solid rgba(168,85,247,0.3); }
+  .status-badge.collected { background: rgba(234,179,8,0.15); color: #eab308; border: 1px solid rgba(234,179,8,0.35); }
+  .status-badge.handedin { background: rgba(148,163,184,0.15); color: #94a3b8; border: 1px solid rgba(148,163,184,0.3); }
   .truck-meta { font-size: 11px; color: var(--text2); margin-bottom: 8px; line-height: 1.6; }
   .truck-meta span { margin-right: 8px; }
   .truck-earnings { font-size: 12px; color: var(--text2); margin-bottom: 10px; }
@@ -2136,6 +2138,14 @@
       <div id="settlementContent" style="padding:0 16px 100px;"></div>
       <div id="settlementHistoryContent" style="padding:0 16px 100px;display:none;"></div>
     </div>
+
+    <div id="tabCollections" style="display:none;">
+      <div style="padding:14px 16px 8px;">
+        <div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:0.08em">💰 COLLECTIONS BY SEALER</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:2px;" id="collectionsSubtitle">Trucks each sealer has collected cash for, not yet cleared</div>
+      </div>
+      <div id="collectionsContent" style="padding:0 16px 100px;"></div>
+    </div>
   </div>
 
   <!-- OFFSCREEN REPORT SNAPSHOT (for image export) -->
@@ -2233,6 +2243,10 @@
     <div class="form-group">
       <label class="form-label">NOTES (optional)</label>
       <input class="form-input" id="truckNotes" placeholder="Optional notes...">
+    </div>
+    <div class="form-group" id="truckCollectedGroup" style="display:flex;align-items:center;gap:10px;background:rgba(234,179,8,0.06);border:1px solid rgba(234,179,8,0.25);border-radius:10px;padding:10px 12px;">
+      <input type="checkbox" id="truckCollectedCheck" style="width:20px;height:20px;flex-shrink:0;accent-color:#eab308;">
+      <label for="truckCollectedCheck" style="font-size:13px;font-weight:600;color:#eab308;cursor:pointer;">💵 I already collected the cash for this truck</label>
     </div>
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeModal('modalTruck')">Cancel</button>
@@ -2408,6 +2422,61 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="modalIssueSeals">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🎟️ Issue Sealing Blombs</div>
+    <input type="hidden" id="issueSealsWorker">
+    <div style="font-size:13px;color:var(--text2);margin-bottom:4px">Sealer: <strong id="issueSealsWorkerLabel" style="color:var(--text)"></strong></div>
+    <div id="issueSealsBalance" style="font-size:12px;color:var(--text3);margin-bottom:14px;font-family:'JetBrains Mono',monospace"></div>
+    <div class="form-group">
+      <label class="form-label">QUICK ISSUE</label>
+      <div style="display:flex;gap:8px">
+        <button class="btn-secondary" style="flex:1" onclick="issueSeals(5)">5</button>
+        <button class="btn-secondary" style="flex:1" onclick="issueSeals(8)">8</button>
+        <button class="btn-secondary" style="flex:1" onclick="issueSeals(10)">10</button>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">CUSTOM AMOUNT (max 10)</label>
+      <input class="form-input" type="number" id="issueSealsCustom" min="1" max="10" placeholder="e.g. 3">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modalIssueSeals')">Cancel</button>
+      <button class="btn-primary" onclick="issueSeals('custom')">Issue</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalTakeBackSeals">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">↩️ Take Back Sealing Blombs</div>
+    <input type="hidden" id="takeBackSealsWorker">
+    <div style="font-size:13px;color:var(--text2);margin-bottom:4px">Sealer: <strong id="takeBackSealsWorkerLabel" style="color:var(--text)"></strong></div>
+    <div id="takeBackSealsBalance" style="font-size:12px;color:var(--text3);margin-bottom:14px;font-family:'JetBrains Mono',monospace"></div>
+    <div id="takeBackSealsNone" style="display:none;font-size:12px;color:var(--text3);background:rgba(255,255,255,0.03);border-radius:8px;padding:10px;margin-bottom:10px">No unused plombs left to take back for this date.</div>
+    <div id="takeBackSealsFields">
+      <div class="form-group">
+        <label class="form-label">QUICK TAKE BACK</label>
+        <div style="display:flex;gap:8px" id="takeBackQuickBtns">
+          <button class="btn-secondary" style="flex:1" onclick="takeBackSeals(5)">5</button>
+          <button class="btn-secondary" style="flex:1" onclick="takeBackSeals(8)">8</button>
+          <button class="btn-secondary" style="flex:1" onclick="takeBackSeals(10)">10</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" id="takeBackCustomLabel">CUSTOM AMOUNT</label>
+        <input class="form-input" type="number" id="takeBackSealsCustom" min="1" placeholder="e.g. 3">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modalTakeBackSeals')">Cancel</button>
+      <button class="btn-primary" id="takeBackSealsSubmitBtn" onclick="takeBackSeals('custom')">Take Back</button>
+    </div>
+  </div>
+</div>
+
 <!-- PWA INSTALL BANNER -->
 <div id="pwaInstallBanner" class="hidden">
   <div class="pwa-banner-icon-wrap">📲</div>
@@ -2532,7 +2601,9 @@
    'renderSettlementTab','switchSettlementView','stlSelectDate',
    'stlRemoveUnpaid','stlAddManualUnpaid','submitSettlement','unlockSettlement',
    'stlShareReport','stlExportPDF',
-   'openScanPlate','captureAndScan','closeScanModal'
+   'openScanPlate','captureAndScan','closeScanModal',
+   'toggleCashCollected','confirmHandIn',
+   'openIssueSeals','issueSeals','renderCollectionsTab','toggleCollectionSealer','toggleCollectionCheck','markSealerCollectionsPaid'
   ].forEach(function(fn) {
     if (!window[fn]) {
       window[fn] = function() {
@@ -2564,7 +2635,8 @@ import {
   setDoc, addDoc, getDoc, getDocs,
   updateDoc, deleteDoc,
   onSnapshot,
-  query, orderBy
+  query, orderBy,
+  writeBatch
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import {
   getStorage, ref as storageRef, uploadBytes, getDownloadURL
@@ -2641,6 +2713,7 @@ let deletedTrucks = {};
 let claims = {};
 let dailyDeductions = {};
 let settlements = {};
+let sealIssuances = {};
 let kabIncoming = {};
 let selectMode = false;
 let selectedTrucks = new Set();
@@ -2715,7 +2788,7 @@ const WORKER_COLORS = {
   Ali: '#ef4444', Omar: '#a855f7'
 };
 // ── TARIFFS — live from Firestore settings/tariffs ──
-window.tariffs = { clientETB:5500, clientFD:5000, sealerPaid:1300, sealerPartial:700, partialFare:2800, agashETB:1300, agashFD:1000 };
+window.tariffs = { clientETB:5500, clientFD:5000, sealerPaid:1300, sealerPartial:700, partialFare:2800, agashETB:1300, agashFD:1000, collectThreshold:8 };
 // Compatibility shims (used widely across the app — always read from window.tariffs)
 Object.defineProperty(window, 'CLIENT_PRICE', { get: function(){ return window.tariffs.clientETB; }, configurable:true });
 Object.defineProperty(window, 'WORKER_PAY',   { get: function(){ return { paid: window.tariffs.sealerPaid, partial: window.tariffs.sealerPartial, unpaid: 0 }; }, configurable:true });
@@ -2863,9 +2936,112 @@ function saveWorkerList(w) {
   buildLogin(); // Keep login screen in sync with worker list
 }
 
+function formatDateTime(ts) {
+  if (!ts) return '—';
+  return new Date(ts).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+}
+
+// ── SEALING BLOMBS (seals issued to sealers) ──
+// Balance is scoped to a work-date: total issued FOR that date minus plombs actually used ON that date.
+// A plomb is only "used" once cash has actually been collected for that truck (paid, partial, or the
+// cashCollected hint) — a truck that's still sitting unpaid/uncollected hasn't consumed a seal yet.
+// Tracking only — running low never blocks adding a truck.
+function getSealIssuedTotal(worker, date) {
+  return Object.values(sealIssuances).filter(s => s.worker === worker && (!date || s.date === date)).reduce((sum, s) => sum + (s.amount || 0), 0);
+}
+function getSealUsedCount(worker, date) {
+  return Object.values(trucks).filter(t => t.worker === worker && (!date || t.date === date)
+    && (t.status === 'paid' || t.status === 'partial' || t.cashCollected === true)).length;
+}
+function getSealBalance(worker, date) {
+  return getSealIssuedTotal(worker, date) - getSealUsedCount(worker, date);
+}
+window.openIssueSeals = function(worker) {
+  const role = currentUser.role;
+  if (!(role==='admin' || role==='cashier' || role==='head')) { showToast('⛔ Not allowed'); return; }
+  const selectedDate = document.getElementById('dateFilter')?.value || getWorkingDate();
+  document.getElementById('issueSealsWorker').value = worker;
+  document.getElementById('issueSealsWorkerLabel').textContent = worker;
+  const issued = getSealIssuedTotal(worker, selectedDate), used = getSealUsedCount(worker, selectedDate);
+  const dateLabel = selectedDate === getWorkingDate() ? 'Today' : new Date(selectedDate+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+  document.getElementById('issueSealsBalance').textContent = `For ${dateLabel} — Issued: ${issued} · Used: ${used} · Left: ${issued-used}`;
+  document.getElementById('issueSealsCustom').value = '';
+  openModal('modalIssueSeals');
+}
+window.issueSeals = function(amount) {
+  const worker = document.getElementById('issueSealsWorker').value;
+  const role = currentUser.role;
+  if (!(role==='admin' || role==='cashier' || role==='head')) { showToast('⛔ Not allowed'); return; }
+  if (!worker) return;
+  let amt = amount;
+  if (amt === 'custom') {
+    amt = parseInt(document.getElementById('issueSealsCustom').value, 10);
+  }
+  if (!amt || amt < 1 || amt > 10) { showToast('⚠️ Enter an amount from 1 to 10'); return; }
+  const selectedDate = document.getElementById('dateFilter')?.value || getWorkingDate();
+  addDoc(collection(db,'sealIssuances'), {
+    worker, amount: amt, date: selectedDate,
+    issuedAt: Date.now(),
+    issuedBy: currentUser.name || currentUser.id
+  }).then(() => {
+    showToast(`🎟️ ${amt} seal(s) issued to ${worker}`);
+    closeModal('modalIssueSeals');
+  }).catch(e => showToast('❌ Error: ' + (e.message || 'failed')));
+}
+window.openTakeBackSeals = function(worker) {
+  const role = currentUser.role;
+  if (!(role==='admin' || role==='cashier' || role==='head')) { showToast('⛔ Not allowed'); return; }
+  const selectedDate = document.getElementById('dateFilter')?.value || getWorkingDate();
+  document.getElementById('takeBackSealsWorker').value = worker;
+  document.getElementById('takeBackSealsWorkerLabel').textContent = worker;
+  const issued = getSealIssuedTotal(worker, selectedDate), used = getSealUsedCount(worker, selectedDate);
+  const left = issued - used;
+  const dateLabel = selectedDate === getWorkingDate() ? 'Today' : new Date(selectedDate+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+  document.getElementById('takeBackSealsBalance').textContent = `For ${dateLabel} — Issued: ${issued} · Used: ${used} · Unused (can take back): ${left}`;
+  document.getElementById('takeBackSealsCustom').value = '';
+  document.getElementById('takeBackSealsCustom').max = left;
+  document.getElementById('takeBackCustomLabel').textContent = `CUSTOM AMOUNT (max ${left})`;
+
+  const noneLeft = left <= 0;
+  document.getElementById('takeBackSealsNone').style.display = noneLeft ? 'block' : 'none';
+  document.getElementById('takeBackSealsFields').style.display = noneLeft ? 'none' : 'block';
+  document.getElementById('takeBackSealsSubmitBtn').style.display = noneLeft ? 'none' : 'inline-block';
+  // Quick buttons only show amounts that are actually available
+  const quickWrap = document.getElementById('takeBackQuickBtns');
+  if (quickWrap) {
+    quickWrap.innerHTML = [5,8,10].filter(n => n <= left).map(n =>
+      `<button class="btn-secondary" style="flex:1" onclick="takeBackSeals(${n})">${n}</button>`
+    ).join('') || `<button class="btn-secondary" style="flex:1" onclick="takeBackSeals(${left})">All (${left})</button>`;
+  }
+  openModal('modalTakeBackSeals');
+}
+window.takeBackSeals = function(amount) {
+  const worker = document.getElementById('takeBackSealsWorker').value;
+  const role = currentUser.role;
+  if (!(role==='admin' || role==='cashier' || role==='head')) { showToast('⛔ Not allowed'); return; }
+  if (!worker) return;
+  const selectedDate = document.getElementById('dateFilter')?.value || getWorkingDate();
+  const issued = getSealIssuedTotal(worker, selectedDate), used = getSealUsedCount(worker, selectedDate);
+  const left = issued - used;
+  let amt = amount;
+  if (amt === 'custom') {
+    amt = parseInt(document.getElementById('takeBackSealsCustom').value, 10);
+  }
+  if (!amt || amt < 1) { showToast('⚠️ Enter an amount to take back'); return; }
+  if (amt > left) { showToast(`⚠️ Only ${left} unused plomb(s) available to take back`); return; }
+  addDoc(collection(db,'sealIssuances'), {
+    worker, amount: -amt, date: selectedDate,
+    issuedAt: Date.now(),
+    issuedBy: currentUser.name || currentUser.id
+  }).then(() => {
+    showToast(`↩️ ${amt} seal(s) taken back from ${worker}`);
+    closeModal('modalTakeBackSeals');
+  }).catch(e => showToast('❌ Error: ' + (e.message || 'failed')));
+}
+
 // ── FIREBASE LISTENERS ──
 function initFirebase() {
-  ['_unsubTrucks','_unsubAdvances','_unsubDeleted','_unsubSuspend','_unsubPins','_unsubPerms','_unsubWorkers','_unsubHead','_unsubClaims','_unsubSettlements','_unsubTariffs','_unsubDeductions','_unsubKabIncoming','_unsubNotifs','_unsubPastPay'].forEach(function(k) {
+  ['_unsubTrucks','_unsubAdvances','_unsubDeleted','_unsubSuspend','_unsubPins','_unsubPerms','_unsubWorkers','_unsubHead','_unsubClaims','_unsubSettlements','_unsubTariffs','_unsubDeductions','_unsubKabIncoming','_unsubNotifs','_unsubPastPay','_unsubSealIssuances'].forEach(function(k) {
     try { if (window[k]) { window[k](); window[k] = null; } } catch(e) {}
   });
 
@@ -2938,6 +3114,7 @@ function initFirebase() {
       renderWorkers();
       renderReports();
       if (currentTab === 'list') renderTruckList();
+      if (currentTab === 'collections') renderCollectionsTab();
       updateDupChip();
     }
   }, (err) => {
@@ -2955,6 +3132,14 @@ function initFirebase() {
     }
   }, () => { markReady('advances'); });
 
+  // ── SEAL ISSUANCES (sealing blombs given to sealers) ──
+  window._unsubSealIssuances = onSnapshot(collection(db,'sealIssuances'), snap => {
+    sealIssuances = {};
+    snap.forEach(d => { sealIssuances[d.id] = d.data(); });
+    if (currentTab === 'workers') renderWorkers();
+    if (currentTab === 'collections') renderCollectionsTab();
+  }, () => {});
+
   // ── TARIFFS (critical) ──
   window._unsubTariffs = onSnapshot(doc(db,'settings','tariffs'), snap => {
     if (snap.exists()) {
@@ -2966,6 +3151,7 @@ function initFirebase() {
       window.tariffs.partialFare   = d.partialFare   || 2800;
       window.tariffs.agashETB      = d.agashETB      || 1300;
       window.tariffs.agashFD       = d.agashFD       || 1000;
+      window.tariffs.collectThreshold = d.collectThreshold || 8;
     }
     markReady('tariffs');
     if (!currentUser) return;
@@ -3254,7 +3440,7 @@ function checkPin() {
 }
 
 window.goLogin = function() {
-  ['_unsubTrucks','_unsubAdvances','_unsubDeleted','_unsubSuspend','_unsubPins','_unsubPerms','_unsubWorkers','_unsubHead','_unsubClaims','_unsubSettlements','_unsubTariffs','_unsubDeductions','_unsubKabIncoming','_unsubNotifs','_unsubPastPay'].forEach(function(k){
+  ['_unsubTrucks','_unsubAdvances','_unsubDeleted','_unsubSuspend','_unsubPins','_unsubPerms','_unsubWorkers','_unsubHead','_unsubClaims','_unsubSettlements','_unsubTariffs','_unsubDeductions','_unsubKabIncoming','_unsubNotifs','_unsubPastPay','_unsubSealIssuances'].forEach(function(k){
     try { if (window[k]) { window[k](); window[k]=null; } } catch(e) {}
   });
   trucks = {}; advances = {}; deletedTrucks = {}; claims = {}; settlements = {};
@@ -3309,6 +3495,9 @@ function buildApp() {
   if (role==='worker' && _headerPerms.isForeman) {
     rb.textContent = '🦺 FOREMAN';
     rb.className = 'role-badge foreman';
+  } else if (role==='worker') {
+    rb.textContent = (currentUser.name || id).toUpperCase();
+    rb.className = 'role-badge worker';
   } else {
     rb.textContent = role==='head' ? getHeadName().toUpperCase() : role.toUpperCase();
     rb.className = 'role-badge ' + (role==='head' ? 'head' : role);
@@ -3378,6 +3567,7 @@ function buildNav() {
     {id:'agash', icon:'📥', label:'Agash'},
     {id:'notifs', icon:'🔔', label:'Alerts'},
     {id:'settlement', icon:'📋', label:'Settlement'},
+    {id:'collections', icon:'💰', label:'Collections'},
     {id:'manage', icon:'⚙️', label:t('manage')},
     {id:'recycle', icon:'🗑️', label:'Bin'},
     {id:'logout', icon:'🚪', label:t('logout')},
@@ -3392,6 +3582,7 @@ function buildNav() {
     {id:'agash', icon:'📥', label:'Agash'},
     {id:'notifs', icon:'🔔', label:'Alerts'},
     {id:'settlement', icon:'📋', label:'Settlement'},
+    {id:'collections', icon:'💰', label:'Collections'},
     {id:'recycle', icon:'🗑️', label:'Bin'},
     {id:'manage', icon:'⚙️', label:t('manage')},
     {id:'logout', icon:'🚪', label:t('logout')},
@@ -3405,6 +3596,7 @@ function buildNav() {
     tabs.push({id:'reports', icon:'📊', label:t('reports')});
     tabs.push({id:'claims', icon:'🙋', label:'Claims'});
     tabs.push({id:'settlement', icon:'💼', label:'Settlement'});
+    tabs.push({id:'collections', icon:'💰', label:'Collections'});
     tabs.push({id:'logout', icon:'🚪', label:t('logout')});
   } else {
     const p = getUserPerms(currentUser.id);
@@ -3442,7 +3634,7 @@ window.switchTab = function(tab) {
   }
 
   // Show/hide tabs
-  ['Trucks','List','Workers','Advances','Reports','Claims','Manage','Recycle','Agash','Notifs','Settlement'].forEach(t => {
+  ['Trucks','List','Workers','Advances','Reports','Claims','Manage','Recycle','Agash','Notifs','Settlement','Collections'].forEach(t => {
     const el = document.getElementById('tab'+t);
     if (el) el.style.display = (tab===t.toLowerCase()) ? '' : 'none';
   });
@@ -3465,6 +3657,7 @@ window.switchTab = function(tab) {
   if (tab==='agash') { agashSealFilter = 'all'; renderAgashIncoming(); }
   if (tab==='notifs') renderNotifsTab();
   if (tab==='settlement') renderSettlementTab();
+  if (tab==='collections') renderCollectionsTab();
 }
 
 // ── TODAY / DATE ──
@@ -3854,6 +4047,25 @@ function renderTrucks() {
     if (isToday && role==='worker' && truck.worker===id) actions += `<button class="truck-action-btn" onclick="openEditPlate('${truck._id}')">✏️ Plate</button>`;
     if (canDelete) actions += `<button class="truck-action-btn danger" onclick="deleteTruck('${truck._id}')">🗑️ Delete</button>`;
 
+    // ── Cash Collected tick (sealer/cashier/CEO/admin only — hints payment status, not the official truck status) ──
+    // Only relevant for trucks still officially "unpaid" — once marked Paid, the collected flag is retired.
+    const isAssignedSealer = role==='worker' && truck.worker===id;
+    const canSeeCollected = !!truck.worker && truck.status==='unpaid' && (role==='admin' || role==='head' || role==='cashier' || isAssignedSealer);
+    // Marking "collected" is the sealer's own duty — cashier/head/admin's role is the clearance step (Collections tab), not this tick.
+    // Admin keeps override rights as a safety net for corrections.
+    const canToggleCollected = !!truck.worker && truck.status==='unpaid' && ((isAssignedSealer && !truck.cashHandedIn) || role==='admin');
+    let collectedBadge = '';
+    if (canSeeCollected && truck.cashCollected) {
+      collectedBadge = truck.cashHandedIn
+        ? `<span class="status-badge handedin">🔒 Handed In</span>`
+        : `<span class="status-badge collected">💵 Collected</span>`;
+    }
+    if (canToggleCollected) {
+      actions += truck.cashCollected
+        ? `<button class="truck-action-btn" style="background:rgba(234,179,8,0.15);color:#eab308;border-color:rgba(234,179,8,0.35);font-weight:700" onclick="toggleCashCollected('${truck._id}')">💵 Collected ✓</button>`
+        : `<button class="truck-action-btn" style="background:rgba(234,179,8,0.06);color:#eab308;border-color:rgba(234,179,8,0.25)" onclick="toggleCashCollected('${truck._id}')">💵 Mark Collected</button>`;
+    }
+
     const truckNum = dayNumMap[truck._id] || '?';
     const plateHighlight = filterPlate && truck.plate.toUpperCase().includes(filterPlate)
       ? truck.plate.replace(new RegExp('('+filterPlate+')', 'gi'), '<mark style="background:rgba(59,130,246,0.3);color:var(--accent);border-radius:3px;padding:0 2px">$1</mark>')
@@ -3871,13 +4083,27 @@ function renderTrucks() {
             <span class="truck-number">#${truckNum}</span>
             <div class="truck-plate">${plateHighlight}</div>
           </div>
-          <span class="status-badge ${statusClass}">${statusLabel}</span>
+          <div style="display:flex;align-items:center;gap:6px">${collectedBadge}<span class="status-badge ${statusClass}">${statusLabel}</span></div>
         </div>
         <div class="truck-meta">
           <span>📅 ${dateStr}</span>${timeStr ? `<span style="color:var(--teal);font-weight:700"> · 🕐 ${timeStr}</span>` : ''}
           ${truck.addedBy ? ` · Added by: ${truck.addedBy}` : ''}
         </div>
-        ${modStr ? `<div class="truck-meta" style="font-size:11px;color:var(--orange);font-weight:600">✏️ Modified: ${modStr}${truck.modifiedBy ? ' — by ' + truck.modifiedBy : ''}</div>` : ''}
+        ${(() => {
+          const lines = [];
+          // Modified & Handed-in usually happen together (the same clearance action) — say it as one sentence.
+          if (modStr && truck.cashHandedIn) {
+            lines.push(`<div class="truck-meta" style="font-size:11px;font-weight:600;color:var(--green)">✏️🔒 Modified &amp; Handed in: ${formatDateTime(truck.cashHandInAt)}${truck.cashHandInBy ? ' — ' + truck.cashHandInBy : ''}</div>`);
+          } else if (truck.cashHandedIn) {
+            lines.push(`<div class="truck-meta" style="font-size:11px;font-weight:600;color:var(--green)">🔒 Handed in: ${formatDateTime(truck.cashHandInAt)}${truck.cashHandInBy ? ' — ' + truck.cashHandInBy : ''}</div>`);
+          } else if (modStr) {
+            lines.push(`<div class="truck-meta" style="font-size:11px;font-weight:600;color:var(--orange)">✏️ Modified: ${modStr}${truck.modifiedBy ? ' — ' + truck.modifiedBy : ''}</div>`);
+          }
+          if (truck.cashCollected) {
+            lines.push(`<div class="truck-meta" style="font-size:11px;font-weight:600;color:#eab308">💵 Collected: ${formatDateTime(truck.cashCollectedAt)}${truck.cashCollectedBy ? ' — ' + truck.cashCollectedBy : ''}</div>`);
+          }
+          return lines.join('');
+        })()}
         ${truck.notes ? `<div class="truck-meta">📝 ${truck.notes}</div>` : ''}
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;padding:10px;background:var(--bg3);border-radius:var(--radius-sm)">
           <div style="text-align:center">
@@ -3939,6 +4165,8 @@ window.openEditTruck = function(id) {
   document.getElementById('truckPlate').value = truck.plate||'';
   document.getElementById('truckDate').value = truck.date||'';
   document.getElementById('truckNotes').value = truck.notes||'';
+  const ccCheck = document.getElementById('truckCollectedCheck');
+  if (ccCheck) ccCheck.checked = !!truck.cashCollected;
   const warn = document.getElementById('dupWarning');
   if (warn) { warn.classList.remove('visible'); warn.style.cssText=''; }
   var sb = document.getElementById('saveTruckBtn'); if (sb) { sb.disabled=false; sb.style.opacity=''; sb.style.cursor=''; sb.textContent='Save Truck'; }
@@ -4022,6 +4250,8 @@ window.openAddTruck = function() {
   var sb = document.getElementById('saveTruckBtn'); if (sb) { sb.disabled=false; sb.style.opacity=''; sb.style.cursor=''; sb.textContent='Save Truck'; }
   document.getElementById('truckDate').value = document.getElementById('dateFilter').value;
   document.getElementById('truckNotes').value = '';
+  const ccCheck = document.getElementById('truckCollectedCheck');
+  if (ccCheck) ccCheck.checked = false;
   const warn = document.getElementById('dupWarning');
   if (warn) warn.classList.remove('visible');
 
@@ -4098,6 +4328,7 @@ window.saveTruck = function() {
   let status = (currentUser.role === 'worker' && !(isForemanAdding && savePerms.canEditStatus)) ? 'unpaid' : getRadioVal('statusRadio');
   if (!worker) status = 'pending';
   const notes = document.getElementById('truckNotes').value.trim();
+  const cashCollectedNow = !!document.getElementById('truckCollectedCheck')?.checked;
   if (!plate) { showToast('⚠️ Enter plate number'); return; }
   if (!date) { showToast('⚠️ Select date'); return; }
   if (addingSuspended && currentUser.role !== 'admin') {
@@ -4140,17 +4371,23 @@ window.saveTruck = function() {
     }
 
     // ── No duplicate — proceed ──
+    const collectedFields = (worker && status==='unpaid' && cashCollectedNow)
+      ? { cashCollected: true, cashCollectedAt: Date.now(), cashCollectedBy: currentUser.name || currentUser.id }
+      : {};
+
     const data = {
       plate, date, worker, status, notes,
       addedBy: currentUser.name || currentUser.id,
-      timestamp: Date.now()
+      timestamp: Date.now(),
+      ...collectedFields
     };
 
     if (editingTruckId) {
       updateDoc(doc(db,'trucks',editingTruckId), {
         plate, date, worker, status, notes,
         modifiedAt: Date.now(),
-        modifiedBy: currentUser.name || currentUser.id
+        modifiedBy: currentUser.name || currentUser.id,
+        ...collectedFields
       });
       showToast('✅ Truck updated');
       closeModal('modalTruck');
@@ -4215,6 +4452,172 @@ window.quickMarkPaid = function(id) {
     modifiedBy: currentUser.name || currentUser.id
   });
   showToast('✅ Marked as Paid');
+}
+
+// ── CASH COLLECTED (sealer hint tick — separate from official settlement status) ──
+window.toggleCashCollected = function(id) {
+  const truck = trucks[id];
+  if (!truck) return;
+  const role = currentUser.role;
+  const isAssignedSealer = role==='worker' && truck.worker===currentUser.id;
+  const canToggle = !!truck.worker && truck.status==='unpaid' && ((isAssignedSealer && !truck.cashHandedIn) || role==='admin');
+  if (!canToggle) { showToast('⛔ Not allowed'); return; }
+  const next = !truck.cashCollected;
+  const update = next
+    ? { cashCollected: true, cashCollectedAt: Date.now(), cashCollectedBy: currentUser.name || currentUser.id }
+    : { cashCollected: false, cashCollectedAt: null, cashCollectedBy: null, cashHandedIn: false, cashHandInAt: null, cashHandInBy: null };
+  updateDoc(doc(db,'trucks',id), update);
+  showToast(next ? '💵 Marked as collected' : '↩️ Collection unmarked');
+}
+
+// Cashier/CEO/Admin batch-confirms a sealer has physically handed in the cash for their collected trucks
+window.confirmHandIn = function(worker) {
+  const role = currentUser.role;
+  if (!(role==='cashier' || role==='admin' || role==='head')) { showToast('⛔ Not allowed'); return; }
+  const selectedDate = document.getElementById('dateFilter')?.value || getWorkingDate();
+  const list = Object.entries(trucks).filter(([k,tk]) => tk.worker===worker && tk.date===selectedDate && tk.status==='unpaid' && tk.cashCollected && !tk.cashHandedIn);
+  if (list.length === 0) { showToast('Nothing to clear'); return; }
+  const amount = list.length * CLIENT_PRICE;
+  if (!confirm(`Confirm hand-in from ${worker}?\n${list.length} truck(s) · ${amount.toLocaleString()} ETB`)) return;
+  const now = Date.now();
+  const by = currentUser.name || currentUser.id;
+  const batch = writeBatch(db);
+  list.forEach(([id]) => {
+    batch.update(doc(db,'trucks',id), { cashHandedIn: true, cashHandInAt: now, cashHandInBy: by });
+  });
+  batch.set(doc(collection(db,'cashHandIns')), {
+    worker, date: selectedDate, truckCount: list.length, amount,
+    truckIds: list.map(([id])=>id),
+    confirmedBy: by, confirmedAt: now
+  });
+  batch.commit()
+    .then(() => showToast(`✅ Hand-in confirmed: ${list.length} truck(s), ${amount.toLocaleString()} ETB`))
+    .catch(e => showToast('❌ Error: ' + (e.message || 'failed')));
+}
+
+// ── COLLECTIONS TAB — per-sealer view of collected-but-uncleared trucks ──
+let expandedCollectionSealer = null;
+let collectionUnchecked = new Set(); // truck ids the cashier has manually unticked (all others default checked)
+window.toggleCollectionSealer = function(worker) {
+  expandedCollectionSealer = (expandedCollectionSealer === worker) ? null : worker;
+  renderCollectionsTab();
+}
+window.toggleCollectionCheck = function(id) {
+  if (collectionUnchecked.has(id)) collectionUnchecked.delete(id); else collectionUnchecked.add(id);
+  renderCollectionsTab();
+}
+window.renderCollectionsTab = function() {
+  const container = document.getElementById('collectionsContent');
+  if (!container) return;
+  const role = currentUser.role;
+  if (!(role==='admin' || role==='cashier' || role==='head')) { container.innerHTML = ''; return; }
+
+  const selectedDate = document.getElementById('dateFilter')?.value || getWorkingDate();
+  const isToday = selectedDate === getWorkingDate();
+  const dateObj = new Date(selectedDate + 'T12:00:00');
+  const dateLabel = isToday ? 'Today' : dateObj.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+  const sub = document.getElementById('collectionsSubtitle');
+  if (sub) sub.textContent = 'For ' + dateLabel + ' — trucks each sealer has collected cash for, not yet cleared';
+
+  const workers = getWorkerList();
+
+  const cards = workers.map(w => {
+    const color = WORKER_COLORS[w] || '#6b7280';
+    const entries = Object.entries(trucks).filter(([id,t]) => t.worker===w && t.date===selectedDate && t.status==='unpaid' && t.cashCollected && !t.cashHandedIn);
+    const selectedEntries = entries.filter(([id]) => !collectionUnchecked.has(id));
+    const amount = entries.length * CLIENT_PRICE;
+    const expanded = expandedCollectionSealer === w;
+
+    // Sealing blombs — issued / used / remaining (tracking only, never blocks sealing)
+    const sealIssued = getSealIssuedTotal(w, selectedDate);
+    const sealUsed = getSealUsedCount(w, selectedDate);
+    const sealLeft = sealIssued - sealUsed;
+    const sealNotTracked = sealIssued === 0; // no batches ever issued — don't show a scary negative number
+    const sealRanOut = !sealNotTracked && sealLeft <= 0;
+
+    const plateRows = entries.map(([id,t]) => `
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--bg2);border-radius:8px;margin-bottom:6px">
+        <input type="checkbox" onclick="toggleCollectionCheck('${id}')" ${collectionUnchecked.has(id)?'':'checked'} style="width:18px;height:18px;flex-shrink:0;accent-color:var(--green);">
+        <span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px;flex:1">${t.plate}</span>
+        <span style="font-size:12px;color:var(--green);font-weight:700">${CLIENT_PRICE.toLocaleString()} ETB</span>
+      </div>
+    `).join('');
+
+    return `
+      <div class="worker-card${expanded?' expanded':''}" style="margin-bottom:10px">
+        <div class="worker-card-header" onclick="toggleCollectionSealer('${w}')">
+          <div class="worker-avatar" style="background:${color}22;color:${color};border:2px solid ${color}44">
+            ${w.substring(0,2).toUpperCase()}
+          </div>
+          <div class="worker-info">
+            <div class="worker-name">${w}</div>
+            <div class="worker-stats-row">
+              <div class="worker-stat">💵 Collected: <span style="color:${entries.length>0?'#eab308':'var(--text2)'};font-weight:700">${entries.length}</span></div>
+              <div class="worker-stat">${amount.toLocaleString()} ETB</div>
+              <div class="worker-stat">🎟️ Seals: <span style="color:${sealRanOut?'var(--red)':'var(--text)'};font-weight:700">${sealNotTracked?'—':sealLeft}</span> ${sealNotTracked?'not issued yet':'left'}</div>
+            </div>
+          </div>
+          <div class="expand-icon">${expanded?'▲':'▼'}</div>
+        </div>
+        ${expanded ? `
+        <div class="worker-details">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:rgba(255,255,255,0.03);border-radius:8px;margin-bottom:10px;font-size:12px;">
+            <span style="color:var(--text2)">🎟️ Plombs — Issued: <strong style="color:var(--text)">${sealIssued}</strong> · Used: <strong style="color:var(--text)">${sealUsed}</strong> · Left: <strong style="color:${sealNotTracked?'var(--text3)':sealRanOut?'var(--red)':'var(--green)'}">${sealNotTracked?'—':sealLeft}</strong></span>
+          </div>
+          ${sealNotTracked ? '<div style="font-size:11px;color:var(--text3);margin-bottom:10px;">No seal batches issued to this sealer yet — issue one from the Sealers tab to start tracking.</div>' : ''}
+          ${sealRanOut ? '<div style="font-size:12px;color:var(--red);background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);border-radius:8px;padding:8px 10px;margin-bottom:10px;">⛔ Out of plombs — no more sealing (and no more cash) until more are issued.</div>' : ''}
+          ${entries.length === 0
+            ? '<div style="font-size:13px;color:var(--text3);padding:8px 0">No collected trucks awaiting clearance for this date.</div>'
+            : plateRows + `<button class="manage-btn" style="width:100%;margin-top:8px;background:rgba(34,197,94,0.15);color:var(--green);border-color:rgba(34,197,94,0.35);font-weight:700" ${selectedEntries.length===0?'disabled':''} onclick="markSealerCollectionsPaid('${w}')">✅ Mark Paid &amp; Clear (${selectedEntries.length} · ${(selectedEntries.length*CLIENT_PRICE).toLocaleString()} ETB)</button>`
+          }
+        </div>
+        ` : ''}
+      </div>
+    `;
+  }).join('');
+
+  container.innerHTML = cards || '<div style="padding:24px 0;text-align:center;color:var(--text3)">No sealers found.</div>';
+}
+
+// One click: officially mark the ticked collected-but-uncleared trucks for this sealer as Paid, and confirm cash hand-in
+window.markSealerCollectionsPaid = function(worker) {
+  const role = currentUser.role;
+  if (!(role==='admin' || role==='cashier' || role==='head')) { showToast('⛔ Not allowed'); return; }
+  const selectedDate = document.getElementById('dateFilter')?.value || getWorkingDate();
+  const list = Object.entries(trucks)
+    .filter(([id,t]) => t.worker===worker && t.date===selectedDate && t.status==='unpaid' && t.cashCollected && !t.cashHandedIn)
+    .filter(([id]) => !collectionUnchecked.has(id));
+  if (list.length === 0) { showToast('Nothing selected to clear'); return; }
+  const plates = list.map(([id,t]) => t.plate).join(', ');
+  const amount = list.length * CLIENT_PRICE;
+  if (!confirm(`Mark ${list.length} truck(s) as Paid & clear cash from ${worker}?\n${plates}\n${amount.toLocaleString()} ETB`)) return;
+  const now = Date.now();
+  const by = currentUser.name || currentUser.id;
+
+  // Two separate writes per truck, each mirroring the exact field-shape already used elsewhere
+  // (quickMarkPaid's {status,modifiedAt,modifiedBy} and confirmHandIn's {cashHandedIn,cashHandInAt,cashHandInBy}).
+  // Combining both sets of fields into one write can be rejected by Firestore rules that
+  // allowlist fields per-action, so we keep them as distinct update calls.
+  const statusBatch = writeBatch(db);
+  list.forEach(([id]) => {
+    statusBatch.update(doc(db,'trucks',id), { status: 'paid', modifiedAt: now, modifiedBy: by });
+  });
+
+  statusBatch.commit()
+    .then(() => {
+      const handInBatch = writeBatch(db);
+      list.forEach(([id]) => {
+        handInBatch.update(doc(db,'trucks',id), { cashHandedIn: true, cashHandInAt: now, cashHandInBy: by });
+      });
+      handInBatch.set(doc(collection(db,'cashHandIns')), {
+        worker, date: selectedDate, truckCount: list.length, amount,
+        truckIds: list.map(([id])=>id),
+        confirmedBy: by, confirmedAt: now
+      });
+      return handInBatch.commit();
+    })
+    .then(() => { showToast(`✅ ${list.length} truck(s) marked Paid & cleared`); expandedCollectionSealer = null; renderCollectionsTab(); })
+    .catch(e => showToast('❌ Error: ' + (e.message || 'failed')));
 }
 
 // ── ASSIGN ──
@@ -4489,6 +4892,21 @@ function renderWorkers() {
                     + wTrucks.filter(t=>t.status==='partial').length * WORKER_PAY.partial;
     const totalMissing = totalOwed - totalPaid;
 
+    // Cash physically collected by the sealer but not yet handed in to the cashier (hint only — not the official truck status)
+    const unclearedTrucks = wTrucks.filter(t=>t.status==='unpaid' && t.cashCollected && !t.cashHandedIn);
+    const unclearedCount = unclearedTrucks.length;
+    const unclearedAmount = unclearedCount * CLIENT_PRICE;
+    const collectThreshold = window.tariffs.collectThreshold || 8;
+    const overThreshold = unclearedCount >= collectThreshold;
+    const canConfirmHandIn = role==='cashier' || role==='admin' || role==='head';
+
+    // Sealing blombs (seals) — tracked only, never blocks work
+    const sealIssued = getSealIssuedTotal(w, selectedDate);
+    const sealUsed = getSealUsedCount(w, selectedDate);
+    const sealLeft = sealIssued - sealUsed;
+    const sealNotTracked = sealIssued === 0; // no batches ever issued — don't show a scary negative number
+    const canIssueSeals = role==='cashier' || role==='admin' || role==='head';
+
     return `
       <div class="worker-card" id="wcard_${w}">
         <div class="worker-card-header" onclick="toggleWorker('${w}')">
@@ -4501,6 +4919,8 @@ function renderWorkers() {
               <div class="worker-stat">Trucks: <span>${wTrucks.length}</span></div>
               <div class="worker-stat">Earned: <span style="color:var(--green)">${earned.toLocaleString()}</span></div>
               <div class="worker-stat">Net: <span style="color:${net>=0?'var(--green)':'var(--red)'}">${net.toLocaleString()}</span></div>
+              ${unclearedCount>0 ? `<div class="worker-stat">💵 Uncleared: <span style="color:${overThreshold?'#eab308':'var(--text2)'};font-weight:${overThreshold?800:600}">${unclearedCount}${overThreshold?' ⚠️':''}</span></div>` : ''}
+              <div class="worker-stat">🎟️ Seals: <span style="color:${sealNotTracked?'var(--text3)':sealLeft<=0?'var(--red)':'var(--text)'};font-weight:700">${sealNotTracked?'—':sealLeft}</span> ${sealNotTracked?'not issued':'left'}</div>
             </div>
           </div>
           <div class="expand-icon">▼</div>
@@ -4533,6 +4953,18 @@ function renderWorkers() {
           <div class="detail-row"><span class="detail-label">Earned today</span><span class="detail-val green">${earned.toLocaleString()} ETB</span></div>
           <div class="detail-row"><span class="detail-label">Total advances</span><span class="detail-val red">-${advTotal.toLocaleString()} ETB</span></div>
           <div class="detail-row"><span class="detail-label">Net balance</span><span class="detail-val" style="color:${net>=0?'var(--green)':'var(--red)'}">${net.toLocaleString()} ETB</span></div>
+          <div class="detail-row"><span class="detail-label">🎟️ Seals left</span><span class="detail-val" style="color:${sealNotTracked?'var(--text3)':sealLeft<=0?'var(--red)':sealLeft<=2?'var(--orange)':'var(--text)'}">${sealNotTracked?'Not tracked yet':sealLeft} <span style="color:var(--text3);font-weight:400;font-size:11px">${sealNotTracked?'':`(${sealUsed} used / ${sealIssued} issued)`}</span></span></div>
+          ${canIssueSeals ? `
+          <div style="display:flex;gap:6px;margin-top:6px">
+            <button class="manage-btn" style="flex:1" onclick="openIssueSeals('${w}')">🎟️ Issue Seals</button>
+            <button class="manage-btn" style="flex:1" ${sealLeft<=0?'disabled':''} onclick="openTakeBackSeals('${w}')">↩️ Take Back</button>
+          </div>` : ''}
+          ${canConfirmHandIn && unclearedCount>0 ? `
+            <div style="margin-top:12px;padding:10px;background:rgba(234,179,8,0.08);border:1px solid rgba(234,179,8,0.25);border-radius:10px">
+              <div style="font-size:12px;font-weight:700;color:#eab308;margin-bottom:6px">💵 ${unclearedCount} truck(s) uncleared · ${unclearedAmount.toLocaleString()} ETB</div>
+              <button class="manage-btn" style="background:rgba(234,179,8,0.15);color:#eab308;border-color:rgba(234,179,8,0.35)" onclick="confirmHandIn('${w}')">🤝 Confirm Hand-in</button>
+            </div>
+          ` : ''}
           ${role==='admin' ? `
             <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
               <button class="manage-btn" onclick="viewWorkerList('${w}')">📋 List</button>
@@ -5094,6 +5526,7 @@ function renderManage() {
             row('sealerPartial', '👷 Sealer Gets — Partial',    T.sealerPartial,  'Sealer commission per partial truck'),
             row('agashETB',      '🏗️ Agash Rate — ETB',        T.agashETB,       'Agash rate per truck (ETB)'),
             row('agashFD',       '🏗️ Agash Rate — FD',         T.agashFD,        'Agash rate per truck (FD)'),
+            row('collectThreshold', '💵 Cash Collection Alert', T.collectThreshold, 'Uncleared trucks before sealer is flagged'),
           ].join('');
         })()}
       </div>
@@ -5778,6 +6211,40 @@ function loadTesseractLib() {
   return tesseractLoadPromise;
 }
 
+// ── TRAINED PLATE-CHARACTER MODEL (TensorFlow.js) ──
+// A small CNN trained specifically on this fleet's plate character set
+// (0-9, A, D) — a second, independent reading method that runs alongside
+// Tesseract. When both agree, that's a strong signal; when they don't, the
+// scan flags it instead of silently trusting either one.
+var tfjsLoadPromise = null;
+var plateModelPromise = null;
+var PLATE_MODEL_CLASSES = '0123456789AD'.split('');
+var PLATE_MODEL_URL = './plate-model/model.json'; // upload the plate-model/ folder alongside index.html
+
+function loadTfjsLib() {
+  if (window.tf) return Promise.resolve();
+  if (tfjsLoadPromise) return tfjsLoadPromise;
+  tfjsLoadPromise = new Promise(function(resolve, reject) {
+    var s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.20.0/dist/tf.min.js';
+    s.onload = resolve;
+    s.onerror = function() { tfjsLoadPromise = null; reject(new Error('Failed to load TensorFlow.js')); };
+    document.head.appendChild(s);
+  });
+  return tfjsLoadPromise;
+}
+
+function ensurePlateModel() {
+  if (plateModelPromise) return plateModelPromise;
+  plateModelPromise = loadTfjsLib().then(function() {
+    return tf.loadLayersModel(PLATE_MODEL_URL);
+  }).catch(function(err) {
+    plateModelPromise = null; // allow retry later (e.g. file was missing but gets added)
+    throw err;
+  });
+  return plateModelPromise;
+}
+
 // A worker takes a couple of seconds to spin up (download engine + language data)
 // the FIRST time. We create it once and keep it alive so every scan after that
 // only pays for the actual recognition, which is near-instant.
@@ -5806,8 +6273,234 @@ function ensureOcrWorker() {
 // first scan doesn't have to wait for the engine to download and initialize.
 if ('requestIdleCallback' in window) {
   requestIdleCallback(function() { ensureOcrWorker().catch(function() {}); }, { timeout: 8000 });
+  requestIdleCallback(function() { ensurePlateModel().catch(function() {}); }, { timeout: 8000 });
 } else {
   setTimeout(function() { ensureOcrWorker().catch(function() {}); }, 4000);
+  setTimeout(function() { ensurePlateModel().catch(function() {}); }, 4000);
+}
+
+// ── PLATE IMAGE PREPROCESSING (data-driven, no fixed thresholds) ──
+// These replace the old fixed-brightness cutoff (150/90) with techniques that
+// adapt to whatever lighting/glare is actually in the shot, plus a sharpening
+// pass, which together tend to help Tesseract read digits under uneven light
+// or slight blur much more reliably than a single global threshold does.
+
+// Convert canvas pixel data to a flat grayscale array (one byte per pixel).
+function toGrayscale(imgData) {
+  var d = imgData.data;
+  var gray = new Uint8ClampedArray(d.length / 4);
+  for (var i = 0, j = 0; i < d.length; i += 4, j++) {
+    gray[j] = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
+  }
+  return gray;
+}
+
+// Otsu's method: finds the threshold that best splits the image into two
+// classes (plate background vs. characters) by maximizing between-class
+// variance — adapts automatically to bright glare or dim/shadowed plates,
+// unlike a fixed cutoff picked for "typical" lighting.
+function otsuThreshold(gray) {
+  var hist = new Array(256).fill(0);
+  for (var i = 0; i < gray.length; i++) hist[gray[i]]++;
+  var total = gray.length;
+  var sum = 0;
+  for (var t = 0; t < 256; t++) sum += t * hist[t];
+  var sumB = 0, wB = 0, wF = 0, maxVar = 0, threshold = 128;
+  for (var t = 0; t < 256; t++) {
+    wB += hist[t];
+    if (wB === 0) continue;
+    wF = total - wB;
+    if (wF === 0) break;
+    sumB += t * hist[t];
+    var mB = sumB / wB;
+    var mF = (sum - sumB) / wF;
+    var varBetween = wB * wF * (mB - mF) * (mB - mF);
+    if (varBetween > maxVar) { maxVar = varBetween; threshold = t; }
+  }
+  return threshold;
+}
+
+// Simple 3x3 unsharp/sharpen kernel on the grayscale array — counteracts the
+// slight softness typical of phone-camera video frames, which otherwise
+// blurs character edges together before thresholding.
+function sharpenGray(gray, w, h) {
+  var out = new Uint8ClampedArray(gray.length);
+  var k = [0, -1, 0, -1, 5, -1, 0, -1, 0];
+  for (var y = 0; y < h; y++) {
+    for (var x = 0; x < w; x++) {
+      if (x === 0 || y === 0 || x === w - 1 || y === h - 1) {
+        out[y * w + x] = gray[y * w + x];
+        continue;
+      }
+      var sum = 0, ki = 0;
+      for (var dy = -1; dy <= 1; dy++) {
+        for (var dx = -1; dx <= 1; dx++) {
+          sum += gray[(y + dy) * w + (x + dx)] * k[ki++];
+        }
+      }
+      out[y * w + x] = sum;
+    }
+  }
+  return out;
+}
+
+// Runs the full preprocessing pipeline on whatever's currently drawn in
+// `canvas` (already cropped/scaled) and writes the cleaned-up result back to
+// the same canvas, ready for Tesseract.
+function preprocessPlateCanvas(canvas) {
+  var ctx = canvas.getContext('2d');
+  var w = canvas.width, h = canvas.height;
+  var imgData = ctx.getImageData(0, 0, w, h);
+  var gray = toGrayscale(imgData);
+  var sharpened = sharpenGray(gray, w, h);
+  var threshold = otsuThreshold(sharpened);
+  // Soft band around the threshold (rather than a hard cutoff) keeps a little
+  // anti-aliasing at character edges, which Tesseract generally reads better
+  // than pure black/white pixels.
+  var band = 22;
+  var d = imgData.data;
+  for (var i = 0, j = 0; i < d.length; i += 4, j++) {
+    var v = sharpened[j];
+    var out = v > threshold + band ? 255 : (v < threshold - band ? 0 : v);
+    d[i] = d[i + 1] = d[i + 2] = out;
+  }
+  ctx.putImageData(imgData, 0, 0);
+  return threshold;
+}
+
+// Splits an already-thresholded (near-binary) canvas into per-character
+// column ranges using a vertical ink-density profile: columns with little
+// or no "ink" are gaps between characters. Auto-detects whether characters
+// are the dark or light class so it works regardless of plate color scheme.
+function segmentCharacterColumns(canvas) {
+  var ctx = canvas.getContext('2d');
+  var w = canvas.width, h = canvas.height;
+  var imgData = ctx.getImageData(0, 0, w, h);
+  var d = imgData.data;
+
+  var white = 0, black = 0;
+  for (var i = 0; i < d.length; i += 4) { if (d[i] > 127) white++; else black++; }
+  var bgIsWhite = white >= black; // majority class = background
+
+  var colInk = new Array(w).fill(0);
+  for (var x = 0; x < w; x++) {
+    var count = 0;
+    for (var y = 0; y < h; y++) {
+      var v = d[(y * w + x) * 4];
+      var isInk = bgIsWhite ? v <= 127 : v > 127;
+      if (isInk) count++;
+    }
+    colInk[x] = count;
+  }
+
+  var minInk = Math.max(1, Math.round(h * 0.06));
+  var minWidth = Math.max(3, w * 0.02);
+  var segments = [];
+  var inChar = false, start = 0;
+  for (var x = 0; x < w; x++) {
+    if (colInk[x] >= minInk && !inChar) { inChar = true; start = x; }
+    else if (colInk[x] < minInk && inChar) {
+      inChar = false;
+      if (x - start >= minWidth) segments.push([start, x]);
+    }
+  }
+  if (inChar && w - start >= minWidth) segments.push([start, w]);
+
+  // A narrow character (like "1") can fail to create a big enough gap and
+  // end up fused with its neighbor into one wide segment. Detect segments
+  // that are much wider than the rest and split each at its weakest
+  // (lowest-ink) interior column, rather than assuming segmentation always
+  // finds one gap per character boundary.
+  if (segments.length > 1) {
+    var widths = segments.map(function(s) { return s[1] - s[0]; });
+    var sorted = widths.slice().sort(function(a, b) { return a - b; });
+    var median = sorted[Math.floor(sorted.length / 2)];
+    var refined = [];
+    segments.forEach(function(s) {
+      var segWidth = s[1] - s[0];
+      if (median > 0 && segWidth > median * 1.7) {
+        // Look for the weakest column in the interior (avoid the very edges)
+        var lo = s[0] + Math.round(segWidth * 0.25);
+        var hi = s[1] - Math.round(segWidth * 0.25);
+        var minVal = Infinity, splitAt = -1;
+        for (var x = lo; x <= hi; x++) {
+          if (colInk[x] < minVal) { minVal = colInk[x]; splitAt = x; }
+        }
+        if (splitAt > s[0] + minWidth / 2 && splitAt < s[1] - minWidth / 2) {
+          refined.push([s[0], splitAt], [splitAt, s[1]]);
+          return;
+        }
+      }
+      refined.push(s);
+    });
+    segments = refined;
+  }
+
+  return { segments: segments, bgIsWhite: bgIsWhite };
+}
+
+// Crops one character segment, centers it on a square canvas padded with the
+// background color (matching how the training images were framed), and
+// resizes to the model's expected 32x32 input.
+function extractCharTile(sourceCanvas, x0, x1, bgIsWhite) {
+  var h = sourceCanvas.height;
+  var segW = x1 - x0;
+  var side = Math.max(segW, h);
+  var pad = side * 0.15;
+  side = Math.round(side + pad * 2);
+
+  var tile = document.createElement('canvas');
+  tile.width = 32; tile.height = 32;
+  var tctx = tile.getContext('2d');
+  tctx.fillStyle = bgIsWhite ? '#fff' : '#000';
+  tctx.fillRect(0, 0, 32, 32);
+
+  var scale = 32 / side;
+  var destW = segW * scale, destH = h * scale;
+  var destX = (32 - destW) / 2, destY = (32 - destH) / 2;
+  tctx.imageSmoothingEnabled = true;
+  tctx.drawImage(sourceCanvas, x0, 0, segW, h, destX, destY, destW, destH);
+  return tile;
+}
+
+// Runs the trained CNN over each segmented character and reassembles the
+// plate string. Returns null (rather than throwing) on any failure so this
+// can always be treated as an optional second opinion alongside Tesseract.
+async function classifyPlateWithModel(canvas) {
+  try {
+    var model = await ensurePlateModel();
+    var seg = segmentCharacterColumns(canvas);
+    if (!seg.segments.length) return null;
+
+    var tiles = seg.segments.map(function(s) { return extractCharTile(canvas, s[0], s[1], seg.bgIsWhite); });
+
+    var text = '';
+    var confidences = [];
+    for (var i = 0; i < tiles.length; i++) {
+      var result = tf.tidy(function() {
+        var imgData = tiles[i].getContext('2d').getImageData(0, 0, 32, 32);
+        var gray = new Float32Array(32 * 32);
+        for (var p = 0, q = 0; p < imgData.data.length; p += 4, q++) {
+          gray[q] = imgData.data[p] / 255;
+        }
+        var input = tf.tensor(gray, [1, 32, 32, 1]);
+        var pred = model.predict(input);
+        var probs = pred.dataSync();
+        return probs;
+      });
+      var maxIdx = 0, maxProb = -1;
+      for (var c = 0; c < result.length; c++) {
+        if (result[c] > maxProb) { maxProb = result[c]; maxIdx = c; }
+      }
+      text += PLATE_MODEL_CLASSES[maxIdx];
+      confidences.push(maxProb);
+    }
+
+    var avgConf = confidences.reduce(function(a, b) { return a + b; }, 0) / confidences.length;
+    return { text: text, confidence: avgConf * 100 };
+  } catch (err) {
+    return null; // model not loaded / file missing / inference error — Tesseract still covers the scan
+  }
 }
 
 window.openScanPlate = async function(targetId) {
@@ -5881,43 +6574,85 @@ window.captureAndScan = async function() {
     var nativeW = boxRect.width / coverScale;
     var nativeH = boxRect.height / coverScale;
 
-    // Small padding around the box so a slightly-misaligned plate isn't clipped
-    var padX = nativeW * 0.1, padY = nativeH * 0.6;
+    // Small padding around the box so a slightly-misaligned plate isn't clipped.
+    // (Previously padY was 0.6x the box height — more than doubling the crop's
+    // vertical extent with grille/background and the small ad-text line under
+    // real plates, which diluted the Otsu threshold and badly under-scaled
+    // the actual characters relative to the target character height below.)
+    var padX = nativeW * 0.1, padY = nativeH * 0.18;
     var cropX = Math.max(0, nativeX - padX);
     var cropY = Math.max(0, nativeY - padY);
     var cropW = Math.min(vw - cropX, nativeW + padX * 2);
     var cropH = Math.min(vh - cropY, nativeH + padY * 2);
 
-    // Downscale before OCR — a smaller image recognizes much faster with
-    // negligible accuracy loss for short plate text on an already-warm engine.
-    var targetW = 480;
-    var scale = Math.min(1, targetW / cropW);
+    // Scale the crop toward a target character height rather than only ever
+    // downscaling. Tesseract reads short text most reliably around ~55-70px
+    // tall — a tight phone-camera crop of a plate is often well under that,
+    // so we now upscale small crops (capped to avoid over-magnifying noise)
+    // instead of shrinking everything to a fixed width.
+    var targetCharH = 64;
+    var scale = targetCharH / cropH;
+    scale = Math.max(0.4, Math.min(scale, 4)); // cap both directions
     var outW = Math.max(1, Math.round(cropW * scale));
     var outH = Math.max(1, Math.round(cropH * scale));
+    if (outW > 900) { var capScale = 900 / outW; outW = 900; outH = Math.round(outH * capScale); }
 
     var canvas = document.getElementById('scanCanvas');
     canvas.width = outW; canvas.height = outH;
     var ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
     ctx.drawImage(video, cropX, cropY, cropW, cropH, 0, 0, outW, outH);
 
-    // Grayscale + contrast boost to help OCR accuracy
-    var imgData = ctx.getImageData(0, 0, outW, outH);
-    var d = imgData.data;
-    for (var i = 0; i < d.length; i += 4) {
-      var gray = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
-      var v = gray > 150 ? 255 : (gray < 90 ? 0 : gray);
-      d[i] = d[i + 1] = d[i + 2] = v;
-    }
-    ctx.putImageData(imgData, 0, 0);
+    // Adaptive threshold (Otsu) + sharpening — replaces the old fixed 150/90
+    // brightness cutoff, which failed under glare or in shadow.
+    preprocessPlateCanvas(canvas);
 
+    // First pass with the worker's default mode (single line of text).
     var result = await worker.recognize(canvas);
     var text = ((result && result.data && result.data.text) || '').toUpperCase().replace(/[^0-9AD]/g, '');
+    var confidence = (result && result.data && result.data.confidence) || 0;
+
+    // If the first pass is empty or looks shaky, try again with a different
+    // page-segmentation mode (treat the crop as a single word instead of a
+    // line) on the same cleaned-up canvas, and keep whichever attempt scored
+    // higher — a single blind guess is more likely to silently save a wrong
+    // plate number than two attempts compared against each other.
+    var CONF_OK = 65;
+    if ((!text || confidence < CONF_OK) && window.Tesseract && Tesseract.PSM) {
+      try {
+        await worker.setParameters({ tessedit_pageseg_mode: Tesseract.PSM.SINGLE_WORD });
+        var result2 = await worker.recognize(canvas);
+        var text2 = ((result2 && result2.data && result2.data.text) || '').toUpperCase().replace(/[^0-9AD]/g, '');
+        var confidence2 = (result2 && result2.data && result2.data.confidence) || 0;
+        if (text2 && confidence2 > confidence) { text = text2; confidence = confidence2; }
+      } catch (e2) { /* keep first-pass result if the retry itself fails */ }
+      finally {
+        // Reset to the persistent worker's normal mode for the next scan.
+        try { await worker.setParameters({ tessedit_pageseg_mode: Tesseract.PSM.SINGLE_LINE }); } catch (e3) {}
+      }
+    }
 
     if (!text) {
       status.textContent = '❌ No text detected — move closer, hold steady, ensure good light';
       btn.disabled = false; btn.textContent = '📸 Capture';
       return;
     }
+
+    // Second, independent read using the trained character-recognition model
+    // (fails silently to null if the model file isn't deployed / hasn't
+    // loaded yet — Tesseract's result above still stands on its own either way).
+    var modelResult = await classifyPlateWithModel(canvas);
+    var agree = !!(modelResult && modelResult.text && modelResult.text === text);
+
+    if (modelResult && modelResult.text && modelResult.confidence > confidence) {
+      text = modelResult.text;
+      confidence = modelResult.confidence;
+    }
+    // Two independent methods landing on the same answer is a stronger
+    // signal than either one's own score, so treat agreement as a confident
+    // read even if neither engine alone cleared the threshold.
+    if (agree) confidence = Math.max(confidence, 90);
 
     // Grab a full, un-cropped frame (JPEG, capped width) as the record photo —
     // kept separate from the small OCR crop above so the saved photo shows the
@@ -5941,14 +6676,31 @@ window.captureAndScan = async function() {
       input.dispatchEvent(new Event('input', { bubbles: true }));
     }
 
-    document.getElementById('scanResultText').textContent = '✅ ' + text;
-    document.getElementById('scanResultWrap').style.display = 'block';
-    status.textContent = 'Plate filled';
+    var confPct = Math.round(confidence);
+    var resultEl = document.getElementById('scanResultText');
+    var mismatchNote = (modelResult && modelResult.text && !agree)
+      ? ('  (Tesseract vs AI model disagreed — verify)')
+      : '';
 
-    setTimeout(function() {
-      closeScanModal();
-      showToast('✅ Plate filled: ' + text);
-    }, 500);
+    if (confidence >= CONF_OK && !mismatchNote) {
+      resultEl.style.color = 'var(--green)';
+      resultEl.textContent = '✅ ' + text + '  (' + confPct + '%)';
+      document.getElementById('scanResultWrap').style.display = 'block';
+      status.textContent = 'Plate filled';
+      setTimeout(function() {
+        closeScanModal();
+        showToast('✅ Plate filled: ' + text);
+      }, 500);
+    } else {
+      // Low-confidence read: fill the field so it's ready to correct, but
+      // don't auto-close — the person doing the scan is the safety net for
+      // a plate number a shaky read could otherwise silently get wrong.
+      resultEl.style.color = 'var(--orange, #d97706)';
+      resultEl.textContent = '⚠️ ' + text + '  (' + confPct + '%)' + mismatchNote + (mismatchNote ? '' : ' — please verify');
+      document.getElementById('scanResultWrap').style.display = 'block';
+      status.textContent = 'Uncertain read — check the plate, edit if needed, or retake';
+      btn.disabled = false; btn.textContent = '🔁 Retake';
+    }
   } catch (err) {
     status.textContent = '❌ Scan failed — try again';
     btn.disabled = false; btn.textContent = '📸 Capture';
