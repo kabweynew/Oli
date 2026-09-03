@@ -1325,10 +1325,226 @@
     background: #fff; opacity: 0; transition: opacity 0.2s;
   }
   .stl-receiver-opt.selected .stl-recv-dot::after { opacity: 1; }
+
+  /* ── CERTIFICAT DE TRAVAIL MODULE ── */
+  .cert-section-title {
+    font-size:10px; font-weight:800; color:var(--text3);
+    letter-spacing:0.1em; padding:14px 16px 6px; text-transform:uppercase;
+  }
+  .cert-card {
+    background:var(--card); border:1px solid var(--border);
+    border-radius:var(--radius); margin:0 16px 12px; padding:16px;
+  }
+  .cert-form-group { margin-bottom:14px; }
+  .cert-form-label {
+    display:block; font-size:10px; font-weight:700; color:var(--text3);
+    letter-spacing:0.08em; margin-bottom:6px; text-transform:uppercase;
+  }
+  .cert-input {
+    width:100%; background:var(--bg3); border:1.5px solid var(--border);
+    border-radius:var(--radius-sm); padding:10px 12px; font-size:14px;
+    font-weight:500; color:var(--text); font-family:inherit; outline:none;
+    transition:border-color 0.2s;
+  }
+  .cert-input:focus { border-color:var(--accent); }
+  .cert-upload-btn {
+    display:flex; align-items:center; gap:10px;
+    background:var(--bg3); border:1.5px dashed var(--border);
+    border-radius:var(--radius-sm); padding:12px 14px;
+    cursor:pointer; transition:all 0.2s; width:100%;
+    font-family:inherit; color:var(--text2); font-size:13px; font-weight:600;
+  }
+  .cert-upload-btn:active { border-color:var(--accent); color:var(--accent); }
+  .cert-img-preview {
+    max-height:60px; max-width:120px; border-radius:6px;
+    object-fit:contain; background:#fff; padding:4px;
+  }
+  .cert-action-bar {
+    display:flex; gap:8px; flex-wrap:wrap;
+    padding:0 16px 12px;
+  }
+  .cert-btn {
+    flex:1; min-width:80px; padding:11px 8px;
+    border-radius:var(--radius-sm); font-size:12px; font-weight:700;
+    cursor:pointer; font-family:inherit; border:none; transition:all 0.2s;
+    text-align:center;
+  }
+  .cert-btn:active { transform:scale(0.95); }
+  .cert-btn-primary { background:var(--accent); color:#fff; }
+  .cert-btn-secondary { background:var(--bg3); border:1px solid var(--border); color:var(--text2); }
+  .cert-btn-green { background:rgba(34,197,94,0.15); border:1px solid rgba(34,197,94,0.3); color:var(--green); }
+  .cert-btn-orange { background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.3); color:var(--orange); }
+  .cert-btn-purple { background:rgba(168,85,247,0.15); border:1px solid rgba(168,85,247,0.3); color:var(--purple); }
+  .cert-preview-wrap {
+    margin:0 16px 16px; border-radius:var(--radius);
+    overflow:hidden; box-shadow:0 4px 20px rgba(0,0,0,0.5);
+    border:1px solid var(--border);
+  }
+  /* The actual certificate document styles (white A4-like) */
+  .cert-document {
+    background:#fff; color:#1a1a2e; font-family:Georgia,serif;
+    padding:32px 28px; min-height:400px; position:relative;
+  }
+  .cert-doc-header {
+    display:flex; align-items:flex-start; gap:16px;
+    border-bottom:2px solid #1a3a6e; padding-bottom:16px; margin-bottom:20px;
+  }
+  .cert-doc-logo {
+    width:72px; height:72px; object-fit:contain; flex-shrink:0;
+  }
+  .cert-doc-logo-placeholder {
+    width:72px; height:72px; border:2px solid #1a3a6e; border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:22px; flex-shrink:0; background:#f0f4ff;
+  }
+  .cert-doc-company-name {
+    font-size:15px; font-weight:800; color:#1a3a6e;
+    text-transform:uppercase; letter-spacing:0.05em;
+  }
+  .cert-doc-company-info { font-size:11px; color:#555; margin-top:4px; line-height:1.6; }
+  .cert-doc-title {
+    text-align:center; font-size:18px; font-weight:800;
+    color:#1a3a6e; text-transform:uppercase; letter-spacing:0.1em;
+    margin:0 0 6px; border-bottom:1px solid #1a3a6e; padding-bottom:8px;
+  }
+  .cert-doc-subtitle {
+    text-align:center; font-size:11px; color:#666; margin-bottom:20px;
+  }
+  .cert-doc-body { font-size:13px; color:#333; line-height:1.9; }
+  .cert-doc-highlight {
+    font-weight:700; color:#1a3a6e; text-decoration:underline;
+  }
+  .cert-doc-footer {
+    margin-top:28px; display:flex; justify-content:flex-end;
+    flex-direction:column; align-items:flex-end; gap:4px;
+  }
+  .cert-doc-sig-block { text-align:right; }
+  .cert-doc-sig-stampwrap { position:relative; display:inline-block; min-width:190px; padding-top:60px; text-align:center; }
+  .cert-doc-stamp-img {
+    position:absolute; top:-16px; left:50%; transform:translateX(-50%);
+    width:140px; height:140px; object-fit:contain; opacity:0.68; z-index:1; pointer-events:none;
+  }
+  .cert-doc-sig-textwrap { position:relative; z-index:2; }
+  .cert-doc-sig-title { font-size:12px; font-weight:700; color:#1a3a6e; }
+  .cert-doc-sig-name { font-size:13px; font-weight:800; color:#1a1a2e; margin-top:2px; }
+  .cert-doc-sig-func { font-size:11px; color:#555; }
+  .cert-doc-sig-img {
+    position:absolute; z-index:3; left:50%; top:42px; transform:translateX(-50%) rotate(-5deg);
+    max-height:48px; max-width:140px; object-fit:contain; pointer-events:none;
+  }
+  .cert-document.cert-adjusting .cert-doc-stamp-img,
+  .cert-document.cert-adjusting .cert-doc-sig-img {
+    pointer-events:auto; cursor:grab; touch-action:none;
+    outline:2px dashed var(--accent); outline-offset:3px; border-radius:4px;
+  }
+  .cert-document.cert-adjusting .cert-doc-stamp-img:active,
+  .cert-document.cert-adjusting .cert-doc-sig-img:active { cursor:grabbing; }
+  .cert-hist-row {
+    background:var(--card); border:1px solid var(--border);
+    border-radius:var(--radius-sm); padding:12px 14px; margin-bottom:8px;
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+  }
+  .cert-hist-name { font-size:13px; font-weight:700; }
+  .cert-hist-meta { font-size:11px; color:var(--text2); margin-top:2px; }
+  .cert-hist-badge {
+    font-size:9px; font-weight:700; padding:3px 8px; border-radius:20px;
+    background:rgba(59,130,246,0.15); color:var(--accent);
+    border:1px solid rgba(59,130,246,0.3); white-space:nowrap;
+  }
+  .cert-tab-bar {
+    display:flex; gap:0; border-bottom:1px solid var(--border); margin:0 16px 12px;
+  }
+  .cert-tab-btn {
+    flex:1; padding:10px 4px; font-size:12px; font-weight:700;
+    background:none; border:none; color:var(--text3); cursor:pointer;
+    font-family:inherit; border-bottom:2px solid transparent;
+    transition:all 0.2s; text-align:center;
+  }
+  .cert-tab-btn.active { color:var(--accent); border-bottom-color:var(--accent); }
+  .cert-banner {
+    margin:0 16px 14px; border-radius:var(--radius-sm); padding:12px 14px;
+    font-size:12px; line-height:1.6;
+  }
+  .cert-banner-ok { background:rgba(34,197,94,0.12); border:1px solid rgba(34,197,94,0.3); color:var(--green); }
+  .cert-banner-warn { background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.3); color:var(--orange); }
+  .cert-banner-err { background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.3); color:var(--red); }
+  .cert-banner-title { font-weight:800; margin-bottom:4px; }
+  .cert-banner ul { margin:6px 0 8px 18px; padding:0; }
+  .cert-banner-btn {
+    background:rgba(255,255,255,0.08); border:1px solid currentColor; color:inherit;
+    border-radius:6px; padding:6px 12px; font-size:11px; font-weight:700;
+    cursor:pointer; font-family:inherit;
+  }
+  .cert-search-wrap { position:relative; }
+  .cert-emp-results {
+    position:absolute; left:0; right:0; top:calc(100% + 4px); z-index:20;
+    background:var(--bg3); border:1.5px solid var(--border); border-radius:var(--radius-sm);
+    max-height:240px; overflow-y:auto; box-shadow:var(--shadow);
+  }
+  .cert-emp-result-item {
+    padding:10px 12px; cursor:pointer; border-bottom:1px solid var(--border);
+    display:flex; align-items:center; justify-content:space-between; gap:8px;
+  }
+  .cert-emp-result-item:last-child { border-bottom:none; }
+  .cert-emp-result-item:active { background:var(--bg4); }
+  .cert-emp-result-name { font-size:13px; font-weight:700; }
+  .cert-emp-result-meta { font-size:11px; color:var(--text2); }
+  .cert-emp-badge { font-size:9px; font-weight:700; padding:2px 7px; border-radius:20px; white-space:nowrap; }
+  .cert-emp-badge.ok { background:rgba(34,197,94,0.15); color:var(--green); border:1px solid rgba(34,197,94,0.3); }
+  .cert-emp-badge.warn { background:rgba(245,158,11,0.15); color:var(--orange); border:1px solid rgba(245,158,11,0.3); }
+  .cert-emp-badge.inactive { background:rgba(239,68,68,0.15); color:var(--red); border:1px solid rgba(239,68,68,0.3); }
+  .cert-selected-emp {
+    background:var(--bg3); border:1.5px solid var(--accent); border-radius:var(--radius-sm);
+    padding:12px; margin-top:10px;
+  }
+  .cert-selected-emp-row { display:flex; justify-content:space-between; font-size:12px; padding:3px 0; color:var(--text2); }
+  .cert-selected-emp-row b { color:var(--text); font-weight:700; }
+  .cert-selected-emp-ok {
+    display:flex; align-items:center; gap:8px; cursor:pointer;
+    background:rgba(34,197,94,0.12); border:1.5px solid rgba(34,197,94,0.4);
+  }
+  .cert-selected-emp-ok-icon { font-size:15px; flex-shrink:0; }
+  .cert-selected-emp-ok-text { flex:1; font-size:12px; color:var(--text2); }
+  .cert-selected-emp-ok-text b { color:var(--green); }
+  .cert-selected-emp-ok-more { font-size:11px; color:var(--green); opacity:0.8; flex-shrink:0; white-space:nowrap; }
+  .cert-sigpad-color {
+    width:24px; height:24px; border-radius:50%; border:2px solid transparent; cursor:pointer; padding:0;
+  }
+  .cert-sigpad-color.active { border-color:var(--accent); box-shadow:0 0 0 2px rgba(59,130,246,0.25); }
+  .cert-sigpad-canvas {
+    width:100%; max-width:360px; height:140px; background:#fff;
+    border:1.5px dashed var(--border); border-radius:var(--radius-sm);
+    touch-action:none; cursor:crosshair; display:block;
+  }
+  .cert-ref-badge {
+    display:inline-block; font-size:10px; font-weight:700; letter-spacing:0.05em;
+    background:rgba(59,130,246,0.15); color:var(--accent); border:1px solid rgba(59,130,246,0.3);
+    padding:3px 9px; border-radius:20px; margin-bottom:8px;
+  }
+  .cert-status-pill {
+    font-size:9px; font-weight:700; padding:2px 8px; border-radius:20px; white-space:nowrap;
+  }
+  .cert-status-pill.Généré { background:rgba(59,130,246,0.15); color:var(--accent); border:1px solid rgba(59,130,246,0.3); }
+  .cert-status-pill.Imprimé { background:rgba(34,197,94,0.15); color:var(--green); border:1px solid rgba(34,197,94,0.3); }
+  .cert-status-pill.Archivé { background:rgba(90,111,138,0.2); color:var(--text2); border:1px solid var(--border); }
+  .cert-hist-filters { display:flex; gap:8px; padding:0 16px 12px; flex-wrap:wrap; }
+  .cert-hist-filters input, .cert-hist-filters select {
+    flex:1; min-width:100px; background:var(--bg3); border:1.5px solid var(--border);
+    border-radius:var(--radius-sm); padding:8px 10px; font-size:12px; color:var(--text); font-family:inherit;
+  }
+  .cert-hist-actions { display:flex; gap:6px; flex-shrink:0; }
+  .cert-hist-icon-btn {
+    background:var(--bg3); border:1px solid var(--border); border-radius:6px;
+    padding:5px 8px; font-size:12px; cursor:pointer; color:var(--text2);
+  }
+  .cert-fiche-row {
+    background:var(--card); border:1px solid var(--border); border-radius:var(--radius-sm);
+    padding:12px 14px; margin-bottom:8px;
+  }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-</head>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.20.0/dist/tf.min.js"></script></head>
 <body>
 
 <!-- SPLASH SCREEN -->
@@ -1376,7 +1592,7 @@
     </button>
   
     <button class="login-btn" onclick="goPin('Ahmed')">
-      
+      <span class="foreman-tile-badge">🦺 FOREMAN</span>
       <div class="avatar" style="background:#3b82f622;color:#3b82f6;border:2px solid #3b82f644">
         AH
       </div>
@@ -1385,7 +1601,7 @@
     </button>
   
     <button class="login-btn" onclick="goPin('Oli')">
-      <span class="foreman-tile-badge">🦺 FOREMAN</span>
+      
       <div class="avatar" style="background:#f59e0b22;color:#f59e0b;border:2px solid #f59e0b44">
         OL
       </div>
@@ -1399,6 +1615,15 @@
         IL
       </div>
       <div class="role-name">Ilyas</div>
+      <div class="role-label">Sealer · My seals only</div>
+    </button>
+  
+    <button class="login-btn" onclick="goPin('Chiné')">
+      
+      <div class="avatar" style="background:#6b728022;color:#6b7280;border:2px solid #6b728044">
+        CH
+      </div>
+      <div class="role-name">Chiné</div>
       <div class="role-label">Sealer · My seals only</div>
     </button>
   </div>
@@ -1444,7 +1669,7 @@
       </div>
     </div>
     <div class="header-right">
-      <div class="online-badge"><div id="syncDot" class=""></div><span id="syncLabel">☁️ Live 06:50</span></div>
+      <div class="online-badge"><div id="syncDot" class="syncing"></div><span id="syncLabel">Syncing…</span></div>
       <span class="role-badge admin" id="roleBadge">ADMIN</span>
       <button class="add-btn" id="headerAddBtn" onclick="openAddTruck()" style="opacity: 1;">+ Add</button>
     </div>
@@ -1470,36 +1695,36 @@
         <div class="stat-card"><div class="stat-num red" id="statUnpaid">0</div><div class="stat-label">UNPAID</div></div>
         <div class="stat-card"><div class="stat-num teal" id="statETB">0</div><div class="stat-label">ETB</div></div>
       </div>
-      <div class="meals-bar" id="mealsBar">
+      <div class="meals-bar" id="mealsBar" style="grid-template-columns: 1fr 1fr;">
         <div class="meal-card" onclick="openMealsModal()">
           <div class="meal-num" id="statLunch">—</div><div class="meal-label">🥗 LUNCH</div>
         </div>
         <div class="meal-card" onclick="openMealsModal()">
           <div class="meal-num" id="statDinner">—</div><div class="meal-label">🍽️ DINNER</div>
         </div>
-        <div class="meal-card" id="statNetCard" onclick="openMealsModal()" style="border-color:rgba(239,68,68,0.3)">
+        <div class="meal-card" id="statNetCard" onclick="openMealsModal()" style="border-color: rgba(239, 68, 68, 0.3); display: none;">
           <div class="meal-num" id="statNetCompany" style="color:var(--green)">—</div><div class="meal-label" id="statNetLabel">🏦 NET</div>
         </div>
       </div>
-      <div id="companyMoneyBar" style="display:none;align-items:center;gap:8px;padding:2px 14px 6px;font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--text2);flex-wrap:wrap">
+      <div id="companyMoneyBar" style="display: flex; align-items: center; gap: 8px; padding: 2px 14px 6px; font-size: 10px; font-family: &quot;JetBrains Mono&quot;, monospace; color: var(--text2); flex-wrap: wrap;">
         <span>💰 If all paid: <strong id="statIfAllPaid" style="color:var(--teal)">—</strong></span>
         <span style="color:var(--border)">·</span>
-        <span>✅ Paid: <strong id="statPaidETB" style="color:var(--green)">—</strong></span>
+        <span>✅ Paid: <strong id="statPaidETB" style="color:var(--green)">0</strong></span>
         <span style="color:var(--border)">·</span>
-        <span>❌ Unpaid: <strong id="statUnpaidETB" style="color:var(--red)">—</strong></span>
+        <span>❌ Unpaid: <strong id="statUnpaidETB" style="color:var(--red)">0</strong></span>
       </div>
       <div class="date-bar">
         <button class="date-chip" id="todayChip" onclick="setToday()" style="background: var(--green); opacity: 1;">🟢 Today</button>
         <div class="date-input-wrap" style="cursor:pointer" onclick="openDatePicker()" id="datePickerBtn">
           <span style="color:var(--text3);font-size:13px;">📅</span>
-          <span id="dateFilterDisplay" style="flex:1;font-size:13px;font-weight:600">Today — Thu 2 Jul</span>
+          <span id="dateFilterDisplay" style="flex:1;font-size:13px;font-weight:600">Today — Wed 26 Aug</span>
           <span style="color:var(--text3);font-size:12px;">▼</span>
-          <input type="hidden" id="dateFilter" value="2026-07-02">
+          <input type="hidden" id="dateFilter" value="2026-08-26">
         </div>
       </div>
       <!-- 6AM RULE NOTICE -->
       <div id="shiftRuleBanner" style="display:none;margin:0 16px 4px;padding:4px 10px;background:rgba(20,184,166,0.1);border:1px solid rgba(20,184,166,0.3);border-radius:8px;font-size:10px;color:var(--teal);font-weight:600;display:flex;align-items:center;gap:6px">
-        🕕 Working day: <span id="shiftRuleText">Thu 2 Jul 06:00 → Fri 3 Jul 05:59  (Djibouti time)</span>
+        🕕 Working day: <span id="shiftRuleText">Wed 26 Aug 06:00 → Thu 27 Aug 05:59  (Djibouti time)</span>
       </div>
       <!-- SUSPEND BANNER -->
       <div id="suspendBanner">
@@ -1533,6 +1758,11 @@
         Ilyas <span class="wcount" id="wcount_Ilyas">0</span>
       </button>
     
+      <button class="worker-chip" id="wchip_Chiné" onclick="setWorkerFilter('Chiné',this)" style="border-color:#6b728044">
+        <div class="wdot" style="background:#6b7280"></div>
+        Chiné <span class="wcount" id="wcount_Chiné">0</span>
+      </button>
+    
     <button class="worker-chip" id="wchip_nosealer" onclick="setWorkerFilter('nosealer',this)" style="border-color: rgba(245, 158, 11, 0.25);">
       <div class="wdot" style="background:var(--orange)"></div>
       No Sealer <span class="wcount" id="wcount_nosealer" style="color:var(--orange)">0</span>
@@ -1547,7 +1777,7 @@
       <div class="section-header">
         <span class="section-title" id="trucksSectionTitle">TODAY'S TRUCKS</span>
         <div style="display:flex;gap:8px;align-items:center">
-          <button class="new-btn" style="color: var(--green); font-size: 11px;" id="exportDateBtn" onclick="exportExcel()">📊 Export 2026-07-02</button>
+          <button class="new-btn" style="color: var(--green); font-size: 11px;" id="exportDateBtn" onclick="exportExcel()">📊 Export 2026-08-26</button>
           <button class="new-btn" style="color:var(--teal)" onclick="openShareReport()">📤 Share</button>
           <button class="select-mode-btn" id="selectModeBtn" onclick="toggleSelectMode()" style="display: none;">☑️ Select</button>
           <button class="new-btn" onclick="openAddTruck()">+ New</button>
@@ -1818,13 +2048,15 @@
             <div class="manage-item-left">
               <div style="width:32px;height:32px;border-radius:50%;background:#3b82f622;color:#3b82f6;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">AH</div>
               <div>
-                <div class="manage-item-name">Ahmed</div>
+                <div class="manage-item-name">Ahmed <span class="role-badge foreman" style="margin-left:4px;vertical-align:middle">🦺 FOREMAN</span></div>
                 <div class="manage-item-sub">Worker · PIN: ••••</div>
               </div>
             </div>
             <div class="manage-item-right">
+              
               <button class="manage-btn" onclick="openWorkerPerms('Ahmed')">⚙️ Perms</button>
               <button class="manage-btn" onclick="openPinChange('Ahmed')">🔐 PIN</button>
+              
               <button class="manage-btn danger" onclick="removeWorker('Ahmed')">🗑️</button>
             </div>
           </div>
@@ -1833,13 +2065,15 @@
             <div class="manage-item-left">
               <div style="width:32px;height:32px;border-radius:50%;background:#f59e0b22;color:#f59e0b;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">OL</div>
               <div>
-                <div class="manage-item-name">Oli <span class="role-badge foreman" style="margin-left:4px;vertical-align:middle">🦺 FOREMAN</span></div>
+                <div class="manage-item-name">Oli</div>
                 <div class="manage-item-sub">Worker · PIN: ••••</div>
               </div>
             </div>
             <div class="manage-item-right">
+              
               <button class="manage-btn" onclick="openWorkerPerms('Oli')">⚙️ Perms</button>
               <button class="manage-btn" onclick="openPinChange('Oli')">🔐 PIN</button>
+              
               <button class="manage-btn danger" onclick="removeWorker('Oli')">🗑️</button>
             </div>
           </div>
@@ -1853,9 +2087,28 @@
               </div>
             </div>
             <div class="manage-item-right">
+              
               <button class="manage-btn" onclick="openWorkerPerms('Ilyas')">⚙️ Perms</button>
               <button class="manage-btn" onclick="openPinChange('Ilyas')">🔐 PIN</button>
+              
               <button class="manage-btn danger" onclick="removeWorker('Ilyas')">🗑️</button>
+            </div>
+          </div>
+        
+          <div class="manage-item">
+            <div class="manage-item-left">
+              <div style="width:32px;height:32px;border-radius:50%;background:#6b728022;color:#6b7280;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">CH</div>
+              <div>
+                <div class="manage-item-name">Chiné</div>
+                <div class="manage-item-sub">Worker · PIN: ••••</div>
+              </div>
+            </div>
+            <div class="manage-item-right">
+              
+              <button class="manage-btn" onclick="openWorkerPerms('Chiné')">⚙️ Perms</button>
+              <button class="manage-btn" onclick="openPinChange('Chiné')">🔐 PIN</button>
+              
+              <button class="manage-btn danger" onclick="removeWorker('Chiné')">🗑️</button>
             </div>
           </div>
         
@@ -1881,8 +2134,10 @@
               </div>
             </div>
             <div class="manage-item-right">
+              
               <button class="manage-btn" onclick="openCashierPerms('cashier1')">⚙️ Perms</button>
               <button class="manage-btn" onclick="openPinChange('cashier1')">🔐 PIN</button>
+              
             </div>
           </div>
         
@@ -1895,14 +2150,17 @@
               </div>
             </div>
             <div class="manage-item-right">
+              
               <button class="manage-btn" onclick="openCashierPerms('cashier2')">⚙️ Perms</button>
               <button class="manage-btn" onclick="openPinChange('cashier2')">🔐 PIN</button>
+              
             </div>
           </div>
         
       </div>
     </div>
 
+    
     <div>
       <div class="manage-section-title">🔐 ADMIN PIN</div>
       <div class="manage-card">
@@ -1915,6 +2173,7 @@
         </div>
       </div>
     </div>
+    
 
     <div>
       <div class="manage-section-title">🏢 COMPANY HEAD</div>
@@ -2009,7 +2268,7 @@
       <div class="manage-section-title">💰 TARIFFS</div>
       <div class="manage-card" style="padding:14px 16px">
         <div style="font-size:11px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:12px">Changes save live — all devices update instantly</div>
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:13px;font-weight:600;color:var(--text)">🚛 Client Rate — ETB</div><div style="font-size:11px;color:var(--text3);margin-top:2px">What client pays per truck (ETB)</div></div><input id="tariff_clientETB" type="number" value="6200" style="width:82px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:14px;font-weight:700;color:var(--text);text-align:right;font-family:JetBrains Mono,monospace" onchange="saveTariff('clientETB',this.value)"></div><div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:13px;font-weight:600;color:var(--text)">🚛 Client Rate — FD</div><div style="font-size:11px;color:var(--text3);margin-top:2px">What client pays per truck (DJF)</div></div><input id="tariff_clientFD" type="number" value="6200" style="width:82px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:14px;font-weight:700;color:var(--text);text-align:right;font-family:JetBrains Mono,monospace" onchange="saveTariff('clientFD',this.value)"></div><div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:13px;font-weight:600;color:var(--text)">⚡ Partial Fare — ETB</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Client pays for partial payment</div></div><input id="tariff_partialFare" type="number" value="3100" style="width:82px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:14px;font-weight:700;color:var(--text);text-align:right;font-family:JetBrains Mono,monospace" onchange="saveTariff('partialFare',this.value)"></div><div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:13px;font-weight:600;color:var(--text)">👷 Sealer Gets — Paid</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Sealer commission per paid truck</div></div><input id="tariff_sealerPaid" type="number" value="1500" style="width:82px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:14px;font-weight:700;color:var(--text);text-align:right;font-family:JetBrains Mono,monospace" onchange="saveTariff('sealerPaid',this.value)"></div><div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:13px;font-weight:600;color:var(--text)">👷 Sealer Gets — Partial</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Sealer commission per partial truck</div></div><input id="tariff_sealerPartial" type="number" value="700" style="width:82px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:14px;font-weight:700;color:var(--text);text-align:right;font-family:JetBrains Mono,monospace" onchange="saveTariff('sealerPartial',this.value)"></div><div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:13px;font-weight:600;color:var(--text)">🏗️ Agash Rate — ETB</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Agash rate per truck (ETB)</div></div><input id="tariff_agashETB" type="number" value="2500" style="width:82px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:14px;font-weight:700;color:var(--text);text-align:right;font-family:JetBrains Mono,monospace" onchange="saveTariff('agashETB',this.value)"></div><div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:13px;font-weight:600;color:var(--text)">🏗️ Agash Rate — FD</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Agash rate per truck (FD)</div></div><input id="tariff_agashFD" type="number" value="2500" style="width:82px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:14px;font-weight:700;color:var(--text);text-align:right;font-family:JetBrains Mono,monospace" onchange="saveTariff('agashFD',this.value)"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:13px;font-weight:600;color:var(--text)">🚛 Client Rate — ETB</div><div style="font-size:11px;color:var(--text3);margin-top:2px">What client pays per truck (ETB)</div></div><input id="tariff_clientETB" type="number" value="6200" style="width:82px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:14px;font-weight:700;color:var(--text);text-align:right;font-family:JetBrains Mono,monospace" onchange="saveTariff('clientETB',this.value)"></div><div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:13px;font-weight:600;color:var(--text)">🚛 Client Rate — FD</div><div style="font-size:11px;color:var(--text3);margin-top:2px">What client pays per truck (DJF)</div></div><input id="tariff_clientFD" type="number" value="6200" style="width:82px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:14px;font-weight:700;color:var(--text);text-align:right;font-family:JetBrains Mono,monospace" onchange="saveTariff('clientFD',this.value)"></div><div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:13px;font-weight:600;color:var(--text)">⚡ Partial Fare — ETB</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Client pays for partial payment</div></div><input id="tariff_partialFare" type="number" value="3100" style="width:82px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:14px;font-weight:700;color:var(--text);text-align:right;font-family:JetBrains Mono,monospace" onchange="saveTariff('partialFare',this.value)"></div><div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:13px;font-weight:600;color:var(--text)">👷 Sealer Gets — Paid</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Sealer commission per paid truck</div></div><input id="tariff_sealerPaid" type="number" value="1500" style="width:82px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:14px;font-weight:700;color:var(--text);text-align:right;font-family:JetBrains Mono,monospace" onchange="saveTariff('sealerPaid',this.value)"></div><div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:13px;font-weight:600;color:var(--text)">👷 Sealer Gets — Partial</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Sealer commission per partial truck</div></div><input id="tariff_sealerPartial" type="number" value="700" style="width:82px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:14px;font-weight:700;color:var(--text);text-align:right;font-family:JetBrains Mono,monospace" onchange="saveTariff('sealerPartial',this.value)"></div><div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:13px;font-weight:600;color:var(--text)">🏗️ Agash Rate — ETB</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Agash rate per truck (ETB)</div></div><input id="tariff_agashETB" type="number" value="2000" style="width:82px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:14px;font-weight:700;color:var(--text);text-align:right;font-family:JetBrains Mono,monospace" onchange="saveTariff('agashETB',this.value)"></div><div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:13px;font-weight:600;color:var(--text)">🏗️ Agash Rate — FD</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Agash rate per truck (FD)</div></div><input id="tariff_agashFD" type="number" value="2000" style="width:82px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:14px;font-weight:700;color:var(--text);text-align:right;font-family:JetBrains Mono,monospace" onchange="saveTariff('agashFD',this.value)"></div><div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:13px;font-weight:600;color:var(--text)">💵 Cash Collection Alert</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Uncleared trucks before sealer is flagged</div></div><input id="tariff_collectThreshold" type="number" value="8" style="width:82px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:14px;font-weight:700;color:var(--text);text-align:right;font-family:JetBrains Mono,monospace" onchange="saveTariff('collectThreshold',this.value)"></div>
       </div>
     </div>
 
@@ -2061,12 +2320,14 @@
     <div>
       <div class="manage-section-title">⚠️ DANGER ZONE</div>
       <div class="manage-card">
+
 <div class="manage-item" onclick="clearAllData()">
           <div class="manage-item-left">
             <div class="manage-item-icon">⚠️</div>
             <div><div class="manage-item-name" style="color:var(--red)">Clear All Truck Data</div></div>
           </div>
         </div>
+
         <div class="manage-item" onclick="goLogin()">
           <div class="manage-item-left">
             <div class="manage-item-icon">🚪</div>
@@ -2106,6 +2367,7 @@
       </div>
       <div style="padding:0 16px 8px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
         <input id="recycleSearch" class="form-input" style="flex:1;min-width:140px;padding:7px 12px;font-size:12px;" placeholder="🔍 Search plate..." oninput="filterRecycle()">
+        <button class="recycle-clear-btn" id="rescanDupBtn" onclick="rescanDuplicates(this)" style="white-space:nowrap;background:rgba(139,92,246,0.12);border-color:rgba(139,92,246,0.35);color:var(--purple)">🔁 Re-scan Duplicates</button>
         <button class="recycle-clear-btn" onclick="emptyRecycleBin()" style="white-space:nowrap;">🗑️ Empty All</button>
       </div>
       <div style="padding:0 16px;" id="recycleFilterBar">
@@ -2153,6 +2415,218 @@
       </div>
       <div id="collectionsContent" style="padding:0 16px 100px;"></div>
     </div>
+
+    <!-- ── CERTIFICAT DE TRAVAIL TAB ── -->
+    <div id="tabCertificat" style="display:none;">
+      <div style="padding:14px 16px 6px;display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:0.08em">📄 CERTIFICAT DE TRAVAIL</div>
+          <div style="font-size:12px;color:var(--text2);margin-top:2px;">Génération automatique d'attestations</div>
+        </div>
+      </div>
+      <!-- Sub-tab bar -->
+      <div class="cert-tab-bar">
+        <button class="cert-tab-btn active" id="certTabNouveauBtn" onclick="certShowSubTab('nouveau')">✏️ Nouveau</button>
+        <button class="cert-tab-btn" id="certTabEmpBtn" onclick="certShowSubTab('employes')">👤 Employés</button>
+        <button class="cert-tab-btn" id="certTabParamBtn" onclick="certShowSubTab('parametres')">⚙️ Paramètres</button>
+        <button class="cert-tab-btn" id="certTabHistBtn" onclick="certShowSubTab('historique')">📂 Historique</button>
+      </div>
+
+      <!-- Sub-tab: Nouveau Certificat -->
+      <div id="certSubNouveauRaw">
+        <div id="certConfigBanner"></div>
+        <div class="cert-section-title">Sélectionner un employé</div>
+        <div class="cert-card">
+          <div class="cert-form-group cert-search-wrap" style="margin-bottom:0">
+            <label class="cert-form-label">Rechercher un employé *</label>
+            <input class="cert-input" id="certEmpSearch" placeholder="Nom, matricule..." autocomplete="off"
+              oninput="certOnEmployeeSearch(this.value)" onfocus="certOnEmployeeSearch(this.value)">
+            <div class="cert-emp-results" id="certEmpResults" style="display:none;"></div>
+          </div>
+          <div id="certSelectedEmpWrap"></div>
+        </div>
+        <div id="certEmpBlockBanner"></div>
+        <div class="cert-action-bar">
+          <button class="cert-btn cert-btn-primary" onclick="certGenerer()">⚡ Générer</button>
+          <button class="cert-btn cert-btn-secondary" onclick="certScrollPreview()">👁 Aperçu</button>
+          <button class="cert-btn cert-btn-green" onclick="certImprimer()">🖨️ Imprimer</button>
+          <button class="cert-btn cert-btn-orange" onclick="certTelechargerPDF()">⬇️ PDF</button>
+          <button class="cert-btn cert-btn-purple" onclick="certEnregistrer()">💾 Enregistrer</button>
+        </div>
+        <!-- Preview -->
+        <div class="cert-section-title">Aperçu du certificat</div>
+        <div class="cert-card" style="padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+          <div style="font-size:11px;color:var(--text3);flex:1;min-width:180px;">Déplacez le cachet ou la signature directement sur l'aperçu pour les repositionner.</div>
+          <button class="cert-btn cert-btn-secondary cert-adjust-btn" style="flex:none;padding:8px 14px" id="certAdjustBtn" onclick="certToggleAdjustMode()">🎯 Ajuster cachet/signature</button>
+        </div>
+        <div class="cert-adjust-panel" id="certAdjustPanel" style="display:none;align-items:center;gap:10px;flex-wrap:wrap;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:10px;">
+          <div style="display:flex;align-items:center;gap:6px;font-size:12px;flex-wrap:wrap;">
+            <span>🔵 Cachet</span>
+            <button class="cert-hist-icon-btn" onclick="certAdjustScale('stamp',-0.05)" title="Réduire">−</button>
+            <button class="cert-hist-icon-btn" onclick="certAdjustScale('stamp',0.05)" title="Agrandir">+</button>
+            <button class="cert-hist-icon-btn" onclick="certNudge('stamp',-1,0)" title="Gauche">◀</button>
+            <button class="cert-hist-icon-btn" onclick="certNudge('stamp',1,0)" title="Droite">▶</button>
+            <button class="cert-hist-icon-btn" onclick="certNudge('stamp',0,-1)" title="Haut">▲</button>
+            <button class="cert-hist-icon-btn" onclick="certNudge('stamp',0,1)" title="Bas">▼</button>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:12px;flex-wrap:wrap;">
+            <span>✍️ Signature</span>
+            <button class="cert-hist-icon-btn" onclick="certAdjustScale('sig',-0.05)" title="Réduire">−</button>
+            <button class="cert-hist-icon-btn" onclick="certAdjustScale('sig',0.05)" title="Agrandir">+</button>
+            <button class="cert-hist-icon-btn" onclick="certNudge('sig',-1,0)" title="Gauche">◀</button>
+            <button class="cert-hist-icon-btn" onclick="certNudge('sig',1,0)" title="Droite">▶</button>
+            <button class="cert-hist-icon-btn" onclick="certNudge('sig',0,-1)" title="Haut">▲</button>
+            <button class="cert-hist-icon-btn" onclick="certNudge('sig',0,1)" title="Bas">▼</button>
+          </div>
+          <button class="cert-hist-icon-btn" onclick="certResetAdjust()">↺ Réinitialiser</button>
+          <button class="cert-btn cert-btn-primary" style="flex:none;padding:7px 14px" onclick="certSaveAdjust()">💾 Enregistrer la position</button>
+        </div>
+        <div class="cert-preview-wrap" id="certPreviewWrap">
+          <div class="cert-document" id="certDocumentPreview">
+            <div style="text-align:center;color:#aaa;padding:40px 0;font-size:13px;">
+              Sélectionnez un employé puis cliquez sur Générer
+            </div>
+          </div>
+        </div>
+        <div style="height:100px;"></div>
+      </div>
+
+      <!-- Sub-tab: Employés (fiches RH pour le certificat) -->
+      <div id="certSubEmployesRaw" style="display:none;">
+        <div class="cert-section-title">Employés</div>
+        <div class="cert-card" style="padding:10px 14px;">
+          <div style="font-size:12px;color:var(--text2);line-height:1.6;">
+            Liste d'employés propre au module Certificat, indépendante des Scelleurs/Workers. Ajoutez un employé puis complétez sa fiche (poste, date de début, statut).
+          </div>
+        </div>
+        <div class="cert-card">
+          <div style="display:flex;gap:8px;align-items:center;">
+            <input class="cert-input" id="certNewEmpName" placeholder="Nom et prénom de l'employé" style="margin-bottom:0;flex:1" onkeydown="if(event.key==='Enter')certAddEmployee()">
+            <button class="cert-btn cert-btn-primary" style="flex:none;padding:9px 16px" onclick="certAddEmployee()">+ Ajouter</button>
+          </div>
+        </div>
+        <div id="certFicheList" style="padding:0 16px 100px;"></div>
+      </div>
+
+      <!-- Sub-tab: Paramètres entreprise -->
+      <div id="certSubParametresRaw" style="display:none;">
+        <div class="cert-section-title">Logo & Images</div>
+        <div class="cert-card">
+          <div class="cert-form-group">
+            <label class="cert-form-label">Logo de l'entreprise</label>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <img id="certLogoPreview" src="" class="cert-img-preview" style="display:none;">
+              <button class="cert-upload-btn" onclick="document.getElementById('certLogoInput').click()">
+                📷 Téléverser le logo
+              </button>
+              <button class="cert-hist-icon-btn" title="Supprimer" onclick="certRemoveImage('certLogoPreview','logo')">✕</button>
+              <input type="file" id="certLogoInput" accept="image/png,image/jpeg,image/webp" style="display:none" onchange="certLoadImage(this,'certLogoPreview','logo')">
+            </div>
+          </div>
+          <div class="cert-form-group">
+            <label class="cert-form-label">Image de la signature</label>
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+              <img id="certSigPreview" src="" class="cert-img-preview" style="display:none;">
+              <button class="cert-upload-btn" onclick="document.getElementById('certSigInput').click()">
+                📁 Téléverser une image
+              </button>
+              <button class="cert-upload-btn" onclick="certOpenSigPad()">
+                ✏️ Signer à l'écran
+              </button>
+              <button class="cert-hist-icon-btn" title="Supprimer" onclick="certRemoveImage('certSigPreview','signature')">✕</button>
+              <input type="file" id="certSigInput" accept="image/png,image/jpeg,image/webp" style="display:none" onchange="certLoadImage(this,'certSigPreview','signature')">
+            </div>
+            <div id="certSigPadWrap" style="display:none;margin-top:10px;">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                <span style="font-size:11px;color:var(--text3)">Stylo :</span>
+                <button type="button" class="cert-sigpad-color active" id="certSigColorBlack" style="background:#1a1a2e" onclick="certSetSigColor('#1a1a2e', this)" title="Noir"></button>
+                <button type="button" class="cert-sigpad-color" id="certSigColorBlue" style="background:#1a3aa0" onclick="certSetSigColor('#1a3aa0', this)" title="Bleu"></button>
+              </div>
+              <canvas id="certSigCanvas" class="cert-sigpad-canvas" width="360" height="140"></canvas>
+              <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
+                <button class="cert-btn cert-btn-secondary" style="flex:none;padding:8px 14px" onclick="certClearSigPad()">🧹 Effacer</button>
+                <button class="cert-btn cert-btn-primary" style="flex:none;padding:8px 14px" onclick="certSaveSigPad()">💾 Utiliser cette signature</button>
+                <button class="cert-btn cert-btn-secondary" style="flex:none;padding:8px 14px" onclick="certCloseSigPad()">Annuler</button>
+              </div>
+            </div>
+          </div>
+          <div class="cert-form-group" style="margin-bottom:0">
+            <label class="cert-form-label">Cachet de l'entreprise (optionnel)</label>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <img id="certCachetPreview" src="" class="cert-img-preview" style="display:none;">
+              <button class="cert-upload-btn" onclick="document.getElementById('certCachetInput').click()">
+                🔵 Téléverser le cachet
+              </button>
+              <button class="cert-hist-icon-btn" title="Supprimer" onclick="certRemoveImage('certCachetPreview','cachet')">✕</button>
+              <input type="file" id="certCachetInput" accept="image/png,image/jpeg,image/webp" style="display:none" onchange="certLoadImage(this,'certCachetPreview','cachet')">
+            </div>
+          </div>
+        </div>
+
+        <div class="cert-section-title">Position du cachet & de la signature</div>
+        <div class="cert-card" style="padding:12px 14px;">
+          <div style="font-size:11px;color:var(--text3);margin-bottom:10px;">Déplacez le cachet ou la signature directement sur l'aperçu pour les repositionner. Cet ajustement est le même que celui utilisé lors de la génération d'un certificat — les deux restent synchronisés.</div>
+          <button class="cert-btn cert-btn-secondary cert-adjust-btn" style="flex:none;padding:8px 14px;margin-bottom:10px;" onclick="certToggleAdjustMode()">🎯 Ajuster cachet/signature</button>
+          <div class="cert-adjust-panel" style="display:none;align-items:center;gap:10px;flex-wrap:wrap;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:10px;">
+            <div style="display:flex;align-items:center;gap:6px;font-size:12px;flex-wrap:wrap;">
+              <span>🔵 Cachet</span>
+              <button class="cert-hist-icon-btn" onclick="certAdjustScale('stamp',-0.05)" title="Réduire">−</button>
+              <button class="cert-hist-icon-btn" onclick="certAdjustScale('stamp',0.05)" title="Agrandir">+</button>
+              <button class="cert-hist-icon-btn" onclick="certNudge('stamp',-1,0)" title="Gauche">◀</button>
+              <button class="cert-hist-icon-btn" onclick="certNudge('stamp',1,0)" title="Droite">▶</button>
+              <button class="cert-hist-icon-btn" onclick="certNudge('stamp',0,-1)" title="Haut">▲</button>
+              <button class="cert-hist-icon-btn" onclick="certNudge('stamp',0,1)" title="Bas">▼</button>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;font-size:12px;flex-wrap:wrap;">
+              <span>✍️ Signature</span>
+              <button class="cert-hist-icon-btn" onclick="certAdjustScale('sig',-0.05)" title="Réduire">−</button>
+              <button class="cert-hist-icon-btn" onclick="certAdjustScale('sig',0.05)" title="Agrandir">+</button>
+              <button class="cert-hist-icon-btn" onclick="certNudge('sig',-1,0)" title="Gauche">◀</button>
+              <button class="cert-hist-icon-btn" onclick="certNudge('sig',1,0)" title="Droite">▶</button>
+              <button class="cert-hist-icon-btn" onclick="certNudge('sig',0,-1)" title="Haut">▲</button>
+              <button class="cert-hist-icon-btn" onclick="certNudge('sig',0,1)" title="Bas">▼</button>
+            </div>
+            <button class="cert-hist-icon-btn" onclick="certResetAdjust()">↺ Réinitialiser</button>
+            <button class="cert-btn cert-btn-primary" style="flex:none;padding:7px 14px" onclick="certSaveAdjust()">💾 Enregistrer la position</button>
+          </div>
+          <div class="cert-preview-wrap" id="certParamPreviewWrap" style="max-height:360px;overflow:auto;"></div>
+        </div>
+
+        <div class="cert-section-title">Informations de l'entreprise</div>
+        <div class="cert-card" id="certInfoCardWrap"></div>
+
+        <div class="cert-section-title">Directeur / Signataire</div>
+        <div class="cert-card" id="certDirCardWrap"></div>
+
+        <div class="cert-section-title">Numérotation des documents</div>
+        <div class="cert-card">
+          <div style="font-size:12px;color:var(--text2);line-height:1.6;">
+            Prochain numéro de certificat : <b id="certNextRefDisplay" style="color:var(--text)">—</b><br>
+            Le numéro est attribué automatiquement à chaque génération et ne peut pas être modifié manuellement.
+          </div>
+        </div>
+
+        <div class="cert-action-bar">
+          <button class="cert-btn cert-btn-primary" style="flex:2" id="certSaveParamsBtn" onclick="certSauvegarderParametres()">💾 Sauvegarder les paramètres</button>
+        </div>
+        <div style="height:100px;"></div>
+      </div>
+
+      <!-- Sub-tab: Historique -->
+      <div id="certSubHistoriqueRaw" style="display:none;">
+        <div class="cert-section-title">Certificats générés</div>
+        <div class="cert-hist-filters">
+          <input id="certHistSearch" placeholder="🔎 Nom ou N° certificat" oninput="certRenderHistorique()">
+          <select id="certHistStatusFilter" onchange="certRenderHistorique()">
+            <option value="">Tous statuts</option>
+            <option value="Généré">Généré</option>
+            <option value="Imprimé">Imprimé</option>
+            <option value="Archivé">Archivé</option>
+          </select>
+        </div>
+        <div id="certHistoriqueList" style="padding:0 16px 100px;"></div>
+      </div>
+    </div>
   </div>
 
   <!-- OFFSCREEN REPORT SNAPSHOT (for image export) -->
@@ -2195,14 +2669,19 @@
       <div class="nav-label">Agash</div>
     </button>
   
-    <button class="nav-btn" id="nav_notifs" onclick="switchTab('notifs')">
+    <button class="nav-btn" id="nav_notifs" onclick="switchTab('notifs')" style="color: var(--orange); font-weight: 800;">
       <div class="nav-icon">🔔</div>
-      <div class="nav-label">Alerts</div>
+      <div class="nav-label">Alerts (1)</div>
     </button>
   
     <button class="nav-btn" id="nav_settlement" onclick="switchTab('settlement')">
       <div class="nav-icon">📋</div>
       <div class="nav-label">Settlement</div>
+    </button>
+  
+    <button class="nav-btn" id="nav_collections" onclick="switchTab('collections')">
+      <div class="nav-icon">💰</div>
+      <div class="nav-label">Collections</div>
     </button>
   
     <button class="nav-btn active" id="nav_manage" onclick="switchTab('manage')">
@@ -2212,7 +2691,7 @@
   
     <button class="nav-btn" id="nav_recycle" onclick="switchTab('recycle')">
       <div class="nav-icon">🗑️</div>
-      <div class="nav-label">Bin (35)</div>
+      <div class="nav-label">Bin (48)</div>
     </button>
   
     <button class="nav-btn" id="nav_logout" onclick="switchTab('logout')">
@@ -2352,7 +2831,7 @@
     <div class="modal-handle"></div>
     <div class="modal-title">📷 Scan Plate Number</div>
     <div style="position:relative;border-radius:var(--radius-sm);overflow:hidden;background:#000;">
-      <video id="scanVideo" autoplay playsinline muted style="width:100%;display:block;max-height:50vh;object-fit:cover;"></video>
+      <video id="scanVideo" autoplay="" playsinline="" muted="" style="width:100%;display:block;max-height:50vh;object-fit:cover;"></video>
       <div id="scanGuideBox" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:82%;height:64px;border:2px solid var(--accent);border-radius:8px;box-shadow:0 0 0 2000px rgba(0,0,0,0.45);pointer-events:none;"></div>
     </div>
     <canvas id="scanCanvas" style="display:none;"></canvas>
@@ -2603,14 +3082,22 @@
    'toggleTruckSelect','renderRecycle','restoreTruck','hardDeleteTruck',
    'renderTruckList','updateDupChip','clearAllData','togglePastPaymentEdit',
    'shareReportAsImage','toggleReportSection','dismissNotif','dismissAllNotifs',
-   'setBinDateFilter','toggleSuspend','emptyRecycleBin','permDelete','setRecycleFilter',
+   'setBinDateFilter','toggleSuspend','emptyRecycleBin','permDelete','setRecycleFilter','rescanDuplicates','resolveDuplicateNotif',
    'filterRecycle','setBinDateFilter',
    'renderSettlementTab','switchSettlementView','stlSelectDate',
    'stlRemoveUnpaid','stlAddManualUnpaid','submitSettlement','unlockSettlement',
    'stlShareReport','stlExportPDF',
    'openScanPlate','captureAndScan','closeScanModal',
    'toggleCashCollected','confirmHandIn',
-   'openIssueSeals','issueSeals','renderCollectionsTab','toggleCollectionSealer','toggleCollectionCheck','markSealerCollectionsPaid'
+   'openIssueSeals','issueSeals','renderCollectionsTab','toggleCollectionSealer','toggleCollectionCheck','markSealerCollectionsPaid',
+   'renderCertificatTab','certShowSubTab','certLoadImage','certRemoveImage','certUpdatePreview','certGenerer',
+   'certScrollPreview','certImprimer','certTelechargerPDF','certEnregistrer','certSauvegarderParametres',
+   'certOnEmployeeSearch','certSelectEmployee','certSaveFiche',
+   'certToggleInlineEdit','certSaveInlineEmployee','certToggleSelectedEmpDetails',
+   'certOpenSigPad','certCloseSigPad','certSetSigColor','certClearSigPad','certSaveSigPad',
+   'certToggleAdjustMode','certAdjustScale','certNudge','certResetAdjust','certSaveAdjust',
+   'certToggleInfoCard','certToggleDirCard',
+   'certVoirHistorique','certTelechargerHistorique','certImprimerHistorique'
   ].forEach(function(fn) {
     if (!window[fn]) {
       window[fn] = function() {
@@ -3047,6 +3534,13 @@ window.takeBackSeals = function(amount) {
 }
 
 // ── FIREBASE LISTENERS ──
+// Normalize a plate for duplicate-comparison purposes only (strips spaces/punctuation
+// so "81826" and "81826." or "DJ 1234 AB" and "DJ-1234-AB" are recognized as the same plate).
+// The plate as originally typed/stored is never altered — only this comparison key is.
+function normPlate(p) {
+  return (p || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+}
+
 function initFirebase() {
   ['_unsubTrucks','_unsubAdvances','_unsubDeleted','_unsubSuspend','_unsubPins','_unsubPerms','_unsubWorkers','_unsubHead','_unsubClaims','_unsubSettlements','_unsubTariffs','_unsubDeductions','_unsubKabIncoming','_unsubNotifs','_unsubPastPay','_unsubSealIssuances'].forEach(function(k) {
     try { if (window[k]) { window[k](); window[k] = null; } } catch(e) {}
@@ -3083,35 +3577,54 @@ function initFirebase() {
     trucks = {};
     snap.forEach(d => { trucks[d.id] = d.data(); });
 
-    // ── DUPLICATE DETECTION (notify only — never auto-delete) ──
+    // ── DUPLICATE DETECTION + AUTO-RESOLVE ──
+    // Same plate + same date = duplicate group. Winner (kept) is:
+    //   1) the paid entry (if several are paid, the earliest-added among them)
+    //   2) otherwise, the first one added to the system (earliest timestamp)
+    // Losers are moved to the Recycle Bin (deletedBy:'system-dedup', dupOf:<keptId>) so they can be restored.
     if (currentUser && (currentUser.role === 'admin' || currentUser.role === 'head')) {
-      var seen = {};
-      var dupPairs = [];
+      var groups = {};
       Object.entries(trucks).forEach(function(e) {
         var id = e[0]; var t = e[1];
-        var pl = t.plate ? t.plate.toUpperCase() : null;
+        var pl = t.plate ? normPlate(t.plate) : null;
         if (!pl) return;
         var key = pl + '|' + (t.date || '');
-        if (seen[key]) {
-          dupPairs.push({ plate: pl, date: t.date || '', id1: seen[key], id2: id });
-        } else {
-          seen[key] = id;
-        }
+        if (!groups[key]) groups[key] = [];
+        groups[key].push({ id: id, t: t });
       });
-      if (dupPairs.length > 0) {
-        dupPairs.forEach(function(dp) {
-          var notifKey = 'dup_' + dp.plate + '_' + dp.date;
-          getDoc(doc(db, 'notifications', notifKey)).then(function(snap) {
-            if (!snap.exists()) {
-              setDoc(doc(db, 'notifications', notifKey), {
-                type: 'duplicate', plate: dp.plate, date: dp.date,
-                id1: dp.id1, id2: dp.id2, detectedAt: Date.now(), read: false
-              });
-            }
+
+      Object.values(groups).forEach(function(group) {
+        if (group.length < 2) return;
+
+        var paidOnes = group.filter(function(g) { return g.t.status === 'paid'; });
+        var pool = paidOnes.length ? paidOnes : group;
+        var winner = pool.reduce(function(a, b) {
+          var ta = a.t.timestamp || 0, tb = b.t.timestamp || 0;
+          return tb < ta ? b : a;
+        });
+
+        group.forEach(function(g) {
+          if (g.id === winner.id) return;
+          setDoc(doc(db, 'deleted', g.id), Object.assign({}, g.t, {
+            deletedAt: Date.now(),
+            deletedBy: 'system-dedup',
+            dupOf: winner.id
+          })).then(function() {
+            deleteDoc(doc(db, 'trucks', g.id));
           }).catch(function(){});
         });
-        if (currentTab === 'trucks' || currentTab === 'list') showDupAlert(dupPairs);
-      }
+
+        // Record a one-time notification so admins have a trail of what happened
+        var notifKey = 'dup_' + group[0].t.plate.toUpperCase() + '_' + (group[0].t.date || '');
+        getDoc(doc(db, 'notifications', notifKey)).then(function(snap) {
+          if (!snap.exists()) {
+            setDoc(doc(db, 'notifications', notifKey), {
+              type: 'duplicate', plate: group[0].t.plate.toUpperCase(), date: group[0].t.date || '',
+              keptId: winner.id, detectedAt: Date.now(), read: false, resolved: true
+            });
+          }
+        }).catch(function(){});
+      });
     }
 
     markReady('trucks');
@@ -3448,6 +3961,7 @@ function checkPin() {
 }
 
 window.goLogin = function() {
+  if (window._unsubCert) { try { window._unsubCert(); } catch(e){} window._unsubCert = null; }
   ['_unsubTrucks','_unsubAdvances','_unsubDeleted','_unsubSuspend','_unsubPins','_unsubPerms','_unsubWorkers','_unsubHead','_unsubClaims','_unsubSettlements','_unsubTariffs','_unsubDeductions','_unsubKabIncoming','_unsubNotifs','_unsubPastPay','_unsubSealIssuances'].forEach(function(k){
     try { if (window[k]) { window[k](); window[k]=null; } } catch(e) {}
   });
@@ -3576,6 +4090,7 @@ function buildNav() {
     {id:'notifs', icon:'🔔', label:'Alerts'},
     {id:'settlement', icon:'📋', label:'Settlement'},
     {id:'collections', icon:'💰', label:'Collections'},
+    {id:'certificat', icon:'📄', label:'Certificat'},
     {id:'manage', icon:'⚙️', label:t('manage')},
     {id:'recycle', icon:'🗑️', label:'Bin'},
     {id:'logout', icon:'🚪', label:t('logout')},
@@ -3591,6 +4106,7 @@ function buildNav() {
     {id:'notifs', icon:'🔔', label:'Alerts'},
     {id:'settlement', icon:'📋', label:'Settlement'},
     {id:'collections', icon:'💰', label:'Collections'},
+    {id:'certificat', icon:'📄', label:'Certificat'},
     {id:'recycle', icon:'🗑️', label:'Bin'},
     {id:'manage', icon:'⚙️', label:t('manage')},
     {id:'logout', icon:'🚪', label:t('logout')},
@@ -3642,7 +4158,7 @@ window.switchTab = function(tab) {
   }
 
   // Show/hide tabs
-  ['Trucks','List','Workers','Advances','Reports','Claims','Manage','Recycle','Agash','Notifs','Settlement','Collections'].forEach(t => {
+  ['Trucks','List','Workers','Advances','Reports','Claims','Manage','Recycle','Agash','Notifs','Settlement','Collections','Certificat'].forEach(t => {
     const el = document.getElementById('tab'+t);
     if (el) el.style.display = (tab===t.toLowerCase()) ? '' : 'none';
   });
@@ -3666,6 +4182,7 @@ window.switchTab = function(tab) {
   if (tab==='notifs') renderNotifsTab();
   if (tab==='settlement') renderSettlementTab();
   if (tab==='collections') renderCollectionsTab();
+  if (tab==='certificat') renderCertificatTab();
 }
 
 // ── TODAY / DATE ──
@@ -3733,6 +4250,7 @@ window.selectDate = function(d) {
   closeModal('modalDatePicker');
   renderTrucks();
   updateDupChip();
+  renderNotifBar();
   if (currentTab === 'agash') renderAgashIncoming();
 }
 
@@ -4175,7 +4693,7 @@ window.saveEditPlate = function() {
   if (!plate) { showToast('⚠️ Enter plate number'); return; }
   // Check duplicate on same date
   const truck = trucks[editingPlateId];
-  const dup = Object.entries(trucks).find(([k,v]) => v.plate && v.plate.toUpperCase()===plate && v.date===truck.date && k!==editingPlateId);
+  const dup = Object.entries(trucks).find(([k,v]) => v.plate && normPlate(v.plate)===normPlate(plate) && v.date===truck.date && k!==editingPlateId);
   if (dup) { showToast('⚠️ ' + plate + ' already recorded today'); return; }
   updateDoc(doc(db,'trucks',editingPlateId), {plate});
   showToast('✅ Plate updated');
@@ -4234,7 +4752,7 @@ window.checkDuplicate = function() {
   if (!plate || plate.length < 2) { unblockSave(); return; }
 
   const matches = Object.entries(trucks).filter(([k,v]) =>
-    v.plate && v.plate.toUpperCase() === plate &&
+    v.plate && normPlate(v.plate) === normPlate(plate) &&
     v.date === date &&
     k !== editingTruckId
   );
@@ -4381,7 +4899,7 @@ window.saveTruck = function() {
     snap.forEach(function(d) { allTrucks[d.id] = d.data(); });
 
     var dupEntry = Object.entries(allTrucks).find(function(e){
-      return e[1].plate && e[1].plate.toUpperCase() === plate && e[1].date === date && e[0] !== editingTruckId;
+      return e[1].plate && normPlate(e[1].plate) === normPlate(plate) && e[1].date === date && e[0] !== editingTruckId;
     });
 
     if (dupEntry) {
@@ -6804,10 +7322,23 @@ function showToast(msg) {
 }
 
 // ── NOTIFICATION BAR + TAB (admin/head — real-time from Firestore) ──
-var _allNotifs = [];
+var _allNotifsRaw = [];  // everything unread, unfiltered
+var _allNotifs = [];     // what's actually shown — duplicate alerts scoped to the selected date
 
-function renderNotifBar(items) {
-  _allNotifs = items || [];
+function currentNotifDate() {
+  return document.getElementById('dateFilter')?.value || getWorkingDate();
+}
+
+function renderNotifBar(rawItems) {
+  if (rawItems) _allNotifsRaw = rawItems;
+  var selDate = currentNotifDate();
+  // Duplicate alerts are scoped to the date currently selected in the app.
+  // Non-duplicate alerts (e.g. settlements) are unaffected by the date filter.
+  _allNotifs = _allNotifsRaw.filter(function(n) {
+    return n.type !== 'duplicate' || n.date === selDate;
+  });
+
+  var items = _allNotifs;
 
   // Update nav badge
   var navBtn = document.getElementById('nav_notifs');
@@ -6834,11 +7365,15 @@ function renderNotifBar(items) {
         var body = n.type==='duplicate'
           ? 'Plate <strong>'+n.plate+'</strong> duplicated on '+n.date+(timeStr?' <span class="notif-time">· '+timeStr+'</span>':'')
           : (n.message||'System notification');
+        var delBtn = n.type==='duplicate'
+          ? '<button class="notif-dismiss" style="background:rgba(239,68,68,0.15);border-color:rgba(239,68,68,0.4);color:var(--red)" onclick="resolveDuplicateNotif(\''+n._id+'\',\''+n.plate+'\',\''+n.date+'\',this)" title="Delete the duplicate now">🗑️</button>'
+          : '';
         return '<div class="notif-item" id="notif_'+n._id+'">'
           +'<div class="notif-icon">🔁</div>'
           +'<div class="notif-body"><div class="notif-title">DUPLICATE DETECTED</div>'
           +'<div class="notif-sub">'+body+'</div></div>'
-          +'<button class="notif-dismiss" onclick="dismissNotif(\''+n._id+'\')">✓</button>'
+          +delBtn
+          +'<button class="notif-dismiss" onclick="dismissNotif(\''+n._id+'\')" title="Dismiss">✓</button>'
           +'</div>';
       }).join('') + (items.length>3 ? '<div style="padding:6px 0;font-size:11px;color:var(--orange);text-align:center;cursor:pointer" onclick="switchTab(\'notifs\')">+' +(items.length-3)+' more — tap to view all →</div>' : '');
     }
@@ -6866,10 +7401,13 @@ function renderNotifsTab() {
       : '—';
     var body = '';
     var icon = '🔔';
+    var delBtn = '';
     if (n.type === 'duplicate') {
       icon = '🔁';
       body = 'Plate <strong>'+n.plate+'</strong> appears twice on <strong>'+n.date+'</strong>. '
-        +'Go to <strong>🗑️ Bin → Dup filter</strong> to review and restore or delete the extra entry.';
+        +(n.resolved ? 'The extra entry was moved to the <strong>🗑️ Recycle Bin</strong> automatically.' : 'It has not been auto-resolved yet.')
+        +' You can also delete it manually right now.';
+      delBtn = '<button onclick="resolveDuplicateNotif(\''+n._id+'\',\''+n.plate+'\',\''+n.date+'\',this)" style="background:none;border:1px solid rgba(239,68,68,0.4);color:var(--red);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;margin-right:6px">🗑️ Delete now</button>';
     } else if (n.type === 'settlement') {
       icon = '📋';
       body = (n.message || 'Settlement submitted');
@@ -6886,7 +7424,10 @@ function renderNotifsTab() {
           +'<span style="font-size:18px">'+icon+'</span>'
           +'<span style="font-size:11px;font-weight:800;letter-spacing:0.05em;color:'+titleColor+'">'+titleText+'</span>'
         +'</div>'
-        +'<button onclick="dismissNotif(\''+n._id+'\')" style="background:none;border:1px solid rgba(245,158,11,0.35);color:var(--orange);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">✓ Done</button>'
+        +'<div style="display:flex;align-items:center">'
+          +delBtn
+          +'<button onclick="dismissNotif(\''+n._id+'\')" style="background:none;border:1px solid rgba(245,158,11,0.35);color:var(--orange);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">✓ Done</button>'
+        +'</div>'
       +'</div>'
       +'<div style="font-size:13px;color:var(--text);line-height:1.6;margin-bottom:8px">'+body+'</div>'
       +'<div style="font-size:10px;color:var(--text3)">🕐 Detected: '+timeStr+'</div>'
@@ -6894,18 +7435,71 @@ function renderNotifsTab() {
   }).join('');
 }
 
+// ── MANUAL DELETE FROM NOTIFICATION — resolves that one plate+date group right now ──
+window.resolveDuplicateNotif = function(notifId, plate, date, btn) {
+  if (btn) { btn.disabled = true; btn.textContent = '⏳'; }
+
+  getDocs(collection(db, 'trucks')).then(function(snap) {
+    var group = [];
+    snap.forEach(function(d) {
+      var t = d.data();
+      if (t.plate && normPlate(t.plate) === normPlate(plate) && t.date === date) {
+        group.push({ id: d.id, t: t });
+      }
+    });
+
+    if (group.length < 2) {
+      showToast(group.length===1 ? '✅ Already resolved — only one entry left' : '✅ Nothing to delete — no entries found');
+      setDoc(doc(db,'notifications',notifId), {read:true}, {merge:true}).catch(function(){});
+      dismissNotif(notifId);
+      return;
+    }
+
+    var paidOnes = group.filter(function(g) { return g.t.status === 'paid'; });
+    var pool = paidOnes.length ? paidOnes : group;
+    var winner = pool.reduce(function(a, b) {
+      var ta = a.t.timestamp || 0, tb = b.t.timestamp || 0;
+      return tb < ta ? b : a;
+    });
+
+    var jobs = group.filter(function(g){ return g.id !== winner.id; }).map(function(g) {
+      return setDoc(doc(db, 'deleted', g.id), Object.assign({}, g.t, {
+        deletedAt: Date.now(),
+        deletedBy: currentUser.name || currentUser.id || 'system-dedup',
+        dupOf: winner.id
+      })).then(function() { return deleteDoc(doc(db, 'trucks', g.id)); });
+    });
+
+    Promise.all(jobs).then(function() {
+      showToast('🗑️ Duplicate ' + plate + ' moved to Recycle Bin');
+      dismissNotif(notifId);
+      renderTrucks();
+      updateDupChip();
+    }).catch(function() {
+      showToast('❌ Could not delete — check connection');
+      if (btn) { btn.disabled = false; btn.textContent = '🗑️ Delete now'; }
+    });
+  }).catch(function() {
+    showToast('❌ Could not check — check connection');
+    if (btn) { btn.disabled = false; btn.textContent = '🗑️ Delete now'; }
+  });
+};
+
 window.dismissNotif = function(id) {
   setDoc(doc(db,'notifications',id), {read:true}, {merge:true}).catch(function(){});
-  _allNotifs = _allNotifs.filter(function(n){ return n._id !== id; });
-  renderNotifBar(_allNotifs);
+  _allNotifsRaw = _allNotifsRaw.filter(function(n){ return n._id !== id; });
+  renderNotifBar();
 };
 
 window.dismissAllNotifs = function() {
+  // Only clears what's currently shown (i.e. the selected date's duplicate alerts,
+  // plus any non-duplicate alerts) — other dates' duplicate alerts are left untouched.
+  var shownIds = _allNotifs.map(function(n){ return n._id; });
   _allNotifs.forEach(function(n) {
     setDoc(doc(db,'notifications',n._id), {read:true}, {merge:true}).catch(function(){});
   });
-  _allNotifs = [];
-  renderNotifBar([]);
+  _allNotifsRaw = _allNotifsRaw.filter(function(n){ return shownIds.indexOf(n._id) === -1; });
+  renderNotifBar();
 };
 
 // ── SUSPEND ADDING ──
@@ -7221,7 +7815,7 @@ function updateDupChip() {
   const seen = {};
   Object.entries(trucks).forEach(([id, t]) => {
     if (t.date !== date) return;
-    const key = t.plate + '|' + t.date;
+    const key = normPlate(t.plate) + '|' + t.date;
     if (!seen[key]) seen[key] = [];
     seen[key].push(id);
   });
@@ -7235,12 +7829,79 @@ function updateDupChip() {
   }
 }
 
+// ── MANUAL RE-SCAN — sweep the whole collection (all dates) on demand ──
+window.rescanDuplicates = function(btn) {
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Scanning…'; }
+
+  getDocs(collection(db, 'trucks')).then(function(snap) {
+    var allTrucks = {};
+    snap.forEach(function(d) { allTrucks[d.id] = d.data(); });
+
+    var groups = {};
+    Object.entries(allTrucks).forEach(function(e) {
+      var id = e[0]; var t = e[1];
+      var pl = t.plate ? normPlate(t.plate) : null;
+      if (!pl) return;
+      var key = pl + '|' + (t.date || '');
+      if (!groups[key]) groups[key] = [];
+      groups[key].push({ id: id, t: t });
+    });
+
+    var dupGroups = Object.values(groups).filter(function(g) { return g.length > 1; });
+
+    if (!dupGroups.length) {
+      showToast('✅ No duplicates found — all dates checked');
+      if (btn) { btn.disabled = false; btn.textContent = '🔁 Re-scan Duplicates'; }
+      return;
+    }
+
+    var removed = 0;
+    var jobs = [];
+
+    dupGroups.forEach(function(group) {
+      var paidOnes = group.filter(function(g) { return g.t.status === 'paid'; });
+      var pool = paidOnes.length ? paidOnes : group;
+      var winner = pool.reduce(function(a, b) {
+        var ta = a.t.timestamp || 0, tb = b.t.timestamp || 0;
+        return tb < ta ? b : a;
+      });
+
+      group.forEach(function(g) {
+        if (g.id === winner.id) return;
+        removed++;
+        jobs.push(
+          setDoc(doc(db, 'deleted', g.id), Object.assign({}, g.t, {
+            deletedAt: Date.now(),
+            deletedBy: 'system-dedup',
+            dupOf: winner.id
+          })).then(function() {
+            return deleteDoc(doc(db, 'trucks', g.id));
+          })
+        );
+      });
+    });
+
+    Promise.all(jobs).then(function() {
+      showToast('🔁 ' + removed + ' duplicate' + (removed===1?'':'s') + ' moved to Recycle Bin — across all dates');
+      if (btn) { btn.disabled = false; btn.textContent = '🔁 Re-scan Duplicates'; }
+      renderRecycle();
+      updateDupChip();
+    }).catch(function() {
+      showToast('❌ Some duplicates could not be removed — check connection');
+      if (btn) { btn.disabled = false; btn.textContent = '🔁 Re-scan Duplicates'; }
+    });
+  }).catch(function() {
+    showToast('❌ Could not scan — check connection');
+    if (btn) { btn.disabled = false; btn.textContent = '🔁 Re-scan Duplicates'; }
+  });
+}
+
 window.openDuplicateSpotter = function() {
   const date = document.getElementById('dateFilter')?.value || getWorkingDate();
   const seen = {};
   Object.entries(trucks).forEach(([id, t]) => {
     if (t.date !== date) return;
-    const key = t.plate + '|' + t.date;
+    const key = normPlate(t.plate) + '|' + t.date;
     if (!seen[key]) seen[key] = [];
     seen[key].push({id, ...t});
   });
@@ -7309,10 +7970,17 @@ window.saveDupEdit = function(id) {
 }
 
 window.deleteDupEntry = function(id, btn) {
-  if (!confirm('Delete this truck entry?')) return;
+  if (!confirm('Delete this truck entry? It will go to Recycle Bin.')) return;
+  const truck = trucks[id];
+  if (truck) {
+    setDoc(doc(db,'deleted',id), Object.assign({}, truck, {
+      deletedAt: Date.now(),
+      deletedBy: currentUser.name || currentUser.id
+    }));
+  }
   deleteDoc(doc(db,'trucks',id));
   btn.closest('[style*="display:flex"]').remove();
-  showToast('🗑️ Deleted');
+  showToast('🗑️ Moved to Recycle Bin');
   updateDupChip();
 }
 // Format timestamp to readable datetime
@@ -9972,6 +10640,1252 @@ function _renderSettlementCanvas(s, cashierId, date, inclT1, inclT2, unpaidList)
 }
 // ══════════════════════════════════════════════════════════════════════
 // END SETTLEMENT MODULE
+// ══════════════════════════════════════════════════════════════════════
+
+// ══════════════════════════════════════════════════════════════════════
+// CERTIFICAT DE TRAVAIL MODULE
+// ══════════════════════════════════════════════════════════════════════
+
+// ── In-memory state (synced with Firestore settings/certCompany) ──
+var _certCompany = {
+  nom:'', adresse:'', ville:'Djibouti', tel:'', email:'', reg:'',
+  dirNom:'', dirFonction:'Directeur Général',
+  sigNom:'', sigFonction:'',
+  logo:'', signature:'', cachet:'',
+  // Saved drag/scale offsets for the stamp & signature on the certificate footer.
+  stampX:0, stampY:0, stampScale:1, sigX:0, sigY:0, sigScale:1
+};
+// Per-employee HR fields needed for certificates, keyed by worker name.
+// This does NOT duplicate the existing worker/name list (from settings/workers) —
+// it only stores the extra fields (poste, dateDebut, statut, matricule, departement)
+// that certificates require and that don't exist elsewhere in the app.
+var _certEmployees = {}; // { [name]: {poste, dateDebut, statut, matricule, departement} }
+var _certEmployeeNames = []; // standalone list of employee full names, independent of Sealers/Workers
+var _certHistorique = []; // array of saved certificate snapshots
+var _certCurrentSubTab = 'nouveau';
+var _certSelectedEmpName = null; // currently selected employee (Nouveau tab)
+var _certSelectedEmpExpanded = false; // whether the selected-employee info table is shown, or collapsed to a success confirmation
+var _certActive = null; // frozen snapshot of the last successfully "Généré" certificate, ready to print/PDF/save
+var _certCounterCache = null; // {year, seq} cache of settings/certCounter
+var _unsubCert = null;
+
+// ── Role helpers ── (Certificat module is Admin/Head only)
+function certCanEditConfig() {
+  return currentUser && (currentUser.role === 'admin' || currentUser.role === 'head');
+}
+function certCanUseModule() {
+  return currentUser && (currentUser.role === 'admin' || currentUser.role === 'head');
+}
+function certCanEditEmployee() {
+  return certCanUseModule();
+}
+
+// ── Load company settings, employee fiches, counter and history from Firestore ──
+function certInitFirestore() {
+  try {
+    _unsubCert = onSnapshot(doc(db, 'settings', 'certCompany'), function(snap) {
+      if (snap.exists()) {
+        var d = snap.data();
+        Object.assign(_certCompany, d);
+        certPopulateParamForm();
+        certRenderConfigBanner();
+        if (_certCurrentSubTab === 'nouveau') certUpdatePreview();
+      }
+    });
+    onSnapshot(doc(db, 'settings', 'certEmployees'), function(snap) {
+      _certEmployees = snap.exists() ? (snap.data().byName || {}) : {};
+      if (_certCurrentSubTab === 'employes') certRenderFicheList();
+      certRenderSelectedEmployee();
+    });
+    // Standalone employee name list — independent of Sealers/Workers
+    onSnapshot(doc(db, 'settings', 'certEmployeeNames'), function(snap) {
+      _certEmployeeNames = snap.exists() ? (snap.data().list || []) : [];
+      if (_certCurrentSubTab === 'employes') certRenderFicheList();
+    });
+    onSnapshot(doc(db, 'settings', 'certCounter'), function(snap) {
+      _certCounterCache = snap.exists() ? snap.data() : null;
+      certUpdateNextRefDisplay();
+    });
+    // History collection
+    onSnapshot(collection(db, 'certificats'), function(snap) {
+      _certHistorique = [];
+      snap.forEach(function(d) { _certHistorique.push(Object.assign({id:d.id}, d.data())); });
+      _certHistorique.sort(function(a,b){ return (b.genereeDate||0)-(a.genereeDate||0); });
+      if (_certCurrentSubTab === 'historique') certRenderHistorique();
+    });
+  } catch(e) {}
+}
+
+// ── Populate the settings form from memory ──
+// Whether the "Informations de l'entreprise" / "Directeur / Signataire" cards are
+// pinned open. Once a card has all its required fields on file, it renders as a
+// collapsed summary (tap to edit) instead of the full form every time you land here.
+var _certInfoExpanded = false;
+var _certDirExpanded = false;
+
+function certEscAttr(s) { return (s||'').toString().replace(/"/g,'&quot;'); }
+function certInfoComplete() { return !!(_certCompany.nom && _certCompany.adresse && _certCompany.ville); }
+function certDirComplete() { return !!(_certCompany.dirNom && _certCompany.dirFonction); }
+
+function certPopulateParamForm() {
+  certRenderInfoCard();
+  certRenderDirCard();
+  // Images
+  ['logo','signature','cachet'].forEach(function(k){
+    var previewId = k==='logo'?'certLogoPreview': k==='signature'?'certSigPreview':'certCachetPreview';
+    var el = document.getElementById(previewId);
+    if(el && _certCompany[k]){ el.src=_certCompany[k]; el.style.display='block'; }
+    else if(el){ el.style.display='none'; }
+  });
+  ['certLogoInput','certSigInput','certCachetInput'].forEach(function(id){
+    var el = document.getElementById(id); if(el) el.disabled = !certCanEditConfig();
+  });
+  var saveBtn = document.getElementById('certSaveParamsBtn');
+  if(saveBtn) saveBtn.style.display = certCanEditConfig() ? '' : 'none';
+  certUpdateParamPreview();
+}
+
+// ── "Informations de l'entreprise" card: collapsed summary once complete, else the form ──
+function certRenderInfoCard() {
+  var wrap = document.getElementById('certInfoCardWrap');
+  if(!wrap) return;
+  var canEdit = certCanEditConfig();
+  if(certInfoComplete() && !_certInfoExpanded){
+    wrap.innerHTML = '<div class="cert-selected-emp cert-selected-emp-ok"'+(canEdit?' onclick="certToggleInfoCard()"':'')+'>'
+      + '<span class="cert-selected-emp-ok-icon">✅</span>'
+      + '<span class="cert-selected-emp-ok-text"><b>'+_certCompany.nom+'</b> — '+_certCompany.ville+(_certCompany.tel?' · '+_certCompany.tel:'')+'</span>'
+      + (canEdit ? '<span class="cert-selected-emp-ok-more">Détails ▾</span>' : '')
+      + '</div>';
+    return;
+  }
+  wrap.innerHTML = '<div class="cert-form-group">'
+    + '<label class="cert-form-label">Nom de l\'entreprise *</label>'
+    + '<input class="cert-input" id="certCompNom" placeholder="Ex: Hask Services Djibouti" value="'+certEscAttr(_certCompany.nom)+'" '+(canEdit?'':'disabled')+'></div>'
+    + '<div class="cert-form-group">'
+    + '<label class="cert-form-label">Adresse *</label>'
+    + '<input class="cert-input" id="certCompAdresse" placeholder="Ex: Avenue de la République, Djibouti" value="'+certEscAttr(_certCompany.adresse)+'" '+(canEdit?'':'disabled')+'></div>'
+    + '<div class="cert-form-group">'
+    + '<label class="cert-form-label">Ville *</label>'
+    + '<input class="cert-input" id="certCompVille" placeholder="Ex: Djibouti" value="'+certEscAttr(_certCompany.ville)+'" '+(canEdit?'':'disabled')+'></div>'
+    + '<div class="cert-form-group">'
+    + '<label class="cert-form-label">Téléphone</label>'
+    + '<input class="cert-input" id="certCompTel" placeholder="Ex: +253 77 00 00 00" value="'+certEscAttr(_certCompany.tel)+'" '+(canEdit?'':'disabled')+'></div>'
+    + '<div class="cert-form-group">'
+    + '<label class="cert-form-label">Email</label>'
+    + '<input class="cert-input" id="certCompEmail" placeholder="Ex: contact@hask.dj" value="'+certEscAttr(_certCompany.email)+'" '+(canEdit?'':'disabled')+'></div>'
+    + '<div class="cert-form-group" style="margin-bottom:0">'
+    + '<label class="cert-form-label">N° d\'enregistrement (optionnel)</label>'
+    + '<input class="cert-input" id="certCompReg" placeholder="Ex: RC/DJ/2020/B/0001" value="'+certEscAttr(_certCompany.reg)+'" '+(canEdit?'':'disabled')+'></div>'
+    + (certInfoComplete() ? '<div style="margin-top:10px;text-align:right"><button class="cert-hist-icon-btn" onclick="certToggleInfoCard()">▲ Réduire</button></div>' : '');
+}
+window.certToggleInfoCard = function() {
+  if(_certInfoExpanded) certSyncInfoFieldsToMemory();
+  _certInfoExpanded = !_certInfoExpanded;
+  certRenderInfoCard();
+};
+// Reads whatever is currently typed in the (expanded) info fields back into memory,
+// so collapsing doesn't discard unsaved edits before the user hits "Sauvegarder".
+function certSyncInfoFieldsToMemory() {
+  var map = {certCompNom:'nom', certCompAdresse:'adresse', certCompVille:'ville', certCompTel:'tel', certCompEmail:'email', certCompReg:'reg'};
+  Object.keys(map).forEach(function(id){ var el=document.getElementById(id); if(el) _certCompany[map[id]]=el.value; });
+}
+
+// ── "Directeur / Signataire" card: same collapsed-summary pattern ──
+function certRenderDirCard() {
+  var wrap = document.getElementById('certDirCardWrap');
+  if(!wrap) return;
+  var canEdit = certCanEditConfig();
+  if(certDirComplete() && !_certDirExpanded){
+    wrap.innerHTML = '<div class="cert-selected-emp cert-selected-emp-ok"'+(canEdit?' onclick="certToggleDirCard()"':'')+'>'
+      + '<span class="cert-selected-emp-ok-icon">✅</span>'
+      + '<span class="cert-selected-emp-ok-text"><b>'+_certCompany.dirNom+'</b> — '+_certCompany.dirFonction+'</span>'
+      + (canEdit ? '<span class="cert-selected-emp-ok-more">Détails ▾</span>' : '')
+      + '</div>';
+    return;
+  }
+  wrap.innerHTML = '<div class="cert-form-group">'
+    + '<label class="cert-form-label">Nom complet du directeur *</label>'
+    + '<input class="cert-input" id="certDirNom" placeholder="Ex: Ahmed Abdallah Ibrahim" value="'+certEscAttr(_certCompany.dirNom)+'" '+(canEdit?'':'disabled')+'></div>'
+    + '<div class="cert-form-group">'
+    + '<label class="cert-form-label">Fonction / Titre du directeur *</label>'
+    + '<input class="cert-input" id="certDirFonction" placeholder="Ex: Directeur Général" value="'+certEscAttr(_certCompany.dirFonction)+'" '+(canEdit?'':'disabled')+'></div>'
+    + '<div class="cert-form-group">'
+    + '<label class="cert-form-label">Nom du signataire autorisé</label>'
+    + '<input class="cert-input" id="certSigNom" placeholder="Si différent du directeur" value="'+certEscAttr(_certCompany.sigNom)+'" '+(canEdit?'':'disabled')+'></div>'
+    + '<div class="cert-form-group" style="margin-bottom:0">'
+    + '<label class="cert-form-label">Fonction du signataire</label>'
+    + '<input class="cert-input" id="certSigFonction" placeholder="Ex: DRH, Responsable RH" value="'+certEscAttr(_certCompany.sigFonction)+'" '+(canEdit?'':'disabled')+'></div>'
+    + (certDirComplete() ? '<div style="margin-top:10px;text-align:right"><button class="cert-hist-icon-btn" onclick="certToggleDirCard()">▲ Réduire</button></div>' : '');
+}
+window.certToggleDirCard = function() {
+  if(_certDirExpanded) certSyncDirFieldsToMemory();
+  _certDirExpanded = !_certDirExpanded;
+  certRenderDirCard();
+};
+function certSyncDirFieldsToMemory() {
+  var map = {certDirNom:'dirNom', certDirFonction:'dirFonction', certSigNom:'sigNom', certSigFonction:'sigFonction'};
+  Object.keys(map).forEach(function(id){ var el=document.getElementById(id); if(el) _certCompany[map[id]]=el.value; });
+}
+
+// ── Tab renderer (called by switchTab) ──
+window.renderCertificatTab = function() {
+  if(!certCanUseModule()){
+    switchTab('trucks');
+    showToast('⛔ Réservé à l\'administrateur / directeur');
+    return;
+  }
+  certInitFirestore();
+  certPopulateParamForm();
+  certRenderConfigBanner();
+  certRenderSelectedEmployee();
+  certUpdatePreview();
+  certRenderHistorique();
+  // Employés tab: anyone who can use the module (incl. Cashier/HR) can view/complete employee fiches.
+  // Paramètres tab (official company/signatory config) stays admin/head-only.
+  var canEdit = certCanEditConfig();
+  var empBtn = document.getElementById('certTabEmpBtn');
+  var paramBtn = document.getElementById('certTabParamBtn');
+  if(empBtn) empBtn.style.display = certCanEditEmployee() ? '' : 'none';
+  if(paramBtn) paramBtn.style.display = canEdit ? '' : 'none';
+};
+
+// ── Sub-tab switching ──
+window.certShowSubTab = function(sub) {
+  if(sub==='parametres' && !certCanEditConfig()){
+    showToast('⛔ Réservé à l\'administrateur / directeur');
+    return;
+  }
+  if(sub==='employes' && !certCanEditEmployee()){
+    showToast('⛔ Non autorisé');
+    return;
+  }
+  _certCurrentSubTab = sub;
+  var certSubTabMap = {
+    nouveau:    {content:'certSubNouveauRaw',    btn:'certTabNouveauBtn'},
+    employes:   {content:'certSubEmployesRaw',   btn:'certTabEmpBtn'},
+    parametres: {content:'certSubParametresRaw', btn:'certTabParamBtn'},
+    historique: {content:'certSubHistoriqueRaw', btn:'certTabHistBtn'}
+  };
+  Object.keys(certSubTabMap).forEach(function(s){
+    var m = certSubTabMap[s];
+    var el = document.getElementById(m.content);
+    if(el) el.style.display = (s===sub)?'':'none';
+    var btn = document.getElementById(m.btn);
+    if(btn){ btn.classList.toggle('active', s===sub); }
+  });
+  if(sub==='historique') certRenderHistorique();
+  if(sub==='parametres') certPopulateParamForm();
+  if(sub==='employes') certRenderFicheList();
+  if(sub==='nouveau') certUpdatePreview();
+};
+
+// ── Image upload handler (logo / signature / cachet) ──
+window.certLoadImage = function(input, previewId, key) {
+  if(!certCanEditConfig()){ showToast('⛔ Réservé à l\'administrateur / directeur'); return; }
+  var file = input.files[0];
+  if(!file) return;
+  var okTypes = ['image/png','image/jpeg','image/jpg','image/webp'];
+  if(okTypes.indexOf(file.type) === -1){
+    showToast('⚠️ Format non supporté. Utilisez PNG, JPG ou WebP.');
+    input.value = '';
+    return;
+  }
+  var reader = new FileReader();
+  reader.onload = function(e){
+    var dataURL = e.target.result;
+    _certCompany[key] = dataURL;
+    var el = document.getElementById(previewId);
+    if(el){ el.src=dataURL; el.style.display='block'; }
+    certRenderConfigBanner();
+    certUpdatePreview();
+  };
+  reader.readAsDataURL(file);
+};
+
+// ── Remove an uploaded image (logo / signature / cachet) ──
+window.certRemoveImage = function(previewId, key) {
+  if(!certCanEditConfig()){ showToast('⛔ Réservé à l\'administrateur / directeur'); return; }
+  _certCompany[key] = '';
+  var el = document.getElementById(previewId);
+  if(el){ el.src=''; el.style.display='none'; }
+  certRenderConfigBanner();
+  certUpdatePreview();
+};
+
+// ══════════════════════════════════════════════════════════════════════
+// SIGNATURE PAD — draw the signature on-screen (black or blue pen)
+// ══════════════════════════════════════════════════════════════════════
+var _certSigPadColor = '#1a1a2e';
+var _certSigPadDrawing = false;
+var _certSigPadHasStrokes = false;
+
+window.certOpenSigPad = function() {
+  if(!certCanEditConfig()){ showToast('⛔ Réservé à l\'administrateur / directeur'); return; }
+  var wrap = document.getElementById('certSigPadWrap');
+  if(!wrap) return;
+  wrap.style.display = 'block';
+  certInitSigCanvas();
+  wrap.scrollIntoView({behavior:'smooth', block:'nearest'});
+};
+
+window.certCloseSigPad = function() {
+  var wrap = document.getElementById('certSigPadWrap');
+  if(wrap) wrap.style.display = 'none';
+};
+
+window.certSetSigColor = function(color, btn) {
+  _certSigPadColor = color;
+  var buttons = document.querySelectorAll('.cert-sigpad-color');
+  for(var i=0;i<buttons.length;i++) buttons[i].classList.remove('active');
+  if(btn) btn.classList.add('active');
+};
+
+// Wires up mouse + touch drawing on the canvas (once per canvas element).
+function certInitSigCanvas() {
+  var canvas = document.getElementById('certSigCanvas');
+  if(!canvas || canvas._certInit) return;
+  canvas._certInit = true;
+  var ctx = canvas.getContext('2d');
+
+  function pointFromEvent(e){
+    var rect = canvas.getBoundingClientRect();
+    var scaleX = canvas.width / rect.width, scaleY = canvas.height / rect.height;
+    var clientX = e.touches && e.touches.length ? e.touches[0].clientX : e.clientX;
+    var clientY = e.touches && e.touches.length ? e.touches[0].clientY : e.clientY;
+    return { x:(clientX-rect.left)*scaleX, y:(clientY-rect.top)*scaleY };
+  }
+  function start(e){
+    e.preventDefault();
+    _certSigPadDrawing = true;
+    var p = pointFromEvent(e);
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y);
+  }
+  function move(e){
+    if(!_certSigPadDrawing) return;
+    e.preventDefault();
+    var p = pointFromEvent(e);
+    ctx.lineWidth = 2.4;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.strokeStyle = _certSigPadColor;
+    ctx.lineTo(p.x, p.y);
+    ctx.stroke();
+    _certSigPadHasStrokes = true;
+  }
+  function end(){ _certSigPadDrawing = false; }
+
+  canvas.addEventListener('mousedown', start);
+  canvas.addEventListener('mousemove', move);
+  window.addEventListener('mouseup', end);
+  canvas.addEventListener('touchstart', start, {passive:false});
+  canvas.addEventListener('touchmove', move, {passive:false});
+  canvas.addEventListener('touchend', end);
+}
+
+window.certClearSigPad = function() {
+  var canvas = document.getElementById('certSigCanvas');
+  if(!canvas) return;
+  canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+  _certSigPadHasStrokes = false;
+};
+
+// Saves the drawn signature into the same slot the uploaded image uses,
+// so it flows through the existing preview/print pipeline unchanged and
+// can be re-drawn (edited) or removed at any time.
+window.certSaveSigPad = function() {
+  if(!certCanEditConfig()){ showToast('⛔ Réservé à l\'administrateur / directeur'); return; }
+  var canvas = document.getElementById('certSigCanvas');
+  if(!canvas) return;
+  if(!_certSigPadHasStrokes){
+    showToast('⚠️ Signez d\'abord dans la zone prévue.');
+    return;
+  }
+  var dataURL = canvas.toDataURL('image/png');
+  _certCompany.signature = dataURL;
+  var el = document.getElementById('certSigPreview');
+  if(el){ el.src = dataURL; el.style.display = 'block'; }
+  certCloseSigPad();
+  certRenderConfigBanner();
+  certUpdatePreview();
+  showToast('✅ Signature enregistrée — n\'oubliez pas de sauvegarder les paramètres');
+};
+
+// ── Format date (YYYY-MM-DD) in French ──
+function certFmtDate(dateStr) {
+  if(!dateStr) return '—';
+  var months = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+  var parts = dateStr.split('-');
+  if(parts.length!==3) return dateStr;
+  return parseInt(parts[2],10)+' '+months[parseInt(parts[1],10)-1]+' '+parts[0];
+}
+
+// ── Get today's date in French ──
+function certDateAujourdhui() {
+  var now = getDjiboutiNow ? getDjiboutiNow() : new Date();
+  var months = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+  return now.getUTCDate()+' '+months[now.getUTCMonth()]+' '+now.getUTCFullYear();
+}
+
+// ── Today's date as YYYY-MM-DD (for comparisons) ──
+function certTodayISO() {
+  var now = getDjiboutiNow ? getDjiboutiNow() : new Date();
+  var y = now.getUTCFullYear(), m = String(now.getUTCMonth()+1).padStart(2,'0'), d = String(now.getUTCDate()).padStart(2,'0');
+  return y+'-'+m+'-'+d;
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// CONFIGURATION VALIDATION (company + signatory)
+// ══════════════════════════════════════════════════════════════════════
+function certConfigStatus() {
+  var c = _certCompany;
+  var missing = [];
+  if(!c.nom) missing.push("Nom de l'entreprise");
+  if(!c.adresse) missing.push('Adresse');
+  if(!c.ville) missing.push('Ville');
+  if(!c.logo) missing.push("Logo de l'entreprise");
+  if(!(c.sigNom || c.dirNom)) missing.push('Nom du signataire officiel');
+  if(!(c.sigFonction || c.dirFonction)) missing.push('Fonction du signataire officiel');
+  if(!c.signature) missing.push('Signature du signataire officiel');
+  return { complete: missing.length===0, missing: missing };
+}
+
+function certRenderConfigBanner() {
+  var el = document.getElementById('certConfigBanner');
+  if(!el) return;
+  var status = certConfigStatus();
+  if(status.complete){
+    el.innerHTML = '<div class="cert-banner cert-banner-ok"><div class="cert-banner-title">✓ Configuration complète</div>'
+      + 'Le certificat peut être généré pour tout employé actif.</div>';
+    return;
+  }
+  var canEdit = certCanEditConfig();
+  el.innerHTML = '<div class="cert-banner cert-banner-warn">'
+    + '<div class="cert-banner-title">⚠ Configuration requise</div>'
+    + "Certaines informations obligatoires de l'entreprise doivent être complétées avant de générer un certificat.<br>"
+    + '<b>Informations manquantes :</b><ul>'
+    + status.missing.map(function(m){ return '<li>'+m+'</li>'; }).join('')
+    + '</ul>'
+    + (canEdit ? '<button class="cert-banner-btn" onclick="certShowSubTab(\'parametres\')">Compléter la configuration</button>'
+                : '<div style="font-size:11px;opacity:0.85">Contactez un administrateur ou le directeur pour compléter la configuration.</div>')
+    + '</div>';
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// EMPLOYEE DATA — standalone list, managed entirely inside the Certificat
+// module (independent of Sealers/Workers). Admin/Head add and remove names.
+// ══════════════════════════════════════════════════════════════════════
+function certGetWorkerNames() {
+  return _certEmployeeNames.slice();
+}
+
+// ── Add a new employee to the certificate module's own list ──
+window.certAddEmployee = function() {
+  if(!certCanEditEmployee()){ showToast('⛔ Non autorisé'); return; }
+  var input = document.getElementById('certNewEmpName');
+  var name = input ? input.value.trim() : '';
+  if(!name){ showToast('⚠️ Entrez un nom'); return; }
+  if(_certEmployeeNames.indexOf(name) !== -1){ showToast('⚠️ Cet employé existe déjà'); return; }
+  _certEmployeeNames.push(name);
+  setDoc(doc(db,'settings','certEmployeeNames'), { list: _certEmployeeNames }).then(function(){
+    showToast('✅ '+name+' ajouté');
+    if(input) input.value = '';
+    certRenderFicheList();
+  }).catch(function(){ showToast('⚠️ Erreur de sauvegarde'); });
+};
+
+// ── Remove an employee from the certificate module's own list ──
+window.certRemoveEmployee = function(name) {
+  if(!certCanEditEmployee()){ showToast('⛔ Non autorisé'); return; }
+  if(!confirm("Retirer "+name+" de la liste des employés ? (n'affecte pas les certificats déjà émis)")) return;
+  _certEmployeeNames = _certEmployeeNames.filter(function(n){ return n !== name; });
+  var updatedFiches = Object.assign({}, _certEmployees);
+  delete updatedFiches[name];
+  Promise.all([
+    setDoc(doc(db,'settings','certEmployeeNames'), { list: _certEmployeeNames }),
+    setDoc(doc(db,'settings','certEmployees'), { byName: updatedFiches })
+  ]).then(function(){
+    showToast('🗑️ '+name+' retiré');
+    if(_certSelectedEmpName === name){ _certSelectedEmpName = null; certRenderSelectedEmployee(); }
+    certRenderFicheList();
+  }).catch(function(){ showToast('⚠️ Erreur de sauvegarde'); });
+};
+
+function certGetEmployee(name) {
+  var fiche = _certEmployees[name] || {};
+  return {
+    nom: name,
+    poste: fiche.poste || '',
+    dateDebut: fiche.dateDebut || '',
+    statut: fiche.statut || '',
+    matricule: fiche.matricule || '',
+    departement: fiche.departement || ''
+  };
+}
+
+function certGetAllEmployees() {
+  return certGetWorkerNames().map(certGetEmployee);
+}
+
+// Validates the fields required by the master spec for a given employee
+function certEmployeeStatus(emp) {
+  var missing = [];
+  if(!emp.nom) missing.push('Nom et prénom');
+  if(!emp.poste) missing.push('Fonction');
+  if(!emp.dateDebut) missing.push('Date de début de travail');
+  if(!emp.statut) missing.push('Statut');
+  var futureDate = false;
+  if(emp.dateDebut && emp.dateDebut > certTodayISO()) futureDate = true;
+  return {
+    complete: missing.length===0 && !futureDate && emp.statut === 'Actif',
+    missing: missing,
+    futureDate: futureDate,
+    inactive: !!emp.statut && emp.statut !== 'Actif'
+  };
+}
+
+// ── Employee search (Nouveau tab) ──
+window.certOnEmployeeSearch = function(q) {
+  var box = document.getElementById('certEmpResults');
+  if(!box) return;
+  q = (q||'').trim().toLowerCase();
+  var all = certGetAllEmployees();
+  var matches = !q ? all : all.filter(function(e){
+    return e.nom.toLowerCase().indexOf(q)>-1 || (e.matricule && e.matricule.toLowerCase().indexOf(q)>-1);
+  });
+  if(!matches.length){
+    box.innerHTML = '<div class="cert-emp-result-item" style="color:var(--text3)">Aucun employé trouvé</div>';
+    box.style.display = 'block';
+    return;
+  }
+  box.innerHTML = matches.slice(0,30).map(function(e){
+    var st = certEmployeeStatus(e);
+    var badge = st.inactive ? '<span class="cert-emp-badge inactive">Inactif</span>'
+              : st.complete ? '<span class="cert-emp-badge ok">Prêt</span>'
+              : '<span class="cert-emp-badge warn">Incomplet</span>';
+    return '<div class="cert-emp-result-item" onclick="certSelectEmployee(\''+e.nom.replace(/'/g,"\\'")+'\')">'
+      + '<div><div class="cert-emp-result-name">'+e.nom+'</div>'
+      + '<div class="cert-emp-result-meta">'+(e.poste||'Poste non renseigné')+(e.matricule?' · '+e.matricule:'')+'</div></div>'
+      + badge + '</div>';
+  }).join('');
+  box.style.display = 'block';
+};
+
+window.certSelectEmployee = function(name) {
+  _certSelectedEmpName = name;
+  _certSelectedEmpExpanded = false; // start collapsed — just confirm the selection succeeded
+  var box = document.getElementById('certEmpResults');
+  if(box) box.style.display = 'none';
+  var search = document.getElementById('certEmpSearch');
+  if(search) search.value = name;
+  _certActive = null; // selecting a new employee invalidates any previously generated draft
+  certRenderSelectedEmployee();
+  certUpdatePreview();
+};
+
+function certRenderSelectedEmployee() {
+  var wrap = document.getElementById('certSelectedEmpWrap');
+  var blockBanner = document.getElementById('certEmpBlockBanner');
+  if(!wrap) return;
+  if(!_certSelectedEmpName){
+    wrap.innerHTML = '';
+    if(blockBanner) blockBanner.innerHTML = '';
+    return;
+  }
+  var emp = certGetEmployee(_certSelectedEmpName);
+  var st = certEmployeeStatus(emp);
+
+  if(st.complete){
+    // Everything on file. Once selected, collapse straight to a success confirmation
+    // instead of leaving the full info table expanded — tap it to see/edit the details.
+    if(!_certSelectedEmpExpanded){
+      wrap.innerHTML = '<div class="cert-selected-emp cert-selected-emp-ok" onclick="certToggleSelectedEmpDetails()">'
+        + '<span class="cert-selected-emp-ok-icon">✅</span>'
+        + '<span class="cert-selected-emp-ok-text"><b>'+emp.nom+'</b> sélectionné(e) — informations complètes, prêt à générer</span>'
+        + '<span class="cert-selected-emp-ok-more">Détails ▾</span>'
+        + '</div>';
+      if(blockBanner) blockBanner.innerHTML = '';
+      return;
+    }
+    wrap.innerHTML = '<div class="cert-selected-emp">'
+      + '<div class="cert-selected-emp-row"><span>Nom</span><b>'+emp.nom+'</b></div>'
+      + '<div class="cert-selected-emp-row"><span>Poste</span><b>'+emp.poste+'</b></div>'
+      + '<div class="cert-selected-emp-row"><span>Date de début</span><b>'+certFmtDate(emp.dateDebut)+'</b></div>'
+      + '<div class="cert-selected-emp-row"><span>Statut</span><b>'+emp.statut+'</b></div>'
+      + (emp.matricule ? '<div class="cert-selected-emp-row"><span>Matricule</span><b>'+emp.matricule+'</b></div>' : '')
+      + '<div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center">'
+      +   '<button class="cert-hist-icon-btn" onclick="certToggleSelectedEmpDetails()">▲ Réduire</button>'
+      +   (certCanEditEmployee() ? '<button class="cert-hist-icon-btn" onclick="certToggleInlineEdit()">✎ Modifier</button>' : '')
+      + '</div>'
+      + '</div>';
+    if(blockBanner) blockBanner.innerHTML = '';
+    return;
+  }
+
+  // Missing/invalid info: show an inline, fillable form right here — no other tab needed.
+  if(!certCanEditEmployee()){
+    wrap.innerHTML = '';
+    var lines0 = st.missing.slice();
+    if(st.futureDate) lines0.push('La date de début de travail ne peut pas être dans le futur');
+    if(st.inactive) lines0.push('Employé inactif — seuls les employés actifs peuvent recevoir une attestation');
+    if(blockBanner) blockBanner.innerHTML = '<div class="cert-banner cert-banner-err">'
+      + '<div class="cert-banner-title">Impossible de générer le certificat</div>'
+      + "Les informations de cet employé sont incomplètes. Veuillez compléter sa fiche avant de générer le certificat.<br>"
+      + '<b>Informations manquantes :</b><ul>' + lines0.map(function(m){return '<li>'+m+'</li>';}).join('') + '</ul>'
+      + '<div style="font-size:11px;opacity:0.85">Contactez un administrateur pour compléter la fiche de cet employé.</div>'
+      + '</div>';
+    return;
+  }
+
+  if(blockBanner) blockBanner.innerHTML = '';
+  wrap.innerHTML = '<div class="cert-selected-emp">'
+    + '<div style="font-size:11px;color:var(--orange);font-weight:700;margin-bottom:8px;">⚠ Première attestation pour '+emp.nom+' — complétez sa fiche (une seule fois, elle sera réutilisée ensuite)</div>'
+    + '<div class="cert-form-group"><label class="cert-form-label">Poste / Fonction *</label>'
+    + '<input class="cert-input" id="certInlinePoste" value="'+(emp.poste||'').replace(/"/g,'&quot;')+'" placeholder="Ex: Chauffeur, Scelleur..."></div>'
+    + '<div class="cert-form-group"><label class="cert-form-label">Date de début de travail *</label>'
+    + '<input class="cert-input" type="date" id="certInlineDate" value="'+(emp.dateDebut||'')+'"></div>'
+    + '<div class="cert-form-group"><label class="cert-form-label">Statut *</label>'
+    + '<select class="cert-input" id="certInlineStatut">'
+    +   '<option value="">—</option>'
+    +   '<option value="Actif"'+(emp.statut==='Actif'?' selected':'')+'>Actif</option>'
+    +   '<option value="Inactif"'+(emp.statut==='Inactif'?' selected':'')+'>Inactif</option>'
+    + '</select></div>'
+    + '<div class="cert-form-group" style="margin-bottom:0"><label class="cert-form-label">Matricule (optionnel)</label>'
+    + '<input class="cert-input" id="certInlineMatricule" value="'+(emp.matricule||'').replace(/"/g,'&quot;')+'"></div>'
+    + '<div style="margin-top:10px"><button class="cert-btn cert-btn-primary" style="flex:none;padding:9px 18px" onclick="certSaveInlineEmployee()">💾 Enregistrer la fiche</button></div>'
+    + '</div>';
+}
+
+// ── Toggle the selected-employee card between the collapsed success confirmation and the full info table ──
+window.certToggleSelectedEmpDetails = function() {
+  _certSelectedEmpExpanded = !_certSelectedEmpExpanded;
+  certRenderSelectedEmployee();
+};
+
+// ── Toggle back into edit mode for an already-complete employee ──
+window.certToggleInlineEdit = function() {
+  var emp = certGetEmployee(_certSelectedEmpName);
+  var wrap = document.getElementById('certSelectedEmpWrap');
+  if(!wrap) return;
+  wrap.innerHTML = '<div class="cert-selected-emp">'
+    + '<div class="cert-form-group"><label class="cert-form-label">Poste / Fonction *</label>'
+    + '<input class="cert-input" id="certInlinePoste" value="'+(emp.poste||'').replace(/"/g,'&quot;')+'"></div>'
+    + '<div class="cert-form-group"><label class="cert-form-label">Date de début de travail *</label>'
+    + '<input class="cert-input" type="date" id="certInlineDate" value="'+(emp.dateDebut||'')+'"></div>'
+    + '<div class="cert-form-group"><label class="cert-form-label">Statut *</label>'
+    + '<select class="cert-input" id="certInlineStatut">'
+    +   '<option value="Actif"'+(emp.statut==='Actif'?' selected':'')+'>Actif</option>'
+    +   '<option value="Inactif"'+(emp.statut==='Inactif'?' selected':'')+'>Inactif</option>'
+    + '</select></div>'
+    + '<div class="cert-form-group" style="margin-bottom:0"><label class="cert-form-label">Matricule (optionnel)</label>'
+    + '<input class="cert-input" id="certInlineMatricule" value="'+(emp.matricule||'').replace(/"/g,'&quot;')+'"></div>'
+    + '<div style="margin-top:10px"><button class="cert-btn cert-btn-primary" style="flex:none;padding:9px 18px" onclick="certSaveInlineEmployee()">💾 Enregistrer</button></div>'
+    + '</div>';
+};
+
+// ── Save the inline fiche form straight from the Nouveau screen ──
+window.certSaveInlineEmployee = function() {
+  if(!certCanEditEmployee()){ showToast('⛔ Non autorisé'); return; }
+  var name = _certSelectedEmpName;
+  var poste = (document.getElementById('certInlinePoste')||{}).value.trim();
+  var dateDebut = (document.getElementById('certInlineDate')||{}).value;
+  var statut = (document.getElementById('certInlineStatut')||{}).value;
+  var matricule = (document.getElementById('certInlineMatricule')||{}).value.trim();
+  if(dateDebut && dateDebut > certTodayISO()){
+    showToast('⚠️ La date de début de travail ne peut pas être dans le futur.');
+    return;
+  }
+  var existing = _certEmployees[name] || {};
+  _certEmployees[name] = { poste:poste, dateDebut:dateDebut, statut:statut, matricule:matricule, departement:existing.departement||'' };
+  try {
+    setDoc(doc(db,'settings','certEmployees'), { byName: _certEmployees }).then(function(){
+      showToast('✅ Fiche enregistrée — prêt à générer');
+      certRenderSelectedEmployee();
+    }).catch(function(){ showToast('⚠️ Erreur de sauvegarde'); });
+  } catch(e){ showToast('⚠️ Erreur de sauvegarde'); }
+};
+
+
+// ══════════════════════════════════════════════════════════════════════
+// EMPLOYEE FICHES (admin/head only — Employés sub-tab)
+// ══════════════════════════════════════════════════════════════════════
+function certRenderFicheList() {
+  var container = document.getElementById('certFicheList');
+  if(!container) return;
+  var names = certGetWorkerNames();
+  if(!names.length){
+    container.innerHTML = '<div style="text-align:center;padding:30px 16px;color:var(--text3);font-size:13px;">Aucun employé. Ajoutez-en un ci-dessus.</div>';
+    return;
+  }
+  container.innerHTML = names.map(function(name){
+    var emp = certGetEmployee(name);
+    var safeId = 'fiche_'+btoa(unescape(encodeURIComponent(name))).replace(/[^a-zA-Z0-9]/g,'');
+    return '<div class="cert-fiche-row">'
+      + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">'
+      +   '<div style="font-weight:700;font-size:13px;">'+name+'</div>'
+      +   '<button class="cert-hist-icon-btn" title="Retirer" onclick="certRemoveEmployee(\''+name.replace(/'/g,"\\'")+'\')">✕</button>'
+      + '</div>'
+      + '<div class="cert-form-group"><label class="cert-form-label">Poste / Fonction *</label>'
+      + '<input class="cert-input" id="'+safeId+'_poste" value="'+(emp.poste||'').replace(/"/g,'&quot;')+'" placeholder="Ex: Chauffeur"></div>'
+      + '<div class="cert-form-group"><label class="cert-form-label">Date de début *</label>'
+      + '<input class="cert-input" type="date" id="'+safeId+'_date" value="'+(emp.dateDebut||'')+'"></div>'
+      + '<div class="cert-form-group"><label class="cert-form-label">Statut *</label>'
+      + '<select class="cert-input" id="'+safeId+'_statut">'
+      +   '<option value="">—</option>'
+      +   '<option value="Actif"'+(emp.statut==='Actif'?' selected':'')+'>Actif</option>'
+      +   '<option value="Inactif"'+(emp.statut==='Inactif'?' selected':'')+'>Inactif</option>'
+      + '</select></div>'
+      + '<div class="cert-form-group"><label class="cert-form-label">Matricule (optionnel)</label>'
+      + '<input class="cert-input" id="'+safeId+'_matricule" value="'+(emp.matricule||'').replace(/"/g,'&quot;')+'"></div>'
+      + '<div class="cert-form-group" style="margin-bottom:0"><label class="cert-form-label">Département (optionnel)</label>'
+      + '<input class="cert-input" id="'+safeId+'_dept" value="'+(emp.departement||'').replace(/"/g,'&quot;')+'"></div>'
+      + '<div style="margin-top:10px"><button class="cert-btn cert-btn-primary" style="flex:none;padding:8px 16px" onclick="certSaveFiche(\''+name.replace(/'/g,"\\'")+'\',\''+safeId+'\')">💾 Enregistrer</button></div>'
+      + '</div>';
+  }).join('');
+}
+
+window.certSaveFiche = function(name, safeId) {
+  if(!certCanEditEmployee()){ showToast('⛔ Non autorisé'); return; }
+  var poste = (document.getElementById(safeId+'_poste')||{}).value.trim();
+  var dateDebut = (document.getElementById(safeId+'_date')||{}).value;
+  var statut = (document.getElementById(safeId+'_statut')||{}).value;
+  var matricule = (document.getElementById(safeId+'_matricule')||{}).value.trim();
+  var departement = (document.getElementById(safeId+'_dept')||{}).value.trim();
+  if(dateDebut && dateDebut > certTodayISO()){
+    showToast('⚠️ La date de début de travail ne peut pas être dans le futur.');
+    return;
+  }
+  _certEmployees[name] = { poste:poste, dateDebut:dateDebut, statut:statut, matricule:matricule, departement:departement };
+  try {
+    setDoc(doc(db,'settings','certEmployees'), { byName: _certEmployees }).then(function(){
+      showToast('✅ Fiche de '+name+' enregistrée');
+      certRenderSelectedEmployee();
+    }).catch(function(){ showToast('⚠️ Erreur de sauvegarde'); });
+  } catch(e){ showToast('⚠️ Erreur de sauvegarde'); }
+};
+
+// ══════════════════════════════════════════════════════════════════════
+// CERTIFICATE REFERENCE NUMBER
+// ══════════════════════════════════════════════════════════════════════
+function certUpdateNextRefDisplay() {
+  var el = document.getElementById('certNextRefDisplay');
+  if(!el) return;
+  var year = (getDjiboutiNow ? getDjiboutiNow() : new Date()).getUTCFullYear();
+  var seq = (_certCounterCache && _certCounterCache.year === year) ? (_certCounterCache.seq||0)+1 : 1;
+  el.textContent = 'CERT-'+year+'-'+String(seq).padStart(4,'0');
+}
+
+// Reads-then-writes the counter doc. Simple app scale (single admin generating at a time) —
+// not a distributed transaction, but avoids collisions in normal single-device usage.
+function certNextRefNumber() {
+  var year = (getDjiboutiNow ? getDjiboutiNow() : new Date()).getUTCFullYear();
+  return getDoc(doc(db,'settings','certCounter')).then(function(snap){
+    var data = snap.exists() ? snap.data() : {year:year, seq:0};
+    var seq = (data.year === year) ? (data.seq||0)+1 : 1;
+    var newData = {year:year, seq:seq};
+    return setDoc(doc(db,'settings','certCounter'), newData).then(function(){
+      _certCounterCache = newData;
+      certUpdateNextRefDisplay();
+      return 'CERT-'+year+'-'+String(seq).padStart(4,'0');
+    });
+  });
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// CERTIFICATE DOCUMENT BUILDING (preview / print / PDF all use this)
+// ══════════════════════════════════════════════════════════════════════
+// `snap` is either the frozen _certActive snapshot (after Générer) or, for the
+// live preview before generation, a lightweight object built from current selection.
+function certBuildDocumentHTML(snap) {
+  var c = snap.company || _certCompany;
+  var dirName = c.sigNom || c.dirNom || '_______________';
+  var dirFunc = c.sigFonction || c.dirFonction || 'Directeur Général';
+  var entreprise = c.nom || 'Notre Entreprise';
+  var ville = c.ville || 'Djibouti';
+  var dateAuj = snap.dateGenFmt || certDateAujourdhui();
+  var debutFmt = certFmtDate(snap.dateDebut);
+  var empNom = snap.empNom || '';
+  var empPoste = snap.empPoste || '';
+
+  var logoHTML = c.logo
+    ? '<img src="'+c.logo+'" class="cert-doc-logo">'
+    : '<div class="cert-doc-logo-placeholder">🏢</div>';
+
+  var infoLines = [];
+  if(c.adresse) infoLines.push(c.adresse);
+  if(c.tel) infoLines.push('Tél : '+c.tel);
+  if(c.email) infoLines.push('Email : '+c.email);
+  if(c.reg) infoLines.push('RC : '+c.reg);
+
+  // Apply any saved drag/scale adjustments (defaults keep the original centered look).
+  var stampX = c.stampX||0, stampY = c.stampY||0, stampScale = c.stampScale||1;
+  var sigX = c.sigX||0, sigY = c.sigY||0, sigScale = c.sigScale||1;
+  var sigHTML = c.signature ? '<img src="'+c.signature+'" class="cert-doc-sig-img" style="transform:translate(calc(-50% + '+sigX+'px), '+sigY+'px) scale('+sigScale+') rotate(-5deg)">' : '';
+  var cachetHTML = c.cachet ? '<img src="'+c.cachet+'" class="cert-doc-stamp-img" style="transform:translate(calc(-50% + '+stampX+'px), '+stampY+'px) scale('+stampScale+')">' : '';
+  var refHTML = snap.refNum ? '<div style="text-align:right;font-size:10px;color:#888;margin-bottom:4px;">N° '+snap.refNum+'</div>' : '';
+
+  return '<div class="cert-document" id="certDocumentPreview">'
+    + refHTML
+    // Header
+    +'<div class="cert-doc-header">'
+    +  logoHTML
+    +  '<div>'
+    +    '<div class="cert-doc-company-name">'+entreprise+'</div>'
+    +    '<div class="cert-doc-company-info">'+infoLines.join(' &nbsp;|&nbsp; ')+'</div>'
+    +  '</div>'
+    +'</div>'
+    // Title
+    +'<div class="cert-doc-title">Attestation de Travail</div>'
+    +'<div class="cert-doc-subtitle">— Document officiel —</div>'
+    // Body
+    +'<div class="cert-doc-body">'
+    +'<p>Je soussigné(e), <span class="cert-doc-highlight">'+(dirName)+'</span>, '
+    +'agissant en qualité de <span class="cert-doc-highlight">'+(dirFunc)+'</span> '
+    +'au sein de <span class="cert-doc-highlight">'+entreprise+'</span>, '
+    +'atteste par la présente que :</p>'
+    +'<br>'
+    +'<p style="text-align:center;font-size:16px;font-weight:800;color:#1a3a6e;letter-spacing:0.03em;">'
+    +(empNom||'_______________')
+    +'</p>'
+    +'<br>'
+    +'<p>travaille actuellement au sein de notre entreprise en qualité de '
+    +'<span class="cert-doc-highlight">'+(empPoste||'_______________')+'</span>, '
+    +'depuis le <span class="cert-doc-highlight">'+(debutFmt||'_______________')+'</span>.</p>'
+    +'<br>'
+    +'<p>À ce jour, <strong>'+(empNom||'_______________')+'</strong> fait toujours partie de notre personnel.</p>'
+    +'<br>'
+    +'<p>La présente attestation est délivrée à l\'intéressé(e) pour servir et valoir ce que de droit.</p>'
+    +'<br>'
+    +'<p style="color:#555;font-size:12px;">Fait à <strong>'+ville+'</strong>, le <strong>'+dateAuj+'</strong>.</p>'
+    +'</div>'
+    // Footer / signature block — stamp centered over the director's name,
+    // with the (drawn or uploaded) signature centered on top of the stamp.
+    +'<div class="cert-doc-footer">'
+    +  '<div class="cert-doc-sig-block">'
+    +    '<div class="cert-doc-sig-stampwrap">'
+    +      cachetHTML
+    +      sigHTML
+    +      '<div class="cert-doc-sig-textwrap">'
+    +        '<div class="cert-doc-sig-title">Le Directeur / Responsable</div>'
+    +        '<div class="cert-doc-sig-name">'+dirName+'</div>'
+    +        '<div class="cert-doc-sig-func">'+dirFunc+'</div>'
+    +      '</div>'
+    +    '</div>'
+    +  '</div>'
+    +'</div>'
+    +'</div>';
+}
+
+// ── Live preview (before generation — no reference number yet) ──
+window.certUpdatePreview = function() {
+  var wrap = document.getElementById('certPreviewWrap');
+  if(wrap){
+    if(_certActive){
+      wrap.innerHTML = '<div class="cert-ref-badge" style="margin:8px 0 0 16px">N° '+_certActive.refNum+' · '+_certActive.status+'</div>'
+        + certBuildDocumentHTML(_certActive);
+    } else if(!_certSelectedEmpName){
+      wrap.innerHTML = '<div class="cert-document"><div style="text-align:center;color:#aaa;padding:40px 0;font-size:13px;">Sélectionnez un employé puis cliquez sur Générer</div></div>';
+    } else {
+      var emp = certGetEmployee(_certSelectedEmpName);
+      wrap.innerHTML = certBuildDocumentHTML({ empNom: emp.nom, empPoste: emp.poste, dateDebut: emp.dateDebut, company: _certCompany });
+    }
+  }
+  // Keep the compact preview on the Paramètres screen in sync too, so a stamp/signature
+  // moved from either screen is reflected on both — they share the same saved offsets.
+  certUpdateParamPreview();
+  certWireAdjustHandlers();
+};
+
+// Lightweight preview (no employee needed) used purely for positioning the
+// stamp/signature from the Paramètres screen. Reads/writes the same _certCompany
+// offsets as the Nouveau-tab preview above, so the two never drift apart.
+function certUpdateParamPreview() {
+  var wrap = document.getElementById('certParamPreviewWrap');
+  if(!wrap) return;
+  wrap.innerHTML = certBuildDocumentHTML({ company: _certCompany });
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// STAMP & SIGNATURE POSITION ADJUSTMENT (drag + scale, saved per company)
+// Works from both the Nouveau-tab preview and the Paramètres-tab preview —
+// whichever is on screen — and both stay synced since they share _certCompany.
+// ══════════════════════════════════════════════════════════════════════
+var _certAdjustMode = false;
+
+window.certToggleAdjustMode = function() {
+  if(!certCanEditConfig()){ showToast('⛔ Réservé à l\'administrateur / directeur'); return; }
+  _certAdjustMode = !_certAdjustMode;
+  document.querySelectorAll('.cert-adjust-btn').forEach(function(btn){
+    btn.textContent = _certAdjustMode ? '✓ Terminer l\'ajustement' : '🎯 Ajuster cachet/signature';
+  });
+  document.querySelectorAll('.cert-adjust-panel').forEach(function(panel){
+    panel.style.display = _certAdjustMode ? 'flex' : 'none';
+  });
+  certWireAdjustHandlers();
+};
+
+// Toggles the drag outline on every visible preview and (re)attaches drag listeners
+// to their stamp/signature images so they can be repositioned by hand from either screen.
+function certWireAdjustHandlers() {
+  document.querySelectorAll('#certPreviewWrap .cert-document, #certParamPreviewWrap .cert-document').forEach(function(docEl){
+    docEl.classList.toggle('cert-adjusting', _certAdjustMode);
+    if(!_certAdjustMode) return;
+    var stampImg = docEl.querySelector('.cert-doc-stamp-img');
+    var sigImg = docEl.querySelector('.cert-doc-sig-img');
+    if(stampImg) certMakeDraggable(stampImg, 'stamp');
+    if(sigImg) certMakeDraggable(sigImg, 'sig');
+  });
+}
+
+// Lets the user drag `el` (the stamp or signature image, on either preview); updates
+// the company's saved offset live as it moves, and mirrors the move onto every other
+// instance of that same image so both screens visibly track the drag together.
+function certMakeDraggable(el, kind) {
+  if(el._certDragWired) return;
+  el._certDragWired = true;
+  var xKey = kind+'X', yKey = kind+'Y';
+  var startX, startY, origX, origY, dragging = false;
+
+  function pointOf(e){ return e.touches && e.touches.length ? e.touches[0] : e; }
+  function onDown(e){
+    e.preventDefault();
+    dragging = true;
+    var p = pointOf(e);
+    startX = p.clientX; startY = p.clientY;
+    origX = _certCompany[xKey] || 0;
+    origY = _certCompany[yKey] || 0;
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+    document.addEventListener('touchmove', onMove, {passive:false});
+    document.addEventListener('touchend', onUp);
+  }
+  function onMove(e){
+    if(!dragging) return;
+    e.preventDefault();
+    var p = pointOf(e);
+    _certCompany[xKey] = origX + (p.clientX - startX);
+    _certCompany[yKey] = origY + (p.clientY - startY);
+    certApplyAdjustTransformAll(kind);
+  }
+  function onUp(){
+    dragging = false;
+    document.removeEventListener('mousemove', onMove);
+    document.removeEventListener('mouseup', onUp);
+    document.removeEventListener('touchmove', onMove);
+    document.removeEventListener('touchend', onUp);
+  }
+  el.addEventListener('mousedown', onDown);
+  el.addEventListener('touchstart', onDown, {passive:false});
+}
+
+// Applies the current saved offset/scale to every stamp (or every signature) image
+// found across both previews at once, so dragging one instance moves them in lockstep.
+function certApplyAdjustTransformAll(kind) {
+  var x = _certCompany[kind+'X']||0, y = _certCompany[kind+'Y']||0, s = _certCompany[kind+'Scale']||1;
+  var rotate = kind==='sig' ? ' rotate(-5deg)' : '';
+  var sel = kind==='stamp' ? '.cert-doc-stamp-img' : '.cert-doc-sig-img';
+  document.querySelectorAll(sel).forEach(function(el){
+    el.style.transform = 'translate(calc(-50% + '+x+'px), '+y+'px) scale('+s+')'+rotate;
+  });
+}
+
+window.certAdjustScale = function(kind, delta) {
+  var key = kind+'Scale';
+  var next = Math.max(0.5, Math.min(2, (_certCompany[key]||1) + delta));
+  _certCompany[key] = next;
+  certApplyAdjustTransformAll(kind);
+};
+
+// Nudges the stamp/signature by a small fixed step per tap — same underlying
+// offset as drag, so this is just a precise alternative for fine-tuning or for
+// devices where dragging is awkward. dx/dy are -1, 0, or 1.
+window.certNudge = function(kind, dx, dy) {
+  var step = 4;
+  _certCompany[kind+'X'] = (_certCompany[kind+'X']||0) + dx*step;
+  _certCompany[kind+'Y'] = (_certCompany[kind+'Y']||0) + dy*step;
+  certApplyAdjustTransformAll(kind);
+};
+
+window.certResetAdjust = function() {
+  _certCompany.stampX = 0; _certCompany.stampY = 0; _certCompany.stampScale = 1;
+  _certCompany.sigX = 0; _certCompany.sigY = 0; _certCompany.sigScale = 1;
+  certUpdatePreview();
+};
+
+window.certSaveAdjust = function() {
+  if(!certCanEditConfig()){ showToast('⛔ Réservé à l\'administrateur / directeur'); return; }
+  var patch = {
+    stampX:_certCompany.stampX||0, stampY:_certCompany.stampY||0, stampScale:_certCompany.stampScale||1,
+    sigX:_certCompany.sigX||0, sigY:_certCompany.sigY||0, sigScale:_certCompany.sigScale||1
+  };
+  setDoc(doc(db,'settings','certCompany'), patch, {merge:true}).then(function(){
+    showToast('✅ Position du cachet et de la signature enregistrée');
+  }).catch(function(){ showToast('⚠️ Erreur de sauvegarde'); });
+};
+
+
+
+// ── Générer button: validate everything, assign ref number, freeze snapshot ──
+window.certGenerer = function() {
+  if(!certCanUseModule()){ showToast('⛔ Non autorisé'); return; }
+  if(!_certSelectedEmpName){
+    showToast('⚠️ Veuillez sélectionner un employé');
+    return;
+  }
+  var configStatus = certConfigStatus();
+  if(!configStatus.complete){
+    showToast('⚠️ Configuration incomplète. Veuillez compléter les informations obligatoires de l\'entreprise.');
+    certRenderConfigBanner();
+    return;
+  }
+  var emp = certGetEmployee(_certSelectedEmpName);
+  var empStatus = certEmployeeStatus(emp);
+  if(empStatus.futureDate){
+    showToast('⚠️ La date de début de travail ne peut pas être dans le futur.');
+    return;
+  }
+  if(!empStatus.complete){
+    showToast('⚠️ Les informations de cet employé sont incomplètes. Veuillez compléter sa fiche avant de générer le certificat.');
+    certRenderSelectedEmployee();
+    return;
+  }
+
+  certNextRefNumber().then(function(refNum){
+    var now = getDjiboutiNow ? getDjiboutiNow() : new Date();
+    _certActive = {
+      refNum: refNum,
+      empNom: emp.nom,
+      empPoste: emp.poste,
+      dateDebut: emp.dateDebut,
+      empMatricule: emp.matricule,
+      dateGeneration: now.getTime ? now.getTime() : Date.now(),
+      dateGenFmt: certDateAujourdhui(),
+      status: 'Généré',
+      // Frozen copy of company/signatory info at generation time (immutability)
+      company: Object.assign({}, _certCompany)
+    };
+    certUpdatePreview();
+    certScrollPreview();
+    showToast('✅ Certificat '+refNum+' généré avec succès');
+  }).catch(function(){
+    showToast('⚠️ Une erreur est survenue lors de la génération. Veuillez réessayer.');
+  });
+};
+
+// ── Scroll to preview ──
+window.certScrollPreview = function() {
+  var wrap = document.getElementById('certPreviewWrap');
+  if(wrap) wrap.scrollIntoView({behavior:'smooth', block:'start'});
+};
+
+function certPrintCSS() {
+  return '*{box-sizing:border-box;margin:0;padding:0}'
+    +'body{font-family:Georgia,serif;background:#fff;color:#1a1a2e;padding:0;margin:0}'
+    +'.cert-document{background:#fff;color:#1a1a2e;font-family:Georgia,serif;padding:40px 48px;min-height:100vh}'
+    +'.cert-doc-header{display:flex;align-items:flex-start;gap:16px;border-bottom:2px solid #1a3a6e;padding-bottom:16px;margin-bottom:20px}'
+    +'.cert-doc-logo{width:80px;height:80px;object-fit:contain}'
+    +'.cert-doc-logo-placeholder{width:80px;height:80px;border:2px solid #1a3a6e;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:28px;background:#f0f4ff}'
+    +'.cert-doc-company-name{font-size:16px;font-weight:800;color:#1a3a6e;text-transform:uppercase;letter-spacing:0.05em}'
+    +'.cert-doc-company-info{font-size:12px;color:#555;margin-top:4px;line-height:1.7}'
+    +'.cert-doc-title{text-align:center;font-size:20px;font-weight:800;color:#1a3a6e;text-transform:uppercase;letter-spacing:0.1em;margin:0 0 6px;border-bottom:1px solid #1a3a6e;padding-bottom:8px}'
+    +'.cert-doc-subtitle{text-align:center;font-size:12px;color:#666;margin-bottom:24px}'
+    +'.cert-doc-body{font-size:14px;color:#333;line-height:2}'
+    +'.cert-doc-highlight{font-weight:700;color:#1a3a6e;text-decoration:underline}'
+    +'.cert-doc-footer{margin-top:40px;display:flex;justify-content:flex-end;flex-direction:column;align-items:flex-end;gap:4px}'
+    +'.cert-doc-sig-block{text-align:right}'
+    +'.cert-doc-sig-stampwrap{position:relative;display:inline-block;min-width:210px;padding-top:68px;text-align:center}'
+    +'.cert-doc-stamp-img{position:absolute;top:-18px;left:50%;transform:translateX(-50%);width:155px;height:155px;object-fit:contain;opacity:0.68;z-index:1;pointer-events:none}'
+    +'.cert-doc-sig-textwrap{position:relative;z-index:2}'
+    +'.cert-doc-sig-title{font-size:13px;font-weight:700;color:#1a3a6e}'
+    +'.cert-doc-sig-name{font-size:14px;font-weight:800;color:#1a1a2e;margin-top:2px}'
+    +'.cert-doc-sig-func{font-size:12px;color:#555}'
+    +'.cert-doc-sig-img{position:absolute;z-index:3;left:50%;top:46px;transform:translateX(-50%) rotate(-5deg);max-height:54px;max-width:150px;object-fit:contain;pointer-events:none}'
+    +'@page{size:A4;margin:20mm}'
+    +'@media print{body{margin:0;padding:0}.cert-document{padding:0}}';
+}
+
+// ── Print (uses the active generated snapshot, or a saved history record) ──
+window.certImprimer = function(historyRecord) {
+  var snap = historyRecord || _certActive;
+  if(!snap){
+    showToast('⚠️ Veuillez d\'abord générer le certificat');
+    return;
+  }
+  var docHTML = certBuildDocumentHTML(snap);
+  var printWin = window.open('','_blank');
+  printWin.document.write('<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8">'
+    +'<title>Attestation de Travail — '+snap.empNom+'</title>'
+    +'<style>'+certPrintCSS()+'</style></head><body>'
+    +docHTML
+    +'<script>window.onload=function(){window.print();window.close();}<\/script>'
+    +'</body></html>');
+  printWin.document.close();
+  if(!historyRecord && _certActive) _certActive.status = 'Imprimé';
+};
+
+// ── Download PDF (image export via html2canvas, falls back to print dialog) ──
+window.certTelechargerPDF = function(historyRecord) {
+  var snap = historyRecord || _certActive;
+  if(!snap){
+    showToast('⚠️ Veuillez d\'abord générer le certificat');
+    return;
+  }
+  if(!window.html2canvas){
+    certImprimer(historyRecord);
+    showToast('📄 Utilisez "Enregistrer en PDF" dans la boîte de dialogue d\'impression');
+    return;
+  }
+  // Render into an offscreen node so history downloads work even if not the active preview
+  var offscreen = document.createElement('div');
+  offscreen.style.position='fixed'; offscreen.style.left='-9999px'; offscreen.style.top='0';
+  offscreen.style.width='794px'; // ~A4 at 96dpi
+  offscreen.innerHTML = certBuildDocumentHTML(snap);
+  document.body.appendChild(offscreen);
+  showToast('⏳ Génération du PDF...');
+  html2canvas(offscreen, {scale:2, useCORS:true, backgroundColor:'#fff'}).then(function(canvas){
+    var link = document.createElement('a');
+    link.download = 'Attestation-'+(snap.refNum||'')+'-'+snap.empNom.replace(/\s+/g,'-')+'.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    document.body.removeChild(offscreen);
+    showToast('📄 Certificat téléchargé');
+  }).catch(function(){
+    document.body.removeChild(offscreen);
+    showToast('⚠️ Une erreur est survenue lors de la génération du PDF. Veuillez réessayer.');
+  });
+};
+
+// ── Save the generated snapshot to certificate history (immutable record) ──
+window.certEnregistrer = function() {
+  if(!_certActive){
+    showToast('⚠️ Veuillez d\'abord générer le certificat');
+    return;
+  }
+  var snap = _certActive;
+  var record = {
+    refNum: snap.refNum,
+    empNom: snap.empNom,
+    empPoste: snap.empPoste,
+    dateDebut: snap.dateDebut,
+    empMatricule: snap.empMatricule || '',
+    company: snap.company,
+    dateGeneration: snap.dateGeneration,
+    dateGenFmt: snap.dateGenFmt,
+    status: 'Généré',
+    genereePar: currentUser ? (currentUser.name||currentUser.id) : 'Inconnu',
+    genereeDate: Date.now()
+  };
+  try {
+    addDoc(collection(db, 'certificats'), record).then(function(){
+      showToast('💾 Certificat '+snap.refNum+' enregistré dans l\'historique');
+    }).catch(function(){ showToast('⚠️ Erreur d\'enregistrement'); });
+  } catch(e) { showToast('⚠️ Erreur d\'enregistrement'); }
+};
+
+// ── Save company settings ──
+window.certSauvegarderParametres = function() {
+  if(!certCanEditConfig()){ showToast('⛔ Réservé à l\'administrateur / directeur'); return; }
+  // If a card is collapsed (already complete, not being edited right now) its inputs
+  // aren't in the DOM — keep the value already in memory instead of reading a missing field.
+  function fieldOr(id, fallback){ var el=document.getElementById(id); return el ? el.value.trim() : fallback; }
+  _certCompany.nom = fieldOr('certCompNom', _certCompany.nom||'');
+  _certCompany.adresse = fieldOr('certCompAdresse', _certCompany.adresse||'');
+  _certCompany.ville = fieldOr('certCompVille', _certCompany.ville||'') || 'Djibouti';
+  _certCompany.tel = fieldOr('certCompTel', _certCompany.tel||'');
+  _certCompany.email = fieldOr('certCompEmail', _certCompany.email||'');
+  _certCompany.reg = fieldOr('certCompReg', _certCompany.reg||'');
+  _certCompany.dirNom = fieldOr('certDirNom', _certCompany.dirNom||'');
+  _certCompany.dirFonction = fieldOr('certDirFonction', _certCompany.dirFonction||'');
+  _certCompany.sigNom = fieldOr('certSigNom', _certCompany.sigNom||'');
+  _certCompany.sigFonction = fieldOr('certSigFonction', _certCompany.sigFonction||'');
+
+  if(!_certCompany.nom || !_certCompany.adresse || !_certCompany.ville){
+    showToast('⚠️ Nom, adresse et ville de l\'entreprise sont obligatoires');
+    return;
+  }
+  try {
+    setDoc(doc(db,'settings','certCompany'), _certCompany).then(function(){
+      showToast('✅ Paramètres sauvegardés avec succès');
+      // Fold each completed card back to its collapsed summary — the toast just
+      // confirms the write, the collapse is what keeps the screen from staying full.
+      _certInfoExpanded = false;
+      _certDirExpanded = false;
+      certRenderInfoCard();
+      certRenderDirCard();
+      certRenderConfigBanner();
+    }).catch(function(){ showToast('⚠️ Erreur de sauvegarde'); });
+  } catch(e){ showToast('⚠️ Erreur de sauvegarde'); }
+};
+
+// ══════════════════════════════════════════════════════════════════════
+// CERTIFICATE HISTORY (search, filter, immutable snapshots)
+// ══════════════════════════════════════════════════════════════════════
+function certRenderHistorique() {
+  var container = document.getElementById('certHistoriqueList');
+  if(!container) return;
+  var searchEl = document.getElementById('certHistSearch');
+  var statusEl = document.getElementById('certHistStatusFilter');
+  var q = searchEl ? searchEl.value.trim().toLowerCase() : '';
+  var statusFilter = statusEl ? statusEl.value : '';
+
+  var list = _certHistorique.filter(function(h){
+    var matchQ = !q || (h.empNom||'').toLowerCase().indexOf(q)>-1 || (h.refNum||'').toLowerCase().indexOf(q)>-1;
+    var matchStatus = !statusFilter || h.status === statusFilter;
+    return matchQ && matchStatus;
+  });
+
+  if(!list.length){
+    container.innerHTML = '<div style="text-align:center;padding:40px 16px;color:var(--text3);font-size:13px;">Aucun certificat trouvé</div>';
+    return;
+  }
+  container.innerHTML = list.map(function(h){
+    var dateGen = h.genereeDate ? new Date(h.genereeDate).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'}) : '—';
+    var debutFmt = certFmtDate(h.dateDebut);
+    var status = h.status || 'Généré';
+    return '<div class="cert-hist-row">'
+      +'<div style="flex:1;min-width:0">'
+      +  '<div class="cert-hist-name">'+h.empNom+' <span class="cert-status-pill '+status+'">'+status+'</span></div>'
+      +  '<div class="cert-hist-meta">'+(h.refNum||'')+' · '+h.empPoste+' · depuis le '+debutFmt+'</div>'
+      +  '<div class="cert-hist-meta" style="margin-top:2px;color:var(--text3)">Généré le '+dateGen+' par '+h.genereePar+'</div>'
+      +'</div>'
+      +'<div class="cert-hist-actions">'
+      +  '<button class="cert-hist-icon-btn" title="Voir" onclick="certVoirHistorique(\''+h.id+'\')">👁</button>'
+      +  '<button class="cert-hist-icon-btn" title="Télécharger" onclick="certTelechargerHistorique(\''+h.id+'\')">⬇️</button>'
+      +  '<button class="cert-hist-icon-btn" title="Imprimer" onclick="certImprimerHistorique(\''+h.id+'\')">🖨️</button>'
+      +'</div>'
+      +'</div>';
+  }).join('');
+}
+
+function certFindHistoryById(id) {
+  return _certHistorique.find(function(h){ return h.id === id; });
+}
+
+window.certVoirHistorique = function(id) {
+  var h = certFindHistoryById(id);
+  if(!h) return;
+  _certActive = h; // display it in the Nouveau tab's preview, read-only (already saved)
+  certShowSubTab('nouveau');
+  document.getElementById('certPreviewWrap').innerHTML =
+    '<div class="cert-ref-badge" style="margin:8px 0 0 16px">N° '+h.refNum+' · '+(h.status||'Généré')+'</div>'
+    + certBuildDocumentHTML(h);
+  certScrollPreview();
+};
+
+window.certTelechargerHistorique = function(id) {
+  var h = certFindHistoryById(id);
+  if(h) certTelechargerPDF(h);
+};
+
+window.certImprimerHistorique = function(id) {
+  var h = certFindHistoryById(id);
+  if(!h) return;
+  certImprimer(h);
+  updateDoc(doc(db,'certificats',id), {status:'Imprimé'}).catch(function(){});
+};
+
+// ══════════════════════════════════════════════════════════════════════
+// END CERTIFICAT DE TRAVAIL MODULE
 // ══════════════════════════════════════════════════════════════════════
 
 buildLogin();
