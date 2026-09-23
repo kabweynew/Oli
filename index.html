@@ -1669,7 +1669,7 @@
       </div>
     </div>
     <div class="header-right">
-      <div class="online-badge"><div id="syncDot" class="syncing"></div><span id="syncLabel">Syncing…</span></div>
+      <div class="online-badge"><div id="syncDot" class=""></div><span id="syncLabel">☁️ Live 22:11</span></div>
       <span class="role-badge admin" id="roleBadge">ADMIN</span>
       <button class="add-btn" id="headerAddBtn" onclick="openAddTruck()" style="opacity: 1;">+ Add</button>
     </div>
@@ -1717,14 +1717,14 @@
         <button class="date-chip" id="todayChip" onclick="setToday()" style="background: var(--green); opacity: 1;">🟢 Today</button>
         <div class="date-input-wrap" style="cursor:pointer" onclick="openDatePicker()" id="datePickerBtn">
           <span style="color:var(--text3);font-size:13px;">📅</span>
-          <span id="dateFilterDisplay" style="flex:1;font-size:13px;font-weight:600">Today — Wed 26 Aug</span>
+          <span id="dateFilterDisplay" style="flex:1;font-size:13px;font-weight:600">Today — Tue 22 Sept</span>
           <span style="color:var(--text3);font-size:12px;">▼</span>
-          <input type="hidden" id="dateFilter" value="2026-08-26">
+          <input type="hidden" id="dateFilter" value="2026-09-22">
         </div>
       </div>
       <!-- 6AM RULE NOTICE -->
       <div id="shiftRuleBanner" style="display:none;margin:0 16px 4px;padding:4px 10px;background:rgba(20,184,166,0.1);border:1px solid rgba(20,184,166,0.3);border-radius:8px;font-size:10px;color:var(--teal);font-weight:600;display:flex;align-items:center;gap:6px">
-        🕕 Working day: <span id="shiftRuleText">Wed 26 Aug 06:00 → Thu 27 Aug 05:59  (Djibouti time)</span>
+        🕕 Working day: <span id="shiftRuleText">Tue 22 Sept 06:00 → Wed 23 Sept 05:59  (Djibouti time)</span>
       </div>
       <!-- SUSPEND BANNER -->
       <div id="suspendBanner">
@@ -1777,7 +1777,7 @@
       <div class="section-header">
         <span class="section-title" id="trucksSectionTitle">TODAY'S TRUCKS</span>
         <div style="display:flex;gap:8px;align-items:center">
-          <button class="new-btn" style="color: var(--green); font-size: 11px;" id="exportDateBtn" onclick="exportExcel()">📊 Export 2026-08-26</button>
+          <button class="new-btn" style="color: var(--green); font-size: 11px;" id="exportDateBtn" onclick="exportExcel()">📊 Export 2026-09-22</button>
           <button class="new-btn" style="color:var(--teal)" onclick="openShareReport()">📤 Share</button>
           <button class="select-mode-btn" id="selectModeBtn" onclick="toggleSelectMode()" style="display: none;">☑️ Select</button>
           <button class="new-btn" onclick="openAddTruck()">+ New</button>
@@ -1810,11 +1810,13 @@
             AH
           </div>
           <div class="worker-info">
-            <div class="worker-name">Ahmed</div>
+            <div class="worker-name">Ahmed <span class="role-badge foreman" style="margin-left:6px;vertical-align:middle">🦺 FOREMAN</span></div>
             <div class="worker-stats-row">
               <div class="worker-stat">Trucks: <span>0</span></div>
               <div class="worker-stat">Earned: <span style="color:var(--green)">0</span></div>
               <div class="worker-stat">Net: <span style="color:var(--green)">0</span></div>
+              
+              <div class="worker-stat">🎟️ Seals: <span style="color:var(--text3);font-weight:700">—</span> not issued</div>
             </div>
           </div>
           <div class="expand-icon">▼</div>
@@ -1829,6 +1831,13 @@
           <div class="detail-row"><span class="detail-label">Earned today</span><span class="detail-val green">0 ETB</span></div>
           <div class="detail-row"><span class="detail-label">Total advances</span><span class="detail-val red">-0 ETB</span></div>
           <div class="detail-row"><span class="detail-label">Net balance</span><span class="detail-val" style="color:var(--green)">0 ETB</span></div>
+          <div class="detail-row"><span class="detail-label">🎟️ Seals left</span><span class="detail-val" style="color:var(--text3)">Not tracked yet <span style="color:var(--text3);font-weight:400;font-size:11px"></span></span></div>
+          
+          <div style="display:flex;gap:6px;margin-top:6px">
+            <button class="manage-btn" style="flex:1" onclick="openIssueSeals('Ahmed')">🎟️ Issue Seals</button>
+            <button class="manage-btn" style="flex:1" disabled="" onclick="openTakeBackSeals('Ahmed')">↩️ Take Back</button>
+          </div>
+          
           
             <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
               <button class="manage-btn" onclick="viewWorkerList('Ahmed')">📋 List</button>
@@ -1846,11 +1855,13 @@
             OL
           </div>
           <div class="worker-info">
-            <div class="worker-name">Oli <span class="role-badge foreman" style="margin-left:6px;vertical-align:middle">🦺 FOREMAN</span></div>
+            <div class="worker-name">Oli</div>
             <div class="worker-stats-row">
               <div class="worker-stat">Trucks: <span>0</span></div>
               <div class="worker-stat">Earned: <span style="color:var(--green)">0</span></div>
               <div class="worker-stat">Net: <span style="color:var(--green)">0</span></div>
+              
+              <div class="worker-stat">🎟️ Seals: <span style="color:var(--text3);font-weight:700">—</span> not issued</div>
             </div>
           </div>
           <div class="expand-icon">▼</div>
@@ -1865,6 +1876,13 @@
           <div class="detail-row"><span class="detail-label">Earned today</span><span class="detail-val green">0 ETB</span></div>
           <div class="detail-row"><span class="detail-label">Total advances</span><span class="detail-val red">-0 ETB</span></div>
           <div class="detail-row"><span class="detail-label">Net balance</span><span class="detail-val" style="color:var(--green)">0 ETB</span></div>
+          <div class="detail-row"><span class="detail-label">🎟️ Seals left</span><span class="detail-val" style="color:var(--text3)">Not tracked yet <span style="color:var(--text3);font-weight:400;font-size:11px"></span></span></div>
+          
+          <div style="display:flex;gap:6px;margin-top:6px">
+            <button class="manage-btn" style="flex:1" onclick="openIssueSeals('Oli')">🎟️ Issue Seals</button>
+            <button class="manage-btn" style="flex:1" disabled="" onclick="openTakeBackSeals('Oli')">↩️ Take Back</button>
+          </div>
+          
           
             <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
               <button class="manage-btn" onclick="viewWorkerList('Oli')">📋 List</button>
@@ -1887,6 +1905,8 @@
               <div class="worker-stat">Trucks: <span>0</span></div>
               <div class="worker-stat">Earned: <span style="color:var(--green)">0</span></div>
               <div class="worker-stat">Net: <span style="color:var(--green)">0</span></div>
+              
+              <div class="worker-stat">🎟️ Seals: <span style="color:var(--text3);font-weight:700">—</span> not issued</div>
             </div>
           </div>
           <div class="expand-icon">▼</div>
@@ -1901,12 +1921,64 @@
           <div class="detail-row"><span class="detail-label">Earned today</span><span class="detail-val green">0 ETB</span></div>
           <div class="detail-row"><span class="detail-label">Total advances</span><span class="detail-val red">-0 ETB</span></div>
           <div class="detail-row"><span class="detail-label">Net balance</span><span class="detail-val" style="color:var(--green)">0 ETB</span></div>
+          <div class="detail-row"><span class="detail-label">🎟️ Seals left</span><span class="detail-val" style="color:var(--text3)">Not tracked yet <span style="color:var(--text3);font-weight:400;font-size:11px"></span></span></div>
+          
+          <div style="display:flex;gap:6px;margin-top:6px">
+            <button class="manage-btn" style="flex:1" onclick="openIssueSeals('Ilyas')">🎟️ Issue Seals</button>
+            <button class="manage-btn" style="flex:1" disabled="" onclick="openTakeBackSeals('Ilyas')">↩️ Take Back</button>
+          </div>
+          
           
             <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
               <button class="manage-btn" onclick="viewWorkerList('Ilyas')">📋 List</button>
               <button class="manage-btn" onclick="openPinChange('Ilyas')">🔐 PIN</button>
               <button class="manage-btn" onclick="openWorkerPerms('Ilyas')">⚙️ Perms</button>
               <button class="manage-btn danger" onclick="removeWorker('Ilyas')">🗑️ Remove</button>
+            </div>
+          
+        </div>
+      </div>
+    
+      <div class="worker-card" id="wcard_Chiné">
+        <div class="worker-card-header" onclick="toggleWorker('Chiné')">
+          <div class="worker-avatar" style="background:#6b728022;color:#6b7280;border:2px solid #6b728044">
+            CH
+          </div>
+          <div class="worker-info">
+            <div class="worker-name">Chiné</div>
+            <div class="worker-stats-row">
+              <div class="worker-stat">Trucks: <span>0</span></div>
+              <div class="worker-stat">Earned: <span style="color:var(--green)">0</span></div>
+              <div class="worker-stat">Net: <span style="color:var(--green)">0</span></div>
+              
+              <div class="worker-stat">🎟️ Seals: <span style="color:var(--text3);font-weight:700">—</span> not issued</div>
+            </div>
+          </div>
+          <div class="expand-icon">▼</div>
+        </div>
+        
+        <div class="worker-details">
+          <div class="detail-row"><span class="detail-label">📅 Date</span><span class="detail-val">Today</span></div>
+          <div class="detail-row"><span class="detail-label">Trucks worked</span><span class="detail-val">0</span></div>
+          <div class="detail-row"><span class="detail-label">Paid trucks</span><span class="detail-val green">0</span></div>
+          <div class="detail-row"><span class="detail-label">Partial trucks</span><span class="detail-val orange">0</span></div>
+          <div class="detail-row"><span class="detail-label">Unpaid trucks</span><span class="detail-val red">0</span></div>
+          <div class="detail-row"><span class="detail-label">Earned today</span><span class="detail-val green">0 ETB</span></div>
+          <div class="detail-row"><span class="detail-label">Total advances</span><span class="detail-val red">-0 ETB</span></div>
+          <div class="detail-row"><span class="detail-label">Net balance</span><span class="detail-val" style="color:var(--green)">0 ETB</span></div>
+          <div class="detail-row"><span class="detail-label">🎟️ Seals left</span><span class="detail-val" style="color:var(--text3)">Not tracked yet <span style="color:var(--text3);font-weight:400;font-size:11px"></span></span></div>
+          
+          <div style="display:flex;gap:6px;margin-top:6px">
+            <button class="manage-btn" style="flex:1" onclick="openIssueSeals('Chiné')">🎟️ Issue Seals</button>
+            <button class="manage-btn" style="flex:1" disabled="" onclick="openTakeBackSeals('Chiné')">↩️ Take Back</button>
+          </div>
+          
+          
+            <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+              <button class="manage-btn" onclick="viewWorkerList('Chiné')">📋 List</button>
+              <button class="manage-btn" onclick="openPinChange('Chiné')">🔐 PIN</button>
+              <button class="manage-btn" onclick="openWorkerPerms('Chiné')">⚙️ Perms</button>
+              <button class="manage-btn danger" onclick="removeWorker('Chiné')">🗑️ Remove</button>
             </div>
           
         </div>
@@ -1927,7 +1999,7 @@
     <div id="tabReports" style="display:none;">
       <div class="reports-content" id="reportsContent">
     <div style="padding:10px 0 4px">
-      <div style="font-size:11px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:6px">📅 Thu, 2 Jul 2026</div>
+      <div style="font-size:11px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:6px">📅 Tue, 22 Sept 2026</div>
       <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none">
     <button class="filter-chip active" onclick="setReportFilter('all',this)" style="font-size:11px;padding:4px 10px">
       All
@@ -1953,6 +2025,9 @@
     </button>
     <button class="filter-chip" onclick="setReportWorkerFilter('Ilyas',this)" style="font-size:11px;padding:4px 10px">
       Ilyas
+    </button>
+    <button class="filter-chip" onclick="setReportWorkerFilter('Chiné',this)" style="font-size:11px;padding:4px 10px">
+      Chiné
     </button></div>
     </div>
 
@@ -1995,8 +2070,7 @@
       
         <div class="report-row"><span class="report-label">🥗 Lunch</span><span class="report-val" style="color:var(--red)">—</span></div>
         <div class="report-row"><span class="report-label">🍽️ Dinner</span><span class="report-val" style="color:var(--red)">—</span></div>
-        
-        <div style="margin-top:10px"><button onclick="openMealsModal('2026-07-02')" style="width:100%;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.3);color:var(--accent);border-radius:var(--radius-sm);padding:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">🍽️ Set Lunch / Dinner Amounts</button></div>
+        <div style="margin-top:10px"><button onclick="openMealsModal('2026-09-22')" style="width:100%;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.3);color:var(--accent);border-radius:var(--radius-sm);padding:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">🍽️ Set Lunch / Dinner Amounts</button></div>
       
 
       <!-- COMBINED TOTAL -->
@@ -2012,6 +2086,7 @@
           <span style="font-size:11px;color:var(--text2)">👷 Sealer pay (all paid)</span>
           <span style="font-size:11px;font-weight:700;color:var(--teal)">0 ETB</span>
         </div>
+        
       </div>
 
       
@@ -2031,6 +2106,10 @@
           </div>
           <div class="report-row">
             <span class="report-label"><span style="width:8px;height:8px;border-radius:50%;background:#6b7280;display:inline-block;margin-right:4px"></span>Ilyas</span>
+            <span class="report-val" style="color:var(--text3)">—</span>
+          </div>
+          <div class="report-row">
+            <span class="report-label"><span style="width:8px;height:8px;border-radius:50%;background:#6b7280;display:inline-block;margin-right:4px"></span>Chiné</span>
             <span class="report-val" style="color:var(--text3)">—</span>
           </div>
     </div>
@@ -2391,6 +2470,9 @@
         </div>
         <button onclick="exportAgashExcel()" style="background:rgba(240,165,0,0.15);border:1px solid rgba(240,165,0,0.4);color:#f0a500;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">📊 Export</button>
       </div>
+      <div style="padding:0 16px 8px;">
+        <input type="text" id="agashPlateSearch" class="form-input" placeholder="🔍 Search plate number..." style="width:100%;padding:9px 12px;font-size:13px;" oninput="setAgashPlateFilter(this.value)">
+      </div>
       <div id="agashIncomingList" style="padding:0 16px 100px;"></div>
     </div>
 
@@ -2439,8 +2521,7 @@
         <div class="cert-card">
           <div class="cert-form-group cert-search-wrap" style="margin-bottom:0">
             <label class="cert-form-label">Rechercher un employé *</label>
-            <input class="cert-input" id="certEmpSearch" placeholder="Nom, matricule..." autocomplete="off"
-              oninput="certOnEmployeeSearch(this.value)" onfocus="certOnEmployeeSearch(this.value)">
+            <input class="cert-input" id="certEmpSearch" placeholder="Nom, matricule..." autocomplete="off" oninput="certOnEmployeeSearch(this.value)" onfocus="certOnEmployeeSearch(this.value)">
             <div class="cert-emp-results" id="certEmpResults" style="display:none;"></div>
           </div>
           <div id="certSelectedEmpWrap"></div>
@@ -2510,7 +2591,7 @@
 
       <!-- Sub-tab: Paramètres entreprise -->
       <div id="certSubParametresRaw" style="display:none;">
-        <div class="cert-section-title">Logo & Images</div>
+        <div class="cert-section-title">Logo &amp; Images</div>
         <div class="cert-card">
           <div class="cert-form-group">
             <label class="cert-form-label">Logo de l'entreprise</label>
@@ -2563,7 +2644,7 @@
           </div>
         </div>
 
-        <div class="cert-section-title">Position du cachet & de la signature</div>
+        <div class="cert-section-title">Position du cachet &amp; de la signature</div>
         <div class="cert-card" style="padding:12px 14px;">
           <div style="font-size:11px;color:var(--text3);margin-bottom:10px;">Déplacez le cachet ou la signature directement sur l'aperçu pour les repositionner. Cet ajustement est le même que celui utilisé lors de la génération d'un certificat — les deux restent synchronisés.</div>
           <button class="cert-btn cert-btn-secondary cert-adjust-btn" style="flex:none;padding:8px 14px;margin-bottom:10px;" onclick="certToggleAdjustMode()">🎯 Ajuster cachet/signature</button>
@@ -2669,9 +2750,9 @@
       <div class="nav-label">Agash</div>
     </button>
   
-    <button class="nav-btn" id="nav_notifs" onclick="switchTab('notifs')" style="color: var(--orange); font-weight: 800;">
+    <button class="nav-btn" id="nav_notifs" onclick="switchTab('notifs')">
       <div class="nav-icon">🔔</div>
-      <div class="nav-label">Alerts (1)</div>
+      <div class="nav-label">Alerts</div>
     </button>
   
     <button class="nav-btn" id="nav_settlement" onclick="switchTab('settlement')">
@@ -2684,6 +2765,11 @@
       <div class="nav-label">Collections</div>
     </button>
   
+    <button class="nav-btn" id="nav_certificat" onclick="switchTab('certificat')">
+      <div class="nav-icon">📄</div>
+      <div class="nav-label">Certificat</div>
+    </button>
+  
     <button class="nav-btn active" id="nav_manage" onclick="switchTab('manage')">
       <div class="nav-icon">⚙️</div>
       <div class="nav-label">Manage</div>
@@ -2691,7 +2777,7 @@
   
     <button class="nav-btn" id="nav_recycle" onclick="switchTab('recycle')">
       <div class="nav-icon">🗑️</div>
-      <div class="nav-label">Bin (48)</div>
+      <div class="nav-label">Bin (163)</div>
     </button>
   
     <button class="nav-btn" id="nav_logout" onclick="switchTab('logout')">
@@ -8073,12 +8159,25 @@ function updateAgashIncomingBadge() {
   if (lbl) lbl.textContent = count > 0 ? 'Agash (' + count + ')' : 'Agash';
 }
 
-// ── Agash sealed filter state ──
+// ── Agash filter state: seal status, truck type (multi-select), plate search ──
 var agashSealFilter = 'all'; // 'all' | 'sealed' | 'unsealed'
+var agashTypeFilter = {};    // e.g. {shirac:true, metal:true} — empty/all-false means "no type filter applied"
+var agashPlateFilter = '';   // plate search text
 window.setAgashSealFilter = function(val) {
   agashSealFilter = val;
   renderAgashIncoming();
 };
+window.setAgashTypeFilter = function(key) {
+  agashTypeFilter[key] = !agashTypeFilter[key];
+  renderAgashIncoming();
+};
+window.setAgashPlateFilter = function(val) {
+  agashPlateFilter = (val || '').trim().toUpperCase();
+  renderAgashIncoming();
+};
+
+// letter tag shown next to a Bashal truck so you can still see its original type
+var AGASH_TYPE_LETTER = { shirac:'Sh', bilashirac:'B', metal:'M' };
 
 function renderAgashIncoming() {
   var container = document.getElementById('agashIncomingList');
@@ -8113,9 +8212,26 @@ function renderAgashIncoming() {
 
   var filtered = all.filter(function(t){ return t.date === selectedDate; });
 
-  // ── Mark each Agash truck as sealed if it exists in the app's trucks collection ──
+  // ── Same plate + same day logged more than once (e.g. Metal re-logged as Bashal) — keep only the newest entry, don't double-count ──
+  (function dedupeByPlate() {
+    var latestByPlate = {};
+    filtered.forEach(function(t) {
+      var key = (t.plate||'').toUpperCase();
+      if (!key) return;
+      if (!latestByPlate[key] || (t.ts||0) > (latestByPlate[key].ts||0)) latestByPlate[key] = t;
+    });
+    filtered = Object.values(latestByPlate);
+  })();
+
+  // ── Plate number search ──
+  if (agashPlateFilter) {
+    filtered = filtered.filter(function(t){ return t.plate.toUpperCase().indexOf(agashPlateFilter) !== -1; });
+  }
+
+  // ── A truck is only ever "Sealed" if its type is Shirac AND it also exists in the app's trucks collection ──
   filtered.forEach(function(t) {
-    t.sealed = Object.values(trucks).some(function(ap) {
+    var isShirac = (t.type||'').toLowerCase().replace(/[\s-]/g,'') === 'shirac';
+    t.sealed = isShirac && Object.values(trucks).some(function(ap) {
       return ap.plate && ap.plate.toUpperCase() === t.plate.toUpperCase() && ap.date === t.date;
     });
   });
@@ -8131,16 +8247,37 @@ function renderAgashIncoming() {
   var chipUnsealed = agashSealFilter==='unsealed' ? 'background:#ef4444;border-color:#ef4444;color:#fff'                  : 'background:var(--card);border-color:var(--border);color:var(--text2)';
   var chipStyle    = 'border:1.5px solid;border-radius:20px;padding:5px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;';
   var filterChips  =
-    '<div style="display:flex;gap:8px;padding:0 0 12px;flex-wrap:wrap">'
+    '<div style="display:flex;gap:8px;padding:0 0 10px;flex-wrap:wrap">'
     + '<button style="'+chipStyle+chipAll+'" onclick="setAgashSealFilter(\'all\')">All ('+filtered.length+')</button>'
     + '<button style="'+chipStyle+chipSealed+'" onclick="setAgashSealFilter(\'sealed\')">🔐 Sealed ('+sealedCount+')</button>'
     + '<button style="'+chipStyle+chipUnsealed+'" onclick="setAgashSealFilter(\'unsealed\')">⭕ Unsealed ('+unsealedCount+')</button>'
     + '</div>';
 
-  // ── Apply seal filter to what goes into the table and card list ──
+  // ── Type filter chips (multi-select) ──
+  var typeChipStyle = 'border:1.5px solid;border-radius:20px;padding:5px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;';
+  var typeAnyActive = agashTypeFilter.shirac || agashTypeFilter.bilashirac || agashTypeFilter.metal;
+  function typeChip(key, label, color) {
+    var on = !!agashTypeFilter[key];
+    var style = on ? 'background:'+color+';border-color:'+color+';color:#fff' : 'background:var(--card);border-color:var(--border);color:var(--text2)';
+    return '<button style="'+typeChipStyle+style+'" onclick="setAgashTypeFilter(\''+key+'\')">'+label+'</button>';
+  }
+  var typeChips =
+    '<div style="display:flex;gap:8px;padding:0 0 12px;flex-wrap:wrap">'
+    + typeChip('shirac',     '🚛 Shirac',      '#10b981')
+    + typeChip('bilashirac', '🚚 Bila Shirac', '#3b82f6')
+    + typeChip('metal',      '🏗️ Metal',       '#ef4444')
+    + '</div>';
+
+  // ── Apply seal + type filters to what goes into the table and card list ──
   var display = agashSealFilter === 'sealed'   ? filtered.filter(function(t){ return t.sealed; })
               : agashSealFilter === 'unsealed' ? filtered.filter(function(t){ return !t.sealed; })
               : filtered;
+  if (typeAnyActive) {
+    display = display.filter(function(t){
+      var ty = (t.type||'').toLowerCase().replace(/[\s-]/g,'');
+      return agashTypeFilter[ty];
+    });
+  }
 
   // ── Build post → load type grid ──
   var ALL_POSTS = ['Post 1','Post 2','Post 3','Post 4','Post 5','Post 6','Post 7'];
@@ -8160,10 +8297,16 @@ function renderAgashIncoming() {
     var postKey = matched || (t.postLabel||'Other').trim();
     if (!grid[postKey]) grid[postKey] = { shirac:0, bilashirac:0, metal:0, bashal:0, sealed:0, unsealed:0 };
     var ty = (t.type||'').toLowerCase().replace(/[\s-]/g,'');
-    if      (ty === 'bilashirac') grid[postKey].bilashirac++;
-    else if (ty === 'metal')      grid[postKey].metal++;
-    else if (ty === 'bashal')     grid[postKey].bashal++;
-    else                          grid[postKey].shirac++;
+    // ── Once a truck's status is Bashal, it moves OUT of its type column and is counted once, only under Bashal ──
+    if (t.status === 'bashal') {
+      grid[postKey].bashal++;
+    } else if (ty === 'bilashirac') {
+      grid[postKey].bilashirac++;
+    } else if (ty === 'metal') {
+      grid[postKey].metal++;
+    } else {
+      grid[postKey].shirac++;
+    }
     if (t.sealed) grid[postKey].sealed++; else grid[postKey].unsealed++;
   });
 
@@ -8246,9 +8389,15 @@ function renderAgashIncoming() {
   }
 
   var truckList = display.map(function(t) {
+    var ty   = (t.type||'').toLowerCase().replace(/[\s-]/g,'');
     var tc   = TYPE_COLORS[t.type] || '#6b7280';
     var tl   = TYPE_LABELS[t.type] || t.type || '—';
     var si   = STAT_INFO[t.status] || STAT_INFO['started'];
+    if (t.status === 'bashal') {
+      // show as Bashal, tagged with a letter for its original type (Sh / B / M)
+      tc = si.color;
+      tl = '🔮 Bashal · ' + (AGASH_TYPE_LETTER[ty] || '?');
+    }
     var timeStr = t.ts ? new Date(t.ts).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}) : '—';
     var sealBadge = t.sealed
       ? '<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:rgba(34,197,94,0.15);color:#22c55e;border:1px solid rgba(34,197,94,0.35)">🔐 Sealed</span>'
@@ -8278,9 +8427,15 @@ function renderAgashIncoming() {
 
   var listLabel = display.length + ' truck' + (display.length!==1?'s':'');
   if (agashSealFilter !== 'all') listLabel += agashSealFilter==='sealed' ? ' — 🔐 Sealed' : ' — ⭕ Unsealed';
+  if (typeAnyActive) {
+    var activeTypeLabels = ['shirac','bilashirac','metal'].filter(function(k){return agashTypeFilter[k];})
+      .map(function(k){ return TYPE_LABELS[k]; });
+    listLabel += ' — ' + activeTypeLabels.join(', ');
+  }
 
   container.innerHTML =
     filterChips
+    + typeChips
     + tableHTML
     + '<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin:8px 0 10px;padding-bottom:5px;border-bottom:1px solid var(--border)">📅 ' + dateLabel + ' — ' + listLabel + '</div>'
     + (display.length === 0
