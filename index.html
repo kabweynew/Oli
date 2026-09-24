@@ -2605,7 +2605,7 @@
             </div>
           </div>
           <div class="cert-form-group">
-            <label class="cert-form-label">Image de la signature</label>
+            <label class="cert-form-label">Image de la signature (optionnel)</label>
             <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
               <img id="certSigPreview" src="" class="cert-img-preview" style="display:none;">
               <button class="cert-upload-btn" onclick="document.getElementById('certSigInput').click()">
@@ -2799,6 +2799,10 @@
         <button type="button" onclick="openScanPlate('truckPlate')" title="Scan plate with camera" style="flex-shrink:0;width:48px;background:var(--bg3);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--accent);font-size:19px;cursor:pointer;">📷</button>
       </div>
       <div class="dup-warning" id="dupWarning">⚠️ This plate may already be recorded today!</div>
+      <div id="truckPlatePhotoWrap" style="display:none;margin-top:8px;">
+        <div style="font-size:11px;color:var(--text3);margin-bottom:4px;">📷 Photo on file — check it against the plate number to catch typos</div>
+        <img id="truckPlatePhotoImg" src="" style="max-width:100%;max-height:160px;border-radius:8px;border:1px solid var(--border);display:block;">
+      </div>
     </div>
     <div class="form-group">
       <label class="form-label">DATE</label>
@@ -2903,6 +2907,10 @@
       <div style="display:flex;gap:8px;">
         <input class="form-input" id="editPlateInput" placeholder="e.g. DJ 1234 AB" autocomplete="off" style="text-transform:uppercase;flex:1;min-width:0;">
         <button type="button" onclick="openScanPlate('editPlateInput')" title="Scan plate with camera" style="flex-shrink:0;width:48px;background:var(--bg3);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--accent);font-size:19px;cursor:pointer;">📷</button>
+      </div>
+      <div id="editPlatePhotoWrap" style="display:none;margin-top:8px;">
+        <div style="font-size:11px;color:var(--text3);margin-bottom:4px;">📷 Photo on file — check it against the plate number to catch typos</div>
+        <img id="editPlatePhotoImg" src="" style="max-width:100%;max-height:160px;border-radius:8px;border:1px solid var(--border);display:block;">
       </div>
     </div>
     <div class="modal-actions">
@@ -3368,7 +3376,37 @@ const WORKER_COLORS = {
   Ali: '#ef4444', Omar: '#a855f7'
 };
 // ── TARIFFS — live from Firestore settings/tariffs ──
-window.tariffs = { clientETB:5500, clientFD:5000, sealerPaid:1300, sealerPartial:700, partialFare:2800, agashETB:1300, agashFD:1000, collectThreshold:8 };
+window.tariffs = { clientETB:5500, clientFD:5000, sealerPaid:1300, sealerPartial:700, partialFare:2800, agashETB:1300, agashFD:1000, collectThreshold:8, rotationGapDays:6 };
+var rotationAnchors = {}; // { [workerName]: 'YYYY-MM-DD' } — admin-set manual anchor date, next work day = anchor + N*gap rolled forward
+
+// ── Work rotation: compute a sealer's next expected work day from their manual anchor date + the global gap ──
+function getNextWorkDay(worker) {
+  var anchor = rotationAnchors[worker];
+  var gap = parseInt(window.tariffs.rotationGapDays, 10) || 6;
+  if (!anchor) return null;
+  var anchorDate = new Date(anchor + 'T12:00:00');
+  if (isNaN(anchorDate.getTime())) return null;
+  var todayDate = new Date(getWorkingDate() + 'T12:00:00');
+  var next = new Date(anchorDate);
+  // Roll forward in gap-day jumps until we land on today or a future date
+  while (next < todayDate) {
+    next.setDate(next.getDate() + gap);
+  }
+  return next.toISOString().slice(0,10);
+}
+
+window.setRotationAnchor = function(worker, dateVal) {
+  if (!currentUser || currentUser.role !== 'admin') { showToast('⛔ Only Admin can set this'); return; }
+  if (!dateVal) return;
+  rotationAnchors[worker] = dateVal;
+  setDoc(doc(db,'settings','rotationAnchors'), { byName: rotationAnchors })
+    .then(function(){ showToast('✅ '+worker+"'s work anchor saved"); renderWorkers(); })
+    .catch(function(){ showToast('❌ Save failed'); });
+};
+
+window.resetRotationAnchorToday = function(worker) {
+  window.setRotationAnchor(worker, getWorkingDate());
+};
 // Compatibility shims (used widely across the app — always read from window.tariffs)
 Object.defineProperty(window, 'CLIENT_PRICE', { get: function(){ return window.tariffs.clientETB; }, configurable:true });
 Object.defineProperty(window, 'WORKER_PAY',   { get: function(){ return { paid: window.tariffs.sealerPaid, partial: window.tariffs.sealerPartial, unpaid: 0 }; }, configurable:true });
@@ -3759,6 +3797,7 @@ function initFirebase() {
       window.tariffs.agashETB      = d.agashETB      || 1300;
       window.tariffs.agashFD       = d.agashFD       || 1000;
       window.tariffs.collectThreshold = d.collectThreshold || 8;
+      window.tariffs.rotationGapDays  = d.rotationGapDays  || 6;
     }
     markReady('tariffs');
     if (!currentUser) return;
@@ -3773,7 +3812,7 @@ function initFirebase() {
   // ── SETTINGS bundle (pins + perms + workers + headName + suspend + pastPay + meals)
   // All count together as one "settings" critical key ──
   var _settingsReady = {};
-  var SETTINGS_KEYS = ['pins','perms','workers','headName','suspend','pastPay','meals'];
+  var SETTINGS_KEYS = ['pins','perms','workers','headName','suspend','pastPay','meals','rotationAnchors','crossCheckIgnored'];
   function markSettingReady(k) {
     _settingsReady[k] = true;
     if (SETTINGS_KEYS.every(function(s){ return _settingsReady[s]; })) {
@@ -3785,6 +3824,20 @@ function initFirebase() {
     _cloudPins = snap.exists() ? snap.data() : {};
     markSettingReady('pins');
   }, () => { markSettingReady('pins'); });
+
+  // ── WORK ROTATION ANCHORS (manual, per-sealer — the last confirmed work day their cycle counts from) ──
+  window._unsubRotationAnchors = onSnapshot(doc(db,'settings','rotationAnchors'), snap => {
+    rotationAnchors = snap.exists() ? (snap.data().byName || {}) : {};
+    markSettingReady('rotationAnchors');
+    if (currentTab === 'workers') renderWorkers();
+  }, () => { markSettingReady('rotationAnchors'); });
+
+  // ── CROSS-CHECK ignore list (plate pairs the user confirmed are NOT typos of each other) ──
+  window._unsubCrossCheckIgnored = onSnapshot(doc(db,'settings','crossCheckIgnored'), snap => {
+    crossCheckIgnored = snap.exists() ? (snap.data().pairs || {}) : {};
+    markSettingReady('crossCheckIgnored');
+    if (currentTab === 'agash') renderAgashIncoming();
+  }, () => { markSettingReady('crossCheckIgnored'); });
 
   window._unsubPerms = onSnapshot(doc(db,'settings','perms'), snap => {
     _cloudPerms = snap.exists() ? snap.data() : {};
@@ -4720,6 +4773,7 @@ function renderTrucks() {
         </div>
         <div class="truck-meta">
           <span>📅 ${dateStr}</span>${timeStr ? `<span style="color:var(--teal);font-weight:700"> · 🕐 ${timeStr}</span>` : ''}
+          ${agashPost ? `<span style="color:var(--teal);font-weight:700"> · 🏗️ ${agashPost}</span>` : ''}
           ${truck.addedBy ? ` · Added by: ${truck.addedBy}` : ''}
         </div>
         ${(() => {
@@ -4772,6 +4826,12 @@ window.openEditPlate = function(id) {
   if (!truck) return;
   document.getElementById('editPlateInput').value = truck.plate || '';
   delete pendingPlatePhotos['editPlateInput'];
+  const photoWrap = document.getElementById('editPlatePhotoWrap');
+  const photoImg = document.getElementById('editPlatePhotoImg');
+  if (photoWrap && photoImg) {
+    if (truck.photoURL) { photoImg.src = truck.photoURL; photoWrap.style.display = ''; }
+    else { photoImg.src = ''; photoWrap.style.display = 'none'; }
+  }
   openModal('modalEditPlate');
 }
 window.saveEditPlate = function() {
@@ -4798,6 +4858,12 @@ window.openEditTruck = function(id) {
   document.getElementById('truckPlate').value = truck.plate||'';
   document.getElementById('truckDate').value = truck.date||'';
   document.getElementById('truckNotes').value = truck.notes||'';
+  const photoWrap = document.getElementById('truckPlatePhotoWrap');
+  const photoImg = document.getElementById('truckPlatePhotoImg');
+  if (photoWrap && photoImg) {
+    if (truck.photoURL) { photoImg.src = truck.photoURL; photoWrap.style.display = ''; }
+    else { photoImg.src = ''; photoWrap.style.display = 'none'; }
+  }
   const ccCheck = document.getElementById('truckCollectedCheck');
   if (ccCheck) ccCheck.checked = !!truck.cashCollected;
   const warn = document.getElementById('dupWarning');
@@ -4880,6 +4946,9 @@ window.openAddTruck = function() {
   delete pendingPlatePhotos['truckPlate'];
   document.getElementById('truckModalTitle').textContent = '🚛 '+t('addTruck');
   document.getElementById('truckPlate').value = '';
+  const photoWrap = document.getElementById('truckPlatePhotoWrap');
+  const photoImg = document.getElementById('truckPlatePhotoImg');
+  if (photoWrap && photoImg) { photoImg.src = ''; photoWrap.style.display = 'none'; }
   var sb = document.getElementById('saveTruckBtn'); if (sb) { sb.disabled=false; sb.style.opacity=''; sb.style.cursor=''; sb.textContent='Save Truck'; }
   document.getElementById('truckDate').value = document.getElementById('dateFilter').value;
   document.getElementById('truckNotes').value = '';
@@ -5646,6 +5715,18 @@ function renderWorkers() {
           <div class="detail-row"><span class="detail-label">Total advances</span><span class="detail-val red">-${advTotal.toLocaleString()} ETB</span></div>
           <div class="detail-row"><span class="detail-label">Net balance</span><span class="detail-val" style="color:${net>=0?'var(--green)':'var(--red)'}">${net.toLocaleString()} ETB</span></div>
           <div class="detail-row"><span class="detail-label">🎟️ Seals left</span><span class="detail-val" style="color:${sealNotTracked?'var(--text3)':sealLeft<=0?'var(--red)':sealLeft<=2?'var(--orange)':'var(--text)'}">${sealNotTracked?'Not tracked yet':sealLeft} <span style="color:var(--text3);font-weight:400;font-size:11px">${sealNotTracked?'':`(${sealUsed} used / ${sealIssued} issued)`}</span></span></div>
+          ${(()=>{
+            var nextDay = getNextWorkDay(w);
+            var nextLabel = nextDay ? new Date(nextDay+'T12:00:00').toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'short'}) : 'Not set';
+            var isDueToday = nextDay === getWorkingDate();
+            return `<div class="detail-row"><span class="detail-label">🔁 Next work day</span><span class="detail-val" style="color:${nextDay?(isDueToday?'var(--green)':'var(--text)'):'var(--text3)'}">${nextLabel}${isDueToday?' ✅':''}</span></div>`
+              + (role==='admin' ? `
+              <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
+                <input type="date" id="rotAnchor_${w}" value="${rotationAnchors[w]||''}" style="flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:12px;color:var(--text);font-family:inherit">
+                <button class="manage-btn" style="flex:none;padding:6px 10px" onclick="setRotationAnchor('${w}', document.getElementById('rotAnchor_${w}').value)">💾</button>
+                <button class="manage-btn" style="flex:none;padding:6px 10px" onclick="resetRotationAnchorToday('${w}')" title="Set anchor to today">📍 Today</button>
+              </div>` : '');
+          })()}
           ${canIssueSeals ? `
           <div style="display:flex;gap:6px;margin-top:6px">
             <button class="manage-btn" style="flex:1" onclick="openIssueSeals('${w}')">🎟️ Issue Seals</button>
@@ -6219,6 +6300,7 @@ function renderManage() {
             row('agashETB',      '🏗️ Agash Rate — ETB',        T.agashETB,       'Agash rate per truck (ETB)'),
             row('agashFD',       '🏗️ Agash Rate — FD',         T.agashFD,        'Agash rate per truck (FD)'),
             row('collectThreshold', '💵 Cash Collection Alert', T.collectThreshold, 'Uncleared trucks before sealer is flagged'),
+            row('rotationGapDays', '🔁 Work Rotation Gap (days)', T.rotationGapDays, 'Days between a sealer\'s work days, e.g. Friday → next Thursday = 6'),
           ].join('');
         })()}
       </div>
@@ -7219,8 +7301,19 @@ window.openScanPlate = async function(targetId) {
     var video = document.getElementById('scanVideo');
     video.srcObject = scanStream;
   } catch (err) {
-    status.textContent = '⚠️ Could not access camera — check permissions';
+    if (err && err.name === 'NotAllowedError') {
+      status.innerHTML = '⚠️ Camera permission is blocked for this app.<br>'
+        + 'Open your phone\'s <b>Settings → Apps → (this app/browser) → Permissions → Camera</b> and allow it, then come back and try again.';
+    } else if (err && err.name === 'NotFoundError') {
+      status.textContent = '⚠️ No camera found on this device';
+    } else if (err && err.name === 'NotReadableError') {
+      status.textContent = '⚠️ Camera is busy — close any other app using it and try again';
+    } else {
+      status.textContent = '⚠️ Could not access camera — check permissions';
+    }
     showToast('⚠️ Camera access denied');
+    btn.disabled = false; btn.textContent = '🔄 Retry';
+    btn.onclick = function() { btn.onclick = function(){ window.captureAndScan(); }; window.openScanPlate(scanTargetInput); };
   }
 };
 
@@ -8179,6 +8272,82 @@ window.setAgashPlateFilter = function(val) {
 // letter tag shown next to a Bashal truck so you can still see its original type
 var AGASH_TYPE_LETTER = { shirac:'Sh', bilashirac:'B', metal:'M' };
 
+// ══════════════════════════════════════════════════════════════════════
+// CROSS-CHECK: catch plate typos between what sealers entered (Trucks)
+// and what Agash entered (kabIncoming) for the same day.
+// ══════════════════════════════════════════════════════════════════════
+var crossCheckIgnored = {}; // { pairKey: true } — pairs the user marked "not a match"
+var agashCrossCheckExpanded = false;
+
+function levenshteinDistance(a, b) {
+  a = (a||'').toUpperCase(); b = (b||'').toUpperCase();
+  var m = a.length, n = b.length;
+  if (Math.abs(m-n) > 1) return 99; // can't be within 1 edit if lengths differ by more than 1
+  var dp = [];
+  for (var i=0; i<=m; i++) dp.push([i].concat(new Array(n).fill(0)));
+  for (var j=0; j<=n; j++) dp[0][j] = j;
+  for (i=1; i<=m; i++) {
+    for (j=1; j<=n; j++) {
+      dp[i][j] = a[i-1] === b[j-1] ? dp[i-1][j-1] : 1 + Math.min(dp[i-1][j-1], dp[i-1][j], dp[i][j-1]);
+    }
+  }
+  return dp[m][n];
+}
+
+function computeCrossCheckMatches(selectedDate) {
+  var sealerTrucks = Object.entries(trucks)
+    .filter(function(e){ return e[1].date === selectedDate && e[1].plate; })
+    .map(function(e){ return { _id:e[0], plate:e[1].plate, worker:e[1].worker||'' }; });
+  var agashTrucks = Object.entries(kabIncoming)
+    .filter(function(e){ return e[1].date === selectedDate && e[1].plate; })
+    .map(function(e){ return { _id:e[0], plate:e[1].plate, type:e[1].type||'' }; });
+
+  var sealerPlateSet = {}; sealerTrucks.forEach(function(t){ sealerPlateSet[t.plate.toUpperCase()] = true; });
+  var agashPlateSet = {};  agashTrucks.forEach(function(t){ agashPlateSet[t.plate.toUpperCase()] = true; });
+
+  // Only look at plates that don't already have an exact match on the other side — no point flagging real matches.
+  var unmatchedSealer = sealerTrucks.filter(function(t){ return !agashPlateSet[t.plate.toUpperCase()]; });
+  var unmatchedAgash  = agashTrucks.filter(function(t){ return !sealerPlateSet[t.plate.toUpperCase()]; });
+
+  var matches = [];
+  unmatchedSealer.forEach(function(s){
+    unmatchedAgash.forEach(function(a){
+      var dist = levenshteinDistance(s.plate, a.plate);
+      if (dist === 1) {
+        var pairKey = s._id + '__' + a._id;
+        if (!crossCheckIgnored[pairKey]) matches.push({ sealer:s, agash:a, pairKey:pairKey });
+      }
+    });
+  });
+  return matches;
+}
+
+window.setCrossCheckExpanded = function(val) {
+  agashCrossCheckExpanded = val;
+  renderAgashIncoming();
+};
+
+window.crossCheckIgnorePair = function(pairKey) {
+  crossCheckIgnored[pairKey] = true;
+  setDoc(doc(db,'settings','crossCheckIgnored'), { pairs: crossCheckIgnored }).catch(function(){});
+  renderAgashIncoming();
+};
+
+// Copy one side's plate onto the other so both records agree, then clear it from the ignore list if present.
+window.crossCheckFix = function(sealerId, agashId, useSealer) {
+  var sealerTruck = trucks[sealerId];
+  var agashTruck = kabIncoming[agashId];
+  if (!sealerTruck || !agashTruck) { showToast('⚠️ Truck no longer exists'); return; }
+  var correctPlate = useSealer ? sealerTruck.plate : agashTruck.plate;
+  var update = useSealer
+    ? updateDoc(doc(db,'kab_trucks', agashId), { plate: correctPlate })
+    : updateDoc(doc(db,'trucks', sealerId), { plate: correctPlate });
+  update.then(function(){
+    showToast('✅ Plate corrected to '+correctPlate);
+    renderAgashIncoming();
+  }).catch(function(){ showToast('❌ Could not save the fix'); });
+};
+
 function renderAgashIncoming() {
   var container = document.getElementById('agashIncomingList');
   var subEl = document.getElementById('agashIncomingSub');
@@ -8405,6 +8574,11 @@ function renderAgashIncoming() {
     var cardBg     = t.sealed ? 'var(--bg3)' : 'rgba(239,68,68,0.06)';
     var cardBorder = t.sealed ? 'var(--border)' : 'rgba(239,68,68,0.4)';
     var leftBorder = t.sealed ? si.color : '#ef4444';
+    // ── Cross-check: find the sealer who sealed this plate on the same day, if any ──
+    var matchedTruck = Object.values(trucks).find(function(tr){
+      return tr.plate && tr.plate.toUpperCase() === t.plate.toUpperCase() && tr.date === t.date;
+    });
+    var sealerName = matchedTruck ? (matchedTruck.worker || '') : '';
     return '<div style="background:'+cardBg+';border:1.5px solid '+cardBorder+';border-left:4px solid '+leftBorder+';border-radius:8px;padding:12px;margin-bottom:8px">'
       // Row 1: plate + seal badge + status badge
       + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px">'
@@ -8422,6 +8596,7 @@ function renderAgashIncoming() {
       + '<span style="font-size:11px;color:var(--text3)">🕐 '+timeStr+'</span>'
       + '</div>'
       + '</div>'
+      + (sealerName ? '<div style="margin-top:6px;font-size:11px;font-weight:700;color:var(--accent)">👷 Sealed by: '+sealerName+'</div>' : '')
       + '</div>';
   }).join('');
 
@@ -8433,8 +8608,42 @@ function renderAgashIncoming() {
     listLabel += ' — ' + activeTypeLabels.join(', ');
   }
 
+  // ── Cross-check: sealer plates vs Agash plates that look like typos of each other (1 character apart) ──
+  var crossMatches = computeCrossCheckMatches(selectedDate);
+  var crossCheckHTML = '';
+  if (crossMatches.length > 0) {
+    var ccHeaderStyle = 'display:flex;align-items:center;justify-content:space-between;padding:10px 12px;cursor:pointer;background:rgba(240,165,0,0.1);border:1px solid rgba(240,165,0,0.35);border-radius:10px;';
+    crossCheckHTML = '<div style="margin-bottom:12px;">'
+      + '<div style="'+ccHeaderStyle+'" onclick="setCrossCheckExpanded('+(!agashCrossCheckExpanded)+')">'
+      +   '<div style="font-size:12px;font-weight:800;color:#f0a500;">⚠️ '+crossMatches.length+' possible plate typo'+(crossMatches.length!==1?'s':'')+' — sealer vs Agash</div>'
+      +   '<div style="font-size:11px;color:#f0a500;">'+(agashCrossCheckExpanded?'Hide ▲':'Review ▾')+'</div>'
+      + '</div>';
+    if (agashCrossCheckExpanded) {
+      crossCheckHTML += '<div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">'
+        + crossMatches.map(function(m){
+            return '<div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 12px;">'
+              + '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;">'
+              +   '<div style="text-align:left;"><div style="font-size:9px;color:var(--text3);font-weight:700;">👷 SEALER ('+((m.sealer.worker)||'—')+')</div>'
+              +     '<div style="font-family:\'JetBrains Mono\',monospace;font-weight:800;font-size:14px;">'+m.sealer.plate+'</div></div>'
+              +   '<div style="color:var(--text3);font-size:16px;">↔</div>'
+              +   '<div style="text-align:right;"><div style="font-size:9px;color:var(--text3);font-weight:700;">📥 AGASH ('+(TYPE_LABELS[m.agash.type]||m.agash.type||'—')+')</div>'
+              +     '<div style="font-family:\'JetBrains Mono\',monospace;font-weight:800;font-size:14px;">'+m.agash.plate+'</div></div>'
+              + '</div>'
+              + '<div style="display:flex;gap:6px;flex-wrap:wrap;">'
+              +   '<button style="flex:1;min-width:110px;background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.35);color:#22c55e;border-radius:8px;padding:6px 8px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;" onclick="crossCheckFix(\''+m.sealer._id+'\',\''+m.agash._id+'\',true)">✅ Use Sealer\'s plate</button>'
+              +   '<button style="flex:1;min-width:110px;background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.35);color:#22c55e;border-radius:8px;padding:6px 8px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;" onclick="crossCheckFix(\''+m.sealer._id+'\',\''+m.agash._id+'\',false)">✅ Use Agash\'s plate</button>'
+              +   '<button style="flex:none;background:var(--bg2);border:1px solid var(--border);color:var(--text3);border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;" onclick="crossCheckIgnorePair(\''+m.pairKey+'\')">🚫 Not a match</button>'
+              + '</div>'
+              + '</div>';
+          }).join('')
+        + '</div>';
+    }
+    crossCheckHTML += '</div>';
+  }
+
   container.innerHTML =
-    filterChips
+    crossCheckHTML
+    + filterChips
     + typeChips
     + tableHTML
     + '<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin:8px 0 10px;padding-bottom:5px;border-bottom:1px solid var(--border)">📅 ' + dateLabel + ' — ' + listLabel + '</div>'
@@ -11201,7 +11410,7 @@ function certConfigStatus() {
   if(!c.logo) missing.push("Logo de l'entreprise");
   if(!(c.sigNom || c.dirNom)) missing.push('Nom du signataire officiel');
   if(!(c.sigFonction || c.dirFonction)) missing.push('Fonction du signataire officiel');
-  if(!c.signature) missing.push('Signature du signataire officiel');
+  // Signature image and company seal (cachet) are optional — a certificate can be generated without them.
   return { complete: missing.length===0, missing: missing };
 }
 
@@ -11245,6 +11454,8 @@ window.certAddEmployee = function() {
   setDoc(doc(db,'settings','certEmployeeNames'), { list: _certEmployeeNames }).then(function(){
     showToast('✅ '+name+' ajouté');
     if(input) input.value = '';
+    // Leave the new employee's fiche collapsed — it does not stay open once added.
+    _certFicheExpanded[name] = false;
     certRenderFicheList();
   }).catch(function(){ showToast('⚠️ Erreur de sauvegarde'); });
 };
@@ -11463,7 +11674,16 @@ window.certSaveInlineEmployee = function() {
 
 // ══════════════════════════════════════════════════════════════════════
 // EMPLOYEE FICHES (admin/head only — Employés sub-tab)
+// Each employee's file is collapsed by default once it exists — tap it to
+// access/view the registered information, or to edit it.
 // ══════════════════════════════════════════════════════════════════════
+var _certFicheExpanded = {}; // name -> bool, which fiche rows are currently open
+
+window.certToggleFiche = function(name) {
+  _certFicheExpanded[name] = !_certFicheExpanded[name];
+  certRenderFicheList();
+};
+
 function certRenderFicheList() {
   var container = document.getElementById('certFicheList');
   if(!container) return;
@@ -11474,11 +11694,37 @@ function certRenderFicheList() {
   }
   container.innerHTML = names.map(function(name){
     var emp = certGetEmployee(name);
+    var st = certEmployeeStatus(emp);
     var safeId = 'fiche_'+btoa(unescape(encodeURIComponent(name))).replace(/[^a-zA-Z0-9]/g,'');
+
+    if(!_certFicheExpanded[name]){
+      // ── Collapsed: compact summary, still gives access to the registered info via a tap ──
+      var badge = st.complete
+        ? '<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:rgba(34,197,94,0.15);color:#22c55e;border:1px solid rgba(34,197,94,0.35)">✅ Complet</span>'
+        : '<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:rgba(240,165,0,0.15);color:#f0a500;border:1px solid rgba(240,165,0,0.35)">⚠ Incomplet</span>';
+      return '<div class="cert-fiche-row" style="cursor:pointer" onclick="certToggleFiche(\''+name.replace(/'/g,"\\'")+'\')">'
+        + '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">'
+        +   '<div style="display:flex;align-items:center;gap:8px;min-width:0;">'
+        +     '<div style="font-weight:700;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+name+'</div>'
+        +     (emp.poste ? '<div style="font-size:11px;color:var(--text3);white-space:nowrap;">· '+emp.poste+'</div>' : '')
+        +   '</div>'
+        +   '<div style="display:flex;align-items:center;gap:8px;flex:none;">'
+        +     badge
+        +     '<span style="font-size:11px;color:var(--text3);">Détails ▾</span>'
+        +     '<button class="cert-hist-icon-btn" title="Retirer" onclick="event.stopPropagation();certRemoveEmployee(\''+name.replace(/'/g,"\\'")+'\')">✕</button>'
+        +   '</div>'
+        + '</div>'
+        + '</div>';
+    }
+
+    // ── Expanded: full editable fiche, opened on request ──
     return '<div class="cert-fiche-row">'
       + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">'
       +   '<div style="font-weight:700;font-size:13px;">'+name+'</div>'
-      +   '<button class="cert-hist-icon-btn" title="Retirer" onclick="certRemoveEmployee(\''+name.replace(/'/g,"\\'")+'\')">✕</button>'
+      +   '<div style="display:flex;align-items:center;gap:6px;">'
+      +     '<button class="cert-hist-icon-btn" onclick="certToggleFiche(\''+name.replace(/'/g,"\\'")+'\')">▲ Réduire</button>'
+      +     '<button class="cert-hist-icon-btn" title="Retirer" onclick="certRemoveEmployee(\''+name.replace(/'/g,"\\'")+'\')">✕</button>'
+      +   '</div>'
       + '</div>'
       + '<div class="cert-form-group"><label class="cert-form-label">Poste / Fonction *</label>'
       + '<input class="cert-input" id="'+safeId+'_poste" value="'+(emp.poste||'').replace(/"/g,'&quot;')+'" placeholder="Ex: Chauffeur"></div>'
@@ -11514,7 +11760,10 @@ window.certSaveFiche = function(name, safeId) {
   try {
     setDoc(doc(db,'settings','certEmployees'), { byName: _certEmployees }).then(function(){
       showToast('✅ Fiche de '+name+' enregistrée');
+      // Collapse the file again once saved — it should not stay open once added.
+      _certFicheExpanded[name] = false;
       certRenderSelectedEmployee();
+      certRenderFicheList();
     }).catch(function(){ showToast('⚠️ Erreur de sauvegarde'); });
   } catch(e){ showToast('⚠️ Erreur de sauvegarde'); }
 };
