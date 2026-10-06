@@ -3303,6 +3303,7 @@ let dailyDeductions = {};
 let settlements = {};
 let sealIssuances = {};
 let kabIncoming = {};
+let agashPostNames = {}; // postId -> CURRENT post name, read live from Agash's kab_config/main
 let selectMode = false;
 let selectedTrucks = new Set();
 let currentUser = null;
@@ -3929,7 +3930,7 @@ function initFirebase() {
         type:      t.type || '',
         status:    t.status || '',
         postId:    t.postId || '',
-        postLabel: t.postLabel || t.postId || '',
+        postLabel: (t.postId && agashPostNames[t.postId]) || t.postLabel || t.postId || '',
         date:      t.workDay || t.date || '',
         ts:        t.ts || 0,
         addedBy:   t.addedBy || ''
@@ -3943,6 +3944,20 @@ function initFirebase() {
     console.warn('kab_trucks listener failed:', err.code || err.message);
     kabIncoming = {};
   });
+
+  // Live post names from the Agash app — renames show up here automatically.
+  window._unsubAgashConfig = onSnapshot(doc(db,'kab_config','main'), snap => {
+    agashPostNames = {};
+    if (snap.exists()) {
+      ((snap.data() || {}).posts || []).forEach(function(p) { if (p && p.id) agashPostNames[p.id] = p.label || ''; });
+    }
+    Object.values(kabIncoming).forEach(function(t) {
+      if (t.postId && agashPostNames[t.postId]) t.postLabel = agashPostNames[t.postId];
+    });
+    if (currentTab === 'agash') renderAgashIncoming();
+    if (currentTab === 'reports') renderReports();
+    if (currentTab === 'trucks') renderTrucks();
+  }, (err) => console.warn('kab_config listener failed:', err.code || err.message));
 
   window._unsubSettlements = onSnapshot(collection(db,'settlements'), snap => {
     settlements = {};
@@ -8375,7 +8390,7 @@ function renderAgashIncoming() {
     .map(function(e) {
       var k=e[0], v=e[1];
       return { _id:k, plate:v.plate||'', type:v.type||'', status:v.status||'',
-        postLabel:v.postLabel||v.postId||'—', date:v.date||'', ts:v.ts||0, addedBy:v.addedBy||'' };
+        postId:v.postId||'', postLabel:(v.postId && agashPostNames[v.postId]) || v.postLabel||v.postId||'—', date:v.date||'', ts:v.ts||0, addedBy:v.addedBy||'' };
     })
     .sort(function(a,b){ return (b.ts||0)-(a.ts||0); });
 
@@ -8449,21 +8464,27 @@ function renderAgashIncoming() {
   }
 
   // ── Build post → load type grid ──
-  var ALL_POSTS = ['Post 1','Post 2','Post 3','Post 4','Post 5','Post 6','Post 7'];
+  var ALL_POSTS = ['p1','p2','p3','p4','p5','p6','p7'];
   var grid = {};
 
+  // Display name for a post key: the CURRENT name from Agash settings.
+  function postDisplayName(key) {
+    if (agashPostNames[key]) return agashPostNames[key];
+    var m = /^p(\d+)$/.exec(key);
+    return m ? ('Post ' + m[1]) : key;
+  }
+
   display.forEach(function(t) {
-    var pl = (t.postLabel||'').trim().toLowerCase().replace(/\s+/g,'');
-    var matched = null;
-    for (var pi=0; pi<ALL_POSTS.length; pi++) {
-      if (ALL_POSTS[pi].toLowerCase().replace(/\s+/g,'') === pl) { matched = ALL_POSTS[pi]; break; }
-    }
-    if (!matched) {
-      for (var pi=0; pi<ALL_POSTS.length; pi++) {
-        if (pl.indexOf(ALL_POSTS[pi].toLowerCase().replace(/\s+/g,'')) !== -1) { matched = ALL_POSTS[pi]; break; }
+    var postKey = null;
+    if (t.postId && /^p\d+$/.test(t.postId)) {
+      postKey = t.postId;                       // reliable: group by post id, not by name
+    } else {
+      var pl = (t.postLabel||'').trim().toLowerCase().replace(/\s+/g,'');
+      for (var pi=0; pi<ALL_POSTS.length; pi++) {   // old trucks without an id: match "Post N"
+        if (('post'+(pi+1)) === pl) { postKey = ALL_POSTS[pi]; break; }
       }
+      if (!postKey) postKey = (t.postLabel||'Other').trim();
     }
-    var postKey = matched || (t.postLabel||'Other').trim();
     if (!grid[postKey]) grid[postKey] = { shirac:0, bilashirac:0, metal:0, bashal:0, sealed:0, unsealed:0 };
     var ty = (t.type||'').toLowerCase().replace(/[\s-]/g,'');
     // ── Once a truck's status is Bashal, it moves OUT of its type column and is counted once, only under Bashal ──
@@ -8524,7 +8545,7 @@ function renderAgashIncoming() {
           var rowTotal = r.shirac + r.bilashirac + r.metal + r.bashal;
           var bg = i%2===0 ? 'transparent' : 'rgba(255,255,255,0.02)';
           return '<div style="display:grid;grid-template-columns:'+cols+';padding:8px 10px;border-bottom:1px solid var(--border);background:'+bg+';align-items:center">'
-            + '<div style="font-size:12px;font-weight:700;color:var(--text)">'+p+'</div>'
+            + '<div style="font-size:12px;font-weight:700;color:var(--text)">'+postDisplayName(p)+'</div>'
             + cell(r.shirac,     '#10b981')
             + cell(r.bilashirac, '#3b82f6')
             + cell(r.metal,      '#f97316')
