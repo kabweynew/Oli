@@ -613,6 +613,17 @@
     transition: border-color 0.2s;
   }
   .form-input:focus { border-color: var(--accent); }
+  /* ── Plaque d'immatriculation : très visible de loin (blanc + cadre bleu) ── */
+  #truckPlate, #editPlateInput {
+    background:#fff; color:#000; -webkit-text-fill-color:#000;
+    border:4px solid #2979FF; outline:none;
+    border-radius:12px; padding:16px 12px; min-height:68px;
+    font-size:32px; font-weight:900; letter-spacing:0.08em; text-align:center;
+    text-transform:uppercase; font-family:"Arial Black",Impact,system-ui,sans-serif;
+    box-shadow:0 0 0 4px rgba(41,121,255,0.3);
+  }
+  #truckPlate::placeholder, #editPlateInput::placeholder { color:rgba(0,0,0,0.35); -webkit-text-fill-color:rgba(0,0,0,0.35); font-size:22px; letter-spacing:0.04em; font-weight:800; }
+  #truckPlate:focus, #editPlateInput:focus { border-color:#00B0FF; box-shadow:0 0 0 7px rgba(41,121,255,0.5); }
   .form-select {
     width: 100%;
     background: var(--bg3);
@@ -1439,6 +1450,14 @@
   }
   .cert-document.cert-adjusting .cert-doc-stamp-img:active,
   .cert-document.cert-adjusting .cert-doc-sig-img:active { cursor:grabbing; }
+  /* ── Modèle A : classique, cadre double ── */
+  .cert-document { border:3px double #1a3a6e; outline:1px solid #1a3a6e; outline-offset:-9px; padding:34px 30px; }
+  .cert-doc-header { flex-direction:column; align-items:center; text-align:center; gap:6px; border-bottom:none; padding-bottom:4px; margin-bottom:4px; }
+  .cert-doc-company-name { font-size:16px; letter-spacing:0.1em; }
+  .cert-doc-title { border-bottom:none; font-variant:small-caps; text-transform:none; font-size:20px; letter-spacing:0.18em; margin:14px 0 2px; padding-bottom:0; }
+  .cert-doc-subtitle { color:#b08d3c; letter-spacing:0.4em; margin-bottom:16px; }
+  .cert-doc-body p { margin:0 0 6px; text-align:justify; }
+  .cert-doc-highlight { text-decoration:none; }
   .cert-hist-row {
     background:var(--card); border:1px solid var(--border);
     border-radius:var(--radius-sm); padding:12px 14px; margin-bottom:8px;
@@ -1451,6 +1470,10 @@
     background:rgba(59,130,246,0.15); color:var(--accent);
     border:1px solid rgba(59,130,246,0.3); white-space:nowrap;
   }
+  .cert-navbar { display:flex; gap:8px; padding:12px 16px 0; }
+  .cert-nav-btn { flex:1; padding:9px 6px; font-size:12px; font-weight:700; font-family:inherit; cursor:pointer;
+    background:var(--bg3,rgba(128,128,128,0.12)); color:var(--text); border:1px solid var(--border); border-radius:10px; }
+  .cert-nav-btn.exit { color:#ef4444; border-color:rgba(239,68,68,0.4); flex:0 0 auto; padding:9px 12px; }
   .cert-tab-bar {
     display:flex; gap:0; border-bottom:1px solid var(--border); margin:0 16px 12px;
   }
@@ -2500,6 +2523,11 @@
 
     <!-- ── CERTIFICAT DE TRAVAIL TAB ── -->
     <div id="tabCertificat" style="display:none;">
+      <div class="cert-navbar">
+        <button class="cert-nav-btn" onclick="certGoBack()">← Retour</button>
+        <button class="cert-nav-btn" onclick="certGoHome()">🏠 Accueil</button>
+        <button class="cert-nav-btn exit" onclick="certExit()">🚪 Quitter</button>
+      </div>
       <div style="padding:14px 16px 6px;display:flex;align-items:center;justify-content:space-between;">
         <div>
           <div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:0.08em">📄 CERTIFICAT DE TRAVAIL</div>
@@ -2679,6 +2707,17 @@
         <div class="cert-section-title">Directeur / Signataire</div>
         <div class="cert-card" id="certDirCardWrap"></div>
 
+        <div class="cert-section-title">Texte du certificat</div>
+        <div class="cert-card">
+          <div style="font-size:11px;color:var(--text3);margin-bottom:8px;">Ce texte sera utilisé pour tous les certificats. Modifiez, coupez ou supprimez n'importe quelle partie. Séparez les paragraphes par une ligne vide. Début de paragraphe avec <b>&gt;</b> = centré. <b>**mot**</b> = gras. Touchez un champ ci-dessous pour l'insérer à la position du curseur.</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;"><button type="button" class="cert-hist-icon-btn" style="width:auto;padding:5px 9px;font-size:11px" onclick="certInsertToken('{{employe}}')">Employé</button><button type="button" class="cert-hist-icon-btn" style="width:auto;padding:5px 9px;font-size:11px" onclick="certInsertToken('{{poste}}')">Poste</button><button type="button" class="cert-hist-icon-btn" style="width:auto;padding:5px 9px;font-size:11px" onclick="certInsertToken('{{date_debut}}')">Date début</button><button type="button" class="cert-hist-icon-btn" style="width:auto;padding:5px 9px;font-size:11px" onclick="certInsertToken('{{anciennete}}')">Ancienneté</button><button type="button" class="cert-hist-icon-btn" style="width:auto;padding:5px 9px;font-size:11px" onclick="certInsertToken('{{directeur}}')">Directeur</button><button type="button" class="cert-hist-icon-btn" style="width:auto;padding:5px 9px;font-size:11px" onclick="certInsertToken('{{fonction}}')">Fonction</button><button type="button" class="cert-hist-icon-btn" style="width:auto;padding:5px 9px;font-size:11px" onclick="certInsertToken('{{entreprise}}')">Entreprise</button><button type="button" class="cert-hist-icon-btn" style="width:auto;padding:5px 9px;font-size:11px" onclick="certInsertToken('{{ville}}')">Ville</button><button type="button" class="cert-hist-icon-btn" style="width:auto;padding:5px 9px;font-size:11px" onclick="certInsertToken('{{date}}')">Date</button></div>
+          <textarea class="cert-input" id="certBodyText" style="min-height:300px;line-height:1.55;resize:vertical;font-family:inherit;" oninput="certOnBodyInput(this)"></textarea>
+          <div class="cert-action-bar" style="padding:10px 0 0">
+            <button class="cert-btn cert-btn-secondary" onclick="certResetBodyText()">↺ Texte d'origine</button>
+            <button class="cert-btn cert-btn-purple" onclick="certSaveBodyTemplate()">💾 Enregistrer le texte</button>
+          </div>
+        </div>
+
         <div class="cert-section-title">Numérotation des documents</div>
         <div class="cert-card">
           <div style="font-size:12px;color:var(--text2);line-height:1.6;">
@@ -2795,7 +2834,7 @@
     <div class="form-group">
       <label class="form-label">PLATE NUMBER</label>
       <div style="display:flex;gap:8px;">
-        <input class="form-input" id="truckPlate" placeholder="e.g. DJ 1234 AB" autocomplete="off" oninput="checkDuplicate()" style="flex:1;min-width:0;">
+        <input class="form-input" id="truckPlate" placeholder="A 12345" autocomplete="off" oninput="plateAssist(event);checkDuplicate()" style="flex:1;min-width:0;">
         <button type="button" onclick="openScanPlate('truckPlate')" title="Scan plate with camera" style="flex-shrink:0;width:48px;background:var(--bg3);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--accent);font-size:19px;cursor:pointer;">📷</button>
       </div>
       <div class="dup-warning" id="dupWarning">⚠️ This plate may already be recorded today!</div>
@@ -4960,7 +4999,8 @@ window.openAddTruck = function() {
   editingTruckId = null;
   delete pendingPlatePhotos['truckPlate'];
   document.getElementById('truckModalTitle').textContent = '🚛 '+t('addTruck');
-  document.getElementById('truckPlate').value = '';
+  document.getElementById('truckPlate').value = 'A'; // plaque éthiopienne par défaut (effaçable)
+  window._plateDSuggested = false;
   const photoWrap = document.getElementById('truckPlatePhotoWrap');
   const photoImg = document.getElementById('truckPlatePhotoImg');
   if (photoWrap && photoImg) { photoImg.src = ''; photoWrap.style.display = 'none'; }
@@ -5034,6 +5074,20 @@ function getRadioVal(groupId) {
   const checked = document.querySelector(`#${groupId} input:checked`);
   return checked ? checked.value : 'unpaid';
 }
+// ── Aide à la saisie de plaque : A au départ ; si A effacé, D suggéré après 2 chiffres ──
+window._plateDSuggested = false;
+window.plateAssist = function(e) {
+  var el = e && e.target; if(!el) return;
+  var v = el.value.toUpperCase();
+  if(v === '') { window._plateDSuggested = false; return; }
+  var deleting = e.inputType && e.inputType.indexOf('delete') === 0;
+  if(!deleting && !window._plateDSuggested && /^[0-9]{2}$/.test(v.replace(/\s/g,''))) {
+    el.value = v.replace(/\s/g,'') + 'D';
+    window._plateDSuggested = true;
+    try { el.setSelectionRange(el.value.length, el.value.length); } catch(x){}
+  }
+};
+
 window.saveTruck = function() {
   const plate = document.getElementById('truckPlate').value.trim().toUpperCase();
   const date = document.getElementById('truckDate').value;
@@ -5043,7 +5097,7 @@ window.saveTruck = function() {
     ? currentUser.id
     : document.getElementById('truckWorker').value;
   let status = (currentUser.role === 'worker' && !(isForemanAdding && savePerms.canEditStatus)) ? 'unpaid' : getRadioVal('statusRadio');
-  if (!worker) status = 'pending';
+  if (!worker && status === 'paid') status = 'pending'; // automatique ; Unpaid/Partial choisis à la main restent tels quels
   const notes = document.getElementById('truckNotes').value.trim();
   const cashCollectedNow = !!document.getElementById('truckCollectedCheck')?.checked;
   if (!plate) { showToast('⚠️ Enter plate number'); return; }
@@ -11405,6 +11459,98 @@ function certFmtDate(dateStr) {
   return parseInt(parts[2],10)+' '+months[parseInt(parts[1],10)-1]+' '+parts[0];
 }
 
+// ── Navigation du module Certificat ──
+window.certGoHome = function() {
+  var b = document.querySelector('.nav-btn:not(#nav_logout):not(#nav_certificat)');
+  var id = b ? b.id.replace('nav_','') : 'trucks';
+  switchTab(id);
+};
+window.certGoBack = function() {
+  if(typeof _certCurrentSubTab !== 'undefined' && _certCurrentSubTab && _certCurrentSubTab !== 'nouveau'){
+    certShowSubTab('nouveau');
+  } else { certGoHome(); }
+};
+window.certExit = function() {
+  if(confirm('Quitter l\'application et vous déconnecter ?')) goLogin();
+};
+
+// ── Texte éditable du certificat ──
+var CERT_DEFAULT_TEXT = `Je soussigné(e), {{directeur}}, agissant en qualité de {{fonction}} au sein de {{entreprise}}, certifie par la présente que :
+
+> {{employe}}
+
+est employé(e) au sein de notre établissement en qualité de {{poste}}, depuis le {{date_debut}}, soit une ancienneté de {{anciennete}}, sans interruption à ce jour.
+
+Durant cette période, l'intéressé(e) a fait preuve de sérieux, de ponctualité, de rigueur professionnelle et d'un comportement exemplaire. Il/elle s'acquitte des missions qui lui sont confiées avec compétence et dévouement, dans le respect du règlement intérieur et des consignes de sa hiérarchie, et donne entière satisfaction à la direction.
+
+À ce jour, **{{employe}}** fait toujours partie de notre personnel et occupe son poste dans les conditions décrites ci-dessus.
+
+La présente attestation est délivrée à l'intéressé(e), sur sa demande, pour servir et valoir ce que de droit.
+
+Fait à {{ville}}, le **{{date}}**.`;
+var _certDraftText = null; // brouillon du texte (Paramètres), non enregistré
+
+function certRenderBody(tpl, vals) {
+  function esc(t){ return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  return String(tpl||'').split(/\n\s*\n/).map(function(par){
+    par = par.trim(); if(!par) return '';
+    var center = /^>\s?/.test(par);
+    if(center) par = par.replace(/^>\s?/, '');
+    var h = esc(par).replace(/\{\{\s*([a-z_]+)\s*\}\}/g, function(m,k){
+      var v = vals[k]; if(v===undefined) return m;
+      return '<span class="cert-doc-highlight">'+esc(v||'_______________')+'</span>';
+    }).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
+    return center
+      ? '<p style="text-align:center;font-size:17px;font-weight:800;color:#1a3a6e;letter-spacing:0.04em;margin:14px 0;">'+h+'</p>'
+      : '<p>'+h+'</p>';
+  }).join('');
+}
+function certSavedDefaultText(){ return _certCompany.bodyTemplate || CERT_DEFAULT_TEXT; }
+function certCurrentBodyText(){ return certSavedDefaultText(); }
+function certSyncBodyEditor() {
+  var el = document.getElementById('certBodyText');
+  if(el){ if(!certCanEditConfig()) el.disabled = true; if(_certDraftText == null && document.activeElement !== el) el.value = certSavedDefaultText(); }
+}
+window.certOnBodyInput = function(el) {
+  _certDraftText = el.value;
+  certUpdateParamPreview();
+};
+window.certInsertToken = function(tok) {
+  var el = document.getElementById('certBodyText'); if(!el) return;
+  var st = el.selectionStart||0, en = el.selectionEnd||0;
+  el.value = el.value.slice(0,st)+tok+el.value.slice(en);
+  el.focus(); el.selectionStart = el.selectionEnd = st+tok.length;
+  certOnBodyInput(el);
+};
+window.certResetBodyText = function() {
+  var el = document.getElementById('certBodyText'); if(!el) return;
+  el.value = CERT_DEFAULT_TEXT; _certDraftText = el.value;
+  certUpdateParamPreview(); showToast('↺ Texte d\'origine rétabli — pensez à enregistrer');
+};
+window.certSaveBodyTemplate = function() {
+  if(!certCanEditConfig()){ showToast('⛔ Réservé à l\'administrateur / directeur'); return; }
+  var el = document.getElementById('certBodyText'); if(!el) return;
+  _certCompany.bodyTemplate = el.value; _certDraftText = null; certUpdatePreview();
+  setDoc(doc(db,'settings','certCompany'), {bodyTemplate: el.value}, {merge:true})
+    .then(function(){ showToast('✅ Texte enregistré comme modèle par défaut'); })
+    .catch(function(){ showToast('⚠️ Erreur de sauvegarde'); });
+};
+
+// ── Ancienneté lisible (ex. "2 ans et 3 mois") depuis YYYY-MM-DD ──
+function certAnciennete(iso) {
+  try {
+    var p=(iso||'').split('-'); if(p.length!==3) return '';
+    var t=certTodayISO().split('-');
+    var m=(parseInt(t[0],10)-parseInt(p[0],10))*12+(parseInt(t[1],10)-parseInt(p[1],10));
+    if(parseInt(t[2],10)<parseInt(p[2],10)) m--;
+    if(m<=0) return 'moins d\'un mois';
+    var y=Math.floor(m/12), r=m%12, o=[];
+    if(y) o.push(y+(y>1?' ans':' an'));
+    if(r) o.push(r+' mois');
+    return o.join(' et ');
+  } catch(e){ return ''; }
+}
+
 // ── Get today's date in French ──
 function certDateAujourdhui() {
   var now = getDjiboutiNow ? getDjiboutiNow() : new Date();
@@ -11831,6 +11977,7 @@ function certBuildDocumentHTML(snap) {
   var debutFmt = certFmtDate(snap.dateDebut);
   var empNom = snap.empNom || '';
   var empPoste = snap.empPoste || '';
+  var anc = certAnciennete(snap.dateDebut);
 
   var logoHTML = c.logo
     ? '<img src="'+c.logo+'" class="cert-doc-logo">'
@@ -11861,27 +12008,11 @@ function certBuildDocumentHTML(snap) {
     +'</div>'
     // Title
     +'<div class="cert-doc-title">Attestation de Travail</div>'
-    +'<div class="cert-doc-subtitle">— Document officiel —</div>'
-    // Body
+    +'<div class="cert-doc-subtitle">◆ ◆ ◆</div>'
     +'<div class="cert-doc-body">'
-    +'<p>Je soussigné(e), <span class="cert-doc-highlight">'+(dirName)+'</span>, '
-    +'agissant en qualité de <span class="cert-doc-highlight">'+(dirFunc)+'</span> '
-    +'au sein de <span class="cert-doc-highlight">'+entreprise+'</span>, '
-    +'atteste par la présente que :</p>'
-    +'<br>'
-    +'<p style="text-align:center;font-size:16px;font-weight:800;color:#1a3a6e;letter-spacing:0.03em;">'
-    +(empNom||'_______________')
-    +'</p>'
-    +'<br>'
-    +'<p>travaille actuellement au sein de notre entreprise en qualité de '
-    +'<span class="cert-doc-highlight">'+(empPoste||'_______________')+'</span>, '
-    +'depuis le <span class="cert-doc-highlight">'+(debutFmt||'_______________')+'</span>.</p>'
-    +'<br>'
-    +'<p>À ce jour, <strong>'+(empNom||'_______________')+'</strong> fait toujours partie de notre personnel.</p>'
-    +'<br>'
-    +'<p>La présente attestation est délivrée à l\'intéressé(e) pour servir et valoir ce que de droit.</p>'
-    +'<br>'
-    +'<p style="color:#555;font-size:12px;">Fait à <strong>'+ville+'</strong>, le <strong>'+dateAuj+'</strong>.</p>'
+    + certRenderBody(snap.bodyText != null ? snap.bodyText : (c.bodyTemplate || CERT_DEFAULT_TEXT), {
+        directeur:dirName, fonction:dirFunc, entreprise:entreprise, employe:empNom, poste:empPoste,
+        date_debut:debutFmt, anciennete:anc, ville:ville, date:dateAuj })
     +'</div>'
     // Footer / signature block — stamp centered over the director's name,
     // with the (drawn or uploaded) signature centered on top of the stamp.
@@ -11903,6 +12034,7 @@ function certBuildDocumentHTML(snap) {
 
 // ── Live preview (before generation — no reference number yet) ──
 window.certUpdatePreview = function() {
+  certSyncBodyEditor();
   var wrap = document.getElementById('certPreviewWrap');
   if(wrap){
     if(_certActive){
@@ -11912,7 +12044,7 @@ window.certUpdatePreview = function() {
       wrap.innerHTML = '<div class="cert-document"><div style="text-align:center;color:#aaa;padding:40px 0;font-size:13px;">Sélectionnez un employé puis cliquez sur Générer</div></div>';
     } else {
       var emp = certGetEmployee(_certSelectedEmpName);
-      wrap.innerHTML = certBuildDocumentHTML({ empNom: emp.nom, empPoste: emp.poste, dateDebut: emp.dateDebut, company: _certCompany });
+      wrap.innerHTML = certBuildDocumentHTML({ empNom: emp.nom, empPoste: emp.poste, dateDebut: emp.dateDebut, company: _certCompany, bodyText: certCurrentBodyText() });
     }
   }
   // Keep the compact preview on the Paramètres screen in sync too, so a stamp/signature
@@ -11927,7 +12059,7 @@ window.certUpdatePreview = function() {
 function certUpdateParamPreview() {
   var wrap = document.getElementById('certParamPreviewWrap');
   if(!wrap) return;
-  wrap.innerHTML = certBuildDocumentHTML({ company: _certCompany });
+  wrap.innerHTML = certBuildDocumentHTML({ company: _certCompany, bodyText: _certDraftText != null ? _certDraftText : undefined });
 }
 
 // ══════════════════════════════════════════════════════════════════════
@@ -12086,6 +12218,7 @@ window.certGenerer = function() {
       dateGeneration: now.getTime ? now.getTime() : Date.now(),
       dateGenFmt: certDateAujourdhui(),
       status: 'Généré',
+      bodyText: certCurrentBodyText(),
       // Frozen copy of company/signatory info at generation time (immutability)
       company: Object.assign({}, _certCompany)
     };
@@ -12125,8 +12258,14 @@ function certPrintCSS() {
     +'.cert-doc-sig-name{font-size:14px;font-weight:800;color:#1a1a2e;margin-top:2px}'
     +'.cert-doc-sig-func{font-size:12px;color:#555}'
     +'.cert-doc-sig-img{position:absolute;z-index:3;left:50%;top:46px;transform:translateX(-50%) rotate(-5deg);max-height:54px;max-width:150px;object-fit:contain;pointer-events:none}'
-    +'@page{size:A4;margin:20mm}'
-    +'@media print{body{margin:0;padding:0}.cert-document{padding:0}}';
+    +'.cert-document{border:3px double #1a3a6e;outline:1px solid #1a3a6e;outline-offset:-10px;padding:16mm 15mm;min-height:270mm}'
+    +'.cert-doc-header{flex-direction:column;align-items:center;text-align:center;gap:6px;border-bottom:none;padding-bottom:4px;margin-bottom:4px}'
+    +'.cert-doc-title{border-bottom:none;font-variant:small-caps;text-transform:none;letter-spacing:0.18em;margin-top:16px}'
+    +'.cert-doc-subtitle{color:#b08d3c;letter-spacing:0.4em}'
+    +'.cert-doc-body p{margin:0 0 8px;text-align:justify}'
+    +'.cert-doc-highlight{text-decoration:none}'
+    +'@page{size:A4;margin:10mm}'
+    +'@media print{body{margin:0;padding:0}}';
 }
 
 // ── Print (uses the active generated snapshot, or a saved history record) ──
@@ -12197,6 +12336,7 @@ window.certEnregistrer = function() {
     dateGeneration: snap.dateGeneration,
     dateGenFmt: snap.dateGenFmt,
     status: 'Généré',
+    bodyText: snap.bodyText != null ? snap.bodyText : certSavedDefaultText(),
     genereePar: currentUser ? (currentUser.name||currentUser.id) : 'Inconnu',
     genereeDate: Date.now()
   };
