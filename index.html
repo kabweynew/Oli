@@ -624,6 +624,19 @@
   }
   #truckPlate::placeholder, #editPlateInput::placeholder { color:rgba(0,0,0,0.35); -webkit-text-fill-color:rgba(0,0,0,0.35); font-size:22px; letter-spacing:0.04em; font-weight:800; }
   #truckPlate:focus, #editPlateInput:focus { border-color:#00B0FF; box-shadow:0 0 0 7px rgba(41,121,255,0.5); }
+  /* ── Formulaire Add Truck compact ── */
+  #modalTruck .modal { padding-top:12px; }
+  #modalTruck .modal-title { margin-bottom:8px; font-size:17px; }
+  #modalTruck .form-group { margin-bottom:8px; }
+  #modalTruck .form-label { margin-bottom:3px; font-size:11px; }
+  #modalTruck .form-input:not(#truckPlate), #modalTruck .form-select { padding:9px 10px; font-size:14px; }
+  #modalTruck #truckPlate { min-height:58px; font-size:28px; padding:10px; }
+  /* ── Add Truck : bas de formulaire fixe (cash + boutons) toujours visible, même clavier ouvert ── */
+  #modalTruck .modal { display:flex; flex-direction:column; overflow:hidden; padding-bottom:0; max-height:96%; }
+  #modalTruck .tm-body { flex:1; min-height:0; overflow-y:auto; padding-bottom:6px; }
+  #modalTruck .tm-foot { flex:none; padding:8px 0 calc(10px + env(safe-area-inset-bottom,0px)); border-top:1px solid var(--border); background:var(--bg2); }
+  #modalTruck .tm-foot #truckCollectedGroup { margin:0 0 8px; }
+  #modalTruck .tm-foot .modal-actions { margin-top:0; }
   .form-select {
     width: 100%;
     background: var(--bg3);
@@ -2831,10 +2844,11 @@
   <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-title" id="truckModalTitle">🚛 Add Truck</div>
+    <div class="tm-body">
     <div class="form-group">
       <label class="form-label">PLATE NUMBER</label>
       <div style="display:flex;gap:8px;">
-        <input class="form-input" id="truckPlate" placeholder="A 12345" autocomplete="off" oninput="plateAssist(event);checkDuplicate()" style="flex:1;min-width:0;">
+        <input class="form-input" id="truckPlate" placeholder="A 12345" autocomplete="off" inputmode="numeric" enterkeyhint="done" oninput="plateAssist(event);checkDuplicate()" onkeydown="if(event.key==='Enter'||event.keyCode===13){event.preventDefault();saveTruck();}" style="flex:1;min-width:0;">
         <button type="button" onclick="openScanPlate('truckPlate')" title="Scan plate with camera" style="flex-shrink:0;width:48px;background:var(--bg3);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--accent);font-size:19px;cursor:pointer;">📷</button>
       </div>
       <div class="dup-warning" id="dupWarning">⚠️ This plate may already be recorded today!</div>
@@ -2843,22 +2857,30 @@
         <img id="truckPlatePhotoImg" src="" style="max-width:100%;max-height:160px;border-radius:8px;border:1px solid var(--border);display:block;">
       </div>
     </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;" id="truckRow2">
     <div class="form-group">
-      <label class="form-label">DATE</label>
-      <input class="form-input" type="date" id="truckDate" onchange="checkDuplicate()">
+      <label class="form-label">DATE (automatic)</label>
+      <input type="hidden" id="truckDate">
+      <div style="background:var(--bg3);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:9px 10px;font-size:14px;font-weight:700;">📅 <span id="truckDateText">—</span></div>
+      <div id="truckDateHint" style="font-size:11px;margin-top:3px;"></div>
     </div>
     <div class="form-group" id="workerGroup">
       <label class="form-label">SEALER/label&gt;
       <select class="form-select" id="truckWorker"></select>
     </label></div>
+    </div>
     <div class="form-group" id="statusGroup">
       <label class="form-label">PAYMENT STATUS</label>
       <div class="radio-group" id="statusRadio"></div>
     </div>
+    <details id="truckMore"><summary style="cursor:pointer;font-size:12px;font-weight:700;color:var(--accent);padding:4px 0 8px;">＋ More options</summary>
     <div class="form-group">
       <label class="form-label">NOTES (optional)</label>
       <input class="form-input" id="truckNotes" placeholder="Optional notes...">
     </div>
+    </details>
+    </div>
+    <div class="tm-foot">
     <div class="form-group" id="truckCollectedGroup" style="display:flex;align-items:center;gap:10px;background:rgba(234,179,8,0.06);border:1px solid rgba(234,179,8,0.25);border-radius:10px;padding:10px 12px;">
       <input type="checkbox" id="truckCollectedCheck" style="width:20px;height:20px;flex-shrink:0;accent-color:#eab308;">
       <label for="truckCollectedCheck" style="font-size:13px;font-weight:600;color:#eab308;cursor:pointer;">💵 I already collected the cash for this truck</label>
@@ -2866,6 +2888,7 @@
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeModal('modalTruck')">Cancel</button>
       <button class="btn-primary" id="saveTruckBtn" onclick="saveTruck()">Save Truck</button>
+    </div>
     </div>
   </div>
 </div>
@@ -3421,18 +3444,11 @@ var rotationAnchors = {}; // { [workerName]: 'YYYY-MM-DD' } — admin-set manual
 
 // ── Work rotation: compute a sealer's next expected work day from their manual anchor date + the global gap ──
 function getNextWorkDay(worker) {
-  var anchor = rotationAnchors[worker];
-  var gap = parseInt(window.tariffs.rotationGapDays, 10) || 6;
-  if (!anchor) return null;
-  var anchorDate = new Date(anchor + 'T12:00:00');
-  if (isNaN(anchorDate.getTime())) return null;
-  var todayDate = new Date(getWorkingDate() + 'T12:00:00');
-  var next = new Date(anchorDate);
-  // Roll forward in gap-day jumps until we land on today or a future date
-  while (next < todayDate) {
-    next.setDate(next.getDate() + gap);
-  }
-  return next.toISOString().slice(0,10);
+  // Les travailleurs suivent le calendrier de l'entreprise (pas de date personnelle)
+  if (!_workCycle.anchor) return null;
+  var today = getWorkingDate(), info = wcInfo(today);
+  if (!info) return null;
+  return info.isWork ? today : info.next;
 }
 
 window.setRotationAnchor = function(worker, dateVal) {
@@ -3918,6 +3934,12 @@ function initFirebase() {
       if (currentTab === 'manage') renderManage();
     }
   }, () => { markSettingReady('headName'); });
+
+  window._unsubWorkCycle = onSnapshot(doc(db,'settings','workCycle'), snap => {
+    if (snap.exists()) { var d=snap.data(); _workCycle = { anchor:d.anchor||'' }; }
+    wcHint();
+    var mc=document.getElementById('manageContent'); if (mc && mc.offsetParent && !document.activeElement.closest?.('#manageContent')) { try{ renderManage(); }catch(e){} }
+  }, () => {});
 
   window._unsubSuspend = onSnapshot(doc(db,'settings','addingSuspended'), snap => {
     addingSuspended = snap.exists() ? snap.data().value === true : false;
@@ -4736,6 +4758,7 @@ function renderTrucks() {
           : '<button class="t-btn-assign claim-truck-btn" style="background:rgba(168,85,247,0.2);border-color:rgba(168,85,247,0.4);color:#c39bd3;" data-tid="'+tk._id+'" data-plate="'+tk.plate+'">🙋 Claim</button>';
       }
       if (!canAssignNow && role!=='worker') actionBtns = '<span style="font-size:10px;color:var(--text3)">Waiting…</span>';
+      if (role==='admin' || role==='head') actionBtns += '<button class="truck-action-btn danger" onclick="deleteTruck(\''+tk._id+'\')">🗑️ Delete</button>';
       return '<div class="pending-row">'
         +'<div style="flex:1">'
         +'<div class="pending-plate">'+tk.plate+'</div>'
@@ -4911,6 +4934,7 @@ window.openEditTruck = function(id) {
   document.getElementById('truckModalTitle').textContent = '✏️ Edit Truck';
   document.getElementById('truckPlate').value = truck.plate||'';
   document.getElementById('truckDate').value = truck.date||'';
+  wcHint();
   document.getElementById('truckNotes').value = truck.notes||'';
   const photoWrap = document.getElementById('truckPlatePhotoWrap');
   const photoImg = document.getElementById('truckPlatePhotoImg');
@@ -5005,7 +5029,8 @@ window.openAddTruck = function() {
   const photoImg = document.getElementById('truckPlatePhotoImg');
   if (photoWrap && photoImg) { photoImg.src = ''; photoWrap.style.display = 'none'; }
   var sb = document.getElementById('saveTruckBtn'); if (sb) { sb.disabled=false; sb.style.opacity=''; sb.style.cursor=''; sb.textContent='Save Truck'; }
-  document.getElementById('truckDate').value = document.getElementById('dateFilter').value;
+  document.getElementById('truckDate').value = getWorkingDate();
+  wcHint();
   document.getElementById('truckNotes').value = '';
   const ccCheck = document.getElementById('truckCollectedCheck');
   if (ccCheck) ccCheck.checked = false;
@@ -5088,9 +5113,101 @@ window.plateAssist = function(e) {
   }
 };
 
+// Après un choix du statut de paiement : le clavier revient sur la plaque (Entrée = enregistrer)
+document.addEventListener('click', function(e){
+  if(e.target.closest && e.target.closest('#statusRadio')){
+    setTimeout(function(){ var pl=document.getElementById('truckPlate'); if(pl && pl.offsetParent){ try{pl.focus({preventScroll:true});}catch(x){pl.focus();} } },0);
+  }
+});
+
+// ── Cycle de travail : jour confirmé + jours d'écart (gap) ──
+var _workCycle = { anchor:'' };
+var _wcEdit = false;
+function wcGapNow(){ return parseInt(window.tariffs && window.tariffs.rotationGapDays,10) || 6; }
+function wcMs(str){ var p=String(str||'').split('-'); return p.length===3 ? Date.UTC(+p[0],+p[1]-1,+p[2]) : NaN; }
+function wcStr(ms){ var d=new Date(ms); return d.getUTCFullYear()+'-'+String(d.getUTCMonth()+1).padStart(2,'0')+'-'+String(d.getUTCDate()).padStart(2,'0'); }
+function wcLabel(str){ var ms=wcMs(str); return isNaN(ms) ? '' : new Date(ms).toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',timeZone:'UTC'}); }
+function wcTodayStr(){ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function wcInfo(dateStr, anchor, gap){
+  anchor = anchor!==undefined ? anchor : _workCycle.anchor; gap = gap!==undefined ? gap : wcGapNow();
+  var a=wcMs(anchor), d=wcMs(dateStr), period=Math.max(1,parseInt(gap,10)||6);
+  if(isNaN(a)||isNaN(d)||period<1) return null;
+  var diff=Math.round((d-a)/86400000), mod=((diff%period)+period)%period;
+  var next = mod===0 ? d+period*86400000 : d+(period-mod)*86400000;
+  return { isWork: mod===0, next: wcStr(next) };
+}
+function wcUpcoming(anchor, gap, n){
+  var a=wcMs(anchor), period=Math.max(1,parseInt(gap,10)||6), t=wcMs(wcTodayStr()), out=[];
+  if(isNaN(a)) return out;
+  var k=Math.max(0, Math.ceil((t-a)/(period*86400000)));
+  for(var i=0;i<n;i++) out.push(wcStr(a+(k+i)*period*86400000));
+  return out;
+}
+window.wcHint = function(){
+  var el=document.getElementById('truckDateHint'), inp=document.getElementById('truckDate'), tx=document.getElementById('truckDateText');
+  if(tx) tx.textContent = inp && inp.value ? wcLabel(inp.value) : '—';
+  if(!el||!inp) return;
+  var info = inp.value ? wcInfo(inp.value) : null;
+  if(!info){ el.innerHTML=''; return; }
+  el.innerHTML = info.isWork ? '<span style="color:#22c55e;font-weight:700;">✅ Work day</span>' : '<span style="color:var(--text3);">Not a work day · next: '+wcLabel(info.next)+'</span>';
+};
+window.wcPreview = function(){
+  var a=document.getElementById('wcAnchor'), g=document.getElementById('wcGap'), box=document.getElementById('wcPreview');
+  if(!a||!g||!box) return;
+  var list = a.value ? wcUpcoming(a.value, g.value, 6) : [];
+  box.innerHTML = list.length ? list.map(function(d,i){ return '<span style="display:inline-block;margin:3px 4px 0 0;padding:4px 8px;border-radius:8px;background:'+(i===0?'rgba(34,197,94,0.18)':'var(--bg3)')+';font-size:12px;font-weight:700;">'+wcLabel(d)+'</span>'; }).join('') : '<span style="color:var(--text3);font-size:12px;">Pick a confirmed work day</span>';
+};
+window.wcToggleEdit = function(on){ _wcEdit = !!on; renderManage(); };
+window.wcSave = function(useToday){
+  if(!(currentUser && (currentUser.role==='admin'||currentUser.role==='head'))){ showToast('⛔ Admin / CEO only'); return; }
+  var a=document.getElementById('wcAnchor'), g=document.getElementById('wcGap');
+  if(useToday) a.value = wcTodayStr();
+  var gap=parseInt(g.value,10);
+  if(!a.value || isNaN(gap) || gap<1 || gap>60){ showToast('⚠️ Enter a work day and days between work days (1–60)'); return; }
+  window.tariffs.rotationGapDays = gap;
+  Promise.all([
+    setDoc(doc(db,'settings','workCycle'), { anchor:a.value, by:(currentUser.name||currentUser.id||''), ts:Date.now() }),
+    setDoc(doc(db,'settings','tariffs'), { rotationGapDays: gap }, { merge:true })
+  ]).then(function(){ showToast('✅ Work calendar saved'); })
+    .catch(function(e){ showToast('⚠️ Could not save: '+(e&&(e.code||e.message)||'error')); });
+  _workCycle.anchor = a.value; _wcEdit = false; renderManage();
+};
+function wcMonthRows(n){
+  var a=wcMs(_workCycle.anchor), period=wcGapNow(), p=period*86400000, now=new Date(), today=wcTodayStr(), rows=[];
+  if(isNaN(a)) return rows;
+  for(var i=0;i<n;i++){
+    var y=now.getFullYear(), m=now.getMonth()+i; var start=Date.UTC(y,m,1), end=Date.UTC(y,m+1,1);
+    var k=Math.ceil((start-a)/p), days=[];
+    for(var d=a+k*p; d<end; d+=p) days.push(wcStr(d));
+    rows.push({ name:new Date(start).toLocaleDateString('en-GB',{month:'long',year:'numeric',timeZone:'UTC'}), days:days });
+  }
+  return rows;
+}
+function wcCardHTML(){
+  var canEdit = currentUser && (currentUser.role==='admin'||currentUser.role==='head');
+  if(!canEdit) return '';
+  var head='<div><div class="manage-section-title">📅 WORK CALENDAR</div><div class="manage-card" style="padding:14px;">';
+  if(_wcEdit){
+    return head
+     +'<div style="display:grid;grid-template-columns:1.5fr 1fr;gap:8px;">'
+     +'<div><label class="form-label">CONFIRMED WORK DAY</label><input class="form-input" type="date" id="wcAnchor" value="'+(_workCycle.anchor||'')+'" oninput="wcPreview()"></div>'
+     +'<div><label class="form-label">DAYS BETWEEN WORK DAYS</label><input class="form-input" type="number" inputmode="numeric" min="1" max="60" id="wcGap" value="'+wcGapNow()+'" oninput="wcPreview()"></div></div>'
+     +'<div style="font-size:11px;color:var(--text3);margin-top:6px;">Sunday → next Saturday = 6. Everyone works only on the company’s work days.</div>'
+     +'<div style="margin-top:8px;font-size:11px;font-weight:700;color:var(--text3);">NEXT WORK DAYS</div><div id="wcPreview"></div>'
+     +'<div style="display:flex;gap:8px;margin-top:12px;"><button class="btn-secondary" style="flex:1" onclick="wcToggleEdit(false)">Cancel</button><button class="btn-secondary" style="flex:1" onclick="wcSave(true)">📍 Today</button><button class="btn-primary" style="flex:1" onclick="wcSave(false)">💾 Save</button></div>'
+     +'</div></div>';
+  }
+  var rows=wcMonthRows(4), today=wcTodayStr();
+  var body = rows.length ? rows.map(function(r){
+    return '<div style="padding:8px 0;border-bottom:1px solid var(--border);"><div style="display:flex;justify-content:space-between;align-items:center;"><b style="font-size:14px;">'+r.name+'</b><span style="background:rgba(34,197,94,0.18);color:#22c55e;font-weight:800;font-size:12px;padding:2px 10px;border-radius:10px;">'+r.days.length+' days</span></div>'
+      +'<div style="margin-top:4px;">'+r.days.map(function(d){ var cur=(d===today), past=(d<today); return '<span style="display:inline-block;margin:3px 4px 0 0;padding:3px 7px;border-radius:7px;font-size:12px;font-weight:700;background:'+(cur?'#22c55e':'var(--bg3)')+';color:'+(cur?'#fff':(past?'var(--text3)':'var(--text)'))+';">'+wcLabel(d)+'</span>'; }).join('')+'</div></div>';
+  }).join('') : '<div style="font-size:13px;color:var(--text3);">No work day confirmed yet.</div>';
+  return head+body+'<button class="btn-secondary" style="width:100%;margin-top:12px;" onclick="wcToggleEdit(true)">✏️ Edit calendar</button></div></div>';
+}
+
 window.saveTruck = function() {
   const plate = document.getElementById('truckPlate').value.trim().toUpperCase();
-  const date = document.getElementById('truckDate').value;
+  const date = editingTruckId ? document.getElementById('truckDate').value : getWorkingDate(); // automatique à l'ajout
   const savePerms = getUserPerms(currentUser.id);
   const isForemanAdding = currentUser.role === 'worker' && !!savePerms.canAddForOthers;
   const worker = (currentUser.role === 'worker' && !isForemanAdding)
@@ -5788,13 +5905,7 @@ function renderWorkers() {
             var nextDay = getNextWorkDay(w);
             var nextLabel = nextDay ? new Date(nextDay+'T12:00:00').toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'short'}) : 'Not set';
             var isDueToday = nextDay === getWorkingDate();
-            return `<div class="detail-row"><span class="detail-label">🔁 Next work day</span><span class="detail-val" style="color:${nextDay?(isDueToday?'var(--green)':'var(--text)'):'var(--text3)'}">${nextLabel}${isDueToday?' ✅':''}</span></div>`
-              + (role==='admin' ? `
-              <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
-                <input type="date" id="rotAnchor_${w}" value="${rotationAnchors[w]||''}" style="flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:12px;color:var(--text);font-family:inherit">
-                <button class="manage-btn" style="flex:none;padding:6px 10px" onclick="setRotationAnchor('${w}', document.getElementById('rotAnchor_${w}').value)">💾</button>
-                <button class="manage-btn" style="flex:none;padding:6px 10px" onclick="resetRotationAnchorToday('${w}')" title="Set anchor to today">📍 Today</button>
-              </div>` : '');
+            return `<div class="detail-row"><span class="detail-label">🔁 Next work day</span><span class="detail-val" style="color:${nextDay?(isDueToday?'var(--green)':'var(--text)'):'var(--text3)'}">${nextLabel}${isDueToday?' ✅':''}</span></div>`;
           })()}
           ${canIssueSeals ? `
           <div style="display:flex;gap:6px;margin-top:6px">
@@ -6184,7 +6295,7 @@ function renderManage() {
   const workers = getWorkerList();
   const isAdmin = currentUser && currentUser.role === 'admin';
 
-  container.innerHTML = `
+  container.innerHTML = wcCardHTML() + `
     <div>
       <div class="manage-section-title">👷 SEALERS</div>
       <div class="manage-card">
@@ -6369,7 +6480,6 @@ function renderManage() {
             row('agashETB',      '🏗️ Agash Rate — ETB',        T.agashETB,       'Agash rate per truck (ETB)'),
             row('agashFD',       '🏗️ Agash Rate — FD',         T.agashFD,        'Agash rate per truck (FD)'),
             row('collectThreshold', '💵 Cash Collection Alert', T.collectThreshold, 'Uncleared trucks before sealer is flagged'),
-            row('rotationGapDays', '🔁 Work Rotation Gap (days)', T.rotationGapDays, 'Days between a sealer\'s work days, e.g. Friday → next Thursday = 6'),
           ].join('');
         })()}
       </div>
@@ -6440,6 +6550,7 @@ ${isAdmin ? `
       </div>
     </div>
   `;
+  if (_wcEdit) setTimeout(wcPreview,0);
 }
 
 window.setLang = function(lang) {
@@ -6704,13 +6815,14 @@ function renderTruckList() {
     const dateLabel = isToday ? 'Today' : dateObj.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
     titleEl.textContent = '📋 ' + dateLabel.toUpperCase();
     workerFilterEl.innerHTML =
-      '<button class="filter-chip'+(listFilterWorker==='all'?' active':'')+'" onclick="setListWorkerFilter(\"all\",this)">👥 All ('+dayTrucks.length+')</button>' +
+      '<button class="filter-chip'+(listFilterWorker==='all'?' active':'')+'" data-w="all" onclick="setListWorkerFilter(this.dataset.w,this)">👥 All ('+dayTrucks.length+')</button>' +
       workers.map(function(w) {
         var wc = WORKER_COLORS[w]||'#6b7280';
         var wCount = dayTrucks.filter(function(t){ return t.worker===w; }).length;
         var active = listFilterWorker===w?' active':'';
         var activeBg = listFilterWorker===w ? 'background:'+wc+';border-color:'+wc+';color:#fff;' : 'border-color:'+wc+'44;';
-        return '<button class="filter-chip'+active+'" onclick="setListWorkerFilter(\"'+w+'\",this)" style="'+activeBg+'">'+
+        var wAttr = String(w).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+        return '<button class="filter-chip'+active+'" data-w="'+wAttr+'" onclick="setListWorkerFilter(this.dataset.w,this)" style="'+activeBg+'">'+
           '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:'+(listFilterWorker===w?'#fff':wc)+';margin-right:5px"></span>'+w+' ('+wCount+')</button>';
       }).join('');
   } else {
@@ -7027,8 +7139,15 @@ function uploadPendingPlatePhoto(targetId, plate) {
     });
 }
 
-window.openModal = function(id) { document.getElementById(id).classList.add('active'); }
-window.closeModal = function(id) { document.getElementById(id).classList.remove('active'); }
+// Le formulaire suit la zone visible (clavier ouvert) pour que le bas reste visible
+window.fitTruckModal = function(){
+  var o=document.getElementById('modalTruck'), vv=window.visualViewport;
+  if(!o||!vv||!o.classList.contains('active')) return;
+  o.style.top=vv.offsetTop+'px'; o.style.height=vv.height+'px'; o.style.bottom='auto';
+};
+if(window.visualViewport){ visualViewport.addEventListener('resize',fitTruckModal); visualViewport.addEventListener('scroll',fitTruckModal); }
+window.openModal = function(id) { document.getElementById(id).classList.add('active'); if(id==='modalTruck') setTimeout(fitTruckModal,0); }
+window.closeModal = function(id) { var el=document.getElementById(id); el.classList.remove('active'); if(id==='modalTruck'){ el.style.top=''; el.style.height=''; el.style.bottom=''; } }
 document.querySelectorAll('.modal-overlay').forEach(o=>{
   o.addEventListener('click', e=>{ if(e.target===o) o.classList.remove('active'); });
 });
@@ -11969,6 +12088,9 @@ function certNextRefNumber() {
 // live preview before generation, a lightweight object built from current selection.
 function certBuildDocumentHTML(snap) {
   var c = snap.company || _certCompany;
+  if (snap.company && (!c.logo || !c.cachet || !c.signature)) {
+    c = Object.assign({}, c, { logo: c.logo || _certCompany.logo, cachet: c.cachet || _certCompany.cachet, signature: c.signature || _certCompany.signature });
+  }
   var dirName = c.sigNom || c.dirNom || '_______________';
   var dirFunc = c.sigFonction || c.dirFonction || 'Directeur Général';
   var entreprise = c.nom || 'Notre Entreprise';
@@ -12340,11 +12462,25 @@ window.certEnregistrer = function() {
     genereePar: currentUser ? (currentUser.name||currentUser.id) : 'Inconnu',
     genereeDate: Date.now()
   };
+  // Nettoyage : Firestore refuse les valeurs "undefined"
+  try { record = JSON.parse(JSON.stringify(record)); } catch(e) {}
+  // Limite Firestore = 1 Mo par document : si les images (logo, cachet, signature) sont trop lourdes,
+  // on les retire de la copie sauvegardée (elles sont reprises depuis les paramètres à l'affichage).
+  try {
+    if (JSON.stringify(record).length > 800000 && record.company) {
+      record.company.logo = ''; record.company.cachet = ''; record.company.signature = '';
+      record.imagesOmitted = true;
+    }
+  } catch(e) {}
+  function fail(err){
+    console.error('certEnregistrer', err);
+    showToast('⚠️ Erreur d\'enregistrement' + (err && (err.code||err.message) ? ' : ' + String(err.code||err.message).slice(0,80) : ''));
+  }
   try {
     addDoc(collection(db, 'certificats'), record).then(function(){
       showToast('💾 Certificat '+snap.refNum+' enregistré dans l\'historique');
-    }).catch(function(){ showToast('⚠️ Erreur d\'enregistrement'); });
-  } catch(e) { showToast('⚠️ Erreur d\'enregistrement'); }
+    }).catch(fail);
+  } catch(e) { fail(e); }
 };
 
 // ── Save company settings ──
