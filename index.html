@@ -4559,14 +4559,20 @@ function renderTrucks() {
   allForDateUnfiltered.forEach((t,i) => { dayNumMap[t._id] = i+1; });
 
   // ── Build filtered list ──
-  let list = [...allForDateUnfiltered];
+  // Permission « See All Sealers' Trucks » : sans elle, un sealer ne voit que ses propres camions
+  const restrictedWorker = role==='worker' && !getUserPerms(id).seeAllTrucks;
+  const visibleBase = restrictedWorker ? allForDateUnfiltered.filter(t => t.worker === id) : allForDateUnfiltered;
+  if (restrictedWorker && filterWorker !== 'all') filterWorker = 'all';
+  const wBar = document.getElementById('workerFilterBar');
+  if (wBar) wBar.style.display = restrictedWorker ? 'none' : '';
+  let list = [...visibleBase];
 
   // Workers see ALL trucks on the trucks tab (numbering order)
   // Their own trucks are in "My List" tab
 
   // Status filter (also kept separately as `statusFiltered` so per-sealer
   // chip counts below can reflect "per person, per payment status")
-  let statusFiltered = [...allForDateUnfiltered];
+  let statusFiltered = [...visibleBase];
   if (filterStatus==='nosealer') {
     statusFiltered = statusFiltered.filter(t => !t.worker || t.status === 'pending');
   } else if (filterStatus!=='all') {
@@ -5177,7 +5183,7 @@ function wcMonthRows(n){
   if(isNaN(a)) return rows;
   for(var i=0;i<n;i++){
     var y=now.getFullYear(), m=now.getMonth()+i; var start=Date.UTC(y,m,1), end=Date.UTC(y,m+1,1);
-    var k=Math.ceil((start-a)/p), days=[];
+    var k=Math.max(0,Math.ceil((start-a)/p)), days=[]; // pas de jours avant le jour confirmé
     for(var d=a+k*p; d<end; d+=p) days.push(wcStr(d));
     rows.push({ name:new Date(start).toLocaleDateString('en-GB',{month:'long',year:'numeric',timeZone:'UTC'}), days:days });
   }
@@ -5199,7 +5205,7 @@ function wcCardHTML(){
   }
   var rows=wcMonthRows(4), today=wcTodayStr();
   var body = rows.length ? rows.map(function(r){
-    return '<div style="padding:8px 0;border-bottom:1px solid var(--border);"><div style="display:flex;justify-content:space-between;align-items:center;"><b style="font-size:14px;">'+r.name+'</b><span style="background:rgba(34,197,94,0.18);color:#22c55e;font-weight:800;font-size:12px;padding:2px 10px;border-radius:10px;">'+r.days.length+' days</span></div>'
+    return '<div style="padding:8px 0;border-bottom:1px solid var(--border);"><div style="display:flex;justify-content:space-between;align-items:center;"><b style="font-size:14px;">'+r.name+'</b><span style="background:rgba(34,197,94,0.18);color:#22c55e;font-weight:800;font-size:12px;padding:2px 10px;border-radius:10px;">'+r.days.length+' work days</span></div>'
       +'<div style="margin-top:4px;">'+r.days.map(function(d){ var cur=(d===today), past=(d<today); return '<span style="display:inline-block;margin:3px 4px 0 0;padding:3px 7px;border-radius:7px;font-size:12px;font-weight:700;background:'+(cur?'#22c55e':'var(--bg3)')+';color:'+(cur?'#fff':(past?'var(--text3)':'var(--text)'))+';">'+wcLabel(d)+'</span>'; }).join('')+'</div></div>';
   }).join('') : '<div style="font-size:13px;color:var(--text3);">No work day confirmed yet.</div>';
   return head+body+'<button class="btn-secondary" style="width:100%;margin-top:12px;" onclick="wcToggleEdit(true)">✏️ Edit calendar</button></div></div>';
