@@ -157,6 +157,7 @@
     display: flex; align-items: center; justify-content: center;
     font-size: 13px; font-weight: 700; color: #fff;
   }
+  .header-company { font-size: 10px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #60a5fa; line-height: 1.2; }
   .header-title { font-size: 15px; font-weight: 700; }
   .header-sub { font-size: 11px; color: var(--text2); }
   .header-right { display: flex; align-items: center; gap: 8px; }
@@ -1599,22 +1600,6 @@
   <button class="login-btn" style="justify-content:center;max-width:260px" onclick="switchCompany()">🏢 Switch company</button>
 </div>
 
-<div id="companyForm" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9999;align-items:center;justify-content:center;padding:24px">
-  <div style="background:var(--bg2,#1e293b);border-radius:16px;padding:20px;width:100%;max-width:340px;display:flex;flex-direction:column;gap:10px">
-    <div id="cfTitle" style="font-size:18px;font-weight:700">Add company</div>
-    <input id="cfName" placeholder="Company name" style="padding:12px;border-radius:10px;border:1px solid #475569;background:transparent;color:inherit;font-size:16px">
-    <input id="cfSub" placeholder="Subtitle (optional)" style="padding:12px;border-radius:10px;border:1px solid #475569;background:transparent;color:inherit;font-size:16px">
-    <div id="cfCodeLabel" style="font-size:12px;opacity:.7">Setup code</div>
-    <input id="cfCode" type="password" autocomplete="off" placeholder="Setup code" style="padding:12px;border-radius:10px;border:1px solid #475569;background:transparent;color:inherit;font-size:16px">
-    <input id="cfCode2" type="password" autocomplete="off" placeholder="Repeat setup code" style="display:none;padding:12px;border-radius:10px;border:1px solid #475569;background:transparent;color:inherit;font-size:16px">
-    <div id="cfMsg" style="color:#f87171;font-size:13px;min-height:16px"></div>
-    <div style="display:flex;gap:8px">
-      <button class="login-btn" style="flex:1;justify-content:center" onclick="closeCompanyForm()">Cancel</button>
-      <button class="login-btn" style="flex:1;justify-content:center" onclick="saveCompany()">Save</button>
-    </div>
-  </div>
-</div>
-
 <div id="loginScreen" class="screen">
   <canvas id="loginLogo" width="72" height="72" style="border-radius:20%;margin-bottom:12px;box-shadow:0 8px 32px rgba(0,0,0,0.5)"></canvas>
   <div class="login-title" id="loginTitle">WKABE</div>
@@ -1705,6 +1690,8 @@
     <div class="pin-dot filled" id="d1"></div>
     <div class="pin-dot filled" id="d2"></div>
     <div class="pin-dot filled" id="d3"></div>
+    <div class="pin-dot filled" id="d4"></div>
+    <div class="pin-dot filled" id="d5"></div>
   </div>
   <div class="pin-keypad">
     <button class="pin-key" onclick="pinKey('1')">1</button>
@@ -1716,7 +1703,7 @@
     <button class="pin-key" onclick="pinKey('7')">7</button>
     <button class="pin-key" onclick="pinKey('8')">8</button>
     <button class="pin-key" onclick="pinKey('9')">9</button>
-    <button class="pin-key back back-btn" onclick="goLogin()">← Back</button>
+    <button class="pin-key back back-btn" onclick="pinSubmit()">✔</button>
     <button class="pin-key" onclick="pinKey('0')">0</button>
     <button class="pin-key back" onclick="pinDel()">⌫</button>
   </div>
@@ -1728,8 +1715,9 @@
   <!-- HEADER -->
   <div class="app-header">
     <div class="header-left">
-      <div class="header-logo">HSK</div>
+      <div class="header-logo" id="headerLogo">HSK</div>
       <div>
+        <div class="header-company" id="headerCompany">WKABE</div>
         <div class="header-title" id="headerTitle">All Trucks</div>
         <div class="header-sub" id="headerSub">Admin — Full View</div>
       </div>
@@ -3313,7 +3301,7 @@ import {
   enableNetwork,
   collection as _collection, doc as _doc,
   setDoc, addDoc, getDoc, getDocs,
-  updateDoc, deleteDoc,
+  updateDoc, deleteDoc, deleteField,
   onSnapshot,
   query, orderBy,
   writeBatch
@@ -3340,8 +3328,8 @@ const LEGACY_COMPANY = 'haaa';   // keeps the ORIGINAL data paths
 const BUILTIN_COMPANIES = [{ id:'haaa', name:'WKABE', sub:'Hask Services — Djibouti' }];
 let COMPANY = null;
 try {
-  const j = JSON.parse(localStorage.getItem('hask_company_json') || 'null');
-  COMPANY = (j && j.id) ? j : (BUILTIN_COMPANIES.find(c => c.id === localStorage.getItem('hask_company')) || null);
+  const j = JSON.parse(sessionStorage.getItem('hask_company_json') || 'null');
+  COMPANY = (j && j.id) ? j : null;
 } catch(e) {}
 const IS_LEGACY = !COMPANY || COMPANY.id === LEGACY_COMPANY;
 function _scope(p) { return IS_LEGACY ? p : ['companies', COMPANY.id, ...p]; }
@@ -3350,12 +3338,7 @@ function doc(r, ...p) { return (r && r.type === 'firestore') ? _doc(r, ..._scope
 
 function mergeCompanies(extra) { const m = {}; BUILTIN_COMPANIES.concat(extra || []).forEach(c => { if (c && c.id) m[c.id] = c; }); return Object.values(m); }
 function cachedCompanies() { try { return mergeCompanies(JSON.parse(localStorage.getItem('hask_companies_cache') || '[]')); } catch(e) { return mergeCompanies([]); } }
-window.chooseCompany = function(id) {
-  const c = cachedCompanies().find(x => x.id === id); if (!c) return;
-  try { localStorage.setItem('hask_company_json', JSON.stringify(c)); localStorage.removeItem('hask_company'); } catch(e) {}
-  location.reload();
-};
-window.switchCompany = function() { try { localStorage.removeItem('hask_company_json'); localStorage.removeItem('hask_company'); } catch(e) {} location.reload(); };
+window.switchCompany = function() { try { sessionStorage.removeItem('hask_company_json'); sessionStorage.removeItem('hask_autologin'); } catch(e) {} location.reload(); };
 async function sha256(t) { const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)); return Array.from(new Uint8Array(b)).map(x => x.toString(16).padStart(2, '0')).join(''); }
 
 function renderCompanyList() {
@@ -3367,20 +3350,19 @@ function renderCompanyList() {
     const n = document.createElement('div'); n.className = 'role-name'; n.textContent = c.name;
     const l = document.createElement('div'); l.className = 'role-label'; l.textContent = c.sub || '';
     b.appendChild(n); b.appendChild(l); b.onclick = () => chooseCompany(c.id);
-    const e = document.createElement('button'); e.className = 'login-btn'; e.textContent = '✏️'; e.style.cssText = 'width:52px;flex:none';
-    e.onclick = () => openCompanyForm(c.id);
-    row.appendChild(b); row.appendChild(e); box.appendChild(row);
+    row.appendChild(b); box.appendChild(row);
   });
-  const add = document.createElement('button'); add.className = 'login-btn'; add.style.cssText = 'justify-content:center';
-  add.textContent = '＋ Add company'; add.onclick = () => openCompanyForm(null); box.appendChild(add);
 }
 function syncCompanyBranding() {
   if (!COMPANY) return;
   const c = cachedCompanies().find(x => x.id === COMPANY.id);
-  if (c && (c.name !== COMPANY.name || c.sub !== COMPANY.sub)) { COMPANY = c; try { localStorage.setItem('hask_company_json', JSON.stringify(c)); } catch(e) {} }
+  if (c && (c.name !== COMPANY.name || c.sub !== COMPANY.sub)) { COMPANY = c; try { sessionStorage.setItem('hask_company_json', JSON.stringify(c)); } catch(e) {} }
   const t = document.getElementById('loginTitle'), s2 = document.getElementById('loginSub');
   if (t) t.textContent = COMPANY.name; if (s2) s2.textContent = COMPANY.sub || '';
   document.title = COMPANY.name + ' — Truck Tracker';
+  const hc = document.getElementById('headerCompany'); if (hc) hc.textContent = COMPANY.name;
+  const hl = document.getElementById('headerLogo');
+  if (hl && COMPANY.id !== LEGACY_COMPANY) hl.textContent = COMPANY.name.replace(/[^A-Za-z0-9\u0600-\u06FF ]/g, '').split(/\s+/).map(w => w[0]).join('').slice(0, 3).toUpperCase() || COMPANY.name.slice(0, 3).toUpperCase();
 }
 async function loadCompanies() {
   try {
@@ -3583,7 +3565,7 @@ function getAllowedDates() {
 }
 
 // ── DEFAULT SETTINGS ──
-const DEFAULT_PINS = !IS_LEGACY ? {} : {
+const LEGACY_DEFAULT_PINS = {
   admin: '2055',
   head: '2013',
   cashier1: '7777',
@@ -3594,6 +3576,7 @@ const DEFAULT_PINS = !IS_LEGACY ? {} : {
   Omar: '4444',
   Radwan: '5555'
 };
+const DEFAULT_PINS = IS_LEGACY ? LEGACY_DEFAULT_PINS : {};
 const DEFAULT_WORKERS = IS_LEGACY ? ['Ahmed','Ilyas','Oli'] : [];
 const WORKER_COLORS = {
   Ahmed: '#3b82f6', Radwan: '#22c55e', Oli: '#f59e0b',
@@ -4283,57 +4266,87 @@ window.goPin = function(userId) {
 }
 
 let pinEntry = '';
+let _bad = 0, _lockUntil = 0, _checking = false;
+const _pinMsg = t => { const e = document.getElementById('pinError'); if (e) e.textContent = t; };
+function showLock() {
+  currentUser = null; pinEntry = ''; updatePinDots();
+  const av = document.getElementById('pinAvatar');
+  av.textContent = '🔒'; av.style.background = 'rgba(148,163,184,.15)'; av.style.color = '#94a3b8'; av.style.border = '2px solid rgba(148,163,184,.3)';
+  document.getElementById('pinName').textContent = COMPANY ? COMPANY.name : 'Enter your PIN';
+  document.getElementById('pinRole').textContent = 'Type your PIN (4 to 6 digits)';
+  _pinMsg('');
+  showScreen('pinScreen');
+  loadPinIndex();
+}
+let _pinIndex = [];
+async function loadPinIndex() {
+  try {
+    try { await loadCompanies(); } catch(e) {}
+    const all = [];
+    for (const c of cachedCompanies()) { const pins = await _companyPins(c); for (const u of Object.keys(pins)) all.push({ c, uid: u, pin: String(pins[u]) }); }
+    _pinIndex = all;
+  } catch(e) {}
+}
 window.pinKey = function(k) {
-  if (pinEntry.length >= 4) return;
-  pinEntry += k;
-  updatePinDots();
-  if (pinEntry.length === 4) setTimeout(checkPin, 100);
-}
-window.pinDel = function() { pinEntry = pinEntry.slice(0,-1); updatePinDots(); }
+  if (_checking || pinEntry.length >= 6) return;
+  pinEntry += k; updatePinDots();
+  if (pinEntry.length === 6) { setTimeout(submitPin, 100); return; }
+  if (pinEntry.length >= 4) {
+    // 4- and 5-digit PINs log in at once, unless a longer PIN starts with the same digits
+    const exact = _pinIndex.filter(x => x.pin === pinEntry);
+    const longer = _pinIndex.some(x => x.pin.length > pinEntry.length && x.pin.startsWith(pinEntry));
+    if (exact.length === 1 && !longer) setTimeout(submitPin, 150);
+  }
+};
+window.pinDel = function() { pinEntry = pinEntry.slice(0, -1); updatePinDots(); };
+window.pinSubmit = function() { if (pinEntry.length >= 4) submitPin(); else _pinMsg('PIN is at least 4 digits'); };
 function updatePinDots() {
-  for (let i=0;i<4;i++) {
-    document.getElementById('d'+i).className = 'pin-dot'+(i<pinEntry.length?' filled':'');
-  }
+  for (let i = 0; i < 6; i++) { const d = document.getElementById('d' + i); if (d) d.className = 'pin-dot' + (i < pinEntry.length ? ' filled' : ''); }
 }
-function checkPin() {
-  // If cloud PINs not yet loaded, wait briefly then fall back to defaults
-  if (Object.keys(_cloudPins).length === 0) {
-    document.getElementById('pinError').textContent = '⏳ Connecting…';
-    var savedEntry = pinEntry;
-    pinEntry=''; updatePinDots();
-    var retries = 0;
-    var wait = setInterval(function() {
-      retries++;
-      if (Object.keys(_cloudPins).length > 0 || retries > 6) {
-        clearInterval(wait);
-        if (Object.keys(_cloudPins).length === 0) {
-          // No connection — fall back to default PINs
-          document.getElementById('pinError').textContent = '⚠️ Offline — using default PIN';
-          setTimeout(function(){ document.getElementById('pinError').textContent=''; }, 2500);
-        } else {
-          document.getElementById('pinError').textContent = '';
-        }
-        // Re-attempt with whatever PINs we have (cloud or default)
-        pinEntry = savedEntry;
-        updatePinDots();
-        if (pinEntry === getPin(currentUser.id)) {
-          loginSuccess();
-        } else {
-          document.getElementById('pinError').textContent = '❌ Wrong PIN';
-          pinEntry=''; updatePinDots();
-          setTimeout(function(){ document.getElementById('pinError').textContent=''; }, 1500);
-        }
-      }
-    }, 400);
-    return;
-  }
-  if (pinEntry === getPin(currentUser.id)) {
+async function _companyPins(c) {
+  const legacy = c.id === LEGACY_COMPANY;
+  const base = legacy ? [] : ['companies', c.id];
+  let data = {}, workers = null;
+  try { const sn = await getDoc(_doc(db, ...base, 'settings', 'pins')); data = sn.exists() ? sn.data() : {}; } catch(e) {}
+  try { const w = await getDoc(_doc(db, ...base, 'settings', 'workers')); if (w.exists()) workers = w.data().list || []; } catch(e) {}
+  if (workers === null) workers = legacy ? ['Ahmed', 'Ilyas', 'Oli'] : [];
+  const valid = new Set(['admin', 'head', 'cashier1', 'cashier2'].concat(workers));
+  const merged = legacy ? Object.assign({}, LEGACY_DEFAULT_PINS, data) : data;
+  const out = {};
+  Object.keys(merged).forEach(u => { if (valid.has(u)) out[u] = merged[u]; });   // deleted workers' old PINs are ignored
+  return out;
+}
+function _waitWorkers() { return new Promise(res => { let n = 0; const iv = setInterval(() => { if (_cloudWorkers !== null || ++n > 40) { clearInterval(iv); res(); } }, 150); }); }
+async function submitPin() {
+  if (_checking) return;
+  const pin = pinEntry; pinEntry = ''; updatePinDots();
+  if (Date.now() < _lockUntil) return _pinMsg('🔒 Too many tries. Wait ' + Math.ceil((_lockUntil - Date.now()) / 1000) + 's');
+  _checking = true; _pinMsg('⏳ Checking…');
+  try {
+    try { await loadCompanies(); } catch(e) {}
+    const matches = [];
+    for (const c of cachedCompanies()) {
+      const pins = await _companyPins(c);
+      for (const uid of Object.keys(pins)) if (String(pins[uid]) === pin) matches.push({ c, uid });
+    }
+    if (matches.length === 0) {
+      _bad++; if (_bad >= 5) { _bad = 0; _lockUntil = Date.now() + 60000; _pinMsg('🔒 Too many tries. Wait 60s'); }
+      else _pinMsg('❌ Wrong PIN');
+      return;
+    }
+    if (matches.length > 1) return _pinMsg('⚠️ This PIN is used twice. Ask the owner for a new PIN.');
+    _bad = 0; _pinMsg('');
+    const { c, uid } = matches[0];
+    const cur = COMPANY ? COMPANY.id : LEGACY_COMPANY;
+    if (c.id !== cur || !COMPANY) {
+      try { sessionStorage.setItem('hask_company_json', JSON.stringify(c)); sessionStorage.setItem('hask_autologin', uid); } catch(e) {}
+      location.reload(); return;
+    }
+    currentUser = { id: uid };
+    await _waitWorkers();
     loginSuccess();
-  } else {
-    document.getElementById('pinError').textContent = '❌ Wrong PIN';
-    pinEntry=''; updatePinDots();
-    setTimeout(()=>document.getElementById('pinError').textContent='', 1500);
-  }
+  } catch(e) { _pinMsg('⚠️ Connection problem. Try again.'); }
+  finally { _checking = false; }
 }
 
 window.goLogin = function() {
@@ -4344,13 +4357,13 @@ window.goLogin = function() {
   });
   trucks = {}; advances = {}; deletedTrucks = {}; claims = {}; settlements = {};
   currentUser = null;
-  showScreen('loginScreen');
-  pinEntry='';
+  try { sessionStorage.removeItem('hask_company_json'); sessionStorage.removeItem('hask_autologin'); } catch(e) {}
+  location.reload();
 }
 
 function loginSuccess() {
   const id = currentUser ? currentUser.id : null;
-  if (!id) { showToast('⚠️ Login error. Please try again.'); showScreen('loginScreen'); return; }
+  if (!id) { showToast('⚠️ Login error. Please try again.'); showLock(); return; }
   const workers = getWorkerList();
 
   if (id === 'admin') {
@@ -4365,7 +4378,7 @@ function loginSuccess() {
     currentUser = {id, name:id, role:'worker', color:WORKER_COLORS[id]||'#6b7280'};
   } else {
     showToast('⚠️ User "' + id + '" not found. Contact Admin.');
-    showScreen('loginScreen');
+    showLock();
     return;
   }
   buildApp();
@@ -6933,6 +6946,12 @@ window.removeWorker = function(name) {
   if (!confirm(`Remove worker ${name}?`)) return;
   const workers = getWorkerList().filter(w=>w!==name);
   saveWorkerList(workers);
+  // Permanently remove this worker's PIN and permissions from Firestore too
+  try {
+    delete _cloudPins[name]; delete _cloudPerms[name];
+    setDoc(doc(db, 'settings', 'pins'), { [name]: deleteField() }, { merge: true }).catch(() => {});
+    setDoc(doc(db, 'settings', 'perms'), { [name]: deleteField() }, { merge: true }).catch(() => {});
+  } catch(e) {}
   buildWorkerFilterBar();
   renderManage();
   renderWorkers();
@@ -9286,7 +9305,7 @@ window.addEventListener('beforeinstallprompt', function(e) {
   setTimeout(function() {
     if (!sessionStorage.getItem('pwa-dismissed')) {
       const banner = document.getElementById('pwaInstallBanner');
-      const onLogin = document.getElementById('loginScreen').classList.contains('active');
+      const onLogin = document.getElementById('pinScreen').classList.contains('active');
       if (onLogin) banner.classList.add('on-login');
       else banner.classList.remove('on-login');
       banner.classList.remove('hidden');
@@ -12760,7 +12779,11 @@ window.certImprimerHistorique = function(id) {
 
 buildLogin();
 renderCompanyList(); syncCompanyBranding(); loadCompanies(); watchCompanyStatus();
-showScreen(COMPANY ? 'loginScreen' : 'companyScreen');
+(function() {
+  let al = null; try { al = sessionStorage.getItem('hask_autologin'); sessionStorage.removeItem('hask_autologin'); } catch(e) {}
+  if (al && COMPANY) { showLock(); currentUser = { id: al }; _waitWorkers().then(loginSuccess); }
+  else showLock();
+})();
 initIcons();
 showSplash();
 // Signal that module is fully loaded — stubs will now hand off to real functions
