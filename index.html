@@ -1586,10 +1586,40 @@
 <!-- SPLASH SCREEN -->
 
 
+<div id="companyScreen" class="screen" style="align-items:center;justify-content:center;padding:24px;text-align:center">
+  <div class="login-title">Choose company</div>
+  <div class="login-sub">Select where you work</div>
+  <div id="companyList" style="display:flex;flex-direction:column;gap:12px;width:100%;max-width:340px"></div>
+</div>
+
+<div id="suspendedOverlay" style="display:none;position:fixed;inset:0;background:#0f172a;z-index:99999;align-items:center;justify-content:center;flex-direction:column;gap:16px;padding:32px;text-align:center">
+  <div style="font-size:48px">🚫</div>
+  <div style="font-size:20px;font-weight:700">Account suspended</div>
+  <div id="suspendedMsg" style="opacity:.8;font-size:15px"></div>
+  <button class="login-btn" style="justify-content:center;max-width:260px" onclick="switchCompany()">🏢 Switch company</button>
+</div>
+
+<div id="companyForm" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9999;align-items:center;justify-content:center;padding:24px">
+  <div style="background:var(--bg2,#1e293b);border-radius:16px;padding:20px;width:100%;max-width:340px;display:flex;flex-direction:column;gap:10px">
+    <div id="cfTitle" style="font-size:18px;font-weight:700">Add company</div>
+    <input id="cfName" placeholder="Company name" style="padding:12px;border-radius:10px;border:1px solid #475569;background:transparent;color:inherit;font-size:16px">
+    <input id="cfSub" placeholder="Subtitle (optional)" style="padding:12px;border-radius:10px;border:1px solid #475569;background:transparent;color:inherit;font-size:16px">
+    <div id="cfCodeLabel" style="font-size:12px;opacity:.7">Setup code</div>
+    <input id="cfCode" type="password" autocomplete="off" placeholder="Setup code" style="padding:12px;border-radius:10px;border:1px solid #475569;background:transparent;color:inherit;font-size:16px">
+    <input id="cfCode2" type="password" autocomplete="off" placeholder="Repeat setup code" style="display:none;padding:12px;border-radius:10px;border:1px solid #475569;background:transparent;color:inherit;font-size:16px">
+    <div id="cfMsg" style="color:#f87171;font-size:13px;min-height:16px"></div>
+    <div style="display:flex;gap:8px">
+      <button class="login-btn" style="flex:1;justify-content:center" onclick="closeCompanyForm()">Cancel</button>
+      <button class="login-btn" style="flex:1;justify-content:center" onclick="saveCompany()">Save</button>
+    </div>
+  </div>
+</div>
+
 <div id="loginScreen" class="screen">
   <canvas id="loginLogo" width="72" height="72" style="border-radius:20%;margin-bottom:12px;box-shadow:0 8px 32px rgba(0,0,0,0.5)"></canvas>
-  <div class="login-title">WKABE</div>
-  <div class="login-sub">Hask Services — Djibouti</div>
+  <div class="login-title" id="loginTitle">WKABE</div>
+  <div class="login-sub" id="loginSub">Hask Services — Djibouti</div>
+  <div onclick="switchCompany()" style="color:var(--text2);font-size:12px;margin-bottom:16px;cursor:pointer;text-decoration:underline">🏢 Switch company</div>
   <div class="login-grid" id="loginGrid">
     <button class="login-btn admin-btn" onclick="goPin('admin')">
       
@@ -3281,7 +3311,7 @@ import {
   persistentLocalCache,
   persistentSingleTabManager,
   enableNetwork,
-  collection, doc,
+  collection as _collection, doc as _doc,
   setDoc, addDoc, getDoc, getDocs,
   updateDoc, deleteDoc,
   onSnapshot,
@@ -3301,6 +3331,137 @@ const firebaseConfig = {
   messagingSenderId: "172639268578",
   appId: "1:172639268578:web:ab7b25bab6bca71e33b8bb",
   measurementId: "G-T69FLVPZPY"
+};
+
+// ── MULTI-COMPANY ──
+// Companies are managed inside the app (picker screen -> "+ Add company"), protected by a setup code
+// that the owner creates on first use. Only a salted SHA-256 hash is stored in Firestore (appConfig/setup).
+const LEGACY_COMPANY = 'haaa';   // keeps the ORIGINAL data paths
+const BUILTIN_COMPANIES = [{ id:'haaa', name:'WKABE', sub:'Hask Services — Djibouti' }];
+let COMPANY = null;
+try {
+  const j = JSON.parse(localStorage.getItem('hask_company_json') || 'null');
+  COMPANY = (j && j.id) ? j : (BUILTIN_COMPANIES.find(c => c.id === localStorage.getItem('hask_company')) || null);
+} catch(e) {}
+const IS_LEGACY = !COMPANY || COMPANY.id === LEGACY_COMPANY;
+function _scope(p) { return IS_LEGACY ? p : ['companies', COMPANY.id, ...p]; }
+function collection(r, ...p) { return (r && r.type === 'firestore') ? _collection(r, ..._scope(p)) : _collection(r, ...p); }
+function doc(r, ...p) { return (r && r.type === 'firestore') ? _doc(r, ..._scope(p)) : _doc(r, ...p); }
+
+function mergeCompanies(extra) { const m = {}; BUILTIN_COMPANIES.concat(extra || []).forEach(c => { if (c && c.id) m[c.id] = c; }); return Object.values(m); }
+function cachedCompanies() { try { return mergeCompanies(JSON.parse(localStorage.getItem('hask_companies_cache') || '[]')); } catch(e) { return mergeCompanies([]); } }
+window.chooseCompany = function(id) {
+  const c = cachedCompanies().find(x => x.id === id); if (!c) return;
+  try { localStorage.setItem('hask_company_json', JSON.stringify(c)); localStorage.removeItem('hask_company'); } catch(e) {}
+  location.reload();
+};
+window.switchCompany = function() { try { localStorage.removeItem('hask_company_json'); localStorage.removeItem('hask_company'); } catch(e) {} location.reload(); };
+async function sha256(t) { const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)); return Array.from(new Uint8Array(b)).map(x => x.toString(16).padStart(2, '0')).join(''); }
+
+function renderCompanyList() {
+  const box = document.getElementById('companyList'); if (!box) return;
+  box.innerHTML = '';
+  cachedCompanies().forEach(c => {
+    const row = document.createElement('div'); row.style.cssText = 'display:flex;gap:8px';
+    const b = document.createElement('button'); b.className = 'login-btn'; b.style.flex = '1';
+    const n = document.createElement('div'); n.className = 'role-name'; n.textContent = c.name;
+    const l = document.createElement('div'); l.className = 'role-label'; l.textContent = c.sub || '';
+    b.appendChild(n); b.appendChild(l); b.onclick = () => chooseCompany(c.id);
+    const e = document.createElement('button'); e.className = 'login-btn'; e.textContent = '✏️'; e.style.cssText = 'width:52px;flex:none';
+    e.onclick = () => openCompanyForm(c.id);
+    row.appendChild(b); row.appendChild(e); box.appendChild(row);
+  });
+  const add = document.createElement('button'); add.className = 'login-btn'; add.style.cssText = 'justify-content:center';
+  add.textContent = '＋ Add company'; add.onclick = () => openCompanyForm(null); box.appendChild(add);
+}
+function syncCompanyBranding() {
+  if (!COMPANY) return;
+  const c = cachedCompanies().find(x => x.id === COMPANY.id);
+  if (c && (c.name !== COMPANY.name || c.sub !== COMPANY.sub)) { COMPANY = c; try { localStorage.setItem('hask_company_json', JSON.stringify(c)); } catch(e) {} }
+  const t = document.getElementById('loginTitle'), s2 = document.getElementById('loginSub');
+  if (t) t.textContent = COMPANY.name; if (s2) s2.textContent = COMPANY.sub || '';
+  document.title = COMPANY.name + ' — Truck Tracker';
+}
+async function loadCompanies() {
+  try {
+    const s = await getDoc(_doc(db, 'appConfig', 'companies'));
+    localStorage.setItem('hask_companies_cache', JSON.stringify(s.exists() ? (s.data().list || []) : []));
+  } catch(e) {}
+  renderCompanyList(); syncCompanyBranding();
+}
+
+// ── OWNER CONSOLE HOOKS (presence, error log, company suspension) ──
+const SESSION_ID = Math.random().toString(36).slice(2) + Date.now().toString(36);
+const _cid = () => COMPANY ? COMPANY.id : LEGACY_COMPANY;
+const _cname = () => COMPANY ? COMPANY.name : 'WKABE';
+let _hbTimer = null;
+function beat() {
+  try {
+    if (!currentUser) return;
+    setDoc(_doc(db, 'presence', SESSION_ID), { company: _cid(), companyName: _cname(), user: currentUser.name || currentUser.id, role: currentUser.role, device: ((navigator.userAgent.match(/\(([^)]+)\)/) || [])[1] || '').slice(0, 60), lastSeen: Date.now(), online: true }).catch(() => {});
+  } catch(e) {}
+}
+window.startPresence = function() { beat(); clearInterval(_hbTimer); _hbTimer = setInterval(beat, 60000); };
+window.stopPresence = function() {
+  clearInterval(_hbTimer);
+  try { setDoc(_doc(db, 'presence', SESSION_ID), { online: false, lastSeen: Date.now(), company: _cid() }, { merge: true }).catch(() => {}); } catch(e) {}
+};
+let _errN = 0, _errLast = 0;
+function logErr(msg, src) {
+  const n = Date.now(); if (_errN >= 20 || n - _errLast < 5000) return; _errN++; _errLast = n;
+  try { setDoc(_doc(db, 'errorLogs', SESSION_ID + '_' + _errN), { company: _cid(), companyName: _cname(), user: currentUser ? (currentUser.name || currentUser.id) : '(not logged in)', msg: String(msg).slice(0, 300), src: String(src || '').slice(0, 120), ts: n }).catch(() => {}); } catch(e) {}
+}
+window.addEventListener('error', e => logErr(e.message, (e.filename || '').split('/').pop() + ':' + (e.lineno || '')));
+window.addEventListener('unhandledrejection', e => logErr((e.reason && (e.reason.message || e.reason)) || 'rejection', 'promise'));
+function applyCompanyStatus(data) {
+  const ov = document.getElementById('suspendedOverlay'); if (!ov || !COMPANY) return;
+  const st = data && data[COMPANY.id];
+  if (st && st.suspended) { document.getElementById('suspendedMsg').textContent = st.message || 'This company account is suspended. Contact the administrator.'; ov.style.display = 'flex'; }
+  else ov.style.display = 'none';
+}
+function watchCompanyStatus() { try { onSnapshot(_doc(db, 'appConfig', 'companyStatus'), x => applyCompanyStatus(x.exists() ? x.data() : {}), () => {}); } catch(e) {} }
+
+window.openCompanyForm = async function(editId) {
+  window._cfEditId = editId;
+  const c = editId ? cachedCompanies().find(x => x.id === editId) : null;
+  document.getElementById('cfName').value = c ? c.name : '';
+  document.getElementById('cfSub').value = c ? (c.sub || '') : '';
+  document.getElementById('cfCode').value = ''; document.getElementById('cfCode2').value = '';
+  document.getElementById('cfMsg').textContent = '';
+  document.getElementById('cfTitle').textContent = editId ? 'Rename company' : 'Add company';
+  document.getElementById('companyForm').style.display = 'flex';
+  let first = false;
+  try { first = !(await getDoc(_doc(db, 'appConfig', 'setup'))).exists(); } catch(e) {}
+  window._cfFirst = first;
+  document.getElementById('cfCode2').style.display = first ? 'block' : 'none';
+  document.getElementById('cfCodeLabel').textContent = first ? 'Create your private setup code (keep it secret, min 4 characters)' : 'Setup code';
+};
+window.closeCompanyForm = function() { document.getElementById('companyForm').style.display = 'none'; };
+window.saveCompany = async function() {
+  const msg = t => { document.getElementById('cfMsg').textContent = t; };
+  const code = document.getElementById('cfCode').value.trim();
+  const name = document.getElementById('cfName').value.trim();
+  const sub = document.getElementById('cfSub').value.trim();
+  if (!name) return msg('Enter a company name');
+  if (code.length < 4) return msg('Code must be at least 4 characters');
+  try {
+    const sref = _doc(db, 'appConfig', 'setup'); const ss = await getDoc(sref);
+    if (!ss.exists()) {
+      if (code !== document.getElementById('cfCode2').value.trim()) return msg('Codes do not match');
+      const salt = crypto.randomUUID(); await setDoc(sref, { salt, hash: await sha256(salt + code) });
+    } else {
+      const d = ss.data(); if (await sha256(d.salt + code) !== d.hash) return msg('Wrong setup code');
+    }
+    const cref = _doc(db, 'appConfig', 'companies'); const cs = await getDoc(cref);
+    const list = cs.exists() ? (cs.data().list || []) : [];
+    let id = window._cfEditId;
+    if (id) { const item = { id, name, sub }; const i = list.findIndex(c => c.id === id); if (i >= 0) list[i] = item; else list.push(item); }
+    else { id = (name.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 12) || 'co') + Math.random().toString(36).slice(2, 6); list.push({ id, name, sub }); }
+    await setDoc(cref, { list });
+    localStorage.setItem('hask_companies_cache', JSON.stringify(list));
+    closeCompanyForm(); renderCompanyList(); syncCompanyBranding();
+    showToast('✅ Company saved');
+  } catch(e) { msg('Could not save: ' + (e.code || e.message)); }
 };
 
 const app = initializeApp(firebaseConfig);
@@ -3422,7 +3583,7 @@ function getAllowedDates() {
 }
 
 // ── DEFAULT SETTINGS ──
-const DEFAULT_PINS = {
+const DEFAULT_PINS = !IS_LEGACY ? {} : {
   admin: '2055',
   head: '2013',
   cashier1: '7777',
@@ -3433,7 +3594,7 @@ const DEFAULT_PINS = {
   Omar: '4444',
   Radwan: '5555'
 };
-const DEFAULT_WORKERS = ['Ahmed','Ilyas','Oli'];
+const DEFAULT_WORKERS = IS_LEGACY ? ['Ahmed','Ilyas','Oli'] : [];
 const WORKER_COLORS = {
   Ahmed: '#3b82f6', Radwan: '#22c55e', Oli: '#f59e0b',
   Ali: '#ef4444', Omar: '#a855f7'
@@ -4176,6 +4337,7 @@ function checkPin() {
 }
 
 window.goLogin = function() {
+  try { stopPresence(); } catch(e) {}
   if (window._unsubCert) { try { window._unsubCert(); } catch(e){} window._unsubCert = null; }
   ['_unsubTrucks','_unsubAdvances','_unsubDeleted','_unsubSuspend','_unsubPins','_unsubPerms','_unsubWorkers','_unsubHead','_unsubClaims','_unsubSettlements','_unsubTariffs','_unsubDeductions','_unsubKabIncoming','_unsubNotifs','_unsubPastPay','_unsubSealIssuances'].forEach(function(k){
     try { if (window[k]) { window[k](); window[k]=null; } } catch(e) {}
@@ -4209,6 +4371,7 @@ function loginSuccess() {
   buildApp();
   initFirebase();
   showScreen('appScreen');
+  startPresence();
 }
 
 // ── BUILD APP ──
@@ -7136,7 +7299,7 @@ function uploadPendingPlatePhoto(targetId, plate) {
   var blob = pendingPlatePhotos[targetId];
   if (!blob) return Promise.resolve(null);
   delete pendingPlatePhotos[targetId];
-  var path = 'plate-photos/' + (plate || 'unknown') + '_' + Date.now() + '.jpg';
+  var path = (IS_LEGACY ? '' : 'companies/' + COMPANY.id + '/') + 'plate-photos/' + (plate || 'unknown') + '_' + Date.now() + '.jpg';
   return uploadBytes(storageRef(storage, path), blob)
     .then(function(snap) { return getDownloadURL(snap.ref); })
     .catch(function(err) {
@@ -12596,7 +12759,8 @@ window.certImprimerHistorique = function(id) {
 // ══════════════════════════════════════════════════════════════════════
 
 buildLogin();
-showScreen('loginScreen');
+renderCompanyList(); syncCompanyBranding(); loadCompanies(); watchCompanyStatus();
+showScreen(COMPANY ? 'loginScreen' : 'companyScreen');
 initIcons();
 showSplash();
 // Signal that module is fully loaded — stubs will now hand off to real functions
