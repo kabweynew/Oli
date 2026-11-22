@@ -157,6 +157,11 @@
     display: flex; align-items: center; justify-content: center;
     font-size: 13px; font-weight: 700; color: #fff;
   }
+  .pin-dot.ok { background: #22c55e !important; border-color: #22c55e !important; animation: pinpulse 0.9s ease-in-out infinite; }
+  .pin-dot.ok:nth-child(2) { animation-delay: .1s; } .pin-dot.ok:nth-child(3) { animation-delay: .2s; } .pin-dot.ok:nth-child(4) { animation-delay: .3s; } .pin-dot.ok:nth-child(5) { animation-delay: .4s; } .pin-dot.ok:nth-child(6) { animation-delay: .5s; }
+  @keyframes pinpulse { 0%,100% { opacity: .45; transform: scale(1); } 50% { opacity: 1; transform: scale(1.25); } }
+  .pin-spin { display: inline-block; width: 12px; height: 12px; border: 2px solid rgba(34,197,94,.3); border-top-color: #22c55e; border-radius: 50%; animation: pinspin .7s linear infinite; vertical-align: -2px; margin-right: 6px; }
+  @keyframes pinspin { to { transform: rotate(360deg); } }
   .header-company { font-size: 10px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #60a5fa; line-height: 1.2; }
   .header-title { font-size: 15px; font-weight: 700; }
   .header-sub { font-size: 11px; color: var(--text2); }
@@ -4267,7 +4272,14 @@ window.goPin = function(userId) {
 
 let pinEntry = '';
 let _bad = 0, _lockUntil = 0, _checking = false;
-const _pinMsg = t => { const e = document.getElementById('pinError'); if (e) e.textContent = t; };
+const _pinMsg = (t, loading) => {
+  const e = document.getElementById('pinError'); if (!e) return;
+  if (loading) { e.style.color = '#22c55e'; e.innerHTML = '<span class="pin-spin"></span>' + t; }
+  else { e.style.color = ''; e.textContent = t; }
+};
+function _pinDotsLoading(on) {
+  for (let i = 0; i < 6; i++) { const d = document.getElementById('d' + i); if (d) d.className = on ? 'pin-dot filled ok' : 'pin-dot' + (i < pinEntry.length ? ' filled' : ''); }
+}
 function showLock() {
   currentUser = null; pinEntry = ''; updatePinDots();
   const av = document.getElementById('pinAvatar');
@@ -4321,7 +4333,7 @@ async function submitPin() {
   if (_checking) return;
   const pin = pinEntry; pinEntry = ''; updatePinDots();
   if (Date.now() < _lockUntil) return _pinMsg('🔒 Too many tries. Wait ' + Math.ceil((_lockUntil - Date.now()) / 1000) + 's');
-  _checking = true; _pinMsg('⏳ Checking…');
+  _checking = true; _pinDotsLoading(true); _pinMsg('Checking…', true);
   try {
     try { await loadCompanies(); } catch(e) {}
     const matches = [];
@@ -4335,7 +4347,7 @@ async function submitPin() {
       return;
     }
     if (matches.length > 1) return _pinMsg('⚠️ This PIN is used twice. Ask the owner for a new PIN.');
-    _bad = 0; _pinMsg('');
+    _bad = 0; _pinMsg('Opening your account…', true);
     const { c, uid } = matches[0];
     const cur = COMPANY ? COMPANY.id : LEGACY_COMPANY;
     if (c.id !== cur || !COMPANY) {
@@ -4346,7 +4358,7 @@ async function submitPin() {
     await _waitWorkers();
     loginSuccess();
   } catch(e) { _pinMsg('⚠️ Connection problem. Try again.'); }
-  finally { _checking = false; }
+  finally { _checking = false; if (!document.getElementById('pinError').querySelector('.pin-spin')) updatePinDots(); }
 }
 
 window.goLogin = function() {
@@ -12781,7 +12793,7 @@ buildLogin();
 renderCompanyList(); syncCompanyBranding(); loadCompanies(); watchCompanyStatus();
 (function() {
   let al = null; try { al = sessionStorage.getItem('hask_autologin'); sessionStorage.removeItem('hask_autologin'); } catch(e) {}
-  if (al && COMPANY) { showLock(); currentUser = { id: al }; _waitWorkers().then(loginSuccess); }
+  if (al && COMPANY) { showLock(); currentUser = { id: al }; _pinDotsLoading(true); _pinMsg('Opening your account…', true); _waitWorkers().then(loginSuccess); }
   else showLock();
 })();
 initIcons();
