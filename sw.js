@@ -1,39 +1,27 @@
-const CACHE_NAME = 'wkabe-v1';
-const ASSETS = [
-  '/Oli/',
-  '/Oli/index.html',
-  '/Oli/manifest.json'
-];
+const CACHE = 'wkabe-v1';
 
-self.addEventListener('install', function(e) {
-  e.waitUntil(
-    caches.open(CACHE_NAME).then(function(cache) {
-      return cache.addAll(ASSETS);
-    })
-  );
+self.addEventListener('install', (e) => {
   self.skipWaiting();
+  e.waitUntil(caches.open(CACHE).then((c) => c.add('./')).catch(() => {}));
 });
 
-self.addEventListener('activate', function(e) {
+self.addEventListener('activate', (e) => {
   e.waitUntil(
-    caches.keys().then(function(keys) {
-      return Promise.all(
-        keys.filter(function(key) { return key !== CACHE_NAME; })
-            .map(function(key) { return caches.delete(key); })
-      );
-    })
+    caches.keys()
+      .then((keys) => Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k))))
+      .then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
-self.addEventListener('fetch', function(e) {
-  // Network first for Firebase requests, cache first for everything else
-  if (e.request.url.includes('firebase') || e.request.url.includes('googleapis')) {
-    return;
+// Network-first for the app page, cached copy when offline.
+self.addEventListener('fetch', (e) => {
+  const req = e.request;
+  if (req.method !== 'GET' || new URL(req.url).origin !== location.origin) return;
+  if (req.mode === 'navigate') {
+    e.respondWith(
+      fetch(req)
+        .then((res) => { const copy = res.clone(); caches.open(CACHE).then((c) => c.put(req, copy)); return res; })
+        .catch(() => caches.match(req).then((r) => r || caches.match('./')))
+    );
   }
-  e.respondWith(
-    fetch(e.request).catch(function() {
-      return caches.match(e.request);
-    })
-  );
 });
