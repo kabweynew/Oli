@@ -8,10 +8,69 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="WKABE">
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icon-192.png">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+<script>
+/* PWA bootstrap: runs first so the install event is never missed */
+(function () {
+  window.__bip = null;
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault();
+    window.__bip = e;
+    if (typeof window.__onBIP === 'function') window.__onBIP(e);
+  });
+
+  function icon(size, full) {
+    var c = document.createElement('canvas'); c.width = c.height = size;
+    var x = c.getContext('2d');
+    var g = x.createLinearGradient(0, 0, size, size);
+    g.addColorStop(0, '#3b82f6'); g.addColorStop(1, '#a855f7');
+    x.fillStyle = g;
+    if (full) { x.fillRect(0, 0, size, size); }
+    else {
+      var r = size * 0.2;
+      x.beginPath(); x.moveTo(r, 0); x.lineTo(size - r, 0);
+      x.quadraticCurveTo(size, 0, size, r); x.lineTo(size, size - r);
+      x.quadraticCurveTo(size, size, size - r, size); x.lineTo(r, size);
+      x.quadraticCurveTo(0, size, 0, size - r); x.lineTo(0, r);
+      x.quadraticCurveTo(0, 0, r, 0); x.fill();
+    }
+    x.fillStyle = '#fff';
+    x.font = 'bold ' + (size * (full ? 0.28 : 0.35)) + 'px sans-serif';
+    x.textAlign = 'center'; x.textBaseline = 'middle';
+    x.fillText('HSK', size / 2, size / 2);
+    return c.toDataURL('image/png');
+  }
+
+  function addLink(rel, href, extra) {
+    var l = document.createElement('link'); l.rel = rel; l.href = href;
+    if (extra) for (var k in extra) l.setAttribute(k, extra[k]);
+    document.head.appendChild(l);
+  }
+
+  try {
+    var base = location.href.split('#')[0].split('?')[0];
+    var dir = base.substring(0, base.lastIndexOf('/') + 1);
+    var i192 = icon(192, false), i512 = icon(512, false), iMask = icon(512, true);
+    var manifest = {
+      name: 'WKABE \u2014 Hask Truck Tracker',
+      short_name: 'WKABE',
+      description: 'Hask Services Djibouti \u2014 Truck tracking and sealer management',
+      start_url: dir, scope: dir, id: dir,
+      display: 'standalone', orientation: 'portrait',
+      background_color: '#0f1623', theme_color: '#0f1623',
+      icons: [
+        { src: i192, sizes: '192x192', type: 'image/png', purpose: 'any' },
+        { src: i512, sizes: '512x512', type: 'image/png', purpose: 'any' },
+        { src: iMask, sizes: '512x512', type: 'image/png', purpose: 'maskable' }
+      ]
+    };
+    var murl = URL.createObjectURL(new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' }));
+    addLink('manifest', murl);
+    addLink('apple-touch-icon', i192);
+    addLink('icon', i192, { type: 'image/png', sizes: '192x192' });
+    addLink('icon', i512, { type: 'image/png', sizes: '512x512' });
+  } catch (err) { console.warn('PWA manifest build failed', err); }
+})();
+</script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
 
@@ -9307,23 +9366,29 @@ function generateIcon(size) {
 
 // ── SERVICE WORKER (PWA) ──
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/Oli/sw.js').catch(()=>{});
+  navigator.serviceWorker.register('./sw.js').catch(function (err) { console.warn('SW registration failed:', err); });
 }
 
 // ── PWA INSTALL ──
-window.addEventListener('beforeinstallprompt', function(e) {
-  e.preventDefault();
+function _pwaDismissed() { try { return !!sessionStorage.getItem('pwa-dismissed'); } catch (e) { return false; } }
+function showPWABanner() {
+  if (appInstalled || _pwaDismissed()) return;
+  const banner = document.getElementById('pwaInstallBanner');
+  if (!banner) return;
+  const pin = document.getElementById('pinScreen');
+  if (pin && pin.classList.contains('active')) banner.classList.add('on-login');
+  else banner.classList.remove('on-login');
+  banner.classList.remove('hidden');
+}
+function onBIP(e) {
   deferredPrompt = e;
-  setTimeout(function() {
-    if (!sessionStorage.getItem('pwa-dismissed')) {
-      const banner = document.getElementById('pwaInstallBanner');
-      const onLogin = document.getElementById('pinScreen').classList.contains('active');
-      if (onLogin) banner.classList.add('on-login');
-      else banner.classList.remove('on-login');
-      banner.classList.remove('hidden');
-    }
-  }, 1500);
-});
+  updateInstallBtn();
+  setTimeout(showPWABanner, 1500);
+}
+window.__onBIP = onBIP;
+if (window.__bip) onBIP(window.__bip);   // event fired before this module loaded
+// iOS Safari has no install event: show the banner with manual instructions
+if (/iPhone|iPad|iPod/.test(navigator.userAgent) && !appInstalled) setTimeout(showPWABanner, 2500);
 
 window.addEventListener('appinstalled', function() {
   deferredPrompt = null;
@@ -9341,7 +9406,7 @@ window.doInstallPWA = function() {
     });
   } else {
     const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
-    if (isIOS) showToast('📲 In Safari: tap Share → Add to Home Screen');
+    if (isIOS) showToast('📲 In Safari: tap the Share button, then Add to Home Screen');
     else showToast('📲 Tap ⋮ menu → Install App or Add to Home Screen');
   }
 }
