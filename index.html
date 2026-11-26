@@ -8,6 +8,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="WKABE">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
@@ -100,8 +101,8 @@ window.addEventListener('beforeinstallprompt', function (e) {
     --red: #ef4444;
     --purple: #a855f7;
     --teal: #14b8a6;
-    --radius: 14px;
-    --radius-sm: 8px;
+    --radius: calc(14px*var(--rscale,1));
+    --radius-sm: calc(8px*var(--rscale,1));
     --shadow: 0 4px 24px rgba(0,0,0,0.4);
   }
 
@@ -129,7 +130,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
   .login-logo {
     width: 72px; height: 72px;
     background: linear-gradient(135deg, var(--accent), var(--purple));
-    border-radius: 20px;
+    border-radius: calc(20px*var(--rscale,1));
     display: flex; align-items: center; justify-content: center;
     font-size: 28px; font-weight: 700; color: #fff;
     margin-bottom: 12px;
@@ -214,14 +215,29 @@ window.addEventListener('beforeinstallprompt', function (e) {
     background: var(--bg2);
     border-bottom: 1px solid var(--border);
     padding: 12px 16px;
-    display: flex; align-items: center; justify-content: space-between;
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
     position: sticky; top: 0; z-index: 100;
   }
+  /* ── COMPANY RIBBON (option C): company name + badge, top of every screen ── */
+  .co-ribbon{display:flex;align-items:center;gap:12px;color:#fff;flex-shrink:0;
+    background:var(--accent);background:linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent) 66%,#000));
+    clip-path:polygon(0 0,100% 0,100% 82%,50% 100%,0 82%);}
+  .co-mono{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.18);border:1.5px solid rgba(255,255,255,.55);display:grid;place-items:center;font:700 14px 'Poppins',system-ui,sans-serif;flex:none;text-shadow:0 1px 3px rgba(0,0,0,.4)}
+  .co-txt{min-width:0}
+  .co-name{font-family:'Poppins',system-ui,sans-serif;font-weight:700;line-height:1.12;word-break:break-word;text-shadow:0 1px 3px rgba(0,0,0,.45),0 2px 10px rgba(0,0,0,.25)}
+  .co-sub{font-size:10px;letter-spacing:2px;text-transform:uppercase;opacity:.9;margin-top:3px;text-shadow:0 1px 3px rgba(0,0,0,.4)}
+  .app-header .co-ribbon{flex:0 0 calc(100% + 32px);margin:-12px -16px -8px;padding:12px 16px 26px;transition:padding .15s}
+  .app-header .header-logo,.app-header .header-company{display:none}
+  .co-min .app-header .co-ribbon{padding-top:6px;padding-bottom:18px}
+  .co-min .co-sub{display:none}
+  .co-min .co-mono{width:30px;height:30px;font-size:11px}
+  .co-min .co-name{font-size:17px!important}
+
   .header-left { display: flex; align-items: center; gap: 10px; }
   .header-logo {
     width: 36px; height: 36px;
     background: linear-gradient(135deg, var(--accent), var(--purple));
-    border-radius: 10px;
+    border-radius: calc(10px*var(--rscale,1));
     display: flex; align-items: center; justify-content: center;
     font-size: 13px; font-weight: 700; color: #fff;
   }
@@ -236,7 +252,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
   .header-right { display: flex; align-items: center; gap: 8px; }
   .role-badge {
     font-size: 10px; font-weight: 700;
-    padding: 3px 8px; border-radius: 20px;
+    padding: 3px 8px; border-radius: calc(20px*var(--rscale,1));
     letter-spacing: 0.05em;
   }
   .role-badge.admin { background: rgba(168,85,247,0.2); color: var(--purple); border: 1px solid rgba(168,85,247,0.3); }
@@ -247,7 +263,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
   .foreman-tile-badge {
     position: absolute; top: 8px; right: 8px;
     font-size: 9px; font-weight: 700; letter-spacing: 0.05em;
-    padding: 2px 7px; border-radius: 20px;
+    padding: 2px 7px; border-radius: calc(20px*var(--rscale,1));
     background: rgba(245,158,11,0.2); color: var(--orange);
     border: 1px solid rgba(245,158,11,0.35);
   }
@@ -309,7 +325,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
     background: var(--accent);
     color: #fff;
     border: none;
-    border-radius: 20px;
+    border-radius: calc(20px*var(--rscale,1));
     padding: 5px 10px;
     font-size: 12px; font-weight: 600;
     cursor: pointer;
@@ -320,7 +336,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
     flex: 1;
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: 20px;
+    border-radius: calc(20px*var(--rscale,1));
     padding: 5px 10px;
     display: flex; align-items: center; gap: 6px;
   }
@@ -336,7 +352,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
   .filter-chip {
     background: var(--card);
     border: 1.5px solid var(--border);
-    border-radius: 20px;
+    border-radius: calc(20px*var(--rscale,1));
     padding: 5px 10px;
     font-size: 11px; font-weight: 600;
     cursor: pointer;
@@ -353,7 +369,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
   .worker-chip {
     background: var(--card);
     border: 1.5px solid var(--border);
-    border-radius: 20px;
+    border-radius: calc(20px*var(--rscale,1));
     padding: 4px 8px;
     font-size: 11px; font-weight: 600;
     cursor: pointer;
@@ -394,7 +410,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
     position: absolute;
     left: 0; top: 0; bottom: 0;
     width: 3px;
-    border-radius: 3px 0 0 3px;
+    border-radius: calc(3px*var(--rscale,1)) 0 0 calc(3px*var(--rscale,1));
   }
   .truck-card.paid::before { background: var(--green); }
   .truck-card.partial::before { background: var(--orange); }
@@ -409,7 +425,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
   }
   .status-badge {
     font-size: 10px; font-weight: 700;
-    padding: 3px 8px; border-radius: 20px;
+    padding: 3px 8px; border-radius: calc(20px*var(--rscale,1));
     letter-spacing: 0.03em;
   }
   .status-badge.paid { background: rgba(34,197,94,0.15); color: var(--green); border: 1px solid rgba(34,197,94,0.3); }
@@ -432,7 +448,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
   .bulk-bar {
     position: fixed; bottom: 72px; left: 50%; transform: translateX(-50%);
     background: var(--card); border: 1.5px solid var(--accent);
-    border-radius: 40px; padding: 10px 18px;
+    border-radius: calc(40px*var(--rscale,1)); padding: 10px 18px;
     display: flex; align-items: center; gap: 12px;
     box-shadow: 0 4px 24px rgba(0,0,0,0.5);
     z-index: 900; white-space: nowrap;
@@ -443,13 +459,13 @@ window.addEventListener('beforeinstallprompt', function (e) {
   .bulk-del-btn {
     background: rgba(239,68,68,0.15); color: var(--red);
     border: 1px solid rgba(239,68,68,0.35);
-    border-radius: 20px; padding: 7px 16px;
+    border-radius: calc(20px*var(--rscale,1)); padding: 7px 16px;
     font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit;
   }
   .bulk-cancel-btn {
     background: var(--bg3); color: var(--text2);
     border: 1px solid var(--border);
-    border-radius: 20px; padding: 7px 14px;
+    border-radius: calc(20px*var(--rscale,1)); padding: 7px 14px;
     font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit;
   }
   .select-mode-btn {
@@ -478,7 +494,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
   .truck-worker-badge {
     display: inline-flex; align-items: center; gap: 5px;
     font-size: 11px; font-weight: 600;
-    padding: 3px 8px; border-radius: 20px;
+    padding: 3px 8px; border-radius: calc(20px*var(--rscale,1));
     background: var(--bg3);
     border: 1px solid var(--border);
     margin-bottom: 8px;
@@ -662,7 +678,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
   .modal {
     background: var(--bg2);
     border: 1px solid var(--border);
-    border-radius: 20px 20px 0 0;
+    border-radius: calc(20px*var(--rscale,1)) calc(20px*var(--rscale,1)) 0 0;
     padding: 20px 20px 32px;
     width: 100%; max-width: 480px;
     max-height: 90vh;
@@ -670,7 +686,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
     animation: slideUp 0.25s ease;
   }
   @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-  .modal-handle { width: 40px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 20px; }
+  .modal-handle { width: 40px; height: 4px; background: var(--border); border-radius: calc(2px*var(--rscale,1)); margin: 0 auto 20px; }
   .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 20px; }
   .form-group { margin-bottom: 16px; }
   .form-label { font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 6px; display: block; letter-spacing: 0.05em; }
@@ -691,7 +707,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
   #truckPlate, #editPlateInput {
     background:#fff; color:#000; -webkit-text-fill-color:#000;
     border:4px solid #2979FF; outline:none;
-    border-radius:12px; padding:16px 12px; min-height:68px;
+    border-radius:calc(12px*var(--rscale,1)); padding:16px 12px; min-height:68px;
     font-size:32px; font-weight:900; letter-spacing:0.08em; text-align:center;
     text-transform:uppercase; font-family:"Arial Black",Impact,system-ui,sans-serif;
     box-shadow:0 0 0 4px rgba(41,121,255,0.3);
@@ -788,7 +804,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
     width: 44px; height: 24px;
     background: var(--bg3);
     border: 1.5px solid var(--border);
-    border-radius: 12px;
+    border-radius: calc(12px*var(--rscale,1));
     cursor: pointer;
     position: relative;
     transition: all 0.2s;
@@ -828,7 +844,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
     transform: translateX(-50%);
     background: linear-gradient(135deg, #1a0533, #2d0a5e);
     border: 1px solid rgba(123,47,247,0.5);
-    border-radius: 18px;
+    border-radius: calc(18px*var(--rscale,1));
     padding: 14px 16px;
     display: flex;
     align-items: center;
@@ -848,7 +864,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
   .pwa-inst-btn {
     background: linear-gradient(135deg, #7b2ff7, #f107a3);
     border: none; color: white;
-    border-radius: 11px;
+    border-radius: calc(11px*var(--rscale,1));
     padding: 9px 15px;
     font-size: 13px; font-weight: 700;
     cursor: pointer; white-space: nowrap;
@@ -943,12 +959,12 @@ window.addEventListener('beforeinstallprompt', function (e) {
   .pending-title { font-size: 15px; font-weight: 800; color: #c39bd3; }
   .pending-count {
     background: rgba(155,89,182,0.3); color: #c39bd3;
-    border-radius: 20px; padding: 2px 9px;
+    border-radius: calc(20px*var(--rscale,1)); padding: 2px 9px;
     font-size: 11px; font-weight: 700;
   }
   .pending-row {
     background: rgba(0,0,0,0.25);
-    border-radius: 10px; padding: 10px 11px;
+    border-radius: calc(10px*var(--rscale,1)); padding: 10px 11px;
     margin-bottom: 7px; display: flex; align-items: center; gap: 10px;
   }
   .pending-row:last-child { margin-bottom: 0; }
@@ -958,7 +974,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
     background: rgba(155,89,182,0.2);
     border: 1px solid rgba(155,89,182,0.4);
     color: #c39bd3; padding: 6px 11px;
-    border-radius: 8px; font-size: 11px; font-weight: 700;
+    border-radius: calc(8px*var(--rscale,1)); font-size: 11px; font-weight: 700;
     cursor: pointer; white-space: nowrap; font-family: inherit;
   }
 
@@ -977,7 +993,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
   #updateBanner.show { transform: translateY(0); }
   #updateBanner button {
     background: #fff; color: var(--accent);
-    border: none; border-radius: 6px;
+    border: none; border-radius: calc(6px*var(--rscale,1));
     padding: 5px 12px; font-size: 12px; font-weight: 700;
     cursor: pointer; font-family: inherit; margin-left: 12px;
   }
@@ -1034,11 +1050,11 @@ window.addEventListener('beforeinstallprompt', function (e) {
   .splash-sub { font-size: 14px; color: rgba(255,255,255,0.6); }
   .splash-loader {
     width: 40px; height: 4px; background: rgba(255,255,255,0.2);
-    border-radius: 2px; overflow: hidden; margin-top: 8px;
+    border-radius: calc(2px*var(--rscale,1)); overflow: hidden; margin-top: 8px;
   }
   .splash-loader-bar {
     height: 100%; width: 0%; background: #6DD5ED;
-    border-radius: 2px; animation: loadBar 1.8s ease forwards;
+    border-radius: calc(2px*var(--rscale,1)); animation: loadBar 1.8s ease forwards;
   }
   @keyframes loadBar { 0%{width:0%} 60%{width:70%} 100%{width:100%} }
 
@@ -1047,7 +1063,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
     font-size: 10px; font-weight: 800;
     color: var(--text3); letter-spacing: 0.05em;
     background: var(--bg3); border: 1px solid var(--border);
-    border-radius: 6px; padding: 2px 7px;
+    border-radius: calc(6px*var(--rscale,1)); padding: 2px 7px;
     font-family: 'JetBrains Mono', monospace;
   }
 
@@ -1059,7 +1075,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
   .plate-search-input {
     flex: 1;
     background: var(--card); border: 1px solid var(--border);
-    border-radius: 20px; padding: 6px 12px;
+    border-radius: calc(20px*var(--rscale,1)); padding: 6px 12px;
     font-size: 13px; font-weight: 600; color: var(--text);
     font-family: inherit; outline: none;
   }
@@ -1107,7 +1123,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
   .notif-sub .notif-time { font-size: 10px; color: var(--text3); margin-left: 4px; }
   .notif-dismiss {
     background: none; border: 1px solid rgba(245,158,11,0.3);
-    color: var(--orange); border-radius: 6px;
+    color: var(--orange); border-radius: calc(6px*var(--rscale,1));
     padding: 3px 9px; font-size: 10px; font-weight: 700;
     cursor: pointer; font-family: inherit; white-space: nowrap; flex-shrink: 0;
     margin-top: 1px;
@@ -1128,7 +1144,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
     position: fixed; top: 60px; left: 8px; right: 8px; z-index: 8000;
     background: linear-gradient(135deg, #1a0e00, #2e1a00);
     border: 1.5px solid rgba(245,158,11,0.55);
-    border-radius: 14px;
+    border-radius: calc(14px*var(--rscale,1));
     padding: 12px 14px;
     display: none; align-items: flex-start; gap: 10px;
     box-shadow: 0 6px 28px rgba(0,0,0,0.55);
@@ -1146,7 +1162,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
   .bin-date-bar { padding: 0 16px 8px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   .bin-date-chip {
     background: var(--card); border: 1.5px solid var(--border);
-    border-radius: 20px; padding: 5px 13px;
+    border-radius: calc(20px*var(--rscale,1)); padding: 5px 13px;
     font-size: 12px; font-weight: 600; cursor: pointer;
     color: var(--text2); transition: all 0.2s; font-family: inherit;
     white-space: nowrap;
@@ -1154,7 +1170,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
   .bin-date-chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
   .bin-reason-badge {
     display: inline-block; font-size: 9px; font-weight: 800;
-    padding: 2px 7px; border-radius: 20px; letter-spacing: 0.04em;
+    padding: 2px 7px; border-radius: calc(20px*var(--rscale,1)); letter-spacing: 0.04em;
     margin-left: 5px; vertical-align: middle;
   }
   .bin-reason-badge.manual { background: rgba(239,68,68,0.18); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
@@ -1169,7 +1185,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
   .report-toggle-chip {
     display: flex; align-items: center; gap: 5px;
     background: var(--card); border: 1.5px solid var(--border);
-    border-radius: 20px; padding: 5px 11px;
+    border-radius: calc(20px*var(--rscale,1)); padding: 5px 11px;
     font-size: 11px; font-weight: 600; cursor: pointer;
     color: var(--text2); transition: all 0.2s; user-select: none;
   }
@@ -1213,7 +1229,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
     color: #f1f5f9;
     font-family: 'Inter', sans-serif;
     padding: 20px;
-    border-radius: 16px;
+    border-radius: calc(16px*var(--rscale,1));
     z-index: -1;
   }
   .share-option {
@@ -1236,7 +1252,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
   .settlement-date-bar::-webkit-scrollbar { display: none; }
   .stl-date-chip {
     background: var(--card); border: 1.5px solid var(--border);
-    border-radius: 20px; padding: 6px 14px;
+    border-radius: calc(20px*var(--rscale,1)); padding: 6px 14px;
     font-size: 12px; font-weight: 600; cursor: pointer;
     white-space: nowrap; color: var(--text2); transition: all 0.2s;
     font-family: inherit;
@@ -1329,19 +1345,19 @@ window.addEventListener('beforeinstallprompt', function (e) {
   }
   .stl-unpaid-date-input {
     background: var(--bg4); border: 1px solid var(--border);
-    border-radius: 6px; padding: 5px 8px;
+    border-radius: calc(6px*var(--rscale,1)); padding: 5px 8px;
     font-size: 11px; color: var(--text); font-family: inherit;
     outline: none; width: 120px;
   }
   .stl-unpaid-remove {
     background: rgba(239,68,68,0.12); color: var(--red);
-    border: 1px solid rgba(239,68,68,0.25); border-radius: 6px;
+    border: 1px solid rgba(239,68,68,0.25); border-radius: calc(6px*var(--rscale,1));
     padding: 4px 8px; font-size: 11px; font-weight: 700;
     cursor: pointer; font-family: inherit; flex-shrink: 0;
   }
   .stl-source-tag {
     font-size: 9px; font-weight: 700; padding: 2px 6px;
-    border-radius: 10px; letter-spacing: 0.04em; flex-shrink: 0;
+    border-radius: calc(10px*var(--rscale,1)); letter-spacing: 0.04em; flex-shrink: 0;
   }
   .stl-source-tag.system { background: rgba(59,130,246,0.15); color: var(--accent); }
   .stl-source-tag.manual { background: rgba(168,85,247,0.15); color: var(--purple); }
@@ -1394,7 +1410,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
   /* ── SETTLEMENT TABLE INPUTS ── */
   .stl-tbl-input {
     background: var(--bg4); border: 1.5px solid var(--border);
-    border-radius: 6px; padding: 6px 8px;
+    border-radius: calc(6px*var(--rscale,1)); padding: 6px 8px;
     font-size: 12px; font-weight: 700; color: var(--text);
     font-family: 'JetBrains Mono', monospace;
     outline: none; width: 70px; text-align: center;
@@ -1454,7 +1470,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
   }
   .cert-upload-btn:active { border-color:var(--accent); color:var(--accent); }
   .cert-img-preview {
-    max-height:60px; max-width:120px; border-radius:6px;
+    max-height:60px; max-width:120px; border-radius:calc(6px*var(--rscale,1));
     object-fit:contain; background:#fff; padding:4px;
   }
   .cert-action-bar {
@@ -1491,7 +1507,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
     width:72px; height:72px; object-fit:contain; flex-shrink:0;
   }
   .cert-doc-logo-placeholder {
-    width:72px; height:72px; border:2px solid #1a3a6e; border-radius:8px;
+    width:72px; height:72px; border:2px solid #1a3a6e; border-radius:calc(8px*var(--rscale,1));
     display:flex; align-items:center; justify-content:center;
     font-size:22px; flex-shrink:0; background:#f0f4ff;
   }
@@ -1533,7 +1549,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
   .cert-document.cert-adjusting .cert-doc-stamp-img,
   .cert-document.cert-adjusting .cert-doc-sig-img {
     pointer-events:auto; cursor:grab; touch-action:none;
-    outline:2px dashed var(--accent); outline-offset:3px; border-radius:4px;
+    outline:2px dashed var(--accent); outline-offset:3px; border-radius:calc(4px*var(--rscale,1));
   }
   .cert-document.cert-adjusting .cert-doc-stamp-img:active,
   .cert-document.cert-adjusting .cert-doc-sig-img:active { cursor:grabbing; }
@@ -1553,13 +1569,13 @@ window.addEventListener('beforeinstallprompt', function (e) {
   .cert-hist-name { font-size:13px; font-weight:700; }
   .cert-hist-meta { font-size:11px; color:var(--text2); margin-top:2px; }
   .cert-hist-badge {
-    font-size:9px; font-weight:700; padding:3px 8px; border-radius:20px;
+    font-size:9px; font-weight:700; padding:3px 8px; border-radius:calc(20px*var(--rscale,1));
     background:rgba(59,130,246,0.15); color:var(--accent);
     border:1px solid rgba(59,130,246,0.3); white-space:nowrap;
   }
   .cert-navbar { display:flex; gap:8px; padding:12px 16px 0; }
   .cert-nav-btn { flex:1; padding:9px 6px; font-size:12px; font-weight:700; font-family:inherit; cursor:pointer;
-    background:var(--bg3,rgba(128,128,128,0.12)); color:var(--text); border:1px solid var(--border); border-radius:10px; }
+    background:var(--bg3,rgba(128,128,128,0.12)); color:var(--text); border:1px solid var(--border); border-radius:calc(10px*var(--rscale,1)); }
   .cert-nav-btn.exit { color:#ef4444; border-color:rgba(239,68,68,0.4); flex:0 0 auto; padding:9px 12px; }
   .cert-tab-bar {
     display:flex; gap:0; border-bottom:1px solid var(--border); margin:0 16px 12px;
@@ -1582,7 +1598,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
   .cert-banner ul { margin:6px 0 8px 18px; padding:0; }
   .cert-banner-btn {
     background:rgba(255,255,255,0.08); border:1px solid currentColor; color:inherit;
-    border-radius:6px; padding:6px 12px; font-size:11px; font-weight:700;
+    border-radius:calc(6px*var(--rscale,1)); padding:6px 12px; font-size:11px; font-weight:700;
     cursor:pointer; font-family:inherit;
   }
   .cert-search-wrap { position:relative; }
@@ -1599,7 +1615,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
   .cert-emp-result-item:active { background:var(--bg4); }
   .cert-emp-result-name { font-size:13px; font-weight:700; }
   .cert-emp-result-meta { font-size:11px; color:var(--text2); }
-  .cert-emp-badge { font-size:9px; font-weight:700; padding:2px 7px; border-radius:20px; white-space:nowrap; }
+  .cert-emp-badge { font-size:9px; font-weight:700; padding:2px 7px; border-radius:calc(20px*var(--rscale,1)); white-space:nowrap; }
   .cert-emp-badge.ok { background:rgba(34,197,94,0.15); color:var(--green); border:1px solid rgba(34,197,94,0.3); }
   .cert-emp-badge.warn { background:rgba(245,158,11,0.15); color:var(--orange); border:1px solid rgba(245,158,11,0.3); }
   .cert-emp-badge.inactive { background:rgba(239,68,68,0.15); color:var(--red); border:1px solid rgba(239,68,68,0.3); }
@@ -1629,10 +1645,10 @@ window.addEventListener('beforeinstallprompt', function (e) {
   .cert-ref-badge {
     display:inline-block; font-size:10px; font-weight:700; letter-spacing:0.05em;
     background:rgba(59,130,246,0.15); color:var(--accent); border:1px solid rgba(59,130,246,0.3);
-    padding:3px 9px; border-radius:20px; margin-bottom:8px;
+    padding:3px 9px; border-radius:calc(20px*var(--rscale,1)); margin-bottom:8px;
   }
   .cert-status-pill {
-    font-size:9px; font-weight:700; padding:2px 8px; border-radius:20px; white-space:nowrap;
+    font-size:9px; font-weight:700; padding:2px 8px; border-radius:calc(20px*var(--rscale,1)); white-space:nowrap;
   }
   .cert-status-pill.Généré { background:rgba(59,130,246,0.15); color:var(--accent); border:1px solid rgba(59,130,246,0.3); }
   .cert-status-pill.Imprimé { background:rgba(34,197,94,0.15); color:var(--green); border:1px solid rgba(34,197,94,0.3); }
@@ -1644,7 +1660,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
   }
   .cert-hist-actions { display:flex; gap:6px; flex-shrink:0; }
   .cert-hist-icon-btn {
-    background:var(--bg3); border:1px solid var(--border); border-radius:6px;
+    background:var(--bg3); border:1px solid var(--border); border-radius:calc(6px*var(--rscale,1));
     padding:5px 8px; font-size:12px; cursor:pointer; color:var(--text2);
   }
   .cert-fiche-row {
@@ -1789,6 +1805,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
 <div id="appScreen" class="screen active">
   <!-- HEADER -->
   <div class="app-header">
+    <div class="co-ribbon"><div class="co-mono">WK</div><div class="co-txt"><div class="co-name">WKABE</div><div class="co-sub">Truck Tracker</div></div></div>
     <div class="header-left">
       <div class="header-logo" id="headerLogo">HSK</div>
       <div>
@@ -1798,7 +1815,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
       </div>
     </div>
     <div class="header-right">
-      <button onclick="showInstallQR()" title="Install app (QR code)" style="width:30px;height:30px;flex-shrink:0;border-radius:8px;border:1px solid var(--border);background:var(--bg3);font-size:15px;padding:0;cursor:pointer">📱</button>
+      <button onclick="showInstallQR()" title="Install app (QR code)" style="width:30px;height:30px;flex-shrink:0;border-radius:calc(8px*var(--rscale,1));border:1px solid var(--border);background:var(--bg3);font-size:15px;padding:0;cursor:pointer">📱</button>
       <div class="online-badge"><div id="syncDot" class=""></div><span id="syncLabel">☁️ Live 22:11</span></div>
       <span class="role-badge admin" id="roleBadge">ADMIN</span>
       <button class="add-btn" id="headerAddBtn" onclick="openAddTruck()" style="opacity: 1;">+ Add</button>
@@ -1853,7 +1870,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
         </div>
       </div>
       <!-- 6AM RULE NOTICE -->
-      <div id="shiftRuleBanner" style="display:none;margin:0 16px 4px;padding:4px 10px;background:rgba(20,184,166,0.1);border:1px solid rgba(20,184,166,0.3);border-radius:8px;font-size:10px;color:var(--teal);font-weight:600;display:flex;align-items:center;gap:6px">
+      <div id="shiftRuleBanner" style="display:none;margin:0 16px 4px;padding:4px 10px;background:rgba(20,184,166,0.1);border:1px solid rgba(20,184,166,0.3);border-radius:calc(8px*var(--rscale,1));font-size:10px;color:var(--teal);font-weight:600;display:flex;align-items:center;gap:6px">
         🕕 Working day: <span id="shiftRuleText">Tue 22 Sept 06:00 → Wed 23 Sept 05:59  (Djibouti time)</span>
       </div>
       <!-- SUSPEND BANNER -->
@@ -2484,7 +2501,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
       <div class="manage-section-title">💰 TARIFFS</div>
       <div class="manage-card" style="padding:14px 16px">
         <div style="font-size:11px;color:var(--text3);font-weight:700;letter-spacing:0.05em;margin-bottom:12px">Changes save live — all devices update instantly</div>
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:13px;font-weight:600;color:var(--text)">🚛 Client Rate — ETB</div><div style="font-size:11px;color:var(--text3);margin-top:2px">What client pays per truck (ETB)</div></div><input id="tariff_clientETB" type="number" value="6200" style="width:82px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:14px;font-weight:700;color:var(--text);text-align:right;font-family:JetBrains Mono,monospace" onchange="saveTariff('clientETB',this.value)"></div><div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:13px;font-weight:600;color:var(--text)">🚛 Client Rate — FD</div><div style="font-size:11px;color:var(--text3);margin-top:2px">What client pays per truck (DJF)</div></div><input id="tariff_clientFD" type="number" value="6200" style="width:82px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:14px;font-weight:700;color:var(--text);text-align:right;font-family:JetBrains Mono,monospace" onchange="saveTariff('clientFD',this.value)"></div><div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:13px;font-weight:600;color:var(--text)">⚡ Partial Fare — ETB</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Client pays for partial payment</div></div><input id="tariff_partialFare" type="number" value="3100" style="width:82px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:14px;font-weight:700;color:var(--text);text-align:right;font-family:JetBrains Mono,monospace" onchange="saveTariff('partialFare',this.value)"></div><div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:13px;font-weight:600;color:var(--text)">👷 Sealer Gets — Paid</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Sealer commission per paid truck</div></div><input id="tariff_sealerPaid" type="number" value="1500" style="width:82px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:14px;font-weight:700;color:var(--text);text-align:right;font-family:JetBrains Mono,monospace" onchange="saveTariff('sealerPaid',this.value)"></div><div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:13px;font-weight:600;color:var(--text)">👷 Sealer Gets — Partial</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Sealer commission per partial truck</div></div><input id="tariff_sealerPartial" type="number" value="700" style="width:82px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:14px;font-weight:700;color:var(--text);text-align:right;font-family:JetBrains Mono,monospace" onchange="saveTariff('sealerPartial',this.value)"></div><div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:13px;font-weight:600;color:var(--text)">🏗️ Agash Rate — ETB</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Agash rate per truck (ETB)</div></div><input id="tariff_agashETB" type="number" value="2000" style="width:82px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:14px;font-weight:700;color:var(--text);text-align:right;font-family:JetBrains Mono,monospace" onchange="saveTariff('agashETB',this.value)"></div><div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:13px;font-weight:600;color:var(--text)">🏗️ Agash Rate — FD</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Agash rate per truck (FD)</div></div><input id="tariff_agashFD" type="number" value="2000" style="width:82px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:14px;font-weight:700;color:var(--text);text-align:right;font-family:JetBrains Mono,monospace" onchange="saveTariff('agashFD',this.value)"></div><div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:13px;font-weight:600;color:var(--text)">💵 Cash Collection Alert</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Uncleared trucks before sealer is flagged</div></div><input id="tariff_collectThreshold" type="number" value="8" style="width:82px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:14px;font-weight:700;color:var(--text);text-align:right;font-family:JetBrains Mono,monospace" onchange="saveTariff('collectThreshold',this.value)"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:13px;font-weight:600;color:var(--text)">🚛 Client Rate — ETB</div><div style="font-size:11px;color:var(--text3);margin-top:2px">What client pays per truck (ETB)</div></div><input id="tariff_clientETB" type="number" value="6200" style="width:82px;background:var(--bg2);border:1px solid var(--border);border-radius:calc(8px*var(--rscale,1));padding:6px 8px;font-size:14px;font-weight:700;color:var(--text);text-align:right;font-family:JetBrains Mono,monospace" onchange="saveTariff('clientETB',this.value)"></div><div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:13px;font-weight:600;color:var(--text)">🚛 Client Rate — FD</div><div style="font-size:11px;color:var(--text3);margin-top:2px">What client pays per truck (DJF)</div></div><input id="tariff_clientFD" type="number" value="6200" style="width:82px;background:var(--bg2);border:1px solid var(--border);border-radius:calc(8px*var(--rscale,1));padding:6px 8px;font-size:14px;font-weight:700;color:var(--text);text-align:right;font-family:JetBrains Mono,monospace" onchange="saveTariff('clientFD',this.value)"></div><div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:13px;font-weight:600;color:var(--text)">⚡ Partial Fare — ETB</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Client pays for partial payment</div></div><input id="tariff_partialFare" type="number" value="3100" style="width:82px;background:var(--bg2);border:1px solid var(--border);border-radius:calc(8px*var(--rscale,1));padding:6px 8px;font-size:14px;font-weight:700;color:var(--text);text-align:right;font-family:JetBrains Mono,monospace" onchange="saveTariff('partialFare',this.value)"></div><div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:13px;font-weight:600;color:var(--text)">👷 Sealer Gets — Paid</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Sealer commission per paid truck</div></div><input id="tariff_sealerPaid" type="number" value="1500" style="width:82px;background:var(--bg2);border:1px solid var(--border);border-radius:calc(8px*var(--rscale,1));padding:6px 8px;font-size:14px;font-weight:700;color:var(--text);text-align:right;font-family:JetBrains Mono,monospace" onchange="saveTariff('sealerPaid',this.value)"></div><div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:13px;font-weight:600;color:var(--text)">👷 Sealer Gets — Partial</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Sealer commission per partial truck</div></div><input id="tariff_sealerPartial" type="number" value="700" style="width:82px;background:var(--bg2);border:1px solid var(--border);border-radius:calc(8px*var(--rscale,1));padding:6px 8px;font-size:14px;font-weight:700;color:var(--text);text-align:right;font-family:JetBrains Mono,monospace" onchange="saveTariff('sealerPartial',this.value)"></div><div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:13px;font-weight:600;color:var(--text)">🏗️ Agash Rate — ETB</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Agash rate per truck (ETB)</div></div><input id="tariff_agashETB" type="number" value="2000" style="width:82px;background:var(--bg2);border:1px solid var(--border);border-radius:calc(8px*var(--rscale,1));padding:6px 8px;font-size:14px;font-weight:700;color:var(--text);text-align:right;font-family:JetBrains Mono,monospace" onchange="saveTariff('agashETB',this.value)"></div><div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:13px;font-weight:600;color:var(--text)">🏗️ Agash Rate — FD</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Agash rate per truck (FD)</div></div><input id="tariff_agashFD" type="number" value="2000" style="width:82px;background:var(--bg2);border:1px solid var(--border);border-radius:calc(8px*var(--rscale,1));padding:6px 8px;font-size:14px;font-weight:700;color:var(--text);text-align:right;font-family:JetBrains Mono,monospace" onchange="saveTariff('agashFD',this.value)"></div><div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:13px;font-weight:600;color:var(--text)">💵 Cash Collection Alert</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Uncleared trucks before sealer is flagged</div></div><input id="tariff_collectThreshold" type="number" value="8" style="width:82px;background:var(--bg2);border:1px solid var(--border);border-radius:calc(8px*var(--rscale,1));padding:6px 8px;font-size:14px;font-weight:700;color:var(--text);text-align:right;font-family:JetBrains Mono,monospace" onchange="saveTariff('collectThreshold',this.value)"></div>
       </div>
     </div>
 
@@ -2501,7 +2518,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
               <div class="manage-item-sub">Block all workers from adding</div>
             </div>
           </div>
-          <div style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;background:rgba(34,197,94,0.15);color:var(--green)">
+          <div style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:calc(20px*var(--rscale,1));background:rgba(34,197,94,0.15);color:var(--green)">
             ACTIVE
           </div>
         </div>
@@ -2556,7 +2573,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
     </div>
 
     <!-- Claims Tab -->
-    <div id="tabClaims" style="display: none;"><div style="padding:12px 16px 80px"><div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:0.08em;margin-bottom:12px">🙋 PENDING CLAIMS — 1</div><div style="display:flex;flex-direction:column;gap:10px;"><div style="background:var(--card);border:1.5px solid rgba(168,85,247,0.35);border-radius:var(--radius);padding:14px;position:relative;overflow:hidden"><div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--purple);border-radius:4px 0 0 4px;"></div><div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px"><div style="font-size:20px;font-weight:800;font-family:monospace;letter-spacing:0.05em">95512</div><span style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;background:rgba(168,85,247,0.15);color:var(--purple);border:1px solid rgba(168,85,247,0.3)">⏳ PENDING</span></div><div style="font-size:12px;color:var(--text2);margin-bottom:8px">📅 2026-04-09 · Sent: 9 Apr, 13:56</div><div style="display:flex;align-items:center;gap:8px"><div style="width:28px;height:28px;border-radius:50%;background:#ef444422;color:#ef4444;border:1.5px solid #ef444444;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700">AL</div><span style="font-size:14px;font-weight:700;color:#ef4444">Ali</span><span style="font-size:11px;color:var(--text3)">wants to claim this truck</span></div><div style="display:flex;gap:8px;margin-top:10px"><button class="claim-approve-btn" data-cid="93EwRl5xWLpHipeXfJr9" style="flex:1;background:rgba(34,197,94,0.15);color:var(--green);border:1px solid rgba(34,197,94,0.3);border-radius:var(--radius-sm);padding:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">✅ Approve</button><button class="claim-reject-btn" data-cid="93EwRl5xWLpHipeXfJr9" style="flex:1;background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.2);border-radius:var(--radius-sm);padding:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">❌ Reject</button></div></div></div></div></div>
+    <div id="tabClaims" style="display: none;"><div style="padding:12px 16px 80px"><div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:0.08em;margin-bottom:12px">🙋 PENDING CLAIMS — 1</div><div style="display:flex;flex-direction:column;gap:10px;"><div style="background:var(--card);border:1.5px solid rgba(168,85,247,0.35);border-radius:var(--radius);padding:14px;position:relative;overflow:hidden"><div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--purple);border-radius:calc(4px*var(--rscale,1)) 0 0 calc(4px*var(--rscale,1));"></div><div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px"><div style="font-size:20px;font-weight:800;font-family:monospace;letter-spacing:0.05em">95512</div><span style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:calc(20px*var(--rscale,1));background:rgba(168,85,247,0.15);color:var(--purple);border:1px solid rgba(168,85,247,0.3)">⏳ PENDING</span></div><div style="font-size:12px;color:var(--text2);margin-bottom:8px">📅 2026-04-09 · Sent: 9 Apr, 13:56</div><div style="display:flex;align-items:center;gap:8px"><div style="width:28px;height:28px;border-radius:50%;background:#ef444422;color:#ef4444;border:1.5px solid #ef444444;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700">AL</div><span style="font-size:14px;font-weight:700;color:#ef4444">Ali</span><span style="font-size:11px;color:var(--text3)">wants to claim this truck</span></div><div style="display:flex;gap:8px;margin-top:10px"><button class="claim-approve-btn" data-cid="93EwRl5xWLpHipeXfJr9" style="flex:1;background:rgba(34,197,94,0.15);color:var(--green);border:1px solid rgba(34,197,94,0.3);border-radius:var(--radius-sm);padding:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">✅ Approve</button><button class="claim-reject-btn" data-cid="93EwRl5xWLpHipeXfJr9" style="flex:1;background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.2);border-radius:var(--radius-sm);padding:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">❌ Reject</button></div></div></div></div></div>
 
     <!-- Notifications Tab -->
     <div id="tabNotifs" style="display:none;">
@@ -2565,7 +2582,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
           <div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:0.08em">🔔 ALERTS</div>
           <div style="font-size:12px;color:var(--text2);margin-top:2px" id="notifTabSub">System notifications</div>
         </div>
-        <button onclick="dismissAllNotifs()" style="background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.3);color:var(--orange);border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">✓ Clear All</button>
+        <button onclick="dismissAllNotifs()" style="background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.3);color:var(--orange);border-radius:calc(8px*var(--rscale,1));padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">✓ Clear All</button>
       </div>
       <div id="notifTabList" style="padding:0 16px 100px;"></div>
     </div>
@@ -2605,7 +2622,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
           <div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:0.08em">📥 FROM AGASH</div>
           <div style="font-size:12px;color:var(--text2);margin-top:2px;" id="agashIncomingSub">Loaded trucks from Agash app</div>
         </div>
-        <button onclick="exportAgashExcel()" style="background:rgba(240,165,0,0.15);border:1px solid rgba(240,165,0,0.4);color:#f0a500;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">📊 Export</button>
+        <button onclick="exportAgashExcel()" style="background:rgba(240,165,0,0.15);border:1px solid rgba(240,165,0,0.4);color:#f0a500;border-radius:calc(8px*var(--rscale,1));padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">📊 Export</button>
       </div>
       <div style="padding:0 16px 8px;">
         <input type="text" id="agashPlateSearch" class="form-input" placeholder="🔍 Search plate number..." style="width:100%;padding:9px 12px;font-size:13px;" oninput="setAgashPlateFilter(this.value)">
@@ -2620,7 +2637,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
           <div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:0.08em">📋 DAILY SETTLEMENT</div>
           <div style="font-size:12px;color:var(--text2);margin-top:2px;" id="settlementSubtitle">Select a date to view or submit</div>
         </div>
-        <button onclick="switchSettlementView('history')" id="stlHistoryBtn" style="background:rgba(59,130,246,0.12);border:1px solid rgba(59,130,246,0.3);color:var(--accent);border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">📂 History</button>
+        <button onclick="switchSettlementView('history')" id="stlHistoryBtn" style="background:rgba(59,130,246,0.12);border:1px solid rgba(59,130,246,0.3);color:var(--accent);border-radius:calc(8px*var(--rscale,1));padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">📂 History</button>
       </div>
       <div class="settlement-date-bar" id="settlementDateBar"></div>
       <div id="settlementContent" style="padding:0 16px 100px;"></div>
@@ -2955,7 +2972,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
       <div class="dup-warning" id="dupWarning">⚠️ This plate may already be recorded today!</div>
       <div id="truckPlatePhotoWrap" style="display:none;margin-top:8px;">
         <div style="font-size:11px;color:var(--text3);margin-bottom:4px;">📷 Photo on file — check it against the plate number to catch typos</div>
-        <img id="truckPlatePhotoImg" src="" style="max-width:100%;max-height:160px;border-radius:8px;border:1px solid var(--border);display:block;">
+        <img id="truckPlatePhotoImg" src="" style="max-width:100%;max-height:160px;border-radius:calc(8px*var(--rscale,1));border:1px solid var(--border);display:block;">
       </div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;" id="truckRow2">
@@ -2982,7 +2999,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
     </details>
     </div>
     <div class="tm-foot">
-    <div class="form-group" id="truckCollectedGroup" style="display:flex;align-items:center;gap:10px;background:rgba(234,179,8,0.06);border:1px solid rgba(234,179,8,0.25);border-radius:10px;padding:10px 12px;">
+    <div class="form-group" id="truckCollectedGroup" style="display:flex;align-items:center;gap:10px;background:rgba(234,179,8,0.06);border:1px solid rgba(234,179,8,0.25);border-radius:calc(10px*var(--rscale,1));padding:10px 12px;">
       <input type="checkbox" id="truckCollectedCheck" style="width:20px;height:20px;flex-shrink:0;accent-color:#eab308;">
       <label for="truckCollectedCheck" style="font-size:13px;font-weight:600;color:#eab308;cursor:pointer;">💵 I already collected the cash for this truck</label>
     </div>
@@ -3054,7 +3071,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
   <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-title">📅 Select Date</div>
-    <div id="datePickerList" style="max-height:320px;overflow-y:auto;margin-bottom:8px;"><div data-date="2026-05-20" class="date-pick-row" style="padding:14px;border-radius:var(--radius-sm);margin-bottom:6px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;background:var(--bg3);border:1.5px solid var(--border)"><div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px"><span style="font-weight:600;font-size:13px;color:var(--text)">Wed, 20 May 2026</span><span style="font-size:10px;background:rgba(59,130,246,0.2);color:var(--accent);padding:2px 7px;border-radius:10px;font-weight:700;margin-left:6px">NEXT</span></div><span style="color:var(--text3);font-size:14px">›</span></div><div data-date="2026-05-19" class="date-pick-row" style="padding:14px;border-radius:var(--radius-sm);margin-bottom:6px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;background:var(--accent);border:1.5px solid var(--accent)"><div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px"><span style="font-weight:600;font-size:13px;color:#fff">Tue, 19 May 2026</span><span style="font-size:10px;background:rgba(34,197,94,0.2);color:var(--green);padding:2px 7px;border-radius:10px;font-weight:700;margin-left:6px">TODAY</span></div><span style="color:#fff;font-size:18px;font-weight:700">✓</span></div><div data-date="2026-05-15" class="date-pick-row" style="padding:14px;border-radius:var(--radius-sm);margin-bottom:6px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;background:var(--bg3);border:1.5px solid var(--border)"><div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px"><span style="font-weight:600;font-size:13px;color:var(--text)">Fri, 15 May 2026</span></div><span style="color:var(--text3);font-size:14px">›</span></div><div data-date="2026-05-09" class="date-pick-row" style="padding:14px;border-radius:var(--radius-sm);margin-bottom:6px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;background:var(--bg3);border:1.5px solid var(--border)"><div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px"><span style="font-weight:600;font-size:13px;color:var(--text)">Sat, 9 May 2026</span></div><span style="color:var(--text3);font-size:14px">›</span></div><div data-date="2026-05-03" class="date-pick-row" style="padding:14px;border-radius:var(--radius-sm);margin-bottom:6px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;background:var(--bg3);border:1.5px solid var(--border)"><div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px"><span style="font-weight:600;font-size:13px;color:var(--text)">Sun, 3 May 2026</span></div><span style="color:var(--text3);font-size:14px">›</span></div><div data-date="2026-04-27" class="date-pick-row" style="padding:14px;border-radius:var(--radius-sm);margin-bottom:6px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;background:var(--bg3);border:1.5px solid var(--border)"><div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px"><span style="font-weight:600;font-size:13px;color:var(--text)">Mon, 27 Apr 2026</span></div><span style="color:var(--text3);font-size:14px">›</span></div><div data-date="2026-04-25" class="date-pick-row" style="padding:14px;border-radius:var(--radius-sm);margin-bottom:6px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;background:var(--bg3);border:1.5px solid var(--border)"><div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px"><span style="font-weight:600;font-size:13px;color:var(--text)">Sat, 25 Apr 2026</span></div><span style="color:var(--text3);font-size:14px">›</span></div><div data-date="2026-04-21" class="date-pick-row" style="padding:14px;border-radius:var(--radius-sm);margin-bottom:6px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;background:var(--bg3);border:1.5px solid var(--border)"><div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px"><span style="font-weight:600;font-size:13px;color:var(--text)">Tue, 21 Apr 2026</span></div><span style="color:var(--text3);font-size:14px">›</span></div><div data-date="2026-04-15" class="date-pick-row" style="padding:14px;border-radius:var(--radius-sm);margin-bottom:6px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;background:var(--bg3);border:1.5px solid var(--border)"><div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px"><span style="font-weight:600;font-size:13px;color:var(--text)">Wed, 15 Apr 2026</span></div><span style="color:var(--text3);font-size:14px">›</span></div></div>
+    <div id="datePickerList" style="max-height:320px;overflow-y:auto;margin-bottom:8px;"><div data-date="2026-05-20" class="date-pick-row" style="padding:14px;border-radius:var(--radius-sm);margin-bottom:6px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;background:var(--bg3);border:1.5px solid var(--border)"><div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px"><span style="font-weight:600;font-size:13px;color:var(--text)">Wed, 20 May 2026</span><span style="font-size:10px;background:rgba(59,130,246,0.2);color:var(--accent);padding:2px 7px;border-radius:calc(10px*var(--rscale,1));font-weight:700;margin-left:6px">NEXT</span></div><span style="color:var(--text3);font-size:14px">›</span></div><div data-date="2026-05-19" class="date-pick-row" style="padding:14px;border-radius:var(--radius-sm);margin-bottom:6px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;background:var(--accent);border:1.5px solid var(--accent)"><div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px"><span style="font-weight:600;font-size:13px;color:#fff">Tue, 19 May 2026</span><span style="font-size:10px;background:rgba(34,197,94,0.2);color:var(--green);padding:2px 7px;border-radius:calc(10px*var(--rscale,1));font-weight:700;margin-left:6px">TODAY</span></div><span style="color:#fff;font-size:18px;font-weight:700">✓</span></div><div data-date="2026-05-15" class="date-pick-row" style="padding:14px;border-radius:var(--radius-sm);margin-bottom:6px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;background:var(--bg3);border:1.5px solid var(--border)"><div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px"><span style="font-weight:600;font-size:13px;color:var(--text)">Fri, 15 May 2026</span></div><span style="color:var(--text3);font-size:14px">›</span></div><div data-date="2026-05-09" class="date-pick-row" style="padding:14px;border-radius:var(--radius-sm);margin-bottom:6px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;background:var(--bg3);border:1.5px solid var(--border)"><div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px"><span style="font-weight:600;font-size:13px;color:var(--text)">Sat, 9 May 2026</span></div><span style="color:var(--text3);font-size:14px">›</span></div><div data-date="2026-05-03" class="date-pick-row" style="padding:14px;border-radius:var(--radius-sm);margin-bottom:6px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;background:var(--bg3);border:1.5px solid var(--border)"><div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px"><span style="font-weight:600;font-size:13px;color:var(--text)">Sun, 3 May 2026</span></div><span style="color:var(--text3);font-size:14px">›</span></div><div data-date="2026-04-27" class="date-pick-row" style="padding:14px;border-radius:var(--radius-sm);margin-bottom:6px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;background:var(--bg3);border:1.5px solid var(--border)"><div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px"><span style="font-weight:600;font-size:13px;color:var(--text)">Mon, 27 Apr 2026</span></div><span style="color:var(--text3);font-size:14px">›</span></div><div data-date="2026-04-25" class="date-pick-row" style="padding:14px;border-radius:var(--radius-sm);margin-bottom:6px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;background:var(--bg3);border:1.5px solid var(--border)"><div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px"><span style="font-weight:600;font-size:13px;color:var(--text)">Sat, 25 Apr 2026</span></div><span style="color:var(--text3);font-size:14px">›</span></div><div data-date="2026-04-21" class="date-pick-row" style="padding:14px;border-radius:var(--radius-sm);margin-bottom:6px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;background:var(--bg3);border:1.5px solid var(--border)"><div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px"><span style="font-weight:600;font-size:13px;color:var(--text)">Tue, 21 Apr 2026</span></div><span style="color:var(--text3);font-size:14px">›</span></div><div data-date="2026-04-15" class="date-pick-row" style="padding:14px;border-radius:var(--radius-sm);margin-bottom:6px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;background:var(--bg3);border:1.5px solid var(--border)"><div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px"><span style="font-weight:600;font-size:13px;color:var(--text)">Wed, 15 Apr 2026</span></div><span style="color:var(--text3);font-size:14px">›</span></div></div>
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeModal('modalDatePicker')">Cancel</button>
     </div>
@@ -3073,7 +3090,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
       </div>
       <div id="editPlatePhotoWrap" style="display:none;margin-top:8px;">
         <div style="font-size:11px;color:var(--text3);margin-bottom:4px;">📷 Photo on file — check it against the plate number to catch typos</div>
-        <img id="editPlatePhotoImg" src="" style="max-width:100%;max-height:160px;border-radius:8px;border:1px solid var(--border);display:block;">
+        <img id="editPlatePhotoImg" src="" style="max-width:100%;max-height:160px;border-radius:calc(8px*var(--rscale,1));border:1px solid var(--border);display:block;">
       </div>
     </div>
     <div class="modal-actions">
@@ -3089,7 +3106,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
     <div class="modal-title">📷 Scan Plate Number</div>
     <div style="position:relative;border-radius:var(--radius-sm);overflow:hidden;background:#000;">
       <video id="scanVideo" autoplay="" playsinline="" muted="" style="width:100%;display:block;max-height:50vh;object-fit:cover;"></video>
-      <div id="scanGuideBox" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:82%;height:64px;border:2px solid var(--accent);border-radius:8px;box-shadow:0 0 0 2000px rgba(0,0,0,0.45);pointer-events:none;"></div>
+      <div id="scanGuideBox" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:82%;height:64px;border:2px solid var(--accent);border-radius:calc(8px*var(--rscale,1));box-shadow:0 0 0 2000px rgba(0,0,0,0.45);pointer-events:none;"></div>
     </div>
     <canvas id="scanCanvas" style="display:none;"></canvas>
     <canvas id="scanPhotoCanvas" style="display:none;"></canvas>
@@ -3198,7 +3215,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
     <input type="hidden" id="takeBackSealsWorker">
     <div style="font-size:13px;color:var(--text2);margin-bottom:4px">Sealer: <strong id="takeBackSealsWorkerLabel" style="color:var(--text)"></strong></div>
     <div id="takeBackSealsBalance" style="font-size:12px;color:var(--text3);margin-bottom:14px;font-family:'JetBrains Mono',monospace"></div>
-    <div id="takeBackSealsNone" style="display:none;font-size:12px;color:var(--text3);background:rgba(255,255,255,0.03);border-radius:8px;padding:10px;margin-bottom:10px">No unused plombs left to take back for this date.</div>
+    <div id="takeBackSealsNone" style="display:none;font-size:12px;color:var(--text3);background:rgba(255,255,255,0.03);border-radius:calc(8px*var(--rscale,1));padding:10px;margin-bottom:10px">No unused plombs left to take back for this date.</div>
     <div id="takeBackSealsFields">
       <div class="form-group">
         <label class="form-label">QUICK TAKE BACK</label>
@@ -3276,7 +3293,7 @@ window.addEventListener('beforeinstallprompt', function (e) {
   <div class="modal" style="text-align:center">
     <div class="modal-handle"></div>
     <div class="modal-title">📱 Scan to install the app</div>
-    <div style="background:#fff;border-radius:14px;padding:8px;display:inline-block;margin:4px auto 10px">
+    <div style="background:#fff;border-radius:calc(14px*var(--rscale,1));padding:8px;display:inline-block;margin:4px auto 10px">
       <canvas id="installQrCanvas" width="240" height="240" style="width:240px;height:240px;display:block;image-rendering:pixelated"></canvas>
     </div>
     <div id="installQrUrl" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--teal);word-break:break-all;margin-bottom:12px"></div>
@@ -3456,6 +3473,7 @@ function renderCompanyList() {
   });
 }
 function syncCompanyBranding() {
+  fillCoRibbon();
   if (!COMPANY) return;
   const c = cachedCompanies().find(x => x.id === COMPANY.id);
   if (c && (c.name !== COMPANY.name || c.sub !== COMPANY.sub)) { COMPANY = c; try { sessionStorage.setItem('hask_company_json', JSON.stringify(c)); } catch(e) {} }
@@ -3504,6 +3522,42 @@ function applyCompanyStatus(data) {
   else ov.style.display = 'none';
 }
 function watchCompanyStatus() { try { onSnapshot(_doc(db, 'appConfig', 'companyStatus'), x => applyCompanyStatus(x.exists() ? x.data() : {}), () => {}); } catch(e) {} }
+
+// ── COMPANY LOOK (colors / corners chosen in the Owner Console) ──
+
+function _coInitials(n) { const w = String(n).replace(/[^A-Za-z0-9\u00C0-\u024F\u0600-\u06FF ]/g, '').split(/\s+/).filter(Boolean); return (w.map(x => x[0]).join('').slice(0, 3) || String(n).slice(0, 2)).toUpperCase(); }
+function fillCoRibbon() {
+  try {
+    const name = COMPANY ? COMPANY.name : 'WKABE', fs = name.length <= 10 ? 24 : name.length <= 18 ? 20 : name.length <= 28 ? 17 : 15;
+    const sub = (COMPANY && COMPANY.sub) || 'Truck Tracker';
+    document.querySelectorAll('.co-ribbon').forEach(r => {
+      r.querySelector('.co-mono').textContent = _coInitials(name);
+      const n = r.querySelector('.co-name'); n.textContent = name; n.style.fontSize = fs + 'px';
+      r.querySelector('.co-sub').textContent = sub;
+    });
+  } catch(e) {}
+}
+(function(){ let _min = false; window.addEventListener('scroll', () => { const y = window.scrollY; if (!_min && y > 60) { _min = true; document.documentElement.classList.add('co-min'); } else if (_min && y < 20) { _min = false; document.documentElement.classList.remove('co-min'); } }, { passive: true }); })();
+function applyCompanyLook(t) {
+  try {
+    const r = document.documentElement.style, meta = document.querySelector('meta[name="theme-color"]');
+    ['--bg','--bg2','--bg3','--bg4','--card','--border','--accent','--accent2','--rscale'].forEach(k => r.removeProperty(k));
+    const v = t && t.vars;
+    if (v) { r.setProperty('--bg', v.bg); r.setProperty('--bg2', v.bg2); r.setProperty('--bg3', v.card2); r.setProperty('--bg4', v.bg4); r.setProperty('--card', v.card); r.setProperty('--border', v.border); r.setProperty('--accent', v.accent); r.setProperty('--accent2', v.accent2); }
+    if (meta) meta.setAttribute('content', v ? v.bg : '#0f1623');
+    if (t && t.rs != null) r.setProperty('--rscale', String(t.rs));
+  } catch(e) {}
+}
+function _applyCachedLook() { try { const j = localStorage.getItem('look_' + _cid()); if (j) applyCompanyLook(JSON.parse(j)); } catch(e) {} }
+function watchCompanyLook() {
+  try { onSnapshot(_doc(db, 'appConfig', 'companyThemes'), x => {
+    const t = x.exists() ? (x.data()[_cid()] || null) : null;
+    try { t ? localStorage.setItem('look_' + _cid(), JSON.stringify(t)) : localStorage.removeItem('look_' + _cid()); } catch(e) {}
+    applyCompanyLook(t);
+  }, () => {}); } catch(e) {}
+}
+_applyCachedLook();
+
 
 window.openCompanyForm = async function(editId) {
   window._cfEditId = editId;
@@ -4707,8 +4761,8 @@ window.openDatePicker = function() {
     const isNextD = d === nextWork;
     const dateObj = new Date(d + 'T12:00:00');
     const label = dateObj.toLocaleDateString('en-GB', {weekday:'short', day:'numeric', month:'short', year:'numeric'});
-    const tag = isTodayD ? '<span style="font-size:10px;background:rgba(34,197,94,0.2);color:var(--green);padding:2px 7px;border-radius:10px;font-weight:700;margin-left:6px">TODAY</span>'
-               : isNextD ? '<span style="font-size:10px;background:rgba(59,130,246,0.2);color:var(--accent);padding:2px 7px;border-radius:10px;font-weight:700;margin-left:6px">NEXT</span>' : '';
+    const tag = isTodayD ? '<span style="font-size:10px;background:rgba(34,197,94,0.2);color:var(--green);padding:2px 7px;border-radius:calc(10px*var(--rscale,1));font-weight:700;margin-left:6px">TODAY</span>'
+               : isNextD ? '<span style="font-size:10px;background:rgba(59,130,246,0.2);color:var(--accent);padding:2px 7px;border-radius:calc(10px*var(--rscale,1));font-weight:700;margin-left:6px">NEXT</span>' : '';
     var bg = isSelected ? 'var(--accent)' : 'var(--bg3)';
     var bdr = isSelected ? 'var(--accent)' : 'var(--border)';
     var txtColor = isSelected ? '#fff' : 'var(--text)';
@@ -5045,7 +5099,7 @@ function renderTrucks() {
       if (canAssignNow) actionBtns += '<button class="t-btn-assign pending-assign-btn" data-tid="'+tk._id+'">👷 Assign</button>';
       if (role==='worker') {
         actionBtns += myPendingClaim
-          ? '<span style="font-size:10px;font-weight:700;color:#f59e0b;background:rgba(245,158,11,0.15);padding:4px 8px;border-radius:8px;">⏳ Claim Sent</span>'
+          ? '<span style="font-size:10px;font-weight:700;color:#f59e0b;background:rgba(245,158,11,0.15);padding:4px 8px;border-radius:calc(8px*var(--rscale,1));">⏳ Claim Sent</span>'
           : '<button class="t-btn-assign claim-truck-btn" style="background:rgba(168,85,247,0.2);border-color:rgba(168,85,247,0.4);color:#c39bd3;" data-tid="'+tk._id+'" data-plate="'+tk.plate+'">🙋 Claim</button>';
       }
       if (!canAssignNow && role!=='worker') actionBtns = '<span style="font-size:10px;color:var(--text3)">Waiting…</span>';
@@ -5122,7 +5176,7 @@ function renderTrucks() {
 
     const truckNum = dayNumMap[truck._id] || '?';
     const plateHighlight = filterPlate && truck.plate.toUpperCase().includes(filterPlate)
-      ? truck.plate.replace(new RegExp('('+filterPlate+')', 'gi'), '<mark style="background:rgba(59,130,246,0.3);color:var(--accent);border-radius:3px;padding:0 2px">$1</mark>')
+      ? truck.plate.replace(new RegExp('('+filterPlate+')', 'gi'), '<mark style="background:rgba(59,130,246,0.3);color:var(--accent);border-radius:calc(3px*var(--rscale,1));padding:0 2px">$1</mark>')
       : truck.plate;
     // ── Cross-check: find matching Agash entry by plate + date ──
     const agashMatch = Object.values(kabIncoming).find(function(a) {
@@ -5446,7 +5500,7 @@ window.wcPreview = function(){
   var a=document.getElementById('wcAnchor'), g=document.getElementById('wcGap'), box=document.getElementById('wcPreview');
   if(!a||!g||!box) return;
   var list = a.value ? wcUpcoming(a.value, g.value, 6) : [];
-  box.innerHTML = list.length ? list.map(function(d,i){ return '<span style="display:inline-block;margin:3px 4px 0 0;padding:4px 8px;border-radius:8px;background:'+(i===0?'rgba(34,197,94,0.18)':'var(--bg3)')+';font-size:12px;font-weight:700;">'+wcLabel(d)+'</span>'; }).join('') : '<span style="color:var(--text3);font-size:12px;">Pick a confirmed work day</span>';
+  box.innerHTML = list.length ? list.map(function(d,i){ return '<span style="display:inline-block;margin:3px 4px 0 0;padding:4px 8px;border-radius:calc(8px*var(--rscale,1));background:'+(i===0?'rgba(34,197,94,0.18)':'var(--bg3)')+';font-size:12px;font-weight:700;">'+wcLabel(d)+'</span>'; }).join('') : '<span style="color:var(--text3);font-size:12px;">Pick a confirmed work day</span>';
 };
 window.wcToggleEdit = function(on){ _wcEdit = !!on; renderManage(); };
 window.wcSave = function(useToday){
@@ -5490,8 +5544,8 @@ function wcCardHTML(){
   }
   var rows=wcMonthRows(4), today=wcTodayStr();
   var body = rows.length ? rows.map(function(r){
-    return '<div style="padding:8px 0;border-bottom:1px solid var(--border);"><div style="display:flex;justify-content:space-between;align-items:center;"><b style="font-size:14px;">'+r.name+'</b><span style="background:rgba(34,197,94,0.18);color:#22c55e;font-weight:800;font-size:12px;padding:2px 10px;border-radius:10px;">'+r.days.length+' work days</span></div>'
-      +'<div style="margin-top:4px;">'+r.days.map(function(d){ var cur=(d===today), past=(d<today); return '<span style="display:inline-block;margin:3px 4px 0 0;padding:3px 7px;border-radius:7px;font-size:12px;font-weight:700;background:'+(cur?'#22c55e':'var(--bg3)')+';color:'+(cur?'#fff':(past?'var(--text3)':'var(--text)'))+';">'+wcLabel(d)+'</span>'; }).join('')+'</div></div>';
+    return '<div style="padding:8px 0;border-bottom:1px solid var(--border);"><div style="display:flex;justify-content:space-between;align-items:center;"><b style="font-size:14px;">'+r.name+'</b><span style="background:rgba(34,197,94,0.18);color:#22c55e;font-weight:800;font-size:12px;padding:2px 10px;border-radius:calc(10px*var(--rscale,1));">'+r.days.length+' work days</span></div>'
+      +'<div style="margin-top:4px;">'+r.days.map(function(d){ var cur=(d===today), past=(d<today); return '<span style="display:inline-block;margin:3px 4px 0 0;padding:3px 7px;border-radius:calc(7px*var(--rscale,1));font-size:12px;font-weight:700;background:'+(cur?'#22c55e':'var(--bg3)')+';color:'+(cur?'#fff':(past?'var(--text3)':'var(--text)'))+';">'+wcLabel(d)+'</span>'; }).join('')+'</div></div>';
   }).join('') : '<div style="font-size:13px;color:var(--text3);">No work day confirmed yet.</div>';
   return head+body+'<button class="btn-secondary" style="width:100%;margin-top:12px;" onclick="wcToggleEdit(true)">✏️ Edit calendar</button></div></div>';
 }
@@ -5755,7 +5809,7 @@ window.renderCollectionsTab = function() {
     const sealRanOut = !sealNotTracked && sealLeft <= 0;
 
     const plateRows = entries.map(([id,t]) => `
-      <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--bg2);border-radius:8px;margin-bottom:6px">
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--bg2);border-radius:calc(8px*var(--rscale,1));margin-bottom:6px">
         <input type="checkbox" onclick="toggleCollectionCheck('${id}')" ${collectionUnchecked.has(id)?'':'checked'} style="width:18px;height:18px;flex-shrink:0;accent-color:var(--green);">
         <span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px;flex:1">${t.plate}</span>
         <span style="font-size:12px;color:var(--green);font-weight:700">${CLIENT_PRICE.toLocaleString()} ETB</span>
@@ -5769,7 +5823,7 @@ window.renderCollectionsTab = function() {
             ${w.substring(0,2).toUpperCase()}
           </div>
           <div class="worker-info">
-            <div class="worker-name">${w}${hasNew ? ' <span style="font-size:10px;font-weight:800;color:#0a0a0a;background:#eab308;border-radius:6px;padding:2px 6px;vertical-align:middle;margin-left:4px;">🆕 NEW</span>' : ''}</div>
+            <div class="worker-name">${w}${hasNew ? ' <span style="font-size:10px;font-weight:800;color:#0a0a0a;background:#eab308;border-radius:calc(6px*var(--rscale,1));padding:2px 6px;vertical-align:middle;margin-left:4px;">🆕 NEW</span>' : ''}</div>
             <div class="worker-stats-row">
               <div class="worker-stat">💵 Collected: <span style="color:${entries.length>0?'#eab308':'var(--text2)'};font-weight:700">${entries.length}</span></div>
               <div class="worker-stat">${amount.toLocaleString()} ETB</div>
@@ -5780,11 +5834,11 @@ window.renderCollectionsTab = function() {
         </div>
         ${expanded ? `
         <div class="worker-details">
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:rgba(255,255,255,0.03);border-radius:8px;margin-bottom:10px;font-size:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:rgba(255,255,255,0.03);border-radius:calc(8px*var(--rscale,1));margin-bottom:10px;font-size:12px;">
             <span style="color:var(--text2)">🎟️ Plombs — Issued: <strong style="color:var(--text)">${sealIssued}</strong> · Used: <strong style="color:var(--text)">${sealUsed}</strong> · Left: <strong style="color:${sealNotTracked?'var(--text3)':sealRanOut?'var(--red)':'var(--green)'}">${sealNotTracked?'—':sealLeft}</strong></span>
           </div>
           ${sealNotTracked ? '<div style="font-size:11px;color:var(--text3);margin-bottom:10px;">No seal batches issued to this sealer yet — issue one from the Sealers tab to start tracking.</div>' : ''}
-          ${sealRanOut ? '<div style="font-size:12px;color:var(--red);background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);border-radius:8px;padding:8px 10px;margin-bottom:10px;">⛔ Out of plombs — no more sealing (and no more cash) until more are issued.</div>' : ''}
+          ${sealRanOut ? '<div style="font-size:12px;color:var(--red);background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);border-radius:calc(8px*var(--rscale,1));padding:8px 10px;margin-bottom:10px;">⛔ Out of plombs — no more sealing (and no more cash) until more are issued.</div>' : ''}
           ${entries.length === 0
             ? '<div style="font-size:13px;color:var(--text3);padding:8px 0">No collected trucks awaiting clearance for this date.</div>'
             : plateRows + `<button class="manage-btn" style="width:100%;margin-top:8px;background:rgba(34,197,94,0.15);color:var(--green);border-color:rgba(34,197,94,0.35);font-weight:700" ${selectedEntries.length===0?'disabled':''} onclick="markSealerCollectionsPaid('${w}')">✅ Mark Paid &amp; Clear (${selectedEntries.length} · ${(selectedEntries.length*CLIENT_PRICE).toLocaleString()} ETB)</button>`
@@ -5804,7 +5858,7 @@ window.renderCollectionsTab = function() {
       return `<div style="font-size:12px;color:var(--text);padding:4px 0">🆕 <strong>${it.worker}</strong> collected <span style="font-family:'JetBrains Mono',monospace;font-weight:700">${it.plate}</span>${timeStr ? ' · '+timeStr : ''}</div>`;
     }).join('');
     banner = `
-      <div style="background:rgba(234,179,8,0.08);border:1px solid rgba(234,179,8,0.3);border-radius:10px;padding:10px 12px;margin-bottom:12px">
+      <div style="background:rgba(234,179,8,0.08);border:1px solid rgba(234,179,8,0.3);border-radius:calc(10px*var(--rscale,1));padding:10px 12px;margin-bottom:12px">
         <div style="font-size:11px;font-weight:800;color:#eab308;letter-spacing:0.06em;margin-bottom:4px">🔔 NEW COLLECTIONS</div>
         ${rows}
       </div>
@@ -6016,10 +6070,10 @@ function renderClaimsTab() {
         +'</div>'
       : '<div style="font-size:11px;color:var(--text3);font-weight:600;margin-top:8px">⏳ Waiting for Admin or Cashier to approve…</div>';
     html += '<div style="background:var(--card);border:1.5px solid rgba(168,85,247,0.35);border-radius:var(--radius);padding:14px;position:relative;overflow:hidden">'
-      +'<div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--purple);border-radius:4px 0 0 4px;"></div>'
+      +'<div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--purple);border-radius:calc(4px*var(--rscale,1)) 0 0 calc(4px*var(--rscale,1));"></div>'
       +'<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px">'
       +'<div style="font-size:20px;font-weight:800;font-family:monospace;letter-spacing:0.05em">'+c.plate+'</div>'
-      +'<span style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;background:rgba(168,85,247,0.15);color:var(--purple);border:1px solid rgba(168,85,247,0.3)">⏳ PENDING</span>'
+      +'<span style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:calc(20px*var(--rscale,1));background:rgba(168,85,247,0.15);color:var(--purple);border:1px solid rgba(168,85,247,0.3)">⏳ PENDING</span>'
       +'</div>'
       +'<div style="font-size:12px;color:var(--text2);margin-bottom:8px">📅 '+(c.date||'—')+' · Sent: '+ts+'</div>'
       +'<div style="display:flex;align-items:center;gap:8px">'
@@ -6204,7 +6258,7 @@ function renderWorkers() {
             <button class="manage-btn" style="flex:1" ${sealLeft<=0?'disabled':''} onclick="openTakeBackSeals('${w}')">↩️ Take Back</button>
           </div>` : ''}
           ${canConfirmHandIn && unclearedCount>0 ? `
-            <div style="margin-top:12px;padding:10px;background:rgba(234,179,8,0.08);border:1px solid rgba(234,179,8,0.25);border-radius:10px">
+            <div style="margin-top:12px;padding:10px;background:rgba(234,179,8,0.08);border:1px solid rgba(234,179,8,0.25);border-radius:calc(10px*var(--rscale,1))">
               <div style="font-size:12px;font-weight:700;color:#eab308;margin-bottom:6px">💵 ${unclearedCount} truck(s) uncleared · ${unclearedAmount.toLocaleString()} ETB</div>
               <button class="manage-btn" style="background:rgba(234,179,8,0.15);color:#eab308;border-color:rgba(234,179,8,0.35)" onclick="confirmHandIn('${w}')">🤝 Confirm Hand-in</button>
             </div>
@@ -6439,7 +6493,7 @@ window.shareReportAsImage = function() {
 
   snap.innerHTML = `
     <div style="padding:4px 0 12px;border-bottom:1px solid rgba(255,255,255,0.1);margin-bottom:12px;display:flex;align-items:center;gap:10px">
-      <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#1d4ed8,#4f46e5);display:flex;align-items:center;justify-content:center;font-size:16px">🚛</div>
+      <div style="width:36px;height:36px;border-radius:calc(10px*var(--rscale,1));background:linear-gradient(135deg,#1d4ed8,#4f46e5);display:flex;align-items:center;justify-content:center;font-size:16px">🚛</div>
       <div>
         <div style="font-size:15px;font-weight:800;color:#f1f5f9">WKABE · Hask Report</div>
         <div style="font-size:11px;color:#64748b">${d.dateLabel}</div>
@@ -6450,11 +6504,11 @@ window.shareReportAsImage = function() {
     <div style="margin-bottom:12px">
       <div style="font-size:10px;font-weight:800;color:#64748b;letter-spacing:0.08em;margin-bottom:8px">📊 SUMMARY</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px">
-        <div style="background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.25);border-radius:10px;padding:10px;text-align:center">
+        <div style="background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.25);border-radius:calc(10px*var(--rscale,1));padding:10px;text-align:center">
           <div style="font-size:20px;font-weight:800;color:#4ade80">${d.paidCount}</div>
           <div style="font-size:10px;color:#64748b">✅ Paid</div>
         </div>
-        <div style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.25);border-radius:10px;padding:10px;text-align:center">
+        <div style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.25);border-radius:calc(10px*var(--rscale,1));padding:10px;text-align:center">
           <div style="font-size:20px;font-weight:800;color:#f87171">${d.unpaidCount}</div>
           <div style="font-size:10px;color:#64748b">❌ Unpaid</div>
         </div>
@@ -6468,7 +6522,7 @@ window.shareReportAsImage = function() {
         <span style="font-size:12px;color:#f87171">⚠️ Missing (Unpaid)</span>
         <span style="font-size:12px;font-weight:700;color:#f87171">-${d.unpaidAmount.toLocaleString()} ETB</span>
       </div>` : ''}
-      <div style="background:linear-gradient(135deg,rgba(59,130,246,0.15),rgba(99,102,241,0.15));border:1.5px solid rgba(99,102,241,0.35);border-radius:10px;padding:10px 12px;margin-top:8px">
+      <div style="background:linear-gradient(135deg,rgba(59,130,246,0.15),rgba(99,102,241,0.15));border:1.5px solid rgba(99,102,241,0.35);border-radius:calc(10px*var(--rscale,1));padding:10px 12px;margin-top:8px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
           <div>
             <div style="font-size:10px;color:#818cf8;font-weight:800;letter-spacing:0.05em">💡 COMBINED TOTAL</div>
@@ -6765,7 +6819,7 @@ function renderManage() {
             + '</div>'
             + (isAdmin
               ? '<input id="tariff_'+key+'" type="number" value="'+val+'"'
-                + ' style="width:82px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:14px;font-weight:700;color:var(--text);text-align:right;font-family:JetBrains Mono,monospace"'
+                + ' style="width:82px;background:var(--bg2);border:1px solid var(--border);border-radius:calc(8px*var(--rscale,1));padding:6px 8px;font-size:14px;font-weight:700;color:var(--text);text-align:right;font-family:JetBrains Mono,monospace"'
                 + ' onchange="saveTariff(\''+key+'\',this.value)">'
               : '<div style="font-size:14px;font-weight:700;color:var(--text3);font-family:JetBrains Mono,monospace">'+Number(val).toLocaleString()+'</div>')
             + '</div>';
@@ -6796,7 +6850,7 @@ function renderManage() {
               <div class="manage-item-sub">${addingSuspended ? 'Workers are currently blocked' : 'Block all workers from adding'}</div>
             </div>
           </div>
-          <div style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;background:${addingSuspended?'rgba(239,68,68,0.15)':'rgba(34,197,94,0.15)'};color:${addingSuspended?'var(--red)':'var(--green)'}">
+          <div style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:calc(20px*var(--rscale,1));background:${addingSuspended?'rgba(239,68,68,0.15)':'rgba(34,197,94,0.15)'};color:${addingSuspended?'var(--red)':'var(--green)'}">
             ${addingSuspended ? 'SUSPENDED' : 'ACTIVE'}
           </div>
         </div>
@@ -8078,7 +8132,7 @@ function renderNotifsTab() {
       body = 'Plate <strong>'+n.plate+'</strong> appears twice on <strong>'+n.date+'</strong>. '
         +(n.resolved ? 'The extra entry was moved to the <strong>🗑️ Recycle Bin</strong> automatically.' : 'It has not been auto-resolved yet.')
         +' You can also delete it manually right now.';
-      delBtn = '<button onclick="resolveDuplicateNotif(\''+n._id+'\',\''+n.plate+'\',\''+n.date+'\',this)" style="background:none;border:1px solid rgba(239,68,68,0.4);color:var(--red);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;margin-right:6px">🗑️ Delete now</button>';
+      delBtn = '<button onclick="resolveDuplicateNotif(\''+n._id+'\',\''+n.plate+'\',\''+n.date+'\',this)" style="background:none;border:1px solid rgba(239,68,68,0.4);color:var(--red);border-radius:calc(6px*var(--rscale,1));padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;margin-right:6px">🗑️ Delete now</button>';
     } else if (n.type === 'settlement') {
       icon = '📋';
       body = (n.message || 'Settlement submitted');
@@ -8097,7 +8151,7 @@ function renderNotifsTab() {
         +'</div>'
         +'<div style="display:flex;align-items:center">'
           +delBtn
-          +'<button onclick="dismissNotif(\''+n._id+'\')" style="background:none;border:1px solid rgba(245,158,11,0.35);color:var(--orange);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">✓ Done</button>'
+          +'<button onclick="dismissNotif(\''+n._id+'\')" style="background:none;border:1px solid rgba(245,158,11,0.35);color:var(--orange);border-radius:calc(6px*var(--rscale,1));padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">✓ Done</button>'
         +'</div>'
       +'</div>'
       +'<div style="font-size:13px;color:var(--text);line-height:1.6;margin-bottom:8px">'+body+'</div>'
@@ -8593,7 +8647,7 @@ window.openDuplicateSpotter = function() {
         🚛 ${group[0].plate} — ${group[0].date} <span style="font-size:11px">(${group.length}x)</span>
       </div>
       ${group.map((tk) => `
-        <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px;margin-bottom:8px">
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:calc(8px*var(--rscale,1));padding:10px;margin-bottom:8px">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
             <div>
               <span style="font-size:12px;font-weight:700;color:${statusColor(tk.status)}">${statusLabel(tk.status)}</span>
@@ -8906,7 +8960,7 @@ function renderAgashIncoming() {
   var chipAll      = agashSealFilter==='all'      ? 'background:var(--accent);border-color:var(--accent);color:#fff'      : 'background:var(--card);border-color:var(--border);color:var(--text2)';
   var chipSealed   = agashSealFilter==='sealed'   ? 'background:#22c55e;border-color:#22c55e;color:#fff'                  : 'background:var(--card);border-color:var(--border);color:var(--text2)';
   var chipUnsealed = agashSealFilter==='unsealed' ? 'background:#ef4444;border-color:#ef4444;color:#fff'                  : 'background:var(--card);border-color:var(--border);color:var(--text2)';
-  var chipStyle    = 'border:1.5px solid;border-radius:20px;padding:5px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;';
+  var chipStyle    = 'border:1.5px solid;border-radius:calc(20px*var(--rscale,1));padding:5px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;';
   var filterChips  =
     '<div style="display:flex;gap:8px;padding:0 0 10px;flex-wrap:wrap">'
     + '<button style="'+chipStyle+chipAll+'" onclick="setAgashSealFilter(\'all\')">All ('+filtered.length+')</button>'
@@ -8915,7 +8969,7 @@ function renderAgashIncoming() {
     + '</div>';
 
   // ── Type filter chips (multi-select) ──
-  var typeChipStyle = 'border:1.5px solid;border-radius:20px;padding:5px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;';
+  var typeChipStyle = 'border:1.5px solid;border-radius:calc(20px*var(--rscale,1));padding:5px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;';
   var typeAnyActive = agashTypeFilter.shirac || agashTypeFilter.bilashirac || agashTypeFilter.metal;
   function typeChip(key, label, color) {
     var on = !!agashTypeFilter[key];
@@ -9006,7 +9060,7 @@ function renderAgashIncoming() {
     // Grid: POST | SHIRAC | BILA | METAL | +BASHAL | TOT | ✅ | ❌
     var cols = '1fr 46px 46px 46px 54px 40px 34px 34px';
     tableHTML =
-      '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:16px">'
+      '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:calc(10px*var(--rscale,1));overflow:hidden;margin-bottom:16px">'
       + '<div style="display:grid;grid-template-columns:'+cols+';background:var(--bg4);padding:8px 10px;border-bottom:1px solid var(--border);align-items:center">'
       + '<div style="font-size:9px;font-weight:800;color:var(--text3);letter-spacing:.07em">POST</div>'
       + '<div style="font-size:9px;font-weight:800;color:#10b981;letter-spacing:.07em;text-align:center">SHIRAC</div>'
@@ -9067,8 +9121,8 @@ function renderAgashIncoming() {
     }
     var timeStr = t.ts ? new Date(t.ts).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}) : '—';
     var sealBadge = t.sealed
-      ? '<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:rgba(34,197,94,0.15);color:#22c55e;border:1px solid rgba(34,197,94,0.35)">🔐 Sealed</span>'
-      : '<span style="font-size:11px;font-weight:800;padding:3px 10px;border-radius:10px;background:rgba(239,68,68,0.22);color:#ef4444;border:1.5px solid rgba(239,68,68,0.6)">⭕ Unsealed</span>';
+      ? '<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:calc(10px*var(--rscale,1));background:rgba(34,197,94,0.15);color:#22c55e;border:1px solid rgba(34,197,94,0.35)">🔐 Sealed</span>'
+      : '<span style="font-size:11px;font-weight:800;padding:3px 10px;border-radius:calc(10px*var(--rscale,1));background:rgba(239,68,68,0.22);color:#ef4444;border:1.5px solid rgba(239,68,68,0.6)">⭕ Unsealed</span>';
     var cardBg     = t.sealed ? 'var(--bg3)' : 'rgba(239,68,68,0.06)';
     var cardBorder = t.sealed ? 'var(--border)' : 'rgba(239,68,68,0.4)';
     var leftBorder = t.sealed ? si.color : '#ef4444';
@@ -9077,20 +9131,20 @@ function renderAgashIncoming() {
       return tr.plate && tr.plate.toUpperCase() === t.plate.toUpperCase() && tr.date === t.date;
     });
     var sealerName = matchedTruck ? (matchedTruck.worker || '') : '';
-    return '<div style="background:'+cardBg+';border:1.5px solid '+cardBorder+';border-left:4px solid '+leftBorder+';border-radius:8px;padding:12px;margin-bottom:8px">'
+    return '<div style="background:'+cardBg+';border:1.5px solid '+cardBorder+';border-left:4px solid '+leftBorder+';border-radius:calc(8px*var(--rscale,1));padding:12px;margin-bottom:8px">'
       // Row 1: plate + seal badge + status badge
       + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px">'
       + '<div style="font-size:18px;font-weight:800;font-family:monospace;letter-spacing:0.05em">'+t.plate+'</div>'
       + '<div style="display:flex;align-items:center;gap:6px">'
       + sealBadge
-      + '<span style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:12px;background:'+si.color+'22;color:'+si.color+';border:1px solid '+si.color+'44">'+si.label+'</span>'
+      + '<span style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:calc(12px*var(--rscale,1));background:'+si.color+'22;color:'+si.color+';border:1px solid '+si.color+'44">'+si.label+'</span>'
       + '</div>'
       + '</div>'
       // Row 2: post + type badge + time
       + '<div style="display:flex;align-items:center;justify-content:space-between;gap:6px">'
       + '<span style="font-size:12px;font-weight:700;color:var(--text2)">🏗️ '+t.postLabel+'</span>'
       + '<div style="display:flex;align-items:center;gap:6px">'
-      + '<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;background:'+tc+'18;color:'+tc+';border:1px solid '+tc+'33">'+tl+'</span>'
+      + '<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:calc(10px*var(--rscale,1));background:'+tc+'18;color:'+tc+';border:1px solid '+tc+'33">'+tl+'</span>'
       + '<span style="font-size:11px;color:var(--text3)">🕐 '+timeStr+'</span>'
       + '</div>'
       + '</div>'
@@ -9110,7 +9164,7 @@ function renderAgashIncoming() {
   var crossMatches = computeCrossCheckMatches(selectedDate);
   var crossCheckHTML = '';
   if (crossMatches.length > 0) {
-    var ccHeaderStyle = 'display:flex;align-items:center;justify-content:space-between;padding:10px 12px;cursor:pointer;background:rgba(240,165,0,0.1);border:1px solid rgba(240,165,0,0.35);border-radius:10px;';
+    var ccHeaderStyle = 'display:flex;align-items:center;justify-content:space-between;padding:10px 12px;cursor:pointer;background:rgba(240,165,0,0.1);border:1px solid rgba(240,165,0,0.35);border-radius:calc(10px*var(--rscale,1));';
     crossCheckHTML = '<div style="margin-bottom:12px;">'
       + '<div style="'+ccHeaderStyle+'" onclick="setCrossCheckExpanded('+(!agashCrossCheckExpanded)+')">'
       +   '<div style="font-size:12px;font-weight:800;color:#f0a500;">⚠️ '+crossMatches.length+' possible plate typo'+(crossMatches.length!==1?'s':'')+' — sealer vs Agash</div>'
@@ -9119,7 +9173,7 @@ function renderAgashIncoming() {
     if (agashCrossCheckExpanded) {
       crossCheckHTML += '<div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">'
         + crossMatches.map(function(m){
-            return '<div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 12px;">'
+            return '<div style="background:var(--card);border:1px solid var(--border);border-radius:calc(10px*var(--rscale,1));padding:10px 12px;">'
               + '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;">'
               +   '<div style="text-align:left;"><div style="font-size:9px;color:var(--text3);font-weight:700;">👷 SEALER ('+((m.sealer.worker)||'—')+')</div>'
               +     '<div style="font-family:\'JetBrains Mono\',monospace;font-weight:800;font-size:14px;">'+m.sealer.plate+'</div></div>'
@@ -9128,9 +9182,9 @@ function renderAgashIncoming() {
               +     '<div style="font-family:\'JetBrains Mono\',monospace;font-weight:800;font-size:14px;">'+m.agash.plate+'</div></div>'
               + '</div>'
               + '<div style="display:flex;gap:6px;flex-wrap:wrap;">'
-              +   '<button style="flex:1;min-width:110px;background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.35);color:#22c55e;border-radius:8px;padding:6px 8px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;" onclick="crossCheckFix(\''+m.sealer._id+'\',\''+m.agash._id+'\',true)">✅ Use Sealer\'s plate</button>'
-              +   '<button style="flex:1;min-width:110px;background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.35);color:#22c55e;border-radius:8px;padding:6px 8px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;" onclick="crossCheckFix(\''+m.sealer._id+'\',\''+m.agash._id+'\',false)">✅ Use Agash\'s plate</button>'
-              +   '<button style="flex:none;background:var(--bg2);border:1px solid var(--border);color:var(--text3);border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;" onclick="crossCheckIgnorePair(\''+m.pairKey+'\')">🚫 Not a match</button>'
+              +   '<button style="flex:1;min-width:110px;background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.35);color:#22c55e;border-radius:calc(8px*var(--rscale,1));padding:6px 8px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;" onclick="crossCheckFix(\''+m.sealer._id+'\',\''+m.agash._id+'\',true)">✅ Use Sealer\'s plate</button>'
+              +   '<button style="flex:1;min-width:110px;background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.35);color:#22c55e;border-radius:calc(8px*var(--rscale,1));padding:6px 8px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;" onclick="crossCheckFix(\''+m.sealer._id+'\',\''+m.agash._id+'\',false)">✅ Use Agash\'s plate</button>'
+              +   '<button style="flex:none;background:var(--bg2);border:1px solid var(--border);color:var(--text3);border-radius:calc(8px*var(--rscale,1));padding:6px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;" onclick="crossCheckIgnorePair(\''+m.pairKey+'\')">🚫 Not a match</button>'
               + '</div>'
               + '</div>';
           }).join('')
@@ -9263,11 +9317,11 @@ window.showInstallHelp = async function() {
   box.id = 'installHelpBox';
   box.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:100000;display:flex;align-items:center;justify-content:center;padding:20px';
   box.onclick = (ev) => { if (ev.target === box) box.remove(); };
-  box.innerHTML = '<div style="background:#1a2234;color:#e8edf7;border-radius:16px;padding:20px;max-width:360px;width:100%;font-size:14px;line-height:1.4;max-height:85vh;overflow:auto">'
+  box.innerHTML = '<div style="background:#1a2234;color:#e8edf7;border-radius:calc(16px*var(--rscale,1));padding:20px;max-width:360px;width:100%;font-size:14px;line-height:1.4;max-height:85vh;overflow:auto">'
     + '<div style="font-weight:700;font-size:16px;margin-bottom:8px">📲 Install WKABE</div>'
     + '<div style="opacity:.8;margin-bottom:6px">The browser has not offered the install prompt yet. Checks:</div>'
     + rows.join('') + '<div style="margin-top:10px">' + tip + '</div>'
-    + '<button onclick="document.getElementById(\'installHelpBox\').remove()" style="margin-top:14px;width:100%;padding:12px;border:0;border-radius:10px;background:#3b82f6;color:#fff;font-weight:600;font-size:14px">OK</button></div>';
+    + '<button onclick="document.getElementById(\'installHelpBox\').remove()" style="margin-top:14px;width:100%;padding:12px;border:0;border-radius:calc(10px*var(--rscale,1));background:#3b82f6;color:#fff;font-weight:600;font-size:14px">OK</button></div>';
   document.body.appendChild(box);
 };
 // ── QR CODE GENERATOR (byte mode, ECC level M, versions 1-10) ──
@@ -10090,7 +10144,7 @@ function renderSettlementFormCard(cashierId, cashierName, date, dayTrucks, unpai
     // Header
     + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">'
     + '<div style="font-size:13px;font-weight:700;">💼 ' + cashierName + '</div>'
-    + '<span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;background:rgba(245,158,11,0.15);color:var(--orange)">⏳ PENDING</span>'
+    + '<span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:calc(10px*var(--rscale,1));background:rgba(245,158,11,0.15);color:var(--orange)">⏳ PENDING</span>'
     + '</div>'
 
     // ══ TABLE 1 — AGASH REPORT ══
@@ -10137,7 +10191,7 @@ function renderSettlementFormCard(cashierId, cashierName, date, dayTrucks, unpai
     + '<div>'
     + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">'
     + '<div class="stl-label" style="margin-bottom:0">👷 Given to Shibo Workers</div>'
-    + '<button type="button" id="stlShiboUnlock_'+cashierId+'" onclick="stlShiboUnlock(\''+cashierId+'\')" style="display:'+(shiboManual?'inline-flex':'none')+';align-items:center;gap:3px;font-size:9px;font-weight:700;color:var(--orange);background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.35);border-radius:20px;padding:2px 7px;cursor:pointer;font-family:inherit">🔒 locked · reset</button>'
+    + '<button type="button" id="stlShiboUnlock_'+cashierId+'" onclick="stlShiboUnlock(\''+cashierId+'\')" style="display:'+(shiboManual?'inline-flex':'none')+';align-items:center;gap:3px;font-size:9px;font-weight:700;color:var(--orange);background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.35);border-radius:calc(20px*var(--rscale,1));padding:2px 7px;cursor:pointer;font-family:inherit">🔒 locked · reset</button>'
     + '</div>'
     + '<div style="font-size:9px;color:var(--text3);margin-bottom:4px" id="stlShiboHint_'+cashierId+'">💡 Suggested: '+(cntShiracETB+cntShiracDJF)+' Shirac × '+SEALER_PRICE.toLocaleString()+' = '+shiboSuggested.toLocaleString()+' ETB</div>'
     + '<input class="stl-input" type="text" inputmode="decimal" id="stlShiboGiven_'+cashierId+'" placeholder="0" value="'+savedShiboGiven+'"'
@@ -10407,7 +10461,7 @@ function renderLockedSettlement(s, cashierName, cashierId, date, role, expectedC
           return '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--bg3);border:1px solid var(--border);border-left:3px solid '+col+';border-radius:var(--radius-sm);margin-bottom:6px">'
             + '<div style="display:flex;align-items:center;gap:6px">'
             + '<span style="font-size:13px;font-weight:800;font-family:\'JetBrains Mono\',monospace">'+ut.plate+'</span>'
-            + (tl ? '<span style="font-size:9px;padding:2px 7px;border-radius:10px;background:'+col+'22;color:'+col+'">'+tl+'</span>' : '')
+            + (tl ? '<span style="font-size:9px;padding:2px 7px;border-radius:calc(10px*var(--rscale,1));background:'+col+'22;color:'+col+'">'+tl+'</span>' : '')
             + '</div>'
             + '<div style="text-align:right">'
             + '<div style="font-size:11px;font-weight:700;color:var(--accent)">'+formatUnpaidPayDate(ut.payDate)+'</div>'
@@ -10560,7 +10614,7 @@ function renderLockedSettlement(s, cashierName, cashierId, date, role, expectedC
     + '</div>'
     + table1HTML
     + table2HTML
-    + (s.notes ? '<div style="font-size:12px;color:var(--text2);margin-top:10px;padding:8px;background:var(--bg3);border-radius:6px">📝 '+s.notes+'</div>' : '')
+    + (s.notes ? '<div style="font-size:12px;color:var(--text2);margin-top:10px;padding:8px;background:var(--bg3);border-radius:calc(6px*var(--rscale,1))">📝 '+s.notes+'</div>' : '')
     + '<div style="margin-top:12px">'
     + '<button onclick="stlShareReport(\''+cashierId+'\',\''+date+'\')" style="width:100%;background:rgba(59,130,246,0.12);border:1px solid rgba(59,130,246,0.3);color:var(--accent);border-radius:var(--radius-sm);padding:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">📤 Partager le rapport</button>'
     + '</div>'
@@ -10626,13 +10680,13 @@ function renderUnpaidListUI(cashierId) {
     // Settlement date — any date picker, plus quick "Tomorrow" / "+2 days" buttons
     var datePicker = '<input type="date" value="'+payDate+'" '
       + 'onchange="stlSetUnpaidField(\''+cashierId+'\','+idx+',\'payDate\',this.value)" style="'
-      + 'flex:1;padding:6px 8px;border-radius:7px;cursor:pointer;font-size:11px;font-weight:700;'
+      + 'flex:1;padding:6px 8px;border-radius:calc(7px*var(--rscale,1));cursor:pointer;font-size:11px;font-weight:700;'
       + 'border:1.5px solid var(--border);background:var(--bg4);color:var(--text);font-family:inherit">'
       + '<button onclick="stlSetUnpaidField(\''+cashierId+'\','+idx+',\'payDate\',\''+addDaysISO(baseDate,1)+'\')" title="Tomorrow" style="'
-      + 'padding:6px 8px;border-radius:7px;cursor:pointer;font-size:11px;font-weight:700;border:1.5px solid var(--border);'
+      + 'padding:6px 8px;border-radius:calc(7px*var(--rscale,1));cursor:pointer;font-size:11px;font-weight:700;border:1.5px solid var(--border);'
       + 'background:var(--bg4);color:var(--text3);font-family:inherit">+1d</button>'
       + '<button onclick="stlSetUnpaidField(\''+cashierId+'\','+idx+',\'payDate\',\''+addDaysISO(baseDate,2)+'\')" title="Day after tomorrow" style="'
-      + 'padding:6px 8px;border-radius:7px;cursor:pointer;font-size:11px;font-weight:700;border:1.5px solid var(--border);'
+      + 'padding:6px 8px;border-radius:calc(7px*var(--rscale,1));cursor:pointer;font-size:11px;font-weight:700;border:1.5px solid var(--border);'
       + 'background:var(--bg4);color:var(--text3);font-family:inherit">+2d</button>';
 
     // Collector pills
@@ -10642,7 +10696,7 @@ function renderUnpaidListUI(cashierId) {
     ].map(function(o) {
       var active = collector === o.v;
       return '<button onclick="stlSetUnpaidField(\''+cashierId+'\','+idx+',\'collector\',\''+o.v+'\')" style="'
-        + 'flex:1;padding:6px 4px;border-radius:7px;cursor:pointer;font-size:11px;font-weight:700;border:1.5px solid;'
+        + 'flex:1;padding:6px 4px;border-radius:calc(7px*var(--rscale,1));cursor:pointer;font-size:11px;font-weight:700;border:1.5px solid;'
         + 'border-color:' + (active?'var(--green)':'var(--border)') + ';'
         + 'background:' + (active?'rgba(34,197,94,0.15)':'var(--bg4)') + ';'
         + 'color:' + (active?'var(--green)':'var(--text3)') + ';'
@@ -10656,10 +10710,10 @@ function renderUnpaidListUI(cashierId) {
       + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">'
       + '<div style="display:flex;align-items:center;gap:7px">'
       + '<div style="font-size:14px;font-weight:800;font-family:\'JetBrains Mono\',monospace;color:var(--text)">' + ut.plate + '</div>'
-      + (typeLabel ? '<span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;background:'+color+'22;color:'+color+';border:1px solid '+color+'44">' + typeLabel + '</span>' : '')
-      + (isManual  ? '<span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;background:rgba(168,85,247,0.15);color:#a855f7;border:1px solid rgba(168,85,247,0.3)">MANUAL</span>' : '')
+      + (typeLabel ? '<span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:calc(10px*var(--rscale,1));background:'+color+'22;color:'+color+';border:1px solid '+color+'44">' + typeLabel + '</span>' : '')
+      + (isManual  ? '<span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:calc(10px*var(--rscale,1));background:rgba(168,85,247,0.15);color:#a855f7;border:1px solid rgba(168,85,247,0.3)">MANUAL</span>' : '')
       + '</div>'
-      + '<button onclick="stlRemoveUnpaid(\''+cashierId+'\','+idx+')" style="background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.25);border-radius:6px;padding:3px 9px;font-size:11px;cursor:pointer;font-weight:700">✕</button>'
+      + '<button onclick="stlRemoveUnpaid(\''+cashierId+'\','+idx+')" style="background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.25);border-radius:calc(6px*var(--rscale,1));padding:3px 9px;font-size:11px;cursor:pointer;font-weight:700">✕</button>'
       + '</div>'
 
       // Row 2: settlement date
@@ -11119,16 +11173,16 @@ function renderSettlementHistory() {
           + '<div style="font-size:13px;font-weight:700;">' + (s.cashierName||s.cashier) + '</div>'
           + '<div style="font-size:11px;color:var(--text2);margin-top:2px">📅 ' + dateLabel + '</div>'
           + '</div>'
-          + '<span style="font-size:12px;font-weight:700;padding:4px 10px;border-radius:10px;background:rgba(34,197,94,0.12);color:var(--green)">✅ Locked</span>'
+          + '<span style="font-size:12px;font-weight:700;padding:4px 10px;border-radius:calc(10px*var(--rscale,1));background:rgba(34,197,94,0.12);color:var(--green)">✅ Locked</span>'
           + '</div>'
           + '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:6px">'
-          + '<div style="text-align:center;background:var(--bg3);border-radius:6px;padding:6px">'
+          + '<div style="text-align:center;background:var(--bg3);border-radius:calc(6px*var(--rscale,1));padding:6px">'
           + '<div style="font-size:13px;font-weight:800;font-family:\'JetBrains Mono\',monospace;color:var(--accent)">' + (s.paidCount||0) + '</div>'
           + '<div style="font-size:9px;color:var(--text3);font-weight:700">PAID</div></div>'
-          + '<div style="text-align:center;background:var(--bg3);border-radius:6px;padding:6px">'
+          + '<div style="text-align:center;background:var(--bg3);border-radius:calc(6px*var(--rscale,1));padding:6px">'
           + '<div style="font-size:13px;font-weight:800;font-family:\'JetBrains Mono\',monospace;color:var(--green)">' + (s.cashSent||0).toLocaleString() + '</div>'
           + '<div style="font-size:9px;color:var(--text3);font-weight:700">ETB SENT</div></div>'
-          + '<div style="text-align:center;background:var(--bg3);border-radius:6px;padding:6px">'
+          + '<div style="text-align:center;background:var(--bg3);border-radius:calc(6px*var(--rscale,1));padding:6px">'
           + '<div style="font-size:13px;font-weight:800;font-family:\'JetBrains Mono\',monospace;color:' + diffColor + '">' + diffText + '</div>'
           + '<div style="font-size:9px;color:var(--text3);font-weight:700">DISCREPANCY</div></div>'
           + '</div>'
@@ -12485,8 +12539,8 @@ function certRenderFicheList() {
     if(!_certFicheExpanded[name]){
       // ── Collapsed: compact summary, still gives access to the registered info via a tap ──
       var badge = st.complete
-        ? '<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:rgba(34,197,94,0.15);color:#22c55e;border:1px solid rgba(34,197,94,0.35)">✅ Complet</span>'
-        : '<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:rgba(240,165,0,0.15);color:#f0a500;border:1px solid rgba(240,165,0,0.35)">⚠ Incomplet</span>';
+        ? '<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:calc(10px*var(--rscale,1));background:rgba(34,197,94,0.15);color:#22c55e;border:1px solid rgba(34,197,94,0.35)">✅ Complet</span>'
+        : '<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:calc(10px*var(--rscale,1));background:rgba(240,165,0,0.15);color:#f0a500;border:1px solid rgba(240,165,0,0.35)">⚠ Incomplet</span>';
       return '<div class="cert-fiche-row" style="cursor:pointer" onclick="certToggleFiche(\''+name.replace(/'/g,"\\'")+'\')">'
         + '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">'
         +   '<div style="display:flex;align-items:center;gap:8px;min-width:0;">'
@@ -12863,7 +12917,7 @@ function certPrintCSS() {
     +'.cert-document{background:#fff;color:#1a1a2e;font-family:Georgia,serif;padding:40px 48px;min-height:100vh}'
     +'.cert-doc-header{display:flex;align-items:flex-start;gap:16px;border-bottom:2px solid #1a3a6e;padding-bottom:16px;margin-bottom:20px}'
     +'.cert-doc-logo{width:80px;height:80px;object-fit:contain}'
-    +'.cert-doc-logo-placeholder{width:80px;height:80px;border:2px solid #1a3a6e;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:28px;background:#f0f4ff}'
+    +'.cert-doc-logo-placeholder{width:80px;height:80px;border:2px solid #1a3a6e;border-radius:calc(8px*var(--rscale,1));display:flex;align-items:center;justify-content:center;font-size:28px;background:#f0f4ff}'
     +'.cert-doc-company-name{font-size:16px;font-weight:800;color:#1a3a6e;text-transform:uppercase;letter-spacing:0.05em}'
     +'.cert-doc-company-info{font-size:12px;color:#555;margin-top:4px;line-height:1.7}'
     +'.cert-doc-title{text-align:center;font-size:20px;font-weight:800;color:#1a3a6e;text-transform:uppercase;letter-spacing:0.1em;margin:0 0 6px;border-bottom:1px solid #1a3a6e;padding-bottom:8px}'
@@ -13089,7 +13143,7 @@ window.certImprimerHistorique = function(id) {
 // ══════════════════════════════════════════════════════════════════════
 
 buildLogin();
-renderCompanyList(); syncCompanyBranding(); loadCompanies(); watchCompanyStatus();
+renderCompanyList(); syncCompanyBranding(); fillCoRibbon(); loadCompanies(); watchCompanyStatus(); watchCompanyLook();
 (function() {
   let al = null; try { al = sessionStorage.getItem('hask_autologin'); sessionStorage.removeItem('hask_autologin'); } catch(e) {}
   if (al && COMPANY) { showLock(); currentUser = { id: al }; _pinDotsLoading(true); _pinMsg('Opening your account…', true); _waitWorkers().then(loginSuccess); }
